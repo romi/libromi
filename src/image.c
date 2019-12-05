@@ -46,6 +46,16 @@ void delete_image(image_t *image)
         }
 }
 
+int image_width(image_t *image)
+{
+        return image->width;
+}
+
+int image_height(image_t *image)
+{
+        return image->height;
+}
+
 image_t *image_clone(image_t *im)
 {
         image_t *image = (image_t *) malloc(sizeof(image_t));
@@ -986,7 +996,7 @@ image_t *image_load(const char *filename)
 image_t *image_binary(image_t* image, float threshold)
 {
         if (image->type != IMAGE_BW) {
-                fprintf(stderr, "image_otsu_threshold: not a BW image\n");
+                fprintf(stderr, "image_binary: not a BW image\n");
                 return NULL;
         }
 

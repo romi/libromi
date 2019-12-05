@@ -51,6 +51,8 @@ int image_contains(image_t *image, int x, int y);
          (__im)->data[(int)((__im)->channels * ((__y) * (__im)->width + (__x)) + (__chan))] : 0.0f)
 
 
+int image_width(image_t *image);
+int image_height(image_t *image);
 void image_clear(image_t *image);
 void image_fill(image_t *image, int channel, float color);
 void image_offset(image_t *image, float offset, int channel);
