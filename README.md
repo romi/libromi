@@ -1,2 +1,3 @@
 # libromi
-Shared code for romi-rover apps
+
+Libromi provides common abstractions and functions for ROMI applications.
