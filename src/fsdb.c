@@ -73,6 +73,9 @@ static int file_update_files(file_t *file);
 static int fileset_update_files(fileset_t *fileset);
 static int scan_store_filesets(scan_t *scan);
 
+static int fsdb_store_data(const char *path, void *ptr, int32_t len);
+static int fsdb_store_membuf(const char *path, membuf_t *data);
+
 /**************************************************************/
 
 struct _file_t {
@@ -89,8 +92,6 @@ file_t *new_file(fileset_t *fileset,
                  const char *mimetype)
 {
         file_t *file = r_new(file_t);
-        if (file == NULL) return NULL;
-
         file->fileset = fileset;
         file->id = r_strdup(id);
         file->localfile = localfile? r_strdup(localfile) : NULL;
@@ -198,41 +199,26 @@ int file_import_data(file_t *file,
         if (file->mimetype == NULL)
                 return -1;
 
-        file_path(file, path, sizeof(path));
-        
-        int fd = open(path,
-                      O_WRONLY | O_CREAT,
-                      S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
-        if (fd == -1) {
-                r_warn("Failed to open '%s': %s.", path, strerror(errno));
+        if (file_path(file, path, sizeof(path)) != 0)
                 return -1;
-        }
-        
-        ssize_t n, wrote = 0;
-        while (wrote < len) {
-                n = write(fd, data + wrote, len - wrote);
-		//r_debug("file_import_jpeg: %s: len=%d, wrote=%d, n=%d", path, len, wrote, n);
-                if (n == -1) {
-                        r_warn("Failed to write '%s': %s.", path, strerror(errno));
-                        close(fd);
-                        return -1;
-                }
-                wrote += n;
-        }
-        close(fd);
 
-        if (file_update_files(file) != 0) {
+        if (fsdb_store_data(path, data, len) != 0)
+                return -1;
+
+        if (file_update_files(file) != 0)
                 // FIXME: then what?
-        }
+                return -1;
 
-        int err = file_set_metadata_str(file, "mimetype", mimetype);
+        if (file_set_metadata_str(file, "mimetype", mimetype) != 0)
+                // FIXME: then what?
+                return -1;
 
         if (new_file)
                 file_broadcast(file, "new-file");
         else
                 file_broadcast(file, "update-file");
         
-        return err;
+        return 0;
 }
 
 int file_import_jpeg(file_t *file, const char *image, int len)
@@ -390,8 +376,6 @@ static int fileset_load(fileset_t *fileset, json_object_t obj);
 fileset_t *new_fileset(scan_t *scan, const char *id)
 {
         fileset_t *fileset = r_new(fileset_t);
-        if (fileset == NULL) return NULL;
-        
         fileset->scan = scan;
         fileset->id = r_strdup(id);
         fileset->files = NULL;
@@ -469,28 +453,33 @@ static int fileset_store_metadata(fileset_t *fileset)
 
 static int fileset_store_file(fileset_t *fileset, file_t *file, membuf_t *buf)
 {
+        int err = 0; 
         if (file->localfile == NULL || file->mimetype == NULL) {
                 //r_warn("File '%s' has no file localfile. Skipping.", file->id);
         } else {
-                membuf_printf(buf, "{\"id\": \"%s\", \"file\": \"%s\","
-                              " \"mimetype\": \"%s\"}",
-                              file->id, file->localfile, file->mimetype);
+                err = membuf_printf(buf, "{\"id\": \"%s\", \"file\": \"%s\","
+                                    " \"mimetype\": \"%s\"}",
+                                    file->id, file->localfile, file->mimetype);
         }
-        return 0;
+        return err;
 }
 
 static int fileset_store_files(fileset_t *fileset, membuf_t *buf)
 {
-        membuf_printf(buf, "{\"id\": \"%s\", \"files\": [", fileset->id);
+        if (membuf_printf(buf, "{\"id\": \"%s\", \"files\": [", fileset->id) != 0)
+                return -1;
 
         list_t *files = fileset->files;
         while (files) {
                 file_t *file = list_get(files, file_t);;
                 fileset_store_file(fileset, file, buf);
                 files = list_next(files);
-                if (files) membuf_printf(buf, ", ");
+                if (files) {
+                        if (membuf_printf(buf, ", ") != 0)
+                                return -1;
+                }
         } 
-        membuf_printf(buf, "]}");
+        membuf_append_str(buf, "]}");
         return 0;
 }
 
@@ -702,8 +691,6 @@ static int scan_unload(scan_t *scan);
 scan_t *new_scan(database_t *db, const char *id)
 {
         scan_t *scan = r_new(scan_t);
-        if (scan == NULL) return NULL;
-
         scan->db = db;
         scan->id = r_strdup(id);
         scan->filesets = NULL;
@@ -860,17 +847,18 @@ static int scan_store_filesets(scan_t *scan)
         if (buf == NULL)
                 return -1;
         
-        membuf_printf(buf, "{\"filesets\": [");
+        membuf_append_str(buf, "{\"filesets\": [");
+        
         for (list_t *l = scan->filesets; l != NULL; l = list_next(l)) {
                 fileset_t *fileset = list_get(l, fileset_t);
                 fileset_store_files(fileset, buf);
                 if (list_next(l))
-                        membuf_printf(buf, ", ");
+                        membuf_append_str(buf, ", ");
         }
         
-        membuf_printf(buf, "]}");
-
-        err = file_store(path, membuf_data(buf), membuf_len(buf), FS_LOCK);
+        membuf_append_str(buf, "]}");
+        
+        err = fsdb_store_membuf(path, buf);
         
         if (buf)
                 delete_membuf(buf);        
@@ -1002,8 +990,6 @@ struct _database_t {
 database_t *new_database(const char *path)
 {
         database_t *db = r_new(database_t);
-        if (db == NULL) return NULL;
-
         db->userdata = NULL;
         db->listener = NULL;
         db->scans = NULL;
@@ -1154,6 +1140,13 @@ static int database_get_file_path(database_t *db,
                                   file_t *file,
                                   char *buffer, int len)
 {
+        if (db == NULL || scan == NULL
+            || fileset == NULL || file == NULL
+            || buffer == NULL) {
+                r_err("Illegal value (NULL)");
+                return -1;
+        }
+                
         if (rprintf(buffer, len, "%s/%s/%s/%s",
                     db->path, scan->id,
                     fileset->id, file->localfile) == NULL)
@@ -1310,3 +1303,45 @@ const char *database_path(database_t *db)
 {
         return db->path;
 }
+
+static int fsdb_store_membuf(const char *path, membuf_t *data)
+{
+        return fsdb_store_data(path, membuf_data(membuf), membuf_len(membuf));
+}
+
+static int fsdb_store_data(const char *path, void *ptr, int32_t len)
+{
+        FILE *fp = NULL;
+
+        fp = fopen(path, "wb");
+        if (fp == NULL) {
+                char msg[200];
+                strerror_r(errno, msg, sizeof(msg));
+                r_err("Failed to open %s: %s", path, msg);
+                return -1;
+        }
+
+        size_t n = fwrite(ptr, 1, len, fp);
+        if (n != len || ferror(fp)) {
+                r_err("Failed to write the file %s: %s", path);
+                fclose(fp);
+                return -1;
+        }
+        
+        if (fflush(fp) != 0) {
+                char msg[200];
+                strerror_r(errno, msg, sizeof(msg));
+                r_err("Failed to flush %s: %s", path, msg);
+                return -1;
+        }
+
+        if (fclose(fp) != 0) {
+                char msg[200];
+                strerror_r(errno, msg, sizeof(msg));
+                r_err("Failed to close %s: %s", path, msg);
+                return -1;
+        }
+
+        return 0;
+}
+

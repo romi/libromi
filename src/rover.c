@@ -62,10 +62,6 @@ rover_t *new_rover(double wheel_diameter,
                    double encoder_steps)
 {
         rover_t *r = r_new(rover_t);
-        if (r == NULL)
-                return NULL;
-        memset(r, 0, sizeof(rover_t));
-
         r->wheel_diameter = wheel_diameter;
         r->wheel_circumference = M_PI * wheel_diameter;
         r->wheel_base = wheel_base;
@@ -75,7 +71,6 @@ rover_t *new_rover(double wheel_diameter,
         r->encoder[1] = 0.0;
         r->initialized = 0;
         r->orientation = quaternion(1, 0, 0, 0);
-
         return r;
 }
 
