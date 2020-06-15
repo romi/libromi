@@ -15,10 +15,10 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 script:
-  # once CMake has done its job we just build using make as usual
+  # once CMake has done, just build using make as usual
   - make
-  # if the project uses ctest we can run the tests like this
-  - ctest -V
+  # run the tests
+  - ctest -V -R libromi_unit_tests
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
