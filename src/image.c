@@ -567,8 +567,7 @@ static boolean jpeg_bufferemptyoutput(j_compress_ptr cinfo)
 
         membuf_set_len(membuf, membuf_size(membuf));
 
-        if (membuf_assure(membuf, BLOCKSIZE) != 0)
-                return 0;
+        membuf_assure(membuf, BLOCKSIZE);
         
         cinfo->dest->next_output_byte = (unsigned char*) (membuf_data(membuf)
                                                           + membuf_len(membuf));
