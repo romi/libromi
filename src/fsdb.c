@@ -73,7 +73,7 @@ static int file_update_files(file_t *file);
 static int fileset_update_files(fileset_t *fileset);
 static int scan_store_filesets(scan_t *scan);
 
-static int fsdb_store_data(const char *path, void *ptr, int32_t len);
+static int fsdb_store_data(const char *path, const void *ptr, int32_t len);
 static int fsdb_store_membuf(const char *path, membuf_t *data);
 
 /**************************************************************/
@@ -1304,12 +1304,12 @@ const char *database_path(database_t *db)
         return db->path;
 }
 
-static int fsdb_store_membuf(const char *path, membuf_t *data)
+static int fsdb_store_membuf(const char *path, membuf_t *membuf)
 {
         return fsdb_store_data(path, membuf_data(membuf), membuf_len(membuf));
 }
 
-static int fsdb_store_data(const char *path, void *ptr, int32_t len)
+static int fsdb_store_data(const char *path, const void *ptr, int32_t len)
 {
         FILE *fp = NULL;
 
@@ -1332,6 +1332,7 @@ static int fsdb_store_data(const char *path, void *ptr, int32_t len)
                 char msg[200];
                 strerror_r(errno, msg, sizeof(msg));
                 r_err("Failed to flush %s: %s", path, msg);
+                fclose(fp);
                 return -1;
         }
 
