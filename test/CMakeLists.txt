@@ -21,7 +21,9 @@ add_test(
         COMMAND libromi_unit_tests
         )
 
-SETUP_TARGET_FOR_COVERAGE_LCOV(
+if(BUILD_COVERAGE)
+        SETUP_TARGET_FOR_COVERAGE_LCOV(
                             NAME libromi_unit_tests_coverage
                             EXECUTABLE ctest -V ${n_cores}
                             DEPENDENCIES libromi_unit_tests )
+endif()
