@@ -203,7 +203,7 @@ void image_bell(image_t *image, float xc, float yc, float stddev)
 
 static jmp_buf setjmp_buffer;
 
-static void exit_error(j_common_ptr cinfo)
+static void exit_error(j_common_ptr cinfo __attribute__((unused)))
 {
         longjmp(setjmp_buffer, 1);
 }
@@ -841,7 +841,7 @@ void append_png_data(png_structp png_ptr, png_bytep data, png_size_t length)
         membuf_append(out, (const char*) data, length);
 }
 
-void flush_png_data(png_structp png_ptr)
+void flush_png_data(png_structp png_ptr __attribute__((unused)))
 {
 }
 
@@ -942,7 +942,7 @@ int image_store_to_mem(image_t* image, membuf_t *out, const char *format)
 int image_type_png(const char *filename)
 {
         FILE *fp;
-        char buf[4];
+        unsigned char buf[4];
 
         if ((fp = fopen(filename, "rb")) == NULL)
                 return 0;

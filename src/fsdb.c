@@ -435,6 +435,8 @@ static int fileset_unload(fileset_t *fileset)
                 delete_list(fileset->files);
                 fileset->files = NULL;
         }
+        //ToDo: Is this correct?
+        return 0;
 }
 
 static int fileset_get_metadata_path(fileset_t *fileset, char *buffer, int len)
@@ -451,7 +453,8 @@ static int fileset_store_metadata(fileset_t *fileset)
         return json_tofile(fileset->metadata, 0, path);
 }
 
-static int fileset_store_file(fileset_t *fileset, file_t *file, membuf_t *buf)
+// ToDo: looks like we can remove fileset from this.
+static int fileset_store_file(fileset_t *fileset __attribute__((unused)), file_t *file, membuf_t *buf)
 {
         int err = 0; 
         if (file->localfile == NULL || file->mimetype == NULL) {
@@ -750,11 +753,12 @@ fileset_t *scan_get_fileset(scan_t *scan, const char *id)
         return NULL;
 }
 
-static int scan_get_directory(scan_t *scan, char *buffer, int len)
-{
-        database_t *db = scan_get_database(scan);
-        return database_get_scan_directory(scan->db, scan, buffer, len);
-}
+// ToDo: Unused YAGNI?
+//static int scan_get_directory(scan_t *scan, char *buffer, int len)
+//{
+//        database_t *db = scan_get_database(scan);
+//        return database_get_scan_directory(db, scan, buffer, len);
+//}
 
 static int scan_add_fileset(scan_t *scan, fileset_t *fileset)
 {
@@ -811,6 +815,7 @@ static int scan_unload(scan_t *scan)
                 delete_list(scan->filesets);
                 scan->filesets = NULL;
         }
+        return 0;
 }
 
 database_t *scan_get_database(scan_t *scan)
@@ -1264,8 +1269,6 @@ static int database_get_scan_json_file(database_t *db,
         return 0;
 }
 
-//
-
 void database_print(database_t *db)
 {
         for (list_t *l = db->scans; l != NULL; l = list_next(l)) {
@@ -1322,7 +1325,7 @@ static int fsdb_store_data(const char *path, const void *ptr, int32_t len)
         }
 
         size_t n = fwrite(ptr, 1, len, fp);
-        if (n != len || ferror(fp)) {
+        if (n != (unsigned)len || ferror(fp)) {
                 r_err("Failed to write the file %s: %s", path);
                 fclose(fp);
                 return -1;
