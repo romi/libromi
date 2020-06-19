@@ -36,8 +36,6 @@
 image_t *new_image(int type, int width, int height)
 {
         image_t *image = r_new(image_t);
-        if (image == NULL) return NULL;
-
         image->type = type;
         image->channels = (type == IMAGE_BW)? 1 : 3;
         image->width = width;
