@@ -94,7 +94,7 @@ int cnc_range_parse(cnc_range_t *range, json_object_t r)
                 r_err("Invalid range, expected an array");
                 err = -1;
         } else if (json_array_length(r) != 3) {
-                r_err("Invalid range, expected an array with 3 axis");
+                r_err("Invalid range, expected an array with 3 axes");
                 err = -1;
         } else {
                 err = cnc_range_parse_axes(range, r);

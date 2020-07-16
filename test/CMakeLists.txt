@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 set(SRCS
     src/tests_main.cpp
-    src/rover_tests.cpp)
+    src/rover_tests.cpp
+    src/cnc_range_tests.cpp)
 
 add_executable(libromi_unit_tests ${SRCS})
 
