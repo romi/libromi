@@ -22,22 +22,27 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _ROMI_H_
-#define _ROMI_H_
+#ifndef _ROMI_RANGE_H_
+#define _ROMI_RANGE_H_
+
+#include <r.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <romi/image.h>
-#include <romi/quaternion.h>
-#include <romi/rover.h>
-#include <romi/vector.h>
-#include <romi/fsdb.h>
-#include <romi/cnc_range.h>
+typedef struct _cnc_range_t {
+        double x[2];
+        double y[2];
+        double z[2];
+} cnc_range_t;
+
+int cnc_range_parse(cnc_range_t *range, json_object_t r);
+int cnc_range_set_minmax(cnc_range_t *range, int axis, double min, double max);
+int cnc_range_is_valid(cnc_range_t *range, double x, double y, double z);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // _ROMI_ROVER_H_

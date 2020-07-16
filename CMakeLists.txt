@@ -145,7 +145,8 @@ set(SOURCES
   src/quaternion.c 
   src/image.c 
   src/fsdb.c 
-  src/rover.c)
+  src/rover.c
+  src/cnc_range.c)
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
