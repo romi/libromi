@@ -1,23 +1,31 @@
 dist: bionic
 
+addons:
+  apt:
+    packages:
+      - socat
+
 language: cpp
 
 compiler:
   - gcc
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install python3
+  - sudo apt-get install python3-pip
+
+install:
+  - pip3 install websocket-client
+
 before_script:
-  # create a build folder for the out-of-source build
-  - mkdir build_tests_coverage
-  # switch to build directory
-  - cd build_tests_coverage
-  # run cmake; here we assume that the project's
-  # top-level CMakeLists.txt is located at '..' Coverage is on by default.
-  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  # out-of-source build
+  - mkdir build_tests
+  - cd build_tests
+  - cmake ..
 
 script:
-  # once CMake has done, just build using make as usual
-  - make
-  # run the tests
+  - make -j4
   - ctest -V -R libromi_unit_tests
 
 after_success:
