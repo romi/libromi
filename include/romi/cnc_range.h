@@ -40,9 +40,10 @@ typedef struct _cnc_range_t {
 int cnc_range_parse(cnc_range_t *range, json_object_t r);
 int cnc_range_set_minmax(cnc_range_t *range, int axis, double min, double max);
 int cnc_range_is_valid(cnc_range_t *range, double x, double y, double z);
+double cnc_range_error(cnc_range_t *range, double x, double y, double z);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _ROMI_ROVER_H_
+#endif // _ROMI_RANGE_H_

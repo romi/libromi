@@ -23,6 +23,7 @@
 
  */
 
+#include <math.h>
 #include "romi/cnc_range.h"
 
 int cnc_range_set_minmax(cnc_range_t *range, int axis, double min, double max)
@@ -107,4 +108,26 @@ int cnc_range_is_valid(cnc_range_t *range, double x, double y, double z)
         return ((x >= range->x[0]) && (x <= range->x[1])
                 && (y >= range->y[0]) && (y <= range->y[1])
                 && (z >= range->z[0]) && (z <= range->z[1]));
+}
+
+double cnc_range_error(cnc_range_t *range, double x, double y, double z)
+{
+        double dx = 0.0;
+        double dy = 0.0;
+        double dz = 0.0;
+        
+        if (x < range->x[0])
+                dx = range->x[0] - x;
+        if (x > range->x[1])
+                dx = x - range->x[1];
+        if (y < range->y[0])
+                dy = range->y[0] - y;
+        if (y > range->y[1])
+                dy = y - range->y[1];
+        if (z < range->z[0])
+                dz = range->z[0] - z;
+        if (z > range->z[1])
+                dz = z - range->z[1];
+        
+        return sqrt(dx * dx + dy * dy + dz * dz);
 }
