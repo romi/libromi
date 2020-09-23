@@ -713,8 +713,8 @@ void delete_scan(scan_t *scan)
                 scan_unload(scan);
                 if (scan->id)
                         r_free(scan->id);
-                r_delete(scan);
                 json_unref(scan->metadata);
+                r_delete(scan);
         }
 }
 
