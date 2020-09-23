@@ -393,7 +393,9 @@ fileset_t *new_fileset(scan_t *scan, const char *id)
 void delete_fileset(fileset_t *fileset)
 {
         if (fileset) {
-                if (fileset->id) r_free(fileset->id);
+                fileset_unload(fileset);
+                if (fileset->id)
+                        r_free(fileset->id);
                 json_unref(fileset->metadata);
                 r_delete(fileset);
         }
