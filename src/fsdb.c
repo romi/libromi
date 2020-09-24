@@ -114,6 +114,8 @@ void delete_file( file_t *file)
                         r_free(file->id);
                 if (file->localfile)
                         r_free(file->localfile);
+                if (file->mimetype)
+                        r_free(file->mimetype);
                 json_unref(file->metadata);
                 r_delete(file);
         }
@@ -1097,6 +1099,7 @@ int database_load(database_t *db)
         }
         for (list_t *l = ids; l != NULL; l = list_next(l))
                 r_free(list_get(l, char));
+        delete_list(ids);
 
         return err;
 }
