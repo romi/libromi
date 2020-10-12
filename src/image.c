@@ -884,16 +884,36 @@ int image_store_to_mem_png(image_t* image, membuf_t *out)
                 for (y = 0, k = 0; y < (size_t) image->height; y++) {
                         png_bytep row = row_pointers[y];
                         for (x = 0; x < (size_t) image->width; x++) {
-                                *row++ = (png_byte)(image->data[k++] * 255.0f);
+                                float v = image->data[k++];
+                                if (v < 0.0f)
+                                        v = 0.0f;
+                                else if (v > 1.0f)
+                                        v = 1.0f;
+                                *row++ = (png_byte)(v * 255.0f);
                         }
                 }
         } else {
                 for (y = 0, k = 0; y < (size_t) image->height; y++) {
                         png_bytep row = row_pointers[y];
                         for (x = 0; x < (size_t) image->width; x++) {
-                                *row++ = (png_byte)(image->data[k++] * 255.0f);
-                                *row++ = (png_byte)(image->data[k++] * 255.0f);
-                                *row++ = (png_byte)(image->data[k++] * 255.0f);
+                                float r = image->data[k++];
+                                float g = image->data[k++];
+                                float b = image->data[k++];
+                                if (r < 0.0f)
+                                        r = 0.0f;
+                                else if (r > 1.0f)
+                                        r = 1.0f;
+                                if (g < 0.0f)
+                                        g = 0.0f;
+                                else if (g > 1.0f)
+                                        g = 1.0f;
+                                if (b < 0.0f)
+                                        b = 0.0f;
+                                else if (b > 1.0f)
+                                        b = 1.0f;
+                                *row++ = (png_byte)(r * 255.0f);
+                                *row++ = (png_byte)(g * 255.0f);
+                                *row++ = (png_byte)(b * 255.0f);
                         }
                 }
         }
