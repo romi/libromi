@@ -40,12 +40,13 @@ image_t *new_image(int type, int width, int height)
         image->channels = (type == IMAGE_BW)? 1 : 3;
         image->width = width;
         image->height = height;
-        image->data = (float *) malloc(image->channels * width * height * sizeof(float));
-        if (image->data == NULL) {
-                free(image);
-                return NULL;
+        int len = width * height;
+        if (len > 0) {
+                image->data = (float *) malloc(image->channels * len * sizeof(float));
+                memset(image->data, 0, image->channels * len * sizeof(float));
+        } else {
+                image->data = NULL;
         }
-        memset(image->data, 0, image->channels * width * height * sizeof(float));
         return image;
 }
 
@@ -70,16 +71,20 @@ void delete_image(image_t *image)
 
 int image_width(image_t *image)
 {
-        return image->width;
+        return image? image->width : 0;
 }
 
 int image_height(image_t *image)
 {
-        return image->height;
+        return image? image->height : 0;
 }
 
 image_t *image_clone(image_t *im)
 {
+        if (im == NULL) {
+                r_warn("image_clone: image is null");
+                return NULL;
+        }
         image_t *image = (image_t *) malloc(sizeof(image_t));
         if (image == NULL) return NULL;
 
@@ -98,11 +103,19 @@ image_t *image_clone(image_t *im)
 
 void image_clear(image_t *image)
 {
-        memset(image->data, 0, image->channels * image->width * image->height);
+        if (image == NULL) {
+                r_warn("image_clear: image is null");
+        } else {
+                memset(image->data, 0, image->channels * image->width * image->height);
+        }
 }
 
 void image_fill(image_t *image, int channel, float color)
 {
+        if (image == NULL) {
+                r_warn("image_fill: image is null");
+                return;
+        }        
         int stride = image->channels;
         int len = image->channels * image->width * image->height;
         for (int i = channel; i < len; i += stride)
@@ -111,6 +124,10 @@ void image_fill(image_t *image, int channel, float color)
 
 void image_offset(image_t *image, float offset, int channel)
 {
+        if (image == NULL) {
+                r_warn("image_circle: image is null");
+                return;
+        }
         int stride = image->channels;
         int len = image->channels * image->width * image->height;
         for (int i = channel; i < len; i += stride)
@@ -119,6 +136,10 @@ void image_offset(image_t *image, float offset, int channel)
 
 void image_circle(image_t *image, float xc, float yc, float radius, float* color)
 {
+        if (image == NULL) {
+                r_warn("image_circle: image is null");
+                return;
+        }
         int ymin = ceilf(yc - radius);
         int ymax = floorf(yc + radius);
         int r2 = radius * radius;
@@ -155,6 +176,10 @@ void image_circle(image_t *image, float xc, float yc, float radius, float* color
 
 void image_bell(image_t *image, float xc, float yc, float stddev)
 {
+        if (image == NULL) {
+                r_warn("image_bell: image is null");
+                return;
+        }
         float r = 3 * stddev;
         int ymin = ceilf(yc - r);
         int ymax = floorf(yc + r);
@@ -486,12 +511,17 @@ int image_store_jpeg(image_t* image, const char *filename)
         FILE* outfile;	 
         JSAMPLE* buffer;
         int index = 0;
+
+        if (image == NULL) {
+                r_warn("image_store_jpeg: image is null");
+                return -1;
+        }
         
         cinfo.err = jpeg_std_error(&jerr);
         jpeg_create_compress(&cinfo);
 
         if ((outfile = fopen(filename, "wb")) == NULL) {
-                fprintf(stderr, "Failed to open the file: %s\n", filename);
+                r_err("Failed to open the file: %s\n", filename);
                 return -1;
         }
         jpeg_stdio_dest(&cinfo, outfile);
@@ -511,11 +541,7 @@ int image_store_jpeg(image_t* image, const char *filename)
 
         jpeg_start_compress(&cinfo, TRUE);
 
-        buffer = (JSAMPLE*) malloc(image->channels * image->width); 
-        if (buffer == NULL) {
-                fprintf(stderr, "Out of memory\n");
-                return -1;
-        }
+        buffer = (JSAMPLE*) r_alloc(image->channels * image->width); 
 
         while (cinfo.next_scanline < cinfo.image_height) {
                 if (image->type == IMAGE_BW) {
@@ -534,7 +560,7 @@ int image_store_jpeg(image_t* image, const char *filename)
         jpeg_finish_compress(&cinfo);
         fclose(outfile);
         jpeg_destroy_compress(&cinfo);
-        free(buffer);
+        r_free(buffer);
 
         return 0;
 }
@@ -590,6 +616,11 @@ int image_store_to_mem_jpeg(image_t* image, membuf_t *out)
         JSAMPLE* buffer;
         int index = 0;
 
+        if (image == NULL) {
+                r_warn("image_store_to_mem_jpeg: image is null");
+                return -1;
+        }
+
         cinfo.err = jpeg_std_error(&jerr);
         jpeg_create_compress(&cinfo);
 
@@ -618,11 +649,7 @@ int image_store_to_mem_jpeg(image_t* image, membuf_t *out)
 
         jpeg_start_compress(&cinfo, TRUE);
 
-        buffer = (JSAMPLE*) malloc(image->channels * image->width); 
-        if (buffer == NULL) {
-                fprintf(stderr, "Out of memory\n");
-                return -1;
-        }
+        buffer = (JSAMPLE*) r_alloc(image->channels * image->width); 
 
         while (cinfo.next_scanline < cinfo.image_height) {
                 if (image->type == IMAGE_BW) {
@@ -641,7 +668,7 @@ int image_store_to_mem_jpeg(image_t* image, membuf_t *out)
         jpeg_finish_compress(&cinfo);
 
         jpeg_destroy_compress(&cinfo);
-        free(buffer);
+        r_free(buffer);
 
         return 0;
 }
@@ -767,6 +794,11 @@ int image_store_png(image_t* image, const char *filename)
         png_infop info_ptr = NULL;
         size_t x, y, k;
         png_bytepp row_pointers;
+
+        if (image == NULL) {
+                r_warn("image_store_png: image is null");
+                return -1;
+        }
 
         FILE *fp = fopen(filename, "wb");
         if (fp == NULL) {
@@ -937,6 +969,10 @@ int image_store_to_mem_png(image_t* image, membuf_t *out)
 
 int image_store(image_t* image, const char *filename, const char *type)
 {
+        if (image == NULL) {
+                r_warn("image_store: image is null");
+                return -1;
+        }
         if (rstreq(type, "jpg"))
                 return image_store_jpeg(image, filename);
         else if (rstreq(type, "png"))
@@ -949,6 +985,10 @@ int image_store(image_t* image, const char *filename, const char *type)
 
 int image_store_to_mem(image_t* image, membuf_t *out, const char *format)
 {
+        if (image == NULL) {
+                r_warn("image_store_to_mem: image is null");
+                return -1;
+        }
         if (rstreq(format, "jpg"))
                 return image_store_to_mem_jpeg(image, out);
         else if (rstreq(format, "png"))
@@ -1036,6 +1076,10 @@ image_t *image_load(const char *filename)
 
 image_t *image_binary(image_t* image, float threshold)
 {
+        if (image == NULL) {
+                r_warn("image_binary: image is null");
+                return NULL;
+        }
         if (image->type != IMAGE_BW) {
                 fprintf(stderr, "image_binary: not a BW image\n");
                 return NULL;
@@ -1058,6 +1102,10 @@ image_t *image_binary(image_t* image, float threshold)
 // FIXME
 image_t *FIXME_image_crop(image_t *image, int x, int y, int width, int height)
 {
+        if (image == NULL) {
+                r_warn("image_circle: image is null");
+                return NULL;
+        }
         // FIXME: check boundaries! The rest of this code supposes that
         // the rectangle fits in the original image. Beware!
         image_t *cropped = new_image(image->type, width, height);
@@ -1072,6 +1120,11 @@ image_t *FIXME_image_crop(image_t *image, int x, int y, int width, int height)
 
 image_t *image_rotate(image_t *image, float xc, float yc, double radians)
 {
+        if (image == NULL) {
+                r_warn("image_rotate: image is null");
+                return NULL;
+        }
+        
         image_t *rot = new_image(image->type, image->width, image->height);
 
         float c = cosf(radians);
@@ -1143,6 +1196,10 @@ image_t *image_rotate(image_t *image, float xc, float yc, double radians)
 // FIXME
 image_t *FIXME_image_scale(image_t *image, int n)
 {
+        if (image == NULL) {
+                r_warn("image_scale: image is null");
+                return NULL;
+        }
         int w = image->width / n;
         int h = image->height / n;
         image_t *scaled = new_image(image->type, w, h);
@@ -1165,6 +1222,10 @@ image_t *FIXME_image_scale(image_t *image, int n)
 // FIXME
 image_t *image_scale(image_t *image, int width, int height)
 {
+        if (image == NULL) {
+                r_warn("image_scale: image is null");
+                return NULL;
+        }
         image_t *scaled = new_image(image->type, width, height);
         float scale_x = (float) image->width / width;
         float scale_y = (float) image->height / height;
@@ -1205,6 +1266,10 @@ image_t *image_scale(image_t *image, int width, int height)
 
 int image_split_rgb(image_t *rgb_in, image_t **rgb_out)
 {
+        if (rgb_in == NULL) {
+                r_warn("image_split_rgb: image is null");
+                return -1;
+        }
         memset(rgb_out, 0, 3 * sizeof(image_t *));
         
         if (rgb_in->type == IMAGE_RGB) {
@@ -1231,6 +1296,10 @@ int image_split_rgb(image_t *rgb_in, image_t **rgb_out)
 
 image_t *image_convert_bw(image_t *image)
 {
+        if (image == NULL) {
+                r_warn("image_convert_bw: image is null");
+                return NULL;
+        }
         if (image->type == IMAGE_BW) {
                 return image_clone(image);
         }
@@ -1252,6 +1321,10 @@ image_t *image_convert_bw(image_t *image)
 
 image_t* image_excess_green(image_t* image)
 {
+        if (image == NULL) {
+                r_warn("image_excess_green: image is null");
+                return NULL;
+        }
         if (image->type != IMAGE_RGB) {
                 fprintf(stderr, "image_excess_green: not a RGB image\n");
                 return NULL;
