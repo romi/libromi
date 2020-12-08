@@ -1,5 +1,8 @@
+
 codecov:
-# Since we only upload on success we don't need this flag
+  fixes:
+  - "/home/runner/work/libromi/libromi/::"
+  
   require_ci_to_pass: no
 
 coverage:
@@ -19,8 +22,10 @@ comment:
   layout: "reach,diff,flags,tree"
   behavior: default
   require_changes: no
-  
+
 ignore:
-  - "test/src" 
-
-
+  - "test/src"
+  - "test/mocks"
+  - "test/support"
+  - "test/json_data"
+  

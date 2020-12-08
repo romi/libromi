@@ -1,0 +1,41 @@
+name: CI
+
+on: [push]
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install socat
+        run: sudo apt install socat
+
+      - name: Create Build Environment & configure CMake
+        working-directory: ${{runner.workspace}}/libromi
+        shell: bash
+        run: |
+          mkdir build_tests
+          cd build_tests
+          cmake ..
+
+      - name: Build
+        working-directory: ${{runner.workspace}}/libromi
+        run: |
+          cd build_tests
+          make -j4
+
+      - name: Test
+        working-directory: ${{runner.workspace}}/libromi
+        run: |
+          cd build_tests
+          ctest -V
+      
+      - name: Upload coverage to Codecov
+        working-directory: ${{runner.workspace}}/libromi
+        run: bash <(curl -s https://codecov.io/bash)
+      
