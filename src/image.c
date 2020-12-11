@@ -33,11 +33,45 @@
 #include <r.h>
 #include "romi/image.h"
 
+typedef struct {
+    float r;       // a fraction between 0 and 1
+    float g;       // a fraction between 0 and 1
+    float b;       // a fraction between 0 and 1
+} rgb_t;
+
+typedef struct {
+    float h;       // angle in degrees
+    float s;       // a fraction between 0 and 1
+    float v;       // a fraction between 0 and 1
+} hsv_t;
+
+
+static int channels_per_type(int type)
+{
+        int r = -1;
+        switch (type) {
+        case IMAGE_BW:
+                r = 1;
+                break;
+        case IMAGE_RGB:
+                r = 3;
+                break;
+        case IMAGE_HSV:
+                r = 3;
+                break;
+        }
+        return r;
+}
+
 image_t *new_image(int type, int width, int height)
 {
         image_t *image = r_new(image_t);
         image->type = type;
-        image->channels = (type == IMAGE_BW)? 1 : 3;
+        image->channels = channels_per_type(type);
+        if (image->channels <= 0) {
+                r_err("Invalid type");
+                r_delete(image);
+        }
         image->width = width;
         image->height = height;
         int len = width * height;
@@ -60,11 +94,16 @@ image_t *new_image_rgb(int width, int height)
         return new_image(IMAGE_RGB, width, height);
 }
 
+image_t *new_image_hsv(int width, int height)
+{
+        return new_image(IMAGE_HSV, width, height);
+}
+
 void delete_image(image_t *image)
 {
         if (image) {
                 if (image->data)
-                        free(image->data);
+                        r_free(image->data);
                 r_delete(image);
         }
 }
@@ -91,7 +130,7 @@ image_t *image_clone(image_t *im)
         image->channels = im->channels;
         image->width = im->width;
         image->height = im->height;
-        image->data = (float *) r_alloc(im->channels * im->width * im->height * sizeof(float));
+        image->data = r_array(float, im->channels * im->width * im->height);
         memcpy(image->data, im->data, im->channels * im->width * im->height * sizeof(float));
         return image;
 }
@@ -1093,6 +1132,82 @@ image_t *image_binary(image_t* image, float threshold)
         return binary;
 }
 
+image_t *image_in_range_1(image_t* image, float *min, float *max)
+{
+        image_t *res = image_clone(image);
+        int len = image->width * image->height;
+        for (int i = 0; i < len; i++) {
+                if (image->data[i] < min[0] || image->data[i] > max[0])
+                        res->data[i] = 0.0f;
+        }
+        return res;
+}
+
+image_t *image_in_range_n(image_t* image, float *min, float *max)
+{
+        image_t *res = image_clone(image);
+        int len = image->width * image->height;
+        for (int i = 0, j = 0; i < len; i++, j += image->channels) {
+                int in_range = 1;
+                for (int c = 0; c < image->channels; c++) {
+                        if (image->data[j+c] < min[c]
+                            || image->data[j+c] > max[c]) {
+                                in_range = 0;
+                                break;
+                        }
+                }
+                if (!in_range) {
+                        for (int c = 0; c < image->channels; c++)
+                                res->data[j+c] = 0.0;
+                }
+        }
+        return res;
+}
+
+image_t *image_in_range(image_t* image, float *min, float *max)
+{
+        image_t *r = NULL;
+        if (image->channels == 1)
+                r = image_in_range_1(image, min, max);
+        else
+                r = image_in_range_n(image, min, max);
+        return r;
+}
+
+void image_range_stats(image_t* image,
+                       float *min, float *max,
+                       int32_t *count,
+                       float *cx, float *cy)
+{
+        int32_t n = 0;
+        double x = 0.0;
+        double y = 0.0;
+        int32_t j = 0;
+        for (int32_t yi = 0; yi < image->height; yi++) {
+                for (int32_t xi = 0; xi < image->width; xi++) {
+                        int in_range = 1;
+                        for (int32_t c = 0; c < image->channels; c++) {
+                                if (image->data[j+c] < min[c]
+                                    || image->data[j+c] > max[c]) {
+                                        in_range = 0;
+                                        break;
+                                }
+                        }
+                        if (in_range) {
+                                n++;
+                                x += (double) xi;
+                                y += (double) yi;
+                        }
+                        j += image->channels;
+                }
+        }
+        *count = n;
+        if (n > 0) {
+                *cx = (float) (x / (double) n);
+                *cy = (float) (y / (double) n);
+        }
+}
+
 
 // FIXME
 image_t *FIXME_image_crop(image_t *image, int x, int y, int width, int height)
@@ -1295,23 +1410,173 @@ image_t *image_convert_bw(image_t *image)
                 r_warn("image_convert_bw: image is null");
                 return NULL;
         }
+        image_t *bw = NULL;
+        
         if (image->type == IMAGE_BW) {
-                return image_clone(image);
-        }
-        image_t *bw = new_image_bw(image->width, image->height);
-        if (bw == NULL) {
-                // FIXME
-                return NULL;
-        }
-        int len = image->width * image->height;
-        for (int i = 0, j = 0; i < len; i++) {
-                float r = image->data[j++];
-                float g = image->data[j++];
-                float b = image->data[j++];
-                float v = 0.2989f * r + 0.5870f * g + 0.1140f * b;
-                bw->data[i] = v;
+                bw = image_clone(image);
+        } else if (image->type == IMAGE_RGB) {
+                bw = new_image_bw(image->width, image->height);
+                int len = image->width * image->height;
+                for (int i = 0, j = 0; i < len; i++) {
+                        float r = image->data[j++];
+                        float g = image->data[j++];
+                        float b = image->data[j++];
+                        float v = 0.2989f * r + 0.5870f * g + 0.1140f * b;
+                        bw->data[i] = v;
+                }
+        } else if (image->type == IMAGE_HSV) {
+                r_err("image_convert_bw: cannot convert a HSV image, yet");
+        }  else {
+                r_err("image_convert_bw: unknown image type");
         }
         return bw;
+}
+
+// https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+static hsv_t rgb2hsv(rgb_t in)
+{
+    hsv_t out;
+    float min, max, delta;
+
+    min = in.r < in.g ? in.r : in.g;
+    min = min  < in.b ? min  : in.b;
+
+    max = in.r > in.g ? in.r : in.g;
+    max = max  > in.b ? max  : in.b;
+
+    out.v = max;                                // v
+    delta = max - min;
+    
+    if (delta < 0.00001f) {
+            out.s = 0;
+            out.h = 0; // undefined, maybe nan?
+            return out;
+    }
+    if (max > 0.0f) { // NOTE: if Max is == 0, this divide would cause a crash
+            out.s = (delta / max);                  // s
+    } else {
+            // if max is 0, then r = g = b = 0              
+            // s = 0, h is undefined
+            out.s = 0.0f;
+            out.h = NAN;                            // its now undefined
+            return out;
+    }
+    if (in.r >= max)                           // > is bogus, just keeps compilor happy
+            out.h = (in.g - in.b) / delta;        // between yellow & magenta
+    else if (in.g >= max)
+            out.h = 2.0f + ( in.b - in.r ) / delta;  // between cyan & yellow
+    else
+            out.h = 4.0f + ( in.r - in.g ) / delta;  // between magenta & cyan
+
+    out.h *= 60.0f;                              // degrees
+
+    if (out.h < 0.0f)
+            out.h += 360.0f;
+
+    return out;
+}
+
+// https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+static rgb_t hsv2rgb(hsv_t in)
+{
+        float hh, p, q, t, ff;
+        long i;
+        rgb_t out;
+
+        if (in.s <= 0.0f) {       // < is bogus, just shuts up warnings
+                out.r = in.v;
+                out.g = in.v;
+                out.b = in.v;
+                return out;
+        }
+    
+        hh = in.h;
+        if(hh >= 360.0f)
+                hh = 0.0f;
+        hh /= 60.0f;
+        i = (long) hh;
+        ff = hh - i;
+        p = in.v * (1.0f - in.s);
+        q = in.v * (1.0f - (in.s * ff));
+        t = in.v * (1.0f - (in.s * (1.0f - ff)));
+
+        switch(i) {
+        case 0:
+                out.r = in.v;
+                out.g = t;
+                out.b = p;
+                break;
+        case 1:
+                out.r = q;
+                out.g = in.v;
+                out.b = p;
+                break;
+        case 2:
+                out.r = p;
+                out.g = in.v;
+                out.b = t;
+                break;
+
+        case 3:
+                out.r = p;
+                out.g = q;
+                out.b = in.v;
+                break;
+        case 4:
+                out.r = t;
+                out.g = p;
+                out.b = in.v;
+                break;
+        case 5:
+        default:
+                out.r = in.v;
+                out.g = p;
+                out.b = q;
+                break;
+        }
+        return out;     
+}
+
+image_t *image_convert_hsv(image_t *image)
+{
+        image_t *res = NULL;
+        
+        if (image->type == IMAGE_HSV) {
+                res = image_clone(image);
+        } else if (image->type == IMAGE_BW) {
+                r_err("image_convert_hsv: cannot convert a BW image");
+        } else if (image->type == IMAGE_RGB) {
+                res = new_image_hsv(image->width, image->height);
+                int len = image->width * image->height;
+                rgb_t *in = (rgb_t *) image->data;
+                hsv_t *out = (hsv_t *) res->data;
+                for (int i = 0; i < len; i++)
+                        out[i] = rgb2hsv(in[i]);
+        }  else {
+                r_err("image_convert_hsv: unknown image type");
+        }
+        return res;
+}
+
+image_t *image_convert_rgb(image_t *image)
+{
+        image_t *res = NULL;
+        
+        if (image->type == IMAGE_RGB) {
+                res = image_clone(image);
+        } else if (image->type == IMAGE_BW) {
+                r_err("image_convert_rgb: cannot convert a BW image");
+        } else if (image->type == IMAGE_HSV) {
+                res = new_image_rgb(image->width, image->height);
+                int len = image->width * image->height;
+                hsv_t *in = (hsv_t *) image->data;
+                rgb_t *out = (rgb_t *) res->data;
+                for (int i = 0; i < len; i++)
+                        out[i] = hsv2rgb(in[i]);
+        }  else {
+                r_err("image_convert_rgb: unknown image type");
+        }
+        return res;
 }
 
 image_t* image_excess_green(image_t* image)
@@ -1321,7 +1586,7 @@ image_t* image_excess_green(image_t* image)
                 return NULL;
         }
         if (image->type != IMAGE_RGB) {
-                fprintf(stderr, "image_excess_green: not a RGB image\n");
+                r_err("image_excess_green: not an RGB image");
                 return NULL;
         }
 
