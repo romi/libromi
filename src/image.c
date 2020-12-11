@@ -42,7 +42,7 @@ image_t *new_image(int type, int width, int height)
         image->height = height;
         int len = width * height;
         if (len > 0) {
-                image->data = (float *) malloc(image->channels * len * sizeof(float));
+                image->data = (float *) r_alloc(image->channels * len * sizeof(float));
                 memset(image->data, 0, image->channels * len * sizeof(float));
         } else {
                 image->data = NULL;
@@ -85,18 +85,13 @@ image_t *image_clone(image_t *im)
                 r_warn("image_clone: image is null");
                 return NULL;
         }
-        image_t *image = (image_t *) malloc(sizeof(image_t));
-        if (image == NULL) return NULL;
+        image_t *image = (image_t *) r_alloc(sizeof(image_t));
 
         image->type = im->type;
         image->channels = im->channels;
         image->width = im->width;
         image->height = im->height;
-        image->data = (float *) malloc(im->channels * im->width * im->height * sizeof(float));
-        if (image->data == NULL) {
-                free(image);
-                return NULL;
-        }
+        image->data = (float *) r_alloc(im->channels * im->width * im->height * sizeof(float));
         memcpy(image->data, im->data, im->channels * im->width * im->height * sizeof(float));
         return image;
 }
@@ -1425,15 +1420,18 @@ int convert_to_jpeg(uint8_t* rgb, int width, int height, int quality, membuf_t *
         return 0;
 }
 
+void image_import(image_t *image, uint8_t* rgb)
+{
+        float *p = image->data;
+        int len = 3 * image->width * image->height;
+        for (int i = 0; i < len; i++)
+                *p++ = (float) *rgb++ / 255.0f;
+}
+
 image_t *convert_to_image(uint8_t* rgb, int width, int height)
 {
         image_t *image = new_image_rgb(width, height);
-        if (image == NULL)
-                return NULL;
-        float *p = image->data;
-        int len = width * height;
-        for (int i = 0; i < len; i++)
-                *p++ = (float) *rgb / 255.0f;
+        image_import(image, rgb);
         return image;
 }
 

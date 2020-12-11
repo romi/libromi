@@ -100,6 +100,7 @@ image_t* image_excess_green(image_t* image);
 
 
 int convert_to_jpeg(uint8_t* rgb, int width, int height, int quality, membuf_t *out);
+void image_import(image_t *image, uint8_t* rgb);
 image_t *convert_to_image(uint8_t* rgb, int width, int height);
 
         

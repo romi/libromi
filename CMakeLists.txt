@@ -141,12 +141,46 @@ endif()
 ###########################################################3
 
 set(SOURCES
+  include/romi/CameraFactory.h
+  include/romi/CameraFile.h
+  include/romi/CameraProxy.h
+  include/romi/CameraServer.h
+  include/romi/CameraUSB.h
+  include/romi/camera_v4l.h
+  include/romi/CNCProxy.h
+  include/romi/cnc_range.h
+  include/romi/CNCRange.h
+  include/romi/ConfigurationFile.h
+  include/romi/FakeCNC.h
+  include/romi/fsdb.h
+  include/romi/ICamera.h
+  include/romi/ICNC.h
+  include/romi/IConfiguration.h
+  include/romi/IFileCabinet.h
+  include/romi/IFolder.h
+  include/romi/image.h
+  include/romi/Image.h
+  include/romi/IRPCHandler.h
+  include/romi/JSON.h
+  include/romi/Path.h
+  include/romi/quaternion.h
+  include/romi/rover.h
+  include/romi/RPCClient.h
+  include/romi/RPCServer.h
+  include/romi/vector.h
   src/vector.c 
   src/quaternion.c 
   src/image.c 
   src/fsdb.c 
   src/rover.c
-  src/cnc_range.c)
+  src/cnc_range.c
+  src/CNCProxy.cpp
+  src/RPCClient.cpp
+  src/RPCServer.cpp
+  src/CameraFactory.cpp
+  src/CameraUSB.cpp
+  src/camera_v4l.c
+  )
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
@@ -160,6 +194,7 @@ target_include_directories(romi
 
 target_link_libraries(romi
                         r
+                        librcom
                         jpeg
                         png
                         m)
