@@ -33,7 +33,8 @@ extern "C" {
 
 enum {
         IMAGE_BW,
-        IMAGE_RGB
+        IMAGE_RGB,
+        IMAGE_HSV
 }; 
 
 typedef struct _image_t {
@@ -47,6 +48,7 @@ typedef struct _image_t {
 image_t *new_image(int type, int width, int height);
 image_t *new_image_bw(int width, int height);
 image_t *new_image_rgb(int width, int height);
+image_t *new_image_hsv(int width, int height);
 void delete_image(image_t *image);
 
 image_t *image_clone(image_t *im);
@@ -83,8 +85,13 @@ void image_offset(image_t *image, float offset, int channel);
 void image_circle(image_t *image, float xc, float yc, float radius, float* color);
 void image_bell(image_t *image, float xc, float yc, float stddev);
 image_t *image_binary(image_t* image, float threshold);
+image_t *image_in_range(image_t* image, float *min, float *max);
+void image_range_stats(image_t* image, float *min, float *max,
+                       int32_t *count, float *cx, float *cy);
 image_t *image_rotate(image_t *image, float xc, float yc, double radians);
 image_t *image_convert_bw(image_t *image);
+image_t *image_convert_hsv(image_t *image);
+image_t *image_convert_rgb(image_t *image);
 
 // FIXME: check boundaries! This function supposes that the rectangle
 // fits in the original image. Beware!
@@ -100,6 +107,7 @@ image_t* image_excess_green(image_t* image);
 
 
 int convert_to_jpeg(uint8_t* rgb, int width, int height, int quality, membuf_t *out);
+void image_import(image_t *image, uint8_t* rgb);
 image_t *convert_to_image(uint8_t* rgb, int width, int height);
 
         
