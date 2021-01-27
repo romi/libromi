@@ -11,12 +11,12 @@ set(SRCS_V
   ../include/v.h
   ../src/v.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_v ${SRCS_V})
-target_link_libraries(romi_rover_unit_tests_libromirover_v rpp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_v ${SRCS_V})
+target_link_libraries(romi_rover_unit_tests_libromi_v rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_v
-    COMMAND romi_rover_unit_tests_libromirover_v
+    NAME romi_rover_unit_tests_libromi_v
+    COMMAND romi_rover_unit_tests_libromi_v
 )
 
 ##
@@ -29,12 +29,12 @@ set(SRCS_CNCRANGE
   ../src/api/CNCRange.cpp
   ../src/v.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_cncrange ${SRCS_CNCRANGE})
-target_link_libraries(romi_rover_unit_tests_libromirover_cncrange rpp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_cncrange ${SRCS_CNCRANGE})
+target_link_libraries(romi_rover_unit_tests_libromi_cncrange rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_cncrange
-    COMMAND romi_rover_unit_tests_libromirover_cncrange
+    NAME romi_rover_unit_tests_libromi_cncrange
+    COMMAND romi_rover_unit_tests_libromi_cncrange
 )
 
 ##
@@ -49,12 +49,12 @@ set(SRCS_PATH
   ../src/api/Path.cpp
   ../src/v.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_path ${SRCS_PATH})
-target_link_libraries(romi_rover_unit_tests_libromirover_path rpp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_path ${SRCS_PATH})
+target_link_libraries(romi_rover_unit_tests_libromi_path rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_path
-    COMMAND romi_rover_unit_tests_libromirover_path
+    NAME romi_rover_unit_tests_libromi_path
+    COMMAND romi_rover_unit_tests_libromi_path
 )
 
 ##
@@ -65,13 +65,13 @@ set(SRCS_NAVIGATIONSETTINGS
   ../include/NavigationSettings.h
   )
 
-add_executable(romi_rover_unit_tests_libromirover_navigationsettings ${SRCS_NAVIGATIONSETTINGS})
+add_executable(romi_rover_unit_tests_libromi_navigationsettings ${SRCS_NAVIGATIONSETTINGS})
 include_directories( "../src" )
-target_link_libraries(romi_rover_unit_tests_libromirover_navigationsettings rpp gtest gmock)
+target_link_libraries(romi_rover_unit_tests_libromi_navigationsettings rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_navigationsettings
-    COMMAND romi_rover_unit_tests_libromirover_navigationsettings
+    NAME romi_rover_unit_tests_libromi_navigationsettings
+    COMMAND romi_rover_unit_tests_libromi_navigationsettings
 )
 
 
@@ -84,13 +84,13 @@ set(SRCS_WHEELODOMETRY
   ../src/WheelOdometry.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_wheelodometry ${SRCS_WHEELODOMETRY})
+add_executable(romi_rover_unit_tests_libromi_wheelodometry ${SRCS_WHEELODOMETRY})
 include_directories( "../src" )
-target_link_libraries(romi_rover_unit_tests_libromirover_wheelodometry rpp gtest gmock)
+target_link_libraries(romi_rover_unit_tests_libromi_wheelodometry rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_wheelodometry
-    COMMAND romi_rover_unit_tests_libromirover_wheelodometry
+    NAME romi_rover_unit_tests_libromi_wheelodometry
+    COMMAND romi_rover_unit_tests_libromi_wheelodometry
 )
 
 ##
@@ -101,12 +101,12 @@ set(SRCS_IMAGE
   ../include/Image.h
   ../src/Image.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_image ${SRCS_IMAGE})
-target_link_libraries(romi_rover_unit_tests_libromirover_image rpp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_image ${SRCS_IMAGE})
+target_link_libraries(romi_rover_unit_tests_libromi_image rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_image
-    COMMAND romi_rover_unit_tests_libromirover_image
+    NAME romi_rover_unit_tests_libromi_image
+    COMMAND romi_rover_unit_tests_libromi_image
 )
 
 ##
@@ -119,12 +119,12 @@ set(SRCS_IMAGEIO
   ../src/Image.cpp
   ../src/ImageIO.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_imageio ${SRCS_IMAGEIO})
-target_link_libraries(romi_rover_unit_tests_libromirover_imageio rpp gtest gmock jpeg png)
+add_executable(romi_rover_unit_tests_libromi_imageio ${SRCS_IMAGEIO})
+target_link_libraries(romi_rover_unit_tests_libromi_imageio rpp gtest gmock jpeg png)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_imageio
-    COMMAND romi_rover_unit_tests_libromirover_imageio
+    NAME romi_rover_unit_tests_libromi_imageio
+    COMMAND romi_rover_unit_tests_libromi_imageio
 )
 
 ##
@@ -137,12 +137,12 @@ set(SRCS_ROVEROPTIONS
   ../src/GetOpt.cpp
   ../src/rover/RoverOptions.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_roveroptions ${SRCS_ROVEROPTIONS})
-target_link_libraries(romi_rover_unit_tests_libromirover_roveroptions rpp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_roveroptions ${SRCS_ROVEROPTIONS})
+target_link_libraries(romi_rover_unit_tests_libromi_roveroptions rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_roveroptions
-    COMMAND romi_rover_unit_tests_libromirover_roveroptions
+    NAME romi_rover_unit_tests_libromi_roveroptions
+    COMMAND romi_rover_unit_tests_libromi_roveroptions
 )
 
 ##
@@ -155,13 +155,13 @@ set(SRCS_NAVIGATIONADAPTOR
   ../src/rpc/NavigationAdaptor.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_navigationadaptor ${SRCS_NAVIGATIONADAPTOR})
+add_executable(romi_rover_unit_tests_libromi_navigationadaptor ${SRCS_NAVIGATIONADAPTOR})
 include_directories( "../src" )
-target_link_libraries(romi_rover_unit_tests_libromirover_navigationadaptor romirover rpp rcompp gtest gmock)
+target_link_libraries(romi_rover_unit_tests_libromi_navigationadaptor romi rpp rcompp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_navigationadaptor
-    COMMAND romi_rover_unit_tests_libromirover_navigationadaptor
+    NAME romi_rover_unit_tests_libromi_navigationadaptor
+    COMMAND romi_rover_unit_tests_libromi_navigationadaptor
 )
 
 ##
@@ -174,13 +174,13 @@ set(SRCS_DEFAULTNAVIGATION
   ../src/DefaultNavigation.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_defaultnavigation ${SRCS_DEFAULTNAVIGATION})
+add_executable(romi_rover_unit_tests_libromi_defaultnavigation ${SRCS_DEFAULTNAVIGATION})
 include_directories( "../src" )
-target_link_libraries(romi_rover_unit_tests_libromirover_defaultnavigation romirover rpp gtest gmock)
+target_link_libraries(romi_rover_unit_tests_libromi_defaultnavigation romi rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_defaultnavigation
-    COMMAND romi_rover_unit_tests_libromirover_defaultnavigation
+    NAME romi_rover_unit_tests_libromi_defaultnavigation
+    COMMAND romi_rover_unit_tests_libromi_defaultnavigation
 )
 
 ##
@@ -192,12 +192,12 @@ set(SRCS_REMOTENAVIGATION
   ../src/rpc/RemoteNavigation.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_remotenavigation ${SRCS_REMOTENAVIGATION})
-target_link_libraries(romi_rover_unit_tests_libromirover_remotenavigation rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_remotenavigation ${SRCS_REMOTENAVIGATION})
+target_link_libraries(romi_rover_unit_tests_libromi_remotenavigation rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_remotenavigation
-    COMMAND romi_rover_unit_tests_libromirover_remotenavigation
+    NAME romi_rover_unit_tests_libromi_remotenavigation
+    COMMAND romi_rover_unit_tests_libromi_remotenavigation
 )
 
 ##
@@ -210,12 +210,12 @@ set(SRCS_CRYSTALDISPLAY
   ../src/ui/CrystalDisplay.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_crystaldisplay ${SRCS_CRYSTALDISPLAY})
-target_link_libraries(romi_rover_unit_tests_libromirover_crystaldisplay rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_crystaldisplay ${SRCS_CRYSTALDISPLAY})
+target_link_libraries(romi_rover_unit_tests_libromi_crystaldisplay rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_crystaldisplay
-    COMMAND romi_rover_unit_tests_libromirover_crystaldisplay
+    NAME romi_rover_unit_tests_libromi_crystaldisplay
+    COMMAND romi_rover_unit_tests_libromi_crystaldisplay
 )
 
 ##
@@ -229,12 +229,12 @@ set(SRCS_JOYSTICK
   ../src/ui/LinuxJoystick.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_joystick ${SRCS_JOYSTICK})
-target_link_libraries(romi_rover_unit_tests_libromirover_joystick rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_joystick ${SRCS_JOYSTICK})
+target_link_libraries(romi_rover_unit_tests_libromi_joystick rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_joystick
-    COMMAND romi_rover_unit_tests_libromirover_joystick
+    NAME romi_rover_unit_tests_libromi_joystick
+    COMMAND romi_rover_unit_tests_libromi_joystick
 )
 
 ##
@@ -248,12 +248,12 @@ set(SRCS_JOYSTICKINPUTDEVICE
   ../src/ui/JoystickInputDevice.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_joystickinputdevice ${SRCS_JOYSTICKINPUTDEVICE})
-target_link_libraries(romi_rover_unit_tests_libromirover_joystickinputdevice rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_joystickinputdevice ${SRCS_JOYSTICKINPUTDEVICE})
+target_link_libraries(romi_rover_unit_tests_libromi_joystickinputdevice rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_joystickinputdevice
-    COMMAND romi_rover_unit_tests_libromirover_joystickinputdevice
+    NAME romi_rover_unit_tests_libromi_joystickinputdevice
+    COMMAND romi_rover_unit_tests_libromi_joystickinputdevice
 )
 
 ##
@@ -268,12 +268,12 @@ set(SRCS_SCRIPTLIST
   ../src/ScriptList.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_scriptlist ${SRCS_SCRIPTLIST})
-target_link_libraries(romi_rover_unit_tests_libromirover_scriptlist rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_scriptlist ${SRCS_SCRIPTLIST})
+target_link_libraries(romi_rover_unit_tests_libromi_scriptlist rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_scriptlist
-    COMMAND romi_rover_unit_tests_libromirover_scriptlist
+    NAME romi_rover_unit_tests_libromi_scriptlist
+    COMMAND romi_rover_unit_tests_libromi_scriptlist
 )
 
 ##
@@ -290,12 +290,12 @@ set(SRCS_ROVERSCRIPTENGINE
   ../src/rover/RoverScriptEngine.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_roverscriptengine ${SRCS_ROVERSCRIPTENGINE})
-target_link_libraries(romi_rover_unit_tests_libromirover_roverscriptengine rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_roverscriptengine ${SRCS_ROVERSCRIPTENGINE})
+target_link_libraries(romi_rover_unit_tests_libromi_roverscriptengine rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_roverscriptengine
-    COMMAND romi_rover_unit_tests_libromirover_roverscriptengine
+    NAME romi_rover_unit_tests_libromi_roverscriptengine
+    COMMAND romi_rover_unit_tests_libromi_roverscriptengine
 )
 
 ##
@@ -306,12 +306,12 @@ set(SRCS_STATEMACHINE
   ../include/api/StateMachine.h
   )
 
-add_executable(romi_rover_unit_tests_libromirover_statemachine ${SRCS_STATEMACHINE})
-target_link_libraries(romi_rover_unit_tests_libromirover_statemachine rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_statemachine ${SRCS_STATEMACHINE})
+target_link_libraries(romi_rover_unit_tests_libromi_statemachine rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_statemachine
-    COMMAND romi_rover_unit_tests_libromirover_statemachine
+    NAME romi_rover_unit_tests_libromi_statemachine
+    COMMAND romi_rover_unit_tests_libromi_statemachine
 )
 
 ##
@@ -324,12 +324,12 @@ set(SRCS_SPEEDCONVERTER
   ../src/SpeedConverter.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_speedconverter ${SRCS_SPEEDCONVERTER})
-target_link_libraries(romi_rover_unit_tests_libromirover_speedconverter rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_speedconverter ${SRCS_SPEEDCONVERTER})
+target_link_libraries(romi_rover_unit_tests_libromi_speedconverter rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_speedconverter
-    COMMAND romi_rover_unit_tests_libromirover_speedconverter
+    NAME romi_rover_unit_tests_libromi_speedconverter
+    COMMAND romi_rover_unit_tests_libromi_speedconverter
 )
 
 ##
@@ -344,12 +344,12 @@ set(SRCS_SPEEDCONTROLLER
   ../src/SpeedConverter.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_speedcontroller ${SRCS_SPEEDCONTROLLER})
-target_link_libraries(romi_rover_unit_tests_libromirover_speedcontroller rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_speedcontroller ${SRCS_SPEEDCONTROLLER})
+target_link_libraries(romi_rover_unit_tests_libromi_speedcontroller rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_speedcontroller
-    COMMAND romi_rover_unit_tests_libromirover_speedcontroller
+    NAME romi_rover_unit_tests_libromi_speedcontroller
+    COMMAND romi_rover_unit_tests_libromi_speedcontroller
 )
 
 ##
@@ -364,12 +364,12 @@ set(SRCS_SCRIPTMENU
   ../src/ScriptMenu.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_scriptmenu ${SRCS_SCRIPTMENU})
-target_link_libraries(romi_rover_unit_tests_libromirover_scriptmenu rcompp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_scriptmenu ${SRCS_SCRIPTMENU})
+target_link_libraries(romi_rover_unit_tests_libromi_scriptmenu rcompp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_scriptmenu
-    COMMAND romi_rover_unit_tests_libromirover_scriptmenu
+    NAME romi_rover_unit_tests_libromi_scriptmenu
+    COMMAND romi_rover_unit_tests_libromi_scriptmenu
 )
 
 ##
@@ -380,12 +380,12 @@ set(SRCS_CNCADAPTOR
   ../include/rpc/CNCAdaptor.h
   ../src/rpc/CNCAdaptor.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_cncadaptor ${SRCS_CNCADAPTOR})
-target_link_libraries(romi_rover_unit_tests_libromirover_cncadaptor rpp romirover rcompp gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_cncadaptor ${SRCS_CNCADAPTOR})
+target_link_libraries(romi_rover_unit_tests_libromi_cncadaptor rpp romi rcompp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_cncadaptor
-    COMMAND romi_rover_unit_tests_libromirover_cncadaptor
+    NAME romi_rover_unit_tests_libromi_cncadaptor
+    COMMAND romi_rover_unit_tests_libromi_cncadaptor
 )
 
 ##
@@ -396,12 +396,12 @@ set(SRCS_STEPPERSETTINGS
   ../include/oquam/StepperSettings.h
   ../src/oquam/StepperSettings.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_steppersettings ${SRCS_STEPPERSETTINGS})
-target_link_libraries(romi_rover_unit_tests_libromirover_steppersettings rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_steppersettings ${SRCS_STEPPERSETTINGS})
+target_link_libraries(romi_rover_unit_tests_libromi_steppersettings rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_steppersettings
-    COMMAND romi_rover_unit_tests_libromirover_steppersettings
+    NAME romi_rover_unit_tests_libromi_steppersettings
+    COMMAND romi_rover_unit_tests_libromi_steppersettings
 )
 
 ##
@@ -420,12 +420,12 @@ set(SRCS_SECTION
   ../include/oquam/print.h
   ../src/oquam/print.cpp
   )
-add_executable(romi_rover_unit_tests_libromirover_oquam_section ${SRCS_SECTION})
-target_link_libraries(romi_rover_unit_tests_libromirover_oquam_section rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_oquam_section ${SRCS_SECTION})
+target_link_libraries(romi_rover_unit_tests_libromi_oquam_section rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_oquam_section
-    COMMAND romi_rover_unit_tests_libromirover_oquam_section
+    NAME romi_rover_unit_tests_libromi_oquam_section
+    COMMAND romi_rover_unit_tests_libromi_oquam_section
 )
 
 ##
@@ -444,12 +444,12 @@ set(SRCS_PRINT
   ../src/oquam/is_valid.cpp
   ../include/oquam/is_valid.h
   )
-add_executable(romi_rover_unit_tests_libromirover_oquam_print ${SRCS_PRINT})
-target_link_libraries(romi_rover_unit_tests_libromirover_oquam_print rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_oquam_print ${SRCS_PRINT})
+target_link_libraries(romi_rover_unit_tests_libromi_oquam_print rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_oquam_print
-    COMMAND romi_rover_unit_tests_libromirover_oquam_print
+    NAME romi_rover_unit_tests_libromi_oquam_print
+    COMMAND romi_rover_unit_tests_libromi_oquam_print
 )
 
 ##
@@ -468,12 +468,12 @@ set(SRCS_SCRIPT
   ../src/oquam/is_valid.cpp
   ../include/oquam/is_valid.h
   )
-add_executable(romi_rover_unit_tests_libromirover_oquam_script ${SRCS_SCRIPT})
-target_link_libraries(romi_rover_unit_tests_libromirover_oquam_script rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_oquam_script ${SRCS_SCRIPT})
+target_link_libraries(romi_rover_unit_tests_libromi_oquam_script rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_oquam_script
-    COMMAND romi_rover_unit_tests_libromirover_oquam_script
+    NAME romi_rover_unit_tests_libromi_oquam_script
+    COMMAND romi_rover_unit_tests_libromi_oquam_script
 )
 
 ##
@@ -500,12 +500,12 @@ set(SRCS_OQUAM
   ../src/oquam/Oquam.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_oquam ${SRCS_OQUAM})
-target_link_libraries(romi_rover_unit_tests_libromirover_oquam rpp romirover gtest gmock)
+add_executable(romi_rover_unit_tests_libromi_oquam ${SRCS_OQUAM})
+target_link_libraries(romi_rover_unit_tests_libromi_oquam rpp romi gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_oquam
-    COMMAND romi_rover_unit_tests_libromirover_oquam
+    NAME romi_rover_unit_tests_libromi_oquam
+    COMMAND romi_rover_unit_tests_libromi_oquam
     )
 
 ##
@@ -515,13 +515,13 @@ set(SRCS_BRUSHMOTORDRIVER
   src/tests_brushmotordriver.cpp
   )
 
-add_executable(romi_rover_unit_tests_libromirover_brushmotordriver ${SRCS_BRUSHMOTORDRIVER})
+add_executable(romi_rover_unit_tests_libromi_brushmotordriver ${SRCS_BRUSHMOTORDRIVER})
 include_directories( "../src" )
-target_link_libraries(romi_rover_unit_tests_libromirover_brushmotordriver romirover romiserial rpp rcompp gtest gmock)
+target_link_libraries(romi_rover_unit_tests_libromi_brushmotordriver romi romiserial rpp rcompp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_libromirover_brushmotordriver
-    COMMAND romi_rover_unit_tests_libromirover_brushmotordriver
+    NAME romi_rover_unit_tests_libromi_brushmotordriver
+    COMMAND romi_rover_unit_tests_libromi_brushmotordriver
 )
 
 
@@ -529,35 +529,35 @@ add_test(
   
 if(BUILD_COVERAGE)
     SETUP_TARGET_FOR_COVERAGE_LCOV(
-            NAME romi_rover_libromirover_coverage
+            NAME romi_rover_libromi_coverage
             EXECUTABLE ctest -V ${n_cores}
-            DEPENDENCIES romi_rover_unit_tests_libromirover_v
-                         romi_rover_unit_tests_libromirover_cncrange
-                         romi_rover_unit_tests_libromirover_path
-                         romi_rover_unit_tests_libromirover_image
-                         romi_rover_unit_tests_libromirover_imageio
-                         romi_rover_unit_tests_libromirover_wheelodometry
-                         romi_rover_unit_tests_libromirover_navigationsettings
-                         romi_rover_unit_tests_libromirover_roveroptions
-                         romi_rover_unit_tests_libromirover_navigationadaptor
-                         romi_rover_unit_tests_libromirover_defaultnavigation
-                         romi_rover_unit_tests_libromirover_remotenavigation
-                         romi_rover_unit_tests_libromirover_crystaldisplay
-                         romi_rover_unit_tests_libromirover_joystick
-                         romi_rover_unit_tests_libromirover_joystickinputdevice
-                         romi_rover_unit_tests_libromirover_scriptlist
-                         romi_rover_unit_tests_libromirover_scriptmenu
-                         romi_rover_unit_tests_libromirover_roverscriptengine
-                         romi_rover_unit_tests_libromirover_statemachine
-                         romi_rover_unit_tests_libromirover_speedconverter
-                         romi_rover_unit_tests_libromirover_speedcontroller
-                         romi_rover_unit_tests_libromirover_scriptmenu
-                         romi_rover_unit_tests_libromirover_cncadaptor
-                         romi_rover_unit_tests_libromirover_steppersettings
-                         romi_rover_unit_tests_libromirover_oquam_section
-                         romi_rover_unit_tests_libromirover_oquam_script
-                         romi_rover_unit_tests_libromirover_oquam_print
-                         romi_rover_unit_tests_libromirover_oquam
-                         romi_rover_unit_tests_libromirover_brushmotordriver)
+            DEPENDENCIES romi_rover_unit_tests_libromi_v
+                         romi_rover_unit_tests_libromi_cncrange
+                         romi_rover_unit_tests_libromi_path
+                         romi_rover_unit_tests_libromi_image
+                         romi_rover_unit_tests_libromi_imageio
+                         romi_rover_unit_tests_libromi_wheelodometry
+                         romi_rover_unit_tests_libromi_navigationsettings
+                         romi_rover_unit_tests_libromi_roveroptions
+                         romi_rover_unit_tests_libromi_navigationadaptor
+                         romi_rover_unit_tests_libromi_defaultnavigation
+                         romi_rover_unit_tests_libromi_remotenavigation
+                         romi_rover_unit_tests_libromi_crystaldisplay
+                         romi_rover_unit_tests_libromi_joystick
+                         romi_rover_unit_tests_libromi_joystickinputdevice
+                         romi_rover_unit_tests_libromi_scriptlist
+                         romi_rover_unit_tests_libromi_scriptmenu
+                         romi_rover_unit_tests_libromi_roverscriptengine
+                         romi_rover_unit_tests_libromi_statemachine
+                         romi_rover_unit_tests_libromi_speedconverter
+                         romi_rover_unit_tests_libromi_speedcontroller
+                         romi_rover_unit_tests_libromi_scriptmenu
+                         romi_rover_unit_tests_libromi_cncadaptor
+                         romi_rover_unit_tests_libromi_steppersettings
+                         romi_rover_unit_tests_libromi_oquam_section
+                         romi_rover_unit_tests_libromi_oquam_script
+                         romi_rover_unit_tests_libromi_oquam_print
+                         romi_rover_unit_tests_libromi_oquam
+                         romi_rover_unit_tests_libromi_brushmotordriver)
 endif()
 

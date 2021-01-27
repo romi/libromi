@@ -212,22 +212,22 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 set_source_files_properties(src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)
 
-add_library(romirover SHARED ${SOURCES})
+add_library(romi SHARED ${SOURCES})
 
 
-target_include_directories(romirover
+target_include_directories(romi
         PUBLIC
             "${CMAKE_CURRENT_SOURCE_DIR}/include"
         )
 
-target_link_libraries(romirover
+target_link_libraries(romi
         romiserial
         rpp
         rcompp
         fluidsynth
         jpeg
         png
-        m)
+        )
 
 if(BUILD_TESTS)
     add_subdirectory(test)
