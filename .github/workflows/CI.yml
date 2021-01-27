@@ -12,7 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install socat
+      - name: Install dependencies
+        run: |
+          sudo apt install libfluidsynth-dev
+          # Only needed when gpsd is added to the build.
+          # sudo apt-get install libgps-dev
+          
+      - name: Install test dependencies
         run: sudo apt install socat
 
       - name: Create Build Environment & configure CMake
