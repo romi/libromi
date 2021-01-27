@@ -60,9 +60,10 @@ if(BUILD_TESTS)
         endif()
 
         include(${CMAKE_MODULES_DIRECTORY}/DownloadProject.cmake)
-        download_project(   PROJ                googletest
+        download_project(
+                PROJ                googletest
                 GIT_REPOSITORY      https://github.com/google/googletest.git
-                GIT_TAG             master
+                GIT_TAG             v1.10.x
                 PREFIX              ${CMAKE_THIRDPARTY_DIRECTORY}/googletest
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE}
                 )
@@ -135,7 +136,41 @@ if (NOT DEFINED libr_SOURCE_DIR)
     SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
 endif()
 
-###########################################################3
+###########################################################
+
+if (NOT DEFINED rcom_SOURCE_DIR)
+    set(RCOM_DIR "${CMAKE_SOURCE_DIR}/rcom")
+    find_path(RCOM_DIRECTORY
+            NAMES "CMakeLists.txt"
+            PATHS ${RCOM_DIR})
+    #    Save the current Build test settings so we can restore them after including rcom. We don't want to build rcom tests.
+    SET(SAVED_TEST_OPTION BUILD_TESTS)
+    SET(BUILD_TESTS OFF)
+
+    if (NOT RCOM_DIRECTORY)
+        MESSAGE("LIBROMI - ${RCOM_DIR} does not exist. Downloading dependency.")
+        MESSAGE("LIBROMI - WARNING")
+        MESSAGE("LIBROMI - The dependency is cloned to support libromi development only.")
+        MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
+
+        download_project(
+                PROJ              libr
+                GIT_REPOSITORY    https://github.com/romi/rcom.git
+                GIT_TAG           ci_dev
+                TIMEOUT           180
+                SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/rcom
+                BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/rcom
+                ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+        add_subdirectory(${RCOM_DIR})
+    else()
+        MESSAGE("LIBROMI - ${RCOM_DIRECTORY} exists. Not downloading dependency.")
+        add_subdirectory(rcom)
+    endif()
+    # Restore build tests option.
+    SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
+endif()
+
+###########################################################
 
 add_subdirectory(arduino_libraries)
 add_subdirectory(libromi)
