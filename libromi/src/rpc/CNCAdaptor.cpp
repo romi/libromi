@@ -164,7 +164,7 @@ namespace romi {
                         Path path;
                         double speed = params.num("speed", 0.1);
                         JsonCpp p = params.array("path");
-                        for (int i = 0; i < p.length(); i++) {
+                        for (size_t i = 0; i < p.length(); i++) {
                                 v3 pt;
                                 JsonCpp a = p.array(i);
                                 pt.set(a.num(0), a.num(1), a.num(2));

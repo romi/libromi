@@ -45,8 +45,8 @@ namespace romi {
         Quincunx::Quincunx(JsonCpp& params)
         {
                 try {
-                        _distance_plants = params["distance-plants"];
-                        _distance_rows = params["distance-rows"];
+                        _distance_plants = (double) params["distance-plants"];
+                        _distance_rows = (double) params["distance-rows"];
                         _radius_zones = params.num("radius-zones", 0.1);
                         _threshold = params.num("threshold", 0.5);
                         assert_settings();

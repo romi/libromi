@@ -72,7 +72,7 @@ namespace romi {
         
         void ScriptList::convert_scripts(JsonCpp& scripts)
         {
-                for (int index = 0; index < scripts.length(); index++) {
+                for (size_t index = 0; index < scripts.length(); index++) {
                         JsonCpp script = scripts[index];
                         convert_script(script);
                 }                        
@@ -80,8 +80,8 @@ namespace romi {
         
         void ScriptList::convert_script(JsonCpp& script)
         {
-                const char *id = script["id"];
-                const char *title = script["title"];
+                const char *id = (const char *) script["id"];
+                const char *title = (const char *) script["title"];
                 
                 push_back(Script(id, title));
                 convert_script_actions(back(), script);                        
@@ -91,7 +91,7 @@ namespace romi {
                                                 JsonCpp& json_script)
         {
                 JsonCpp actions = json_script.array("actions");
-                for (int i = 0; i < actions.length(); i++) {
+                for (size_t i = 0; i < actions.length(); i++) {
                         JsonCpp action = actions[i];
                         convert_action(script, action);
                 }
@@ -99,7 +99,7 @@ namespace romi {
 
         void ScriptList::convert_action(Script& script, JsonCpp& action)
         {
-                const char *type = action["action"];
+                const char *type = (const char *) action["action"];
                 if (rstreq(type, Action::move_command))
                         convert_move(script, action);
                 else if (rstreq(type, Action::hoe_command))
@@ -114,8 +114,8 @@ namespace romi {
         
         void ScriptList::convert_move(Script& script, JsonCpp& action)
         {
-                double distance = action["distance"];
-                double speed = action["speed"];
+                double distance = (double) action["distance"];
+                double speed = (double) action["speed"];
                 
                 assure_move_params(distance, speed);
                 script.append(Action(Action::Move, distance, speed));

@@ -122,7 +122,7 @@ if (NOT DEFINED libr_SOURCE_DIR)
         download_project(
                 PROJ              libr
                 GIT_REPOSITORY    https://github.com/romi/libr.git
-                GIT_TAG           ci_dev
+                GIT_TAG           libromirover
                 TIMEOUT           180
                 SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/libr
                 BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/libr
@@ -154,9 +154,9 @@ if (NOT DEFINED rcom_SOURCE_DIR)
         MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
 
         download_project(
-                PROJ              libr
+                PROJ              librcom
                 GIT_REPOSITORY    https://github.com/romi/rcom.git
-                GIT_TAG           ci_dev
+                GIT_TAG           libromirover
                 TIMEOUT           180
                 SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/rcom
                 BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/rcom

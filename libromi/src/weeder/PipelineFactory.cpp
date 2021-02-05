@@ -34,21 +34,21 @@ namespace romi {
         
         void PipelineFactory::build_cropper(CNCRange &range, JsonCpp weeder)
         {
-                const char *name = weeder["cropper"];
+                const char *name = (const char *)weeder["cropper"];
                 JsonCpp properties = weeder[name];
                 _cropper = std::make_unique<ImageCropper>(range, properties);
         }
         
         void PipelineFactory::build_segmentation(JsonCpp weeder)
         {
-                const char *name = weeder["segmentation"];
+                const char *name = (const char *)weeder["segmentation"];
                 JsonCpp properties = weeder[name];                
                 _segmentation = std::make_unique<SVMSegmentation>(properties);
         }
         
         void PipelineFactory::build_planner(JsonCpp weeder)
         {
-                const char *name = weeder["path"];
+                const char *name = (const char *)weeder["path"];
                 JsonCpp properties = weeder[name];                
                 build_planner(name, properties);
         }
