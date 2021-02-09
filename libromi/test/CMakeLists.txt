@@ -530,7 +530,7 @@ add_test(
 if(BUILD_COVERAGE)
     SETUP_TARGET_FOR_COVERAGE_LCOV(
             NAME romi_rover_libromi_coverage
-            EXECUTABLE ctest -V ${n_cores}
+            EXECUTABLE ctest -V ${n_cores} -R "romi_rover"
             DEPENDENCIES romi_rover_unit_tests_libromi_v
                          romi_rover_unit_tests_libromi_cncrange
                          romi_rover_unit_tests_libromi_path
