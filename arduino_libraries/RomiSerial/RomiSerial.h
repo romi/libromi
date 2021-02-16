@@ -97,14 +97,16 @@ public:
         /* void log(const char *message) override; */
 
 protected:
-        
+
+    // TBD: This code is duplicated in 3 places.
+// test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
         char convert_4bits_to_hex(uint8_t value) {
                 value &= 0x0f;
-                return (value < 10)? '0' + value : 'a' + (value - 10);
+                return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
         }
 
         void append_hex(uint8_t value) {
-                append_char(convert_4bits_to_hex(value >> 4));
+                append_char(convert_4bits_to_hex((uint8_t)(value >> 4)));
                 append_char(convert_4bits_to_hex(value));
         }
 

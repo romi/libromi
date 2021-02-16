@@ -35,16 +35,16 @@ protected:
         
 public:
         
-        CRC8(uint8_t poly = 0x07) {
+        CRC8(uint8_t poly = 0x07) : _crc(0){
                 init_table(poly);
         }
         
         void init_table(uint8_t poly = 0x07) {
                 uint8_t crc;                
-                for (int i = 0; i < 256; i++) {
-                        crc = i;
-                        for (int j = 0; j < 8; j++)
-                                crc = (crc << 1) ^ ((crc & 0x80) ? poly : 0);
+                for (uint16_t i = 0; i <= UINT8_MAX; i++) {
+                        crc = (uint8_t)i;
+                        for (uint8_t j = 0; j < 8; j++)
+                            crc = (uint8_t)(crc << 1) ^ (uint8_t )((crc & 0x80) ? poly : 0);
                         _table[i] = crc;
                 }
         }
@@ -57,7 +57,7 @@ public:
                 _crc = _table[_crc ^ c];
         }
         
-        void update(const char *s, int len) {
+        void update(const char *s, size_t len) {
                 while (len--) {
                         update((uint8_t) *s++);
                 }
@@ -75,10 +75,10 @@ public:
                 return _crc;
         }
         
-        uint8_t compute(const char *s, int len) {
+        uint8_t compute(const char *s, size_t len) {
                 start();
-                for (int i = 0; i < len; i++)
-                        update(s[i]);
+                for (size_t i = 0; i < len; i++)
+                        update((uint8_t)s[i]);
                 return finalize();
         }
 };

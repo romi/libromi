@@ -34,13 +34,13 @@ class MessageParser
 protected:
         uint8_t _state;
         int8_t _error;
-        uint8_t _opcode;
+        char _opcode;
         int16_t _value[PARSER_MAXIMUM_ARGUMENTS];
         uint8_t _length;
         bool _has_string;
         char _string[PARSER_MAXIMUM_STRING_LENGTH+1];
         uint8_t _string_length;
-        int32_t _tmpval;
+        int16_t _tmpval;
         int16_t _sign;
 
         void set_error(char character, char what);
@@ -48,7 +48,7 @@ protected:
         void reset_values();
         void reset();
         void append_char(char c);
-        int append_value(int32_t v);
+        int append_value(int16_t v);
         void init_value(char c, int16_t sign);
         int append_digit(char c);
         uint8_t hex_to_int(char c);
@@ -82,7 +82,7 @@ public:
                 return _string;
         }
 
-        uint8_t opcode() {
+        char opcode() {
                 return _opcode;
         }
         
@@ -90,7 +90,7 @@ public:
                 return _error;
         }
         
-        bool parse(const char *s, int len);
+        bool parse(const char *s, size_t len);
 };
 
 #endif

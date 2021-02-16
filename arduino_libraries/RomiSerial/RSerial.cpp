@@ -83,13 +83,14 @@ int RSerial::available()
         return retval;
 }
 
-int RSerial::read()
+int RSerial::readchar(char& c)
 {
-        char c;
+        char readc;
         int retval = -1;
-        ssize_t rc = ::read(_fd, &c, 1);
+        ssize_t rc = ::read(_fd, &readc, 1);
         if (rc == 1) {
-                retval = c;
+                c = readc;
+                retval = (int)rc;
                 //printf("%c 0x%02x\n", c, (int) c);
         } 
         return retval;
@@ -103,23 +104,25 @@ bool RSerial::readline(char *buffer, int buflen)
         int n = 0;
         bool success = false;
         
-        while (available()) {
-                int c = read();
-                switch (state) {
-                case READ:
-                        buffer[n++] = (char) c;
-                        if (c == '\r')
+        while (available()){
+                char c;
+                if (readchar(c) > 0) {
+                    switch (state) {
+                        case READ:
+                            buffer[n++] = c;
+                            if (c == '\r')
                                 state = NL;
-                        break;
-                case NL:
-                        if (c == '\n') {
-                                buffer[n++] = (char) c;
+                            break;
+                        case NL:
+                            if (c == '\n') {
+                                buffer[n++] = c;
                                 success = true;
                                 state = DONE;
-                        } else {
+                            } else {
                                 state = READ;
-                        }
-                        break;
+                            }
+                            break;
+                    }
                 }
                 if (n == buflen-1)
                         break;
@@ -209,7 +212,7 @@ void RSerial::open_device()
 void RSerial::configure_termios()
 {
         struct termios tty;
-        int speed_constant;
+        speed_t speed_constant;
 
         switch (_baudrate) {
         case 9600: speed_constant = B9600; break;
@@ -226,25 +229,25 @@ void RSerial::configure_termios()
         get_termios(&tty);
 
         tty.c_cflag |= CLOCAL | CREAD;
-        tty.c_cflag &= ~CSIZE;
+        tty.c_cflag &= (tcflag_t)~CSIZE;
         tty.c_cflag |= CS8;         /* 8-bit characters */
-        tty.c_cflag &= ~PARENB;     /* no parity bit */
-        tty.c_cflag &= ~CSTOPB;     /* only need 1 stop bit */
-        tty.c_cflag &= ~CRTSCTS;    /* no hardware flowcontrol */
-        tty.c_cflag &= ~HUPCL;
+        tty.c_cflag &= (tcflag_t)~PARENB;     /* no parity bit */
+        tty.c_cflag &= (tcflag_t)~CSTOPB;     /* only need 1 stop bit */
+        tty.c_cflag &= (tcflag_t)~CRTSCTS;    /* no hardware flowcontrol */
+        tty.c_cflag &= (tcflag_t)~HUPCL;
         if (_reset)
                 tty.c_cflag |= HUPCL;
 
         tty.c_lflag |= ICANON | ISIG;  /* canonical input */
-        tty.c_lflag &= ~(ECHO | ECHOE | ECHONL | IEXTEN);
+        tty.c_lflag &= (tcflag_t)~(ECHO | ECHOE | ECHONL | IEXTEN);
 
-        tty.c_iflag &= ~IGNCR;   /* Preserve carriage return (= don't ignore CR)*/
+        tty.c_iflag &= (tcflag_t)~IGNCR;   /* Preserve carriage return (= don't ignore CR)*/
         //tty.c_iflag |= IGNCR;  /* preserve carriage return */
-        tty.c_iflag &= ~INPCK;   /* Disable input parity checking. */
-        tty.c_iflag &= ~INLCR;   /* Don't translate newline to carriage return */
-        tty.c_iflag &= ~ICRNL;   /* Don't translate carriage return to newline */
+        tty.c_iflag &= (tcflag_t)~INPCK;   /* Disable input parity checking. */
+        tty.c_iflag &= (tcflag_t)~INLCR;   /* Don't translate newline to carriage return */
+        tty.c_iflag &= (tcflag_t)~ICRNL;   /* Don't translate carriage return to newline */
         //tty.c_iflag &= ~(IUCLC | IMAXBEL);  (not in POSIX)
-        tty.c_iflag &= ~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
+        tty.c_iflag &= (tcflag_t)~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
 
 //    tty.c_oflag &= ~OPOST;
         tty.c_oflag = 0;

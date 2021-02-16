@@ -34,8 +34,8 @@ protected:
 
         void initSerialAvailable(const char *s) {
                 InSequence seq;
-                int len = strlen(s);
-                for (int i = len; i >= 1; i--) {
+                size_t len = strlen(s);
+                for (size_t i = len; i >= 1; i--) {
                         EXPECT_CALL(in, available)
                                 .WillOnce(Return(i))
                                 .RetiresOnSaturation();
@@ -44,10 +44,10 @@ protected:
 
         void initSerialRead(const char *s) {
                 InSequence seq;
-                int len = strlen(s);
-                for (int i = 0; i < len; i++) {
-                        EXPECT_CALL(in, read)
-                                .WillOnce(Return(s[i]))
+                size_t len = strlen(s);
+                for (size_t i = 0; i < len; i++) {
+                        EXPECT_CALL(in, readchar)
+                                .WillOnce(DoAll(SetArgReferee<0>(s[i]), Return(1)))
                                 .RetiresOnSaturation();
                 }
         }

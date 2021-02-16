@@ -53,10 +53,13 @@ RomiSerialClient::~RomiSerialClient()
         delete_mutex(_mutex);
 }
 
+// TBD: This code is duplicated in 3 places.
+// test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
 static char hex(uint8_t value) {
         value &= 0x0f;
-        return (value < 10)? '0' + value : 'a' + (value - 10);
+        return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
 }
+
 
 int RomiSerialClient::make_request(const char *command, std::string &request)
 {
@@ -73,11 +76,11 @@ int RomiSerialClient::make_request(const char *command, std::string &request)
                                 request = "#";
                                 request += command;
                                 request += ":";
-                                request += hex(_id >> 4);
+                                request += hex((uint8_t)(_id >> 4));
                                 request += hex(_id);
                                 uint8_t code = crc.compute(request.c_str(),
                                                            request.length());
-                                request += hex(code >> 4);
+                                request += hex((uint8_t)(code >> 4));
                                 request += hex(code);
                                 request += "\r";
                                 
@@ -156,24 +159,6 @@ JsonCpp RomiSerialClient::make_error(int code)
 
         return JsonCpp::construct("[%d,'%s']", code, message);
 }
-
-enum {
-        romiserialclient_start_message,
-        romiserialclient_opcode,
-        romiserialclient_openbracket,
-        romiserialclient_values,
-        romiserialclient_colon,
-        romiserialclient_id1,
-        romiserialclient_id2,
-        romiserialclient_crc1,
-        romiserialclient_crc2,
-        romiserialclient_carriage_return,
-        romiserialclient_line_feed,
-        romiserialclient_message_complete,
-        romiserialclient_error,
-        romiserialclient_log_message,
-        romiserialclient_log_line_feed,
-};
 
 bool RomiSerialClient::parse_char(int c)
 {
@@ -273,8 +258,8 @@ bool RomiSerialClient::filter_log_message()
 bool RomiSerialClient::handle_one_char()
 {
         bool has_message = false;
-        int c = _in->read();
-        if (c >= 0) {
+        char c;
+        if (_in->readchar(c) > 0) {
 
                 has_message = parse_char(c);
                 

@@ -12,31 +12,31 @@ using namespace testing;
 
 
 
-void handler_without_args(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
+void handler_without_args(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
         romi_serial->send_ok();
 }
 
-void handler_fails_to_send_message(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
+void handler_fails_to_send_message(__attribute__((unused)) RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
 }
 
-void handler_with_two_arguments(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
-{
-        romi_serial->send_ok();
-}
-
-void handler_with_string_arg(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
+void handler_with_two_arguments(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
         romi_serial->send_ok();
 }
 
-void handler_returning_values(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
+void handler_with_string_arg(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+{
+        romi_serial->send_ok();
+}
+
+void handler_returning_values(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
         romi_serial->send("[0,1,2]");
 }
 
-void handler_returning_error(RomiSerial *romi_serial, int16_t *args, const char *string_arg)
+void handler_returning_error(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
         romi_serial->send_error(101, "I will try again tomorrow");
 }
@@ -50,9 +50,7 @@ const static MessageHandler handlers[] = {
         { 'f', 0, false, handler_returning_error }
 };
 
-int num_handlers = sizeof(handlers) / sizeof(MessageHandler);
-
-
+uint8_t num_handlers = sizeof(handlers) / sizeof(MessageHandler);
 
 class romiserial_tests : public ::testing::Test
 {
@@ -75,18 +73,18 @@ protected:
 
         void initSerialRead(const char *s) {
                 InSequence seq;
-                int len = strlen(s);
-                for (int i = 0; i < len; i++) {
-                        EXPECT_CALL(in, read)
-                                .WillOnce(Return(s[i]))
+                size_t len = strlen(s);
+                for (size_t i = 0; i < len; i++) {
+                        EXPECT_CALL(in, readchar)
+                                .WillOnce(DoAll(SetArgReferee<0>(s[i]), Return(1)))
                                 .RetiresOnSaturation();;
                 }
         }
 
         void initSerialAvailable(const char *s) {
                 InSequence seq;
-                int len = strlen(s);
-                for (int i = 0; i <= len; i++) {
+            size_t len = strlen(s);
+                for (size_t i = 0; i <= len; i++) {
                         EXPECT_CALL(in, available)
                                 .WillOnce(Return(len - i))
                                 .RetiresOnSaturation();
@@ -107,10 +105,12 @@ protected:
                 EXPECT_CALL(out, write(_))
                         .WillRepeatedly(Invoke(this, &romiserial_tests::append_output));
         }
-        
+
+    // TBD: This code is duplicated in 3 places.
+    // test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
         char hex(uint8_t value) {
                 value &= 0x0f;
-                return (value < 10)? '0' + value : 'a' + (value - 10);
+                return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
         }
 
         void expectErrorMessage(char opcode, uint8_t id, int error, const char *message = 0) {
@@ -126,10 +126,10 @@ protected:
                         expected_message += "\"";
                 }
                 expected_message += "]:";
-                expected_message += hex(id >> 4);
+                expected_message += hex((uint8_t)(id >> 4));
                 expected_message += hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex(code >> 4);
+                expected_message += hex((uint8_t) (code >> 4));
                 expected_message += hex(code);
                 expected_message += "\r";
                 expected_message += "\n";
@@ -141,10 +141,10 @@ protected:
                 expected_message += "#";
                 expected_message += opcode;
                 expected_message += "[0]:";
-                expected_message += hex(id >> 4);
+                expected_message += hex((uint8_t) (id >> 4));
                 expected_message += hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex(code >> 4);
+                expected_message += hex((uint8_t) (code >> 4));
                 expected_message += hex(code);
                 expected_message += "\r";
                 expected_message += "\n";
@@ -157,10 +157,10 @@ protected:
                 expected_message += opcode;
                 expected_message += s;
                 expected_message += ":";
-                expected_message += hex(id >> 4);
+                expected_message += hex((uint8_t) (id >> 4));
                 expected_message += hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex(code >> 4);
+                expected_message += hex((uint8_t)(code >> 4));
                 expected_message += hex(code);
                 expected_message += "\r";
                 expected_message += "\n";

@@ -21,24 +21,9 @@
   <http://www.gnu.org/licenses/>.
 
  */
-//#include <stdio.h>
-#include <string.h>
+
 #include "EnvelopeParser.h"
 #include "RomiSerialErrors.h"
-#include "Log.h"
-
-enum parser_state_t {
-        expect_start_envelope,
-        expect_payload_or_start_metadata,
-        expect_id_char_1,
-        expect_id_char_2,
-        expect_crc_char_1,
-        expect_crc_char_2,
-        expect_dummy_metadata_char_2,
-        expect_dummy_metadata_char_3,
-        expect_dummy_metadata_char_4,
-        expect_end_envelope
-};
 
 #define START_ENVELOPE(_c)      ((_c) == '#')
 #define END_ENVELOPE(_c)        ((_c) == '\r')
@@ -47,7 +32,9 @@ enum parser_state_t {
 #define VALID_HEX_CHAR(_c)      (('a' <= (_c) && (_c) <= 'f') \
                                  || ('0' <= (_c) && (_c) <= '9'))
 
-void EnvelopeParser::set_error(char character, char what)
+
+
+void EnvelopeParser::set_error(__attribute((unused))char character, char what)
 {
         _message[_message_length] = '\0';
 #if defined(ARDUINO) 
@@ -73,9 +60,9 @@ void EnvelopeParser::set_error(char character, char what)
 static inline uint8_t hex_to_int(char c)
 {
         if ('a' <= c && c <= 'f') {
-                return 10 + (c - 'a');
+                return (uint8_t)(10 + (c - 'a'));
         } else if ('0' <= c && c <= '9') {
-                return c - '0';
+                return (uint8_t)(c - '0');
         } else {
                 return 0;
         }
@@ -120,7 +107,7 @@ bool EnvelopeParser::process(char c)
                 if (START_ENVELOPE(c)) {
                         reset();
                         _state = expect_payload_or_start_metadata;
-                        _crc.update(c);
+                        _crc.update((uint8_t)c);
                 } else {
                         // NOP
                 }
@@ -132,12 +119,12 @@ bool EnvelopeParser::process(char c)
 #endif
                 if (START_METADATA(c)) {
                         _state = expect_id_char_1;
-                        _crc.update(c);
+                        _crc.update((uint8_t)c);
                 } else if (END_ENVELOPE(c)) {
                         set_error(c, romiserial_envelope_missing_metadata);
                 } else {
                         append_char(c);
-                        _crc.update(c);
+                        _crc.update((uint8_t)c);
                 }
                 break;
                 
@@ -152,7 +139,7 @@ bool EnvelopeParser::process(char c)
                         _has_id = true;
                         _id = hex_to_int(c);
                         _state = expect_id_char_2;
-                        _crc.update(c);
+                        _crc.update((uint8_t)c);
                 } else {
                         set_error(c, romiserial_envelope_invalid_id);
                 }
@@ -163,9 +150,9 @@ bool EnvelopeParser::process(char c)
                 // r_debug("expect_id_char_2");
 #endif
                 if (VALID_HEX_CHAR(c)) {
-                        _id = 16 * _id + hex_to_int(c);
+                        _id = (uint8_t)(16 * _id + hex_to_int(c));
                         _state = expect_crc_char_1;
-                        _crc.update(c);
+                        _crc.update((uint8_t)c);
                 } else {
                         set_error(c, romiserial_envelope_invalid_id);
                 }
@@ -190,7 +177,7 @@ bool EnvelopeParser::process(char c)
                 if (VALID_HEX_CHAR(c)) {
                         uint8_t crc = _crc.finalize();
                         
-                        _crc_metadata = 16 * _crc_metadata + hex_to_int(c);
+                        _crc_metadata = (uint8_t)(16 * _crc_metadata + hex_to_int(c));
                         if (_crc_metadata == crc) {
                                 _state = expect_end_envelope;
                         } else {

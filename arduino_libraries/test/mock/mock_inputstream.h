@@ -8,7 +8,7 @@ class MockInputStream : public IInputStream
 {
 public:
         MOCK_METHOD(int, available, (), (override));
-        MOCK_METHOD(int, read, (), (override));
+        MOCK_METHOD(int, readchar, (char& c), (override));
         MOCK_METHOD(bool, readline, (char *buffer, int buflen), (override));
         MOCK_METHOD(void, set_timeout, (float seconds), (override));
 };

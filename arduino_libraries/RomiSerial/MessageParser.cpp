@@ -50,7 +50,7 @@ enum parser_state_t {
 #define CARRIAGE_RETURN(_c)   ((_c) == '\r')
 #define COMMA(_c)             ((_c) == ',')
 #define START_METADATA(_c)    ((_c) == ':')
-#define VALUE(_c)             ((int)((_c) - '0'))
+#define VALUE(_c)             ((int16_t)((_c) - '0'))
 #define VALID_OPCODE(_c)      (('a' <= (_c) && (_c) <= 'z') \
                                || ('A' <= (_c) && (_c) <= 'Z')  \
                                || ('0' <= (_c) && (_c) <= '9')  \
@@ -92,7 +92,7 @@ void MessageParser::init_value(char c, int16_t sign)
         _sign = sign;
 }
 
-int MessageParser::append_value(int32_t v)
+int MessageParser::append_value(int16_t v)
 {
         int r = -1;
         if (_length < PARSER_MAXIMUM_ARGUMENTS) {
@@ -108,12 +108,15 @@ int MessageParser::append_value(int32_t v)
 int MessageParser::append_digit(char c)
 {
         int r = 0;
-        _tmpval = 10 * _tmpval + _sign * VALUE(c);
-        if (_tmpval > 32767 || _tmpval < -32768) {
+        int32_t calcval = 10 * _tmpval + _sign * VALUE(c);
+        if (calcval > INT16_MAX || calcval < INT16_MIN) {
                 log_print("Out of range");
-                log_print(_tmpval);
+                log_print(calcval);
                 set_error(c, romiserial_value_out_of_range);
                 r = -1;
+        }
+        else{
+            _tmpval = (int16_t)calcval;
         }
         return r;
 }
@@ -142,11 +145,11 @@ void MessageParser::reset()
         reset_string();
 }
 
-bool MessageParser::parse(const char *s, int len)
+bool MessageParser::parse(const char *s, size_t len)
 {
         bool success = false;
         reset();
-        for (int i = 0; i < len-1; i++) {
+        for (size_t i = 0; i < len-1; i++) {
                 process(s[i]);
                 if (_error != 0) {
                         log_print(s);
