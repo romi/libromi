@@ -214,7 +214,7 @@ JsonCpp RomiSerialClient::parse_response()
                 // Check that the data is valid. If not, return an error.
                 if (data.isarray()
                     && data.length() > 0
-                    && data.get((int)0).isnumber()) {
+                    && data.get(0).isnumber()) {
                         
                         // If the response is an error message, make
                         // sure it is valid, too: it should be an
