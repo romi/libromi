@@ -26,20 +26,20 @@
 static ArduinoSerial arduinoSerial;
 static bool initialized = false;
 
-IInputStream *get_default_input()
+IInputStream &get_default_input()
 {
         if (!initialized) {
                 arduinoSerial.init(115200);
                 initialized = true;
         }
-        return &arduinoSerial;
+        return arduinoSerial;
 }
 
-IOutputStream *get_default_output()
+IOutputStream &get_default_output()
 {
         if (!initialized) {
                 arduinoSerial.init(115200);
                 initialized = true;
         }
-        return &arduinoSerial;
+        return arduinoSerial;
 }

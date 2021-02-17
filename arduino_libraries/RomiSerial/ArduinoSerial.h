@@ -50,13 +50,14 @@ public:
                 return Serial.available();
         }
         
-        int read() override {
-                char c;
-                size_t n = Serial.readBytes(&c, 1);
-                return (n == 1)? c : -1;
+        int readchar(char& c) override {
+                char charread;
+                size_t n = Serial.readBytes(&charread, 1);
+                c = charread;
+                return (n == 1)? 1 : -1;
         }
         
-        bool readline(char *buffer, int buflen) override {
+        bool readline(char *buffer, size_t buflen) override {
                 size_t n = Serial.readBytesUntil('\n', buffer, buflen);
                 if (n < buflen) {
                         buffer[n] = '\0';
@@ -78,5 +79,8 @@ public:
                 return Serial.println(s);
         }
 };
+
+IInputStream &get_default_input();
+IOutputStream &get_default_output();
 
 #endif // __ARDUINO_SERIAL_H

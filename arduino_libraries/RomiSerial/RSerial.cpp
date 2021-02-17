@@ -39,9 +39,9 @@ RSerial::RSerial(const char *device, int baudrate, bool reset)
           _fd(-1),
           _timeout(0.1f),
           _baudrate(baudrate),
-          _reset(reset)
+          _reset(reset),
+          _timeout_ms((int) (_timeout * 1000.0f))
 {
-        _timeout_ms = (int) (_timeout * 1000.0f);
         open_device();
         configure_termios();
 }
@@ -96,12 +96,12 @@ int RSerial::readchar(char& c)
         return retval;
 }
 
-bool RSerial::readline(char *buffer, int buflen) 
+bool RSerial::readline(char *buffer, size_t buflen)
 {
         enum { READ, NL, DONE };
         
         int state = READ;
-        int n = 0;
+        size_t n = 0;
         bool success = false;
         
         while (available()){

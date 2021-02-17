@@ -25,6 +25,10 @@
 #include "EnvelopeParser.h"
 #include "RomiSerialErrors.h"
 
+#if defined(ARDUINO)
+#include "Log.h"
+#endif
+
 #define START_ENVELOPE(_c)      ((_c) == '#')
 #define END_ENVELOPE(_c)        ((_c) == '\r')
 #define START_METADATA(_c)      ((_c) == ':')
@@ -107,7 +111,7 @@ bool EnvelopeParser::process(char c)
                 if (START_ENVELOPE(c)) {
                         reset();
                         _state = expect_payload_or_start_metadata;
-                        _crc.update((uint8_t)c);
+                        _crc.update(c);
                 } else {
                         // NOP
                 }
@@ -119,12 +123,12 @@ bool EnvelopeParser::process(char c)
 #endif
                 if (START_METADATA(c)) {
                         _state = expect_id_char_1;
-                        _crc.update((uint8_t)c);
+                        _crc.update(c);
                 } else if (END_ENVELOPE(c)) {
                         set_error(c, romiserial_envelope_missing_metadata);
                 } else {
                         append_char(c);
-                        _crc.update((uint8_t)c);
+                        _crc.update(c);
                 }
                 break;
                 
@@ -139,7 +143,7 @@ bool EnvelopeParser::process(char c)
                         _has_id = true;
                         _id = hex_to_int(c);
                         _state = expect_id_char_2;
-                        _crc.update((uint8_t)c);
+                        _crc.update(c);
                 } else {
                         set_error(c, romiserial_envelope_invalid_id);
                 }
@@ -152,7 +156,7 @@ bool EnvelopeParser::process(char c)
                 if (VALID_HEX_CHAR(c)) {
                         _id = (uint8_t)(16 * _id + hex_to_int(c));
                         _state = expect_crc_char_1;
-                        _crc.update((uint8_t)c);
+                        _crc.update(c);
                 } else {
                         set_error(c, romiserial_envelope_invalid_id);
                 }

@@ -52,7 +52,7 @@ public:
         void set_timeout(float seconds) override;
         int available() override;
         int readchar(char& c) override;
-        bool readline(char *buffer, int buflen) override;
+        bool readline(char *buffer, size_t buflen) override;
         size_t write(char c) override;
         size_t print(const char *s) override;
         size_t println(const char *s) override;

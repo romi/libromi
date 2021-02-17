@@ -29,12 +29,9 @@
 
 void RomiSerial::handle_input()
 {
-        if (_in == 0) 
-                _in = get_default_input();
-        
-        while (_in->available()) {
+        while (_in.available()) {
                 char c;
-                if (_in->readchar(c) > 0) {
+                if (_in.readchar(c) > 0) {
                         bool has_message = _envelopeParser.process(c);
                         if (has_message) {
                                 if (_envelopeParser.has_id()) {
@@ -95,10 +92,8 @@ void RomiSerial::handle_message()
 
 void RomiSerial::append_char(const char c)
 {
-        if (_out == 0)
-                _out = get_default_output();
-        _crc.update((uint8_t)c);
-        _out->write(c);
+        _crc.update(c);
+        _out.write(c);
 }
 
 void RomiSerial::append_message(const char *s)

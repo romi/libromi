@@ -27,19 +27,6 @@
 #include "RomiSerialErrors.h"
 #include "Log.h"
 
-enum parser_state_t {
-        wait_opcode,
-        wait_bracket_or_end,
-        wait_value,
-        wait_digit,
-        wait_digits_or_comma_or_bracket,
-        wait_end_message,
-        wait_string,
-        wait_comma_or_bracket,
-        wait_id1, wait_id2,
-        wait_crc1, wait_crc2
-};
-
 #define START_MESSAGE(_c)     ((_c) == '#')
 #define END_MESSAGE(_c)       ((_c) == '\0')
 #define MINUS(_c)             ((_c) == '-')

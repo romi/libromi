@@ -29,10 +29,26 @@
 #define PARSER_MAXIMUM_ARGUMENTS 12
 #define PARSER_MAXIMUM_STRING_LENGTH 32
 
+enum message_parser_state_t {
+    wait_opcode,
+    wait_bracket_or_end,
+    wait_value,
+    wait_digit,
+    wait_digits_or_comma_or_bracket,
+    wait_end_message,
+    wait_string,
+    wait_comma_or_bracket
+    //,
+//    wait_id1,
+//    wait_id2,
+//    wait_crc1,
+//    wait_crc2
+};
+
 class MessageParser
 {
 protected:
-        uint8_t _state;
+        message_parser_state_t _state;
         int8_t _error;
         char _opcode;
         int16_t _value[PARSER_MAXIMUM_ARGUMENTS];
@@ -58,7 +74,8 @@ protected:
 
 public:
         
-        MessageParser() {
+        MessageParser() : _state(wait_opcode), _error(0), _opcode('0'), _length(0), _has_string(false), _string_length(0), _tmpval(0), _sign(0)
+        {
                 reset();
         }
         

@@ -25,16 +25,16 @@
 #ifndef __IINPUTSTREAM_H
 #define __IINPUTSTREAM_H
 
+#include <stddef.h>
+
 class IInputStream
 {
 public:
         virtual ~IInputStream() = default;
         virtual int available() = 0;
         virtual int readchar(char& c) = 0;
-        virtual bool readline(char *buffer, int buflen) = 0;
+        virtual bool readline(char *buffer, size_t buflen) = 0;
         virtual void set_timeout(float seconds) = 0;
 };
-
-IInputStream *get_default_input();
 
 #endif // __INPUTSTREAM_H

@@ -52,7 +52,11 @@ public:
         void start(uint8_t start_value = 0) {
                 _crc = start_value;
         }
-        
+
+        void update(const char c) {
+            update(uint8_t(c));
+        }
+
         void update(uint8_t c) {
                 _crc = _table[_crc ^ c];
         }

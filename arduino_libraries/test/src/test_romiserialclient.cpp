@@ -14,19 +14,17 @@ using namespace testing;
 class romiserialclient_tests : public ::testing::Test
 {
 protected:
-        MockInputStream in;
-        MockOutputStream out;
-        RomiSerialClient client;
+        std::shared_ptr<MockInputStream> in;
+        std::shared_ptr<MockOutputStream> out;
+
         string output_message;
         string expected_message;
         
-	romiserialclient_tests() {}
+	romiserialclient_tests() : in(std::make_shared<MockInputStream>()), out(std::make_shared<MockOutputStream>()), output_message(), expected_message()  {}
 
 	~romiserialclient_tests() override = default;
 
 	void SetUp() override {
-                EXPECT_CALL(in, set_timeout(_));
-                client.init(&in, &out);
 	}
 
 	void TearDown() override {
@@ -36,7 +34,7 @@ protected:
                 InSequence seq;
                 size_t len = strlen(s);
                 for (size_t i = len; i >= 1; i--) {
-                        EXPECT_CALL(in, available)
+                        EXPECT_CALL(*in, available)
                                 .WillOnce(Return(i))
                                 .RetiresOnSaturation();
                 }
@@ -46,7 +44,7 @@ protected:
                 InSequence seq;
                 size_t len = strlen(s);
                 for (size_t i = 0; i < len; i++) {
-                        EXPECT_CALL(in, readchar)
+                        EXPECT_CALL(*in, readchar)
                                 .WillOnce(DoAll(SetArgReferee<0>(s[i]), Return(1)))
                                 .RetiresOnSaturation();
                 }
@@ -64,7 +62,7 @@ protected:
 
         void setExpectedOutput(const char *s) {
                 expected_message = s;
-                EXPECT_CALL(out, print(_))
+                EXPECT_CALL(*out, print(_))
                         .WillOnce(Invoke(this, &romiserialclient_tests::append_output));
         }
         
@@ -73,6 +71,8 @@ protected:
 TEST_F(romiserialclient_tests, message_without_args)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
         setExpectedOutput("#a:008e\r");
         initInput("#a[0]:00e7\r");
 
@@ -90,6 +90,8 @@ TEST_F(romiserialclient_tests, message_without_args)
 TEST_F(romiserialclient_tests, message_with_args)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
         setExpectedOutput("#a[1,2,3]:00dd\r");
         initInput("#a[0]:00e7\r");
 
@@ -107,6 +109,8 @@ TEST_F(romiserialclient_tests, message_with_args)
 TEST_F(romiserialclient_tests, error_reponse)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
         setExpectedOutput("#a:008e\r");
         initInput("#a[1,\"Went to bed early\"]:00f2\r");
 
@@ -126,6 +130,8 @@ TEST_F(romiserialclient_tests, error_reponse)
 TEST_F(romiserialclient_tests, error_reponse_without_message)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
         setExpectedOutput("#a:008e\r");
         initInput("#a[1]:0085\r");
 
@@ -144,6 +150,8 @@ TEST_F(romiserialclient_tests, error_reponse_without_message)
 TEST_F(romiserialclient_tests, log_message)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
         setExpectedOutput("#a:008e\r");
         initInput("#!LOG MESSAGE:008e\r#a[0]:00e7\r");
 
@@ -161,6 +169,8 @@ TEST_F(romiserialclient_tests, log_message)
 TEST_F(romiserialclient_tests, message_too_long)
 {
         // Arrange
+        EXPECT_CALL(*in, set_timeout(_));
+        RomiSerialClient client(in, out);
 
         // Act
         JsonCpp response;

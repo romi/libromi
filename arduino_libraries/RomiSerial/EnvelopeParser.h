@@ -28,7 +28,7 @@
 
 #define MAX_MESSAGE_LENGTH 58
 
-typedef enum _parser_state_t {
+enum envelope_parser_state_t {
     expect_start_envelope = 0,
     expect_payload_or_start_metadata,
     expect_id_char_1,
@@ -39,12 +39,12 @@ typedef enum _parser_state_t {
     expect_dummy_metadata_char_3,
     expect_dummy_metadata_char_4,
     expect_end_envelope
-}parser_state_t;
+};
 
 class EnvelopeParser
 {
 protected:
-        parser_state_t _state;
+        envelope_parser_state_t _state;
         int8_t _error;
         CRC8 _crc;
         uint8_t _id;
@@ -55,7 +55,6 @@ protected:
                 
         void set_error(char character, char what);
         void append_char(char c);
-        void crc8_update(uint8_t c);
 
 public:
         

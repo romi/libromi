@@ -27,6 +27,7 @@
 #if !defined(ARDUINO)
 
 #include <string>
+#include <memory>
 #include <IRomiSerialClient.h>
 #include <IInputStream.h>
 #include <IOutputStream.h>
@@ -36,12 +37,18 @@
 // A 2.0 second timeout to read the response messages.
 #define ROMISERIALCLIENT_TIMEOUT 2.0
 
+struct _mutex_deleter { // deleter
+    void operator() (mutex_t* p) {
+        delete_mutex(p);
+    }
+};
+
 class RomiSerialClient : public IRomiSerialClient
 {
 protected:
-        IInputStream *_in;
-        IOutputStream *_out;
-        mutex_t *_mutex;
+        std::shared_ptr<IInputStream> _in;
+        std::shared_ptr<IOutputStream> _out;
+        std::unique_ptr<mutex_t, _mutex_deleter> _mutex;
         uint8_t _id; 
         bool _debug;
         EnvelopeParser _parser;
@@ -60,16 +67,11 @@ protected:
 
 public:
         
-        RomiSerialClient(IInputStream *in = 0, IOutputStream *out = 0);
-        virtual ~RomiSerialClient() override;
+        explicit RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out);
+        RomiSerialClient(const RomiSerialClient&) = delete;
+        RomiSerialClient& operator=(const RomiSerialClient&) = delete;
+        ~RomiSerialClient() override;
 
-        void init(IInputStream *in, IOutputStream *out) {
-                _in = in;
-                _out = out;
-                if (_in)
-                        _in->set_timeout(0.1f);
-        }
-        
         uint8_t id() {
                 return _id;
         }

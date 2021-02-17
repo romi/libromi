@@ -25,6 +25,7 @@
 #if !defined(ARDUINO)
 
 #include <stdexcept>
+#include <memory>
 #include <CRC8.h>
 #include <RomiSerialClient.h>
 #include <RomiSerialErrors.h>
@@ -40,17 +41,16 @@ using namespace std;
                                || ('0' <= (_c) && (_c) <= '9'))
 
 
-RomiSerialClient::RomiSerialClient(IInputStream *in, IOutputStream *out)
-        : _in(in), _out(out), _id(255), _debug(false)
+RomiSerialClient::RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out)
+        :   _in(in), _out(out), _mutex(std::unique_ptr<mutex_t, _mutex_deleter>(new_mutex(), _mutex_deleter())),
+            _id(255), _debug(false), _parser()
 {
-        _mutex = new_mutex();
-        if (_in)
-                in->set_timeout(0.1f);
+        in->set_timeout(0.1f);
 }
 
 RomiSerialClient::~RomiSerialClient()
 {
-        delete_mutex(_mutex);
+
 }
 
 // TBD: This code is duplicated in 3 places.
@@ -364,11 +364,8 @@ JsonCpp RomiSerialClient::read_response()
 void RomiSerialClient::send(const char *command, JsonCpp& response)
 {
         std::string request;
-
-        if (_in == 0 || _out == 0)
-                throw std::runtime_error("RomiSerialClient: Streams not initialized");
         
-        mutex_lock(_mutex);
+        mutex_lock(_mutex.get());
         
         int err = make_request(command, request);
         if (err == 0) {
@@ -377,7 +374,7 @@ void RomiSerialClient::send(const char *command, JsonCpp& response)
                 response = make_error(err);
         }
         
-        mutex_unlock(_mutex);
+        mutex_unlock(_mutex.get());
 }
 
 const char *RomiSerialClient::get_error_message(int code)

@@ -7,12 +7,12 @@
 class romiserial_arduino_tests : public ::testing::Test
 {
 protected:
-        RSerial serial;
+        std::shared_ptr<RSerial> serial;
         RomiSerialClient romiserial;
 
 	romiserial_arduino_tests()
-                : serial("/dev/ttyACM0", 115200, 1),
-                  romiserial(&serial, &serial) {
+                : serial(std::make_shared<RSerial>("/dev/ttyACM0", 115200, 1)),
+                  romiserial(serial, serial) {
                 //romiserial.set_debug(true);
 	}
         

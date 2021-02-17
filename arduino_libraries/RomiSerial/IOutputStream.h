@@ -36,6 +36,4 @@ public:
         virtual size_t println(const char *s) = 0;
 };
 
-IOutputStream *get_default_output();
-
 #endif // __IOUTPUTSTREAM_H

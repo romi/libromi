@@ -49,8 +49,8 @@ struct MessageHandler
 class RomiSerial : public IRomiSerial
 {
 protected:
-        IInputStream *_in;
-        IOutputStream *_out;
+        IInputStream& _in;
+        IOutputStream& _out;
         const MessageHandler *_handlers;
         uint8_t _num_handlers;
         //Parser _parser;
@@ -68,27 +68,23 @@ protected:
         void finalize_message();
 
 public:
-        
-        RomiSerial(const MessageHandler *handlers, uint8_t num_handlers)
-                : _in(0),
-                  _out(0),
-                  _handlers(handlers),
-                  _num_handlers(num_handlers),
-                  _sent_response(false),
-                  _last_id(255)
-        {
-        }
 
-        RomiSerial(IInputStream *in, IOutputStream *out,
+        RomiSerial(IInputStream& in, IOutputStream& out,
                    const MessageHandler *handlers, uint8_t num_handlers)
                 : _in(in), _out(out),
                   _handlers(handlers),
                   _num_handlers(num_handlers),
-                  _sent_response(false)
+                  _envelopeParser(),
+                  _messageParser(),
+                  _sent_response(false),
+                  _crc(),
+                  _last_id(255)
         {
         }
+        RomiSerial(const RomiSerial&) = delete;
+        RomiSerial& operator=(const RomiSerial&) = delete;
 
-        virtual ~RomiSerial() override = default;
+        ~RomiSerial() override = default;
 
         void handle_input() override;
         void send_ok() override;
@@ -99,7 +95,7 @@ public:
 protected:
 
     // TBD: This code is duplicated in 3 places.
-// test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
+    // test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
         char convert_4bits_to_hex(uint8_t value) {
                 value &= 0x0f;
                 return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));

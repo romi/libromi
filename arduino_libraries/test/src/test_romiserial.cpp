@@ -61,7 +61,7 @@ protected:
         string output_message;
         string expected_message;
         
-	romiserial_tests() : serial(&in, &out, handlers, num_handlers) {}
+	romiserial_tests() : in(), out(), serial(in, out, handlers, num_handlers), output_message(), expected_message() {}
 
 	~romiserial_tests() override = default;
 
