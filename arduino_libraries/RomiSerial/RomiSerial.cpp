@@ -38,13 +38,13 @@ void RomiSerial::handle_input()
                                         if (_envelopeParser.id() != _last_id) {
                                                 handle_message();
                                         } else {
-                                                send_error(romiserial_duplicate, 0);
+                                                send_error(romiserial_duplicate, nullptr);
                                         }
                                 } else { // no id
                                         handle_message();
                                 }
                         } else if (_envelopeParser.error() != 0) {
-                                send_error(_envelopeParser.error(), 0);
+                                send_error(_envelopeParser.error(), nullptr);
                         }
                 }
         }
@@ -59,7 +59,7 @@ void RomiSerial::handle_message()
         bool ok = _messageParser.parse(_envelopeParser.message(),
                                        _envelopeParser.length());
         if (!ok) {
-                send_error(_messageParser.error(), 0);
+                send_error(_messageParser.error(), nullptr);
                 return;
         }
         
@@ -72,21 +72,21 @@ void RomiSerial::handle_message()
                                                               _messageParser.string());
                                 } else {
                                         if (_handlers[i].requires_string)
-                                                send_error(romiserial_missing_string, 0);
+                                                send_error(romiserial_missing_string, nullptr);
                                         else
-                                                send_error(romiserial_bad_string, 0);
+                                                send_error(romiserial_bad_string, nullptr);
                                 }
                         } else {
-                                send_error(romiserial_bad_number_of_arguments, 0);                       
+                                send_error(romiserial_bad_number_of_arguments, nullptr);
                         }
                         handled = true;
                         break;
                 }
         }
         if (!handled) {
-                send_error(romiserial_unknown_opcode, 0);
+                send_error(romiserial_unknown_opcode, nullptr);
         } else if (!_sent_response) {
-                send_error(romiserial_bad_handler, 0);
+                send_error(romiserial_bad_handler, nullptr);
         }
 }
 
@@ -124,33 +124,35 @@ void RomiSerial::finalize_message()
 void RomiSerial::send_error(int code, const char *message)
 {
         char buffer[128];
-        if (message) 
+        if (message)
                 snprintf(buffer, sizeof(buffer), "[%d,\"%s\"]", code, message);
         else
                 snprintf(buffer, sizeof(buffer), "[%d]", code);
-        start_message();
-        append_message(buffer);
-        finalize_message();
+        send_message(buffer);
         _sent_response = true;
 }
 
 void RomiSerial::send_ok()
 {
-        start_message();
-        append_message("[0]");
-        finalize_message();
+        send_message("[0]");
         _sent_response = true;
         _last_id = _envelopeParser.id();
 }
 
 void RomiSerial::send(const char *message)
 {
-        start_message();
-        append_message(message);
-        finalize_message();
+        send_message(message);
         _sent_response = true;
         _last_id = _envelopeParser.id();
 }
+
+void RomiSerial::send_message(const char *message)
+{
+    start_message();
+    append_message(message);
+    finalize_message();
+}
+
 
 // void RomiSerial::log(const char *message)
 // {

@@ -53,7 +53,7 @@ protected:
         bool _debug;
         EnvelopeParser _parser;
 
-        int make_request(const char *command, std::string &request);
+        int make_request(const std::string &command, std::string &request);
         JsonCpp try_sending_request(std::string &request);
         bool send_request(std::string &request);
         JsonCpp make_error(int code);

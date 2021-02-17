@@ -61,15 +61,14 @@ static char hex(uint8_t value) {
 }
 
 
-int RomiSerialClient::make_request(const char *command, std::string &request)
+int RomiSerialClient::make_request(const std::string &command, std::string &request)
 {
         int err = 0;
         CRC8 crc;
 
         request = "";
-
-        if (command != 0 && strlen(command) > 0) {
-                if (strlen(command) <= 58) {
+            if (command.length() > 0) {
+                if (command.length() <= MAX_MESSAGE_LENGTH) {
                         if (VALID_OPCODE(command[0])) {
                                 
                                 _id++;
@@ -91,7 +90,6 @@ int RomiSerialClient::make_request(const char *command, std::string &request)
                 } else {
                         err = romiserialclient_too_long;
                 }
-                        
         } else {
                 err = romiserial_empty_request;
         }
@@ -379,7 +377,7 @@ void RomiSerialClient::send(const char *command, JsonCpp& response)
 
 const char *RomiSerialClient::get_error_message(int code)
 {
-        const char *r = 0;
+        const char *r = nullptr;
         switch (code) {
                 
         case romiserial_error_none:

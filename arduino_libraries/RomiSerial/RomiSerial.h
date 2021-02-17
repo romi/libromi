@@ -66,6 +66,7 @@ protected:
         void append_char(const char c);
         void append_message(const char *s);
         void finalize_message();
+        void send_message(const char*message);
 
 public:
 
@@ -91,6 +92,8 @@ public:
         void send_error(int code, const char *message) override;
         void send(const char *message) override;
         /* void log(const char *message) override; */
+private:
+
 
 protected:
 

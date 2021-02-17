@@ -113,7 +113,7 @@ protected:
                 return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
         }
 
-        void expectErrorMessage(char opcode, uint8_t id, int error, const char *message = 0) {
+        void expectErrorMessage(char opcode, uint8_t id, int error, const char *message = nullptr) {
                 initAppendOutput();                
                 CRC8 crc;
                 expected_message += "#";
