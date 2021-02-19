@@ -245,6 +245,8 @@ bool MessageParser::process(char c)
                         set_error(c, romiserial_unexpected_char);
                 }
                 break;
+            default:
+                break;
         }
         
         return has_request;

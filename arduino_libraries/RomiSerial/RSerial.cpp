@@ -98,13 +98,13 @@ int RSerial::readchar(char& c)
 
 bool RSerial::readline(char *buffer, size_t buflen)
 {
-        enum { READ, NL, DONE };
-        
-        int state = READ;
+        enum readstate_t{ READ, NL, DONE };
+
+        readstate_t state = READ;
         size_t n = 0;
         bool success = false;
         
-        while (available()){
+        while (available() && (state != DONE)){
                 char c;
                 if (readchar(c) > 0) {
                     switch (state) {
@@ -122,11 +122,12 @@ bool RSerial::readline(char *buffer, size_t buflen)
                                 state = READ;
                             }
                             break;
+                        case DONE:
+                        default:
+                            break;
                     }
                 }
                 if (n == buflen-1)
-                        break;
-                if (state == DONE)
                         break;
         }
         buffer[n] = '\0';

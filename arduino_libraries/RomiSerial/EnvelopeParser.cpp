@@ -24,10 +24,7 @@
 
 #include "EnvelopeParser.h"
 #include "RomiSerialErrors.h"
-
-#if defined(ARDUINO)
 #include "Log.h"
-#endif
 
 #define START_ENVELOPE(_c)      ((_c) == '#')
 #define END_ENVELOPE(_c)        ((_c) == '\r')
@@ -240,6 +237,9 @@ bool EnvelopeParser::process(char c)
                 } else {
                         set_error(c, romiserial_envelope_expected_end);
                 }
+                break;
+        default:
+            break;
         }
         
         return has_message;
