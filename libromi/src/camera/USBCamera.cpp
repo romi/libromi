@@ -64,8 +64,7 @@ namespace romi {
                 r_info("USBCamera::open: %s, %ux%u", _device.c_str(),
                        width, height);
 
-                _camera = new_camera(_device.c_str(), IO_METHOD_MMAP,
-                                     width, height);
+                _camera = new_camera(_device.c_str(), width, height);
                 if (_camera != 0) {
                         start_capture_thread();
                         success = true;

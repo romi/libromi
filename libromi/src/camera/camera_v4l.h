@@ -52,16 +52,9 @@
 extern "C" {
 #endif
 
-typedef enum {
-        IO_METHOD_READ,
-        IO_METHOD_MMAP,
-        IO_METHOD_USERPTR,
-} io_method;
-
 typedef struct _camera_t camera_t;
 
 camera_t* new_camera(const char* dev, 
-                     io_method io,
                      unsigned int width, 
                      unsigned int height);
 
