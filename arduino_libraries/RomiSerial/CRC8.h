@@ -42,9 +42,9 @@ public:
         void init_table(uint8_t poly = 0x07) {
                 uint8_t crc;                
                 for (uint16_t i = 0; i <= UINT8_MAX; i++) {
-                        crc = (uint8_t)i;
+                        crc = (uint8_t) i;
                         for (uint8_t j = 0; j < 8; j++)
-                            crc = (uint8_t)(crc << 1) ^ (uint8_t )((crc & 0x80) ? poly : 0);
+                                crc = (uint8_t) ((uint8_t)(crc << 1) ^ (uint8_t) ((crc & (uint8_t) 0x80) ? poly : 0));
                         _table[i] = crc;
                 }
         }
