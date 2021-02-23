@@ -1,6 +1,6 @@
 MESSAGE("Importing Romi Project Build Settings" )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -19,9 +19,11 @@ endif()
 # For now everything is debug. Set Compile options locally to maintain independent library builds.
 # Ideal list of warnings! Add gradually!
 #"-Wall -Wextra -Wpedantic -Werror -Wmissing-include-dirs -Wconversion -Wsign-conversion -Weffc++ -Wzero-as-null-pointer-constant -Wswitch-default -Wswitch-enum -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2)
-set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wmissing-include-dirs -Wconversion -Wsign-conversion -Wzero-as-null-pointer-constant -Wswitch-default -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2")
+#set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wmissing-include-dirs -Wconversion -Wsign-conversion -Wzero-as-null-pointer-constant -Wswitch-default -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2")
+set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wmissing-include-dirs -Wconversion -Wsign-conversion")
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS}  -Wuseless-cast -Weffc++ ${PROJECT_SANITISE_FLAGS}")
+#set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS} -Wuseless-cast -Weffc++ ${PROJECT_SANITISE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS} -Wuseless-cast ${PROJECT_SANITISE_FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_C_FLAGS "${COMMON_COMPILATION_FLAGS} ${PROJECT_SANITISE_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG "-O0")
@@ -29,9 +31,9 @@ set(CMAKE_C_FLAGS_DEBUG "-O0")
 set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROJECT_SANITISE_FLAGS}")
 
 # Place this after the include so that the flags are appended and not overwritten.
-if (BUILD_COVERAGE AND BUILD_TESTS)
-    append_coverage_compiler_flags()
-endif()
+#if (BUILD_COVERAGE AND BUILD_TESTS)
+#    append_coverage_compiler_flags()
+#endif()
 ############################################################
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
