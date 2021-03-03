@@ -80,9 +80,6 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_2)
         Image image;
         success = ImageIO::load(image, jpg_file);
 
-        auto& p0 = rgb.data();
-        auto& p1 = image.data();
-
         ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::RGB);
         ASSERT_EQ(image.width(), 4);
