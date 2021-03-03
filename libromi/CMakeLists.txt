@@ -4,39 +4,6 @@ project(libromi)
 set(romi_VERSION_MAJOR 0)
 set(romi_VERSION_MINOR 1)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# Default option is off.
-# We override this on the server for a test buid, so tests should be run with this on before checking in.
-option(ADDRESS_SANITISER_BUILD "Enable build settings to allow address sanitiser" ON) # default to off
-
-if(ADDRESS_SANITISER_BUILD)
-
-    message(WARNING "Enabling GCC address sanitiser will disable all Valgrind tasks due to compatibility errors")
-    set( PROJECT_SANITISE_FLAGS
-            "-fsanitize=address,undefined,shift,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,alignment,object-size,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr")
-else()
-    MESSAGE("libr sanitize flags off")
-    set( PROJECT_SANITISE_FLAGS "")
-endif()
-
-# For now everything is debug. Set Compile options locally to maintain independent library builds.
-# TBD: add -Wconversion flag.
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic  -Werror -Wno-unused-parameter ${PROJECT_SANITISE_FLAGS}")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0")
-set(CMAKE_C_FLAGS "-Wall -Wextra -Wpedantic  -Werror -Wno-unused-parameter ${PROJECT_SANITISE_FLAGS}")
-set(CMAKE_C_FLAGS_DEBUG "-O0")
-
-set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROJECT_SANITISE_FLAGS}")
-
-############################################################
-
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 ############################################################
 
 set(SOURCES
@@ -195,24 +162,29 @@ set(SOURCES
         src/weeder/ImageCropper.cpp
         src/weeder/Pipeline.cpp
         src/weeder/PipelineFactory.cpp
-        src/weeder/quincunx/Quincunx.h
-        src/weeder/quincunx/Quincunx.cpp
-        src/weeder/quincunx/point.h
-        src/weeder/quincunx/point.c
         src/weeder/svm/SVMSegmentation.h
         src/weeder/svm/SVMSegmentation.cpp
         src/weeder/som/SOM.cpp
         src/weeder/som/Superpixels.cpp
-        src/weeder/som/slic.cpp
         src/weeder/som/fixed.c
+        src/weeder/quincunx/point.h
+        src/weeder/quincunx/point.c
         )
 
+set(NO_CONV_SOURCES
+        src/weeder/som/slic.cpp
+        src/weeder/quincunx/Quincunx.h
+        src/weeder/quincunx/Quincunx.cpp
+        )
+
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)
+#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-conversion)
+#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-sign-conversion)
+#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-float-conversion)
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-set_source_files_properties(src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)
-
-add_library(romi SHARED ${SOURCES})
+add_library(romi SHARED ${SOURCES} ${NO_CONV_SOURCES})
 
 
 target_include_directories(romi
@@ -222,6 +194,7 @@ target_include_directories(romi
 
 target_link_libraries(romi
         romiserial
+        r
         rpp
         rcompp
         fluidsynth

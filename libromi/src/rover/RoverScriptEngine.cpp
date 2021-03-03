@@ -44,7 +44,7 @@ namespace romi {
                 engine->run_script(args.rover, args.script_index);
         }
         
-        void RoverScriptEngine::run_script(Rover* rover, int script_index)
+        void RoverScriptEngine::run_script(Rover* rover, size_t script_index)
         {
                 int result_event = _finished_event;
                 Script& script = _scripts[script_index];
@@ -107,7 +107,7 @@ namespace romi {
                 return success;
         }
                 
-        bool RoverScriptEngine::execute_homing(Rover* rover)
+        bool RoverScriptEngine::execute_homing(__attribute__((unused))Rover* rover)
         {
                 // bool success = rover->cnc.homing();
                 // if (!success)
@@ -117,7 +117,7 @@ namespace romi {
                 return false;
         }
 
-        void RoverScriptEngine::execute_script(Rover& rover, int id)
+        void RoverScriptEngine::execute_script(Rover& rover, size_t id)
         {
                 r_debug("RoverScriptEngine::execute_script: '%d'", id);
                 

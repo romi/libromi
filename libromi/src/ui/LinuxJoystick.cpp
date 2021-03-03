@@ -53,10 +53,10 @@ namespace romi {
 
         void LinuxJoystick::initialize()
         {
-                int num_axes = try_count_axes();
+                size_t num_axes = try_count_axes();
                 _axes.resize(num_axes, 0.0);
                 
-                int num_buttons = try_count_buttons();
+                size_t num_buttons = try_count_buttons();
                 _buttons.resize(num_buttons, false);
         }
 
@@ -107,7 +107,7 @@ namespace romi {
         
         void LinuxJoystick::parse_event(struct js_event& linux_event)
         {
-                linux_event.type &= ~JS_EVENT_INIT;
+                linux_event.type &= (uint8_t )~JS_EVENT_INIT;
 
                 switch (linux_event.type) {
                 case JS_EVENT_BUTTON:
@@ -166,7 +166,7 @@ namespace romi {
                 return _event;
         }
         
-        int LinuxJoystick::try_count_axes()
+        size_t LinuxJoystick::try_count_axes()
         {
                 int count = count_axes();
                 if (count == -1) {
@@ -175,7 +175,7 @@ namespace romi {
                                                  "number of axes.");
                 }
                 r_info("LinuxJoystick::count_axes: %d", count);
-                return count;
+                return (size_t)count;
         }
         
         int LinuxJoystick::count_axes()
@@ -188,7 +188,7 @@ namespace romi {
                 return retval;
         }
         
-        int LinuxJoystick::try_count_buttons()
+        size_t LinuxJoystick::try_count_buttons()
         {
                 int count = count_buttons();
                 if (count == -1) {
@@ -197,7 +197,7 @@ namespace romi {
                                                  "number of buttons.");
                 }
                 r_info("LinuxJoystick::count_buttons: %d", count);
-                return count;
+                return (size_t)count;
         }
 
         int LinuxJoystick::count_buttons()

@@ -26,6 +26,12 @@
 #include "IFolder.h"
 #include "Quincunx.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+
 namespace romi {
         
         static void store_svg(IFolder &session,
@@ -80,8 +86,8 @@ namespace romi {
                 ssize_t yi_max = y0 + mask.height();
                 size_t xm_min = 0;
                 size_t ym_min = 0;
-                float *data1 = image.data();
-                float *data2 = mask.data();
+                auto& data1 = image.data();
+                auto& data2 = mask.data();
 
                 if (image.type() != Image::BW || mask.type() != Image::BW) {
                         r_err("Quincunx: convolution: Can only handle BW images");
@@ -147,7 +153,7 @@ namespace romi {
         
                 for (int y = ymin; y <= ymax; y++) {
                         float _y = (float) y - yc;
-                        float _x = sqrtf(r2 - (float) (_y * _y));
+                        float _x = sqrtf(r2 - (_y * _y));
                         int xmin = (int) roundf(xc - _x);
                         int xmax = (int) roundf(xc + _x);
                 
@@ -302,7 +308,7 @@ namespace romi {
                 return positions;
         }
         
-        static list_t *compute_positions(IFolder &session,
+        static list_t *compute_positions(__attribute((unused))IFolder &session,
                                          Image& mask,
                                          double distance_plants,
                                          double distance_rows,
@@ -953,7 +959,7 @@ namespace romi {
         
         ////////////////////////////////////////////////////////////////////
 
-        static void store_path(membuf_t *buffer, list_t *points, int h, double scale)
+        static void store_path(membuf_t *buffer, list_t *points, __attribute((unused))int h, double scale)
         {
                 membuf_printf(buffer, "    <path d=\"");
                 float x, y;
@@ -982,7 +988,7 @@ namespace romi {
         static void store_zones(membuf_t *buffer,
                                 list_t *positions,
                                 double radius_zones,
-                                double h, double scale)
+                                __attribute((unused))double h, double scale)
         {
                 double r = radius_zones * scale;
                 for (list_t *l = positions; l != NULL; l = list_next(l)) {
@@ -1028,5 +1034,6 @@ namespace romi {
         }
 
 }
+#pragma GCC diagnostic pop
 
 

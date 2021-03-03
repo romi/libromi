@@ -43,8 +43,8 @@ namespace romi {
                         
                 virtual ~FakeCNCController() override = default;
 
-                bool configure_homing(AxisIndex axis1, AxisIndex axis2,
-                                      AxisIndex axis3) override {
+                bool configure_homing(__attribute__((unused))AxisIndex axis1, __attribute__((unused))AxisIndex axis2,
+                                      __attribute__((unused))AxisIndex axis3) override {
                         return true;
                 }
 
@@ -60,11 +60,11 @@ namespace romi {
                         return true;
                 }
                 
-                bool synchronize(double timeout) {
+                bool synchronize(__attribute__((unused))double timeout) override{
                         return true;
                 }
                 
-                bool move(int16_t millis, int16_t steps_x,
+                bool move(__attribute__((unused))int16_t millis, int16_t steps_x,
                           int16_t steps_y, int16_t steps_z) override {
                         _pos[0] += steps_x;
                         _pos[1] += steps_y;

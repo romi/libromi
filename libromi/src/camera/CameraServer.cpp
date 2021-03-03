@@ -28,16 +28,16 @@
 namespace romi {
 
         CameraServer::CameraServer(Camera &camera, const char *name, const char *topic)
-                : _camera(camera), _service(0)
+                : _camera(camera), _service(nullptr), _image()
         {
                 _service = registry_open_service(name, topic, 0);
                 
-                if (_service == NULL) {
+                if (_service == nullptr) {
                         r_err("Failed to create the service");
                         throw std::runtime_error("Failed to create the service");
                 };
                 
-                int err = service_export(_service, "camera.jpg", 0,
+                int err = service_export(_service, "camera.jpg", nullptr,
                                          "image/jpeg", this, _send_image);
                 if (err) {
                         r_err("service_export failed");

@@ -99,7 +99,7 @@ namespace romi {
         }
         
         static inline fixed_t rexp(fixed_t const& a) {
-                return std::exp(a);
+                return static_cast<fixed_t>(std::exp(a));
         }
         
         static inline fixed_t rsquare(fixed_t const& a) {
@@ -428,8 +428,8 @@ namespace romi {
                 }
                 
                 index = 0;
-                memset(_dfx, 0, _path_length * sizeof(T));        
-                memset(_dfy, 0, _path_length * sizeof(T));        
+                memset(_dfx, 0, static_cast<size_t>(_path_length) * sizeof(T));
+                memset(_dfy, 0, static_cast<size_t>(_path_length) * sizeof(T));
                 for (int city = 0; city < _num_cities; city++) {
                         for (int node = 0; node < _path_length; node++) {
                                 T tmp = rmul(_dx[index], _w[index]);

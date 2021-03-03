@@ -48,8 +48,8 @@ namespace romi {
                 
                 jpeg_stdio_dest(&cinfo, outfile);
 
-                cinfo.image_width = image.width(); 
-                cinfo.image_height = image.height();
+                cinfo.image_width = static_cast<JDIMENSION>(image.width());
+                cinfo.image_height = static_cast<JDIMENSION>(image.height());
                 
                 if (image.type() == Image::BW) {
                         cinfo.input_components = 1;	
@@ -64,15 +64,16 @@ namespace romi {
 
                 jpeg_start_compress(&cinfo, TRUE);
 
-                buffer = (JSAMPLE*) r_alloc(image.channels() * image.width()); 
+                buffer = (JSAMPLE*) r_alloc(image.channels() * image.width());
 
                 size_t index = 0;
-                float *data = image.data();
+                std::vector<float>& data = image.data();
                 
                 while (cinfo.next_scanline < cinfo.image_height) {
                         if (image.type() == Image::BW) {
-                                for (size_t i = 0; i < image.width(); i++)
+                                for (size_t i = 0; i < image.width(); i++){
                                         buffer[i] = (uint8_t) (data[index++] * 255.0f);
+                                }
                         } else {
                                 for (size_t i = 0, j = 0; i < image.width(); i++) {
                                         buffer[j++] = (uint8_t) (data[index++] * 255.0f);
@@ -125,7 +126,8 @@ namespace romi {
                 }
                 
                 png_set_IHDR(png_ptr, info_ptr,
-                             image.width(), image.height(), 
+                             static_cast<png_uint_32>(image.width()),
+                             static_cast<png_uint_32>(image.height()),
                              8, 
                              (image.type() == Image::BW)? PNG_COLOR_TYPE_GRAY : PNG_COLOR_TYPE_RGB,
                              PNG_INTERLACE_NONE,
@@ -141,7 +143,7 @@ namespace romi {
                                                                  * image.channels());
                 }
 
-                float *data = image.data();
+                auto& data = image.data();
                 
                 if (image.type() == Image::BW) {
                         for (y = 0, k = 0; y < image.height(); y++) {
@@ -242,12 +244,12 @@ namespace romi {
                 struct jpeg_error_mgr pub;
                 struct jpeg_decompress_struct cinfo;
                 JSAMPARRAY buffer;
-                int row_stride;
+                size_t row_stride;
                 FILE *infile;
         
-                if ((infile = fopen(filename, "rb")) == NULL) {
+                if ((infile = fopen(filename, "rb")) == nullptr) {
                         fprintf(stderr, "Failed to open the file %s\n", filename);
-                        return NULL;
+                        return false;
                 }
 
                 /* Step 1: allocate and initialize JPEG decompression object */
@@ -309,12 +311,12 @@ namespace romi {
                 }
 
                 /* JSAMPLEs per row in output buffer */
-                row_stride = cinfo.output_width * cinfo.output_components;
+                row_stride = cinfo.output_width * size_t(cinfo.output_components);
 
                 /* Make a one-row-high sample array that will go away
                  * when done with image */
                 buffer = (*cinfo.mem->alloc_sarray)
-                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, static_cast<JDIMENSION>(row_stride), 1);
 
                 /* Step 6: while (scan lines remain to be read) */
                 /*           jpeg_read_scanlines(...); */
@@ -334,18 +336,19 @@ namespace romi {
 
                         unsigned int offset;
                         unsigned char* p = buffer[0];
-                        float *data = image.data();
+                        auto& imagedata = image.data();
                         
                         if (image.type() == Image::BW) {
                                 offset = (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++, offset++) 
-                                        data[offset] = (float) p[i] / 255.0f;
+                                for (size_t i = 0; i < cinfo.output_width; i++, offset++) {
+                                        imagedata[offset] = (float) p[i] / 255.0f;
+                                }
                         } else {
                                 offset = 3 * (cinfo.output_scanline - 1) * cinfo.output_width;
                                 for (size_t i = 0; i < cinfo.output_width; i++) {
-                                        data[offset++] = (float) *p++ / 255.0f;
-                                        data[offset++] = (float) *p++ / 255.0f;
-                                        data[offset++] = (float) *p++ / 255.0f;
+                                        imagedata[offset++] = (float) *p++ / 255.0f;
+                                        imagedata[offset++] = (float) *p++ / 255.0f;
+                                        imagedata[offset++] = (float) *p++ / 255.0f;
                                 }
                         }
                 }
@@ -381,131 +384,131 @@ namespace romi {
                 return true;
         }
 
-        bool ImageIO::load_png(Image& image, const char *filename)
+        bool ImageIO::load_png(Image& image, const char *filename) {
+            size_t x, y, i, k;
+            FILE *fp = nullptr;
+            png_structp png = nullptr;
+            png_infop info = nullptr;
+            png_bytep *row_pointers = nullptr;
+            bool success = false;
+            png_byte color_type = 0;
+            png_byte bit_depth = 0;
+            size_t width = 0;
+            size_t height = 0;
+
+            try {
+            png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+            if (png == nullptr) {
+                throw std::runtime_error("ImageIO::load_png: png_create_read_struct failed");
+            }
+
+            if (setjmp(png_jmpbuf(png))) {
+                r_err("ImageIO::load_png: setjmp returned error");
+                return false;
+            }
+
+            info = png_create_info_struct(png);
+            if (info == nullptr) {
+                throw std::runtime_error("ImageIO::load_png: png_create_info_struct failed");
+            }
+
+            fp = fopen(filename, "rb");
+            if (fp == nullptr) {
+                std::string error = std::string("ImageIO::load_png: Failed to open the file ") + filename;
+                throw std::runtime_error(error);
+            }
+
+            png_init_io(png, fp);
+            png_read_info(png, info);
+
+            color_type = png_get_color_type(png, info);
+            bit_depth = png_get_bit_depth(png, info);
+            width = png_get_image_width(png, info);
+            height = png_get_image_height(png, info);
+
+            // Convert 16-bits to 8-bits
+            if (bit_depth == 16)
+                png_set_strip_16(png);
+
+            // Convert < 8-bit gray scale to 8-bit
+            if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                png_set_expand_gray_1_2_4_to_8(png);
+
+            if (color_type == PNG_COLOR_TYPE_GRAY) {
+                image.init(Image::BW, width, height);
+
+            } else if (color_type == PNG_COLOR_TYPE_RGB
+                       || color_type == PNG_COLOR_TYPE_RGBA) {
+                image.init(Image::RGB, width, height);
+
+            } else {
+                throw std::runtime_error("Unsupported PNG image format");
+            }
+
+            png_read_update_info(png, info);
+
+            row_pointers = (png_bytep *) r_alloc(sizeof(png_bytep) * height);
+            if (row_pointers == nullptr)
+                throw std::runtime_error("failed to allocate row_pointers mem.");
+
+            for (y = 0; y < height; y++) {
+                row_pointers[y] = (png_byte *) r_alloc(png_get_rowbytes(png, info));
+                if (row_pointers[y] == nullptr)
+                    throw std::runtime_error(std::string("failed to allocate row_pointers[") + std::to_string(y) + "]");
+            }
+
+            png_read_image(png, row_pointers);
+
+            auto& data = image.data();
+
+            if (color_type == PNG_COLOR_TYPE_GRAY) {
+                for (y = 0, k = 0; y < height; y++) {
+                    png_bytep row = row_pointers[y];
+                    for (x = 0; x < width; x++)
+                        data[k++] = (float) *row++ / 255.0f;
+                }
+            } else if (color_type == PNG_COLOR_TYPE_RGB) {
+                for (y = 0, k = 0; y < height; y++) {
+                    png_bytep row = row_pointers[y];
+                    for (x = 0; x < width; x++) {
+                        data[k++] = (float) *row++ / 255.0f;
+                        data[k++] = (float) *row++ / 255.0f;
+                        data[k++] = (float) *row++ / 255.0f;
+                    }
+                }
+            } else if (color_type == PNG_COLOR_TYPE_RGBA) {
+                for (y = 0, k = 0; y < height; y++) {
+                    png_bytep row = row_pointers[y];
+                    for (x = 0, i = 0; x < width; x++, i += 4) {
+                        float alpha = (float) row[i + 3] / 255.0f;
+                        data[k++] = alpha * (float) row[i] / 255.0f;
+                        data[k++] = alpha * (float) row[i + 1] / 255.0f;
+                        data[k++] = alpha * (float) row[i + 2] / 255.0f;
+                    }
+                }
+            }
+
+            success = true;
+        }
+                
+        catch (std::exception& e)
         {
-                size_t x, y, i, k;
-                FILE *fp = NULL;
-                png_structp png = NULL;
-                png_infop info = NULL;
-                png_bytep *row_pointers = NULL;
-                bool success = false;
-                png_byte color_type = 0;
-                png_byte bit_depth = 0;
-                size_t width = 0;
-                size_t height = 0;
-                float *data = 0;
-                
-                png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-                if (png == NULL) {
-                        r_err("ImageIO::load_png: png_create_read_struct failed");
-                        goto cleanup_and_exit;
-                }
+            r_err(e.what());
+        }
 
-                if (setjmp(png_jmpbuf(png))) {
-                        r_err("ImageIO::load_png: setjmp returned error");
-                        return false;
-                }
+        if (fp)
+                fclose(fp);
 
-                info = png_create_info_struct(png);
-                if (info == NULL) {
-                        r_err("ImageIO::load_png: png_create_info_struct failed");
-                        goto cleanup_and_exit;
-                }
-        
-                fp = fopen(filename, "rb");
-                if (fp == NULL) {
-                        r_err("ImageIO::load_png: Failed to open the file '%s'", filename);
-                        goto cleanup_and_exit;
-                }
-        
-                png_init_io(png, fp);
-                png_read_info(png, info);
+        if (row_pointers) {
+                for (y = 0; y < height; y++)
+                        if (row_pointers[y])
+                                r_free(row_pointers[y]);
+                r_free(row_pointers);
+        }
 
-                color_type = png_get_color_type(png, info);
-                bit_depth = png_get_bit_depth(png, info);
-                width = png_get_image_width(png, info);
-                height = png_get_image_height(png, info);
+        png_destroy_read_struct(&png, &info, nullptr);
 
-                // Convert 16-bits to 8-bits 
-                if (bit_depth == 16)
-                        png_set_strip_16(png);
-
-                // Convert < 8-bit gray scale to 8-bit 
-                if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-                        png_set_expand_gray_1_2_4_to_8(png);
-
-                if (color_type == PNG_COLOR_TYPE_GRAY) {
-                        image.init(Image::BW, width, height);
-                        
-                } else if (color_type == PNG_COLOR_TYPE_RGB
-                           || color_type == PNG_COLOR_TYPE_RGBA) {
-                        image.init(Image::RGB, width, height);
-                        
-                } else {
-                        r_err("Unsupported PNG image format");
-                        goto cleanup_and_exit;
-                }
-                
-                png_read_update_info(png, info);
-
-                row_pointers = (png_bytep*) r_alloc(sizeof(png_bytep) * height);
-                if (row_pointers == NULL) 
-                        goto cleanup_and_exit;
-        
-                for (y = 0; y < height; y++) {
-                        row_pointers[y] = (png_byte*) r_alloc(png_get_rowbytes(png, info));
-                        if (row_pointers[y] == NULL) 
-                                goto cleanup_and_exit;
-                }
-        
-                png_read_image(png, row_pointers);
-
-                data = image.data();
-                
-                if (color_type == PNG_COLOR_TYPE_GRAY) {
-                        for (y = 0, k = 0; y < height; y++) {
-                                png_bytep row = row_pointers[y];
-                                for (x = 0; x < width; x++)
-                                        data[k++] = (float) *row++ / 255.0f;
-                        }
-                } else if (color_type == PNG_COLOR_TYPE_RGB) {
-                        for (y = 0, k = 0; y < height; y++) {
-                                png_bytep row = row_pointers[y];
-                                for (x = 0; x < width; x++) {
-                                        data[k++] = (float) *row++ / 255.0f;
-                                        data[k++] = (float) *row++ / 255.0f;
-                                        data[k++] = (float) *row++ / 255.0f;
-                                }
-                        }
-                } else if (color_type == PNG_COLOR_TYPE_RGBA) {
-                        for (y = 0, k = 0; y < height; y++) {
-                                png_bytep row = row_pointers[y];
-                                for (x = 0, i = 0; x < width; x++, i += 4) {
-                                        float alpha = (float) row[i+3] / 255.0f;
-                                        data[k++] = alpha * (float) row[i] / 255.0f;
-                                        data[k++] = alpha * (float) row[i+1] / 255.0f;
-                                        data[k++] = alpha * (float) row[i+2] / 255.0f;
-                                }
-                        }
-                }
-
-                success = true;
-                
-        cleanup_and_exit:
-                
-                if (fp)
-                        fclose(fp);
-                
-                if (row_pointers) {
-                        for (y = 0; y < height; y++) 
-                                if (row_pointers[y])
-                                        r_free(row_pointers[y]);
-                        r_free(row_pointers);
-                }
-                
-                png_destroy_read_struct(&png, &info, NULL);
-        
-                return success;
+        return success;
         }
 
         bool ImageIO::load_jpg(Image& image, const uint8_t *data, size_t len)
@@ -513,7 +516,7 @@ namespace romi {
                 struct jpeg_error_mgr pub;
                 struct jpeg_decompress_struct cinfo;
                 JSAMPARRAY buffer;
-                int row_stride;
+                size_t row_stride;
                 
                 cinfo.err = jpeg_std_error(&pub);
                 pub.error_exit = exit_error;
@@ -533,34 +536,32 @@ namespace romi {
                     && cinfo.jpeg_color_space == JCS_GRAYSCALE) {
                         r_debug("8-bit grayscale JPEG");
                         image.init(Image::BW, cinfo.output_width, cinfo.output_height);
-                        
                 } else if (cinfo.output_components == 3
                            && cinfo.out_color_space == JCS_RGB) {
                         r_debug("24-bit RGB JPEG");
                         image.init(Image::RGB, cinfo.output_width, cinfo.output_height);
-                        
                 } else {
                         r_err("load_jpg: Unhandled JPEG format");
                         return false;
                 }
 
-                row_stride = cinfo.output_width * cinfo.output_components;
+                row_stride = cinfo.output_width * (size_t)cinfo.output_components;
                 buffer = (*cinfo.mem->alloc_sarray)
-                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, static_cast<JDIMENSION>(row_stride), 1);
 
-                
+
                 while (cinfo.output_scanline < cinfo.output_height) {
                         jpeg_read_scanlines(&cinfo, buffer, 1);
 
                         unsigned int offset;
                         unsigned char* p = buffer[0];
-                        float *img = image.data();
-                        
+                        auto& img = image.data();
+
                         if (image.type() == Image::BW) {
                                 offset = (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++, offset++) 
+                                for (size_t i = 0; i < cinfo.output_width; i++, offset++)
                                         img[offset] = (float) p[i] / 255.0f;
-                                
+
                         } else {
                                 offset = 3 * (cinfo.output_scanline - 1) * cinfo.output_width;
                                 for (size_t i = 0; i < cinfo.output_width; i++) {
@@ -573,7 +574,7 @@ namespace romi {
 
                 jpeg_finish_decompress(&cinfo);
                 jpeg_destroy_decompress(&cinfo);
-                
+
                 return true;
         }
 
@@ -617,7 +618,7 @@ namespace romi {
                 struct jpeg_error_mgr jerr;
                 jpeg_dest_t* my_mgr;
                 JSAMPLE* buffer;
-                int index = 0;
+                size_t index = 0;
 
                 cinfo.err = jpeg_std_error(&jerr);
                 jpeg_create_compress(&cinfo);
@@ -632,8 +633,8 @@ namespace romi {
                 my_mgr = (jpeg_dest_t*) cinfo.dest;
                 my_mgr->buffer = &out;
 
-                cinfo.image_width = image.width();	
-                cinfo.image_height = image.height();
+                cinfo.image_width = static_cast<JDIMENSION>(image.width());
+                cinfo.image_height = static_cast<JDIMENSION>(image.height());
                 if (image.type() == Image::BW) {
                         cinfo.input_components = 1;	
                         cinfo.in_color_space = JCS_GRAYSCALE;
@@ -649,7 +650,7 @@ namespace romi {
 
                 buffer = (JSAMPLE*) r_alloc(image.channels() * image.width()); 
 
-                float *data = image.data();
+                auto& data = image.data();
                 
                 while (cinfo.next_scanline < cinfo.image_height) {
                         if (image.type() == Image::BW) {

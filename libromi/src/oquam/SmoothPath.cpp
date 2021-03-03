@@ -192,7 +192,7 @@ namespace romi {
                 smul(segment.v, segment.v, s);
         }
         
-        void SmoothPath::convert_segments_to_atdc(double d, double *vmax, double *amax)
+        void SmoothPath::convert_segments_to_atdc(double d, __attribute__((unused)) double *vmax, double *amax)
         {
                 create_atdc();
                 copy_start_position_to_atdc();
@@ -478,7 +478,7 @@ namespace romi {
                         n = w0[2] / w1[2];
                 return (n > 0.0);
         }        
-        static void define_unit_vectors_same_dir(double *w0, double *w1,
+        static void define_unit_vectors_same_dir(double *w0, __attribute__((unused)) double *w1,
                                                  double *ex, double *ey)
         {
                 normalize(ex, w0);
@@ -487,7 +487,7 @@ namespace romi {
                 ey[2] = ex[2];
         }
 
-        static void define_unit_vectors_opposite_dir(double *w0, double *w1,
+        static void define_unit_vectors_opposite_dir(double *w0, __attribute__((unused)) double *w1,
                                                      double *ex, double *ey)
         {
                 normalize(ey, w0);

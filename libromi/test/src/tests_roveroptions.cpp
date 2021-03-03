@@ -23,11 +23,11 @@ protected:
 
 TEST_F(roveroptions_tests, test_parse)
 {
-        Option list[] = {
-                { "help", false, 0, "Print help message" },
-                { "config", true, 0, "Path of the config file" },
+        std::vector<Option> options_list = {
+                { "help", false, nullptr, "Print help message" },
+                { "config", true, nullptr, "Path of the config file" },
         };
-        GetOpt options(list, 2);
+        GetOpt options(options_list);
 
         const char *argv[] = { "app", "--help", "--config", "config.json", 0 };
 
@@ -39,11 +39,11 @@ TEST_F(roveroptions_tests, test_parse)
 
 TEST_F(roveroptions_tests, test_print_usage)
 {
-        Option list[] = {
-                { "help", false, 0, "Print help message" },
-                { "config", true, 0, "Path of the config file" },
+        std::vector<Option> options_list = {
+                { "help", false, nullptr, "Print help message" },
+                { "config", true, nullptr, "Path of the config file" },
         };
-        GetOpt options(list, 2);
+        GetOpt options(options_list);
         options.print_usage();
 }
 

@@ -25,21 +25,17 @@
 
 namespace romi {
         
-        WheelOdometry::WheelOdometry(NavigationSettings &rover_config,
-                                     double left_encoder,
-                                     double right_encoder,
-                                     double timestamp)
+        WheelOdometry::WheelOdometry(NavigationSettings &rover_config, double left_encoder, double right_encoder, double timestamp)
+        :   _mutex(), last_timestamp(timestamp), theta(0.0),
+            wheel_circumference(M_PI * rover_config.wheel_diameter),
+            wheel_base(rover_config.wheel_base), encoder_steps(rover_config.encoder_steps)
         {
-                wheel_circumference = M_PI * rover_config.wheel_diameter;
-                wheel_base = rover_config.wheel_base;
-                encoder_steps = rover_config.encoder_steps;
                 encoder[0] = left_encoder;
                 encoder[1] = right_encoder;
                 for (int i = 0; i < 2; i++) {
                         instantaneous_speed[i] = 0;
                         filtered_speed[i] = 0;
                 }
-                last_timestamp = timestamp;
         }
         
         WheelOdometry::~WheelOdometry()
@@ -48,21 +44,21 @@ namespace romi {
 
         void WheelOdometry::get_location(double &x, double &y)
         {
-                SynchronizedCodeBlock sync(_m);
+                SynchronizedCodeBlock sync(_mutex);
                 x = displacement[0];
                 y = displacement[1];
         }
 
         void WheelOdometry::get_speed(double &vx, double &vy)
         {
-                SynchronizedCodeBlock sync(_m);
+                SynchronizedCodeBlock sync(_mutex);
                 vx = filtered_speed[0];
                 vy = filtered_speed[1];
         }
                 
         double WheelOdometry::get_orientation()
         {
-                SynchronizedCodeBlock sync(_m);
+                SynchronizedCodeBlock sync(_mutex);
                 return theta;
         }
 
@@ -73,7 +69,7 @@ namespace romi {
                 double half_wheel_base = 0.5 * wheel_base;
                 double alpha;
 
-                SynchronizedCodeBlock sync(_m);
+                SynchronizedCodeBlock sync(_mutex);
                 
                 // r_debug("encL %f, encR %f steps", left, right);
         

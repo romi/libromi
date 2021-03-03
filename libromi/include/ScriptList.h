@@ -43,14 +43,12 @@ namespace romi {
                 ActionType type;
                 double params[2];
 
-                Action(ActionType atype) {
-                        type = atype;
+                Action(ActionType atype) : type(atype){
                         params[0] = 0.0;
                         params[1] = 0.0;
                 }
 
-                Action(ActionType atype, double param1, double param2) {
-                        type = atype;
+                Action(ActionType atype, double param1, double param2)  : type(atype){
                         params[0] = param1;
                         params[1] = param2;
                 }
@@ -63,9 +61,7 @@ namespace romi {
                 std::string title;
                 std::vector<Action> actions;
 
-                Script(const char *id_, const char *title_) {
-                        id = id_;
-                        title = title_;
+                Script(const char *id_, const char *title_)  : id(id_), title(title_), actions(){
                 }
 
                 void append(Action action) {
@@ -73,7 +69,7 @@ namespace romi {
                 }
         };
 
-        class ScriptList : public std::vector<Script>
+        class ScriptList final : public std::vector<Script>
         {
         protected:
                 void load_scripts(const char *path);
@@ -90,9 +86,9 @@ namespace romi {
                 
         public:
                 
-                ScriptList(const char *path);
-                ScriptList(JsonCpp& json);
-                virtual ~ScriptList() = default;
+                explicit ScriptList(const char *path);
+                explicit ScriptList(JsonCpp& json);
+                ~ScriptList() = default; // We are final so no virtual destructor.
         };
 }
 

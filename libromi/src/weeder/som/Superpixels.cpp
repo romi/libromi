@@ -30,9 +30,9 @@ namespace romi {
 
         void convert_32bit_rgb(Image &mask, uint32_t *buf)
         {
-                int len = mask.width() * mask.height();
-                float *data = mask.data();
-                for (int i = 0; i < len; i++) {
+                size_t len = mask.width() * mask.height();
+                auto data = mask.data();
+                for (size_t i = 0; i < len; i++) {
                         float grey_f = data[i];
                         uint32_t grey_i = (uint32_t) (255.0f * grey_f);
                         buf[i] = (grey_i << 16) | (grey_i << 8) | grey_i;
@@ -71,12 +71,12 @@ namespace romi {
 
         Centers Superpixels::calculate_centers(Image &mask, int max_centers)
         {
-                int len = mask.width() * mask.height();
+                size_t len = mask.width() * mask.height();
                 uint32_t *ubuff = new uint32_t[len];
                 convert_32bit_rgb(mask, ubuff);
 
                 std::vector<int> segmentation_labels;
-                uint32_t segmentation_size = mask.height() * mask.width();
+                size_t segmentation_size = mask.height() * mask.width();
                 segmentation_labels.resize(segmentation_size);
 
                 int* labels = &segmentation_labels[0];
@@ -96,8 +96,8 @@ namespace romi {
 
                 SLIC slic;
                 slic.DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(ubuff,
-                                                                          mask.width(),
-                                                                          mask.height(),
+                                                                          static_cast<int>(mask.width()),
+                                                                          static_cast<int>(mask.height()),
                                                                           labels, numlabels,
                                                                           max_centers,
                                                                           compactness,

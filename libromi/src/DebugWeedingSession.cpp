@@ -104,21 +104,21 @@ namespace romi {
                 ImageIO::store_png(image, name);
         }
 
-        void DebugWeedingFolder::store_svg(const char* name, const char *body, int len)
+        void DebugWeedingFolder::store_svg(const char* name, const char *body, size_t len)
         {
                 std::string filename = make_filename(name, "svg");                
                 std::ofstream file;
                 file.open(filename);
-                file.write(body, len);
+                file.write(body, static_cast<std::streamsize>(len));
                 file.close();
         }
 
-        void DebugWeedingFolder::store_txt(const char* name, const char *body, int len)
+        void DebugWeedingFolder::store_txt(const char* name, const char *body, size_t len)
         {
                 std::string filename = make_filename(name, "txt");                
                 std::ofstream file;
                 file.open(filename);
-                file.write(body, len);
+                file.write(body, static_cast<std::streamsize>(len));
                 file.close();
         }
 
@@ -139,10 +139,10 @@ namespace romi {
                         r_err("dump: write error");
         }
 
-        void DebugWeedingFolder::dump_text(const char *s, ssize_t len)
+        void DebugWeedingFolder::dump_text(const char *s, size_t len)
         {
                 ssize_t n = write(_dump_fd, s, len);
-                if (n != len)
+                if (n != static_cast<ssize_t>(len))
                         r_err("dump: write error");
         }
 
@@ -157,10 +157,10 @@ namespace romi {
                                        int32_t cols, float *values)
         {
                 if (_dump_fd != -1) {
-                        int32_t len = strlen(name);
+                        size_t len = strlen(name);
                         if (len > 31)
                                 len = 31;
-                        dump_int(len);
+                        dump_int(static_cast<int>(len));
                         dump_text(name, len);
                         dump_int(rows);
                         dump_int(cols);
@@ -179,10 +179,10 @@ namespace romi {
                                        int32_t cols, double *values)
         {
                 if (_dump_fd != -1) {
-                        int32_t len = strlen(name);
+                        size_t len = strlen(name);
                         if (len > 31)
                                 len = 31;
-                        dump_int(len);
+                        dump_int(static_cast<int32_t>(len));
                         dump_text(name, len);
                         dump_int(rows);
                         dump_int(cols);
@@ -201,10 +201,10 @@ namespace romi {
                                                   float *a, float *b)
         {
                 if (_dump_fd != -1) {
-                        int32_t len = strlen(name);
+                        size_t len = strlen(name);
                         if (len > 31)
                                 len = 31;
-                        dump_int(len);
+                        dump_int(static_cast<int32_t>(len));
                         dump_text(name, len);
                         dump_int(size);
                         dump_int(2);
@@ -220,10 +220,10 @@ namespace romi {
                                                   double *a, double *b)
         {
                 if (_dump_fd != -1) {
-                        int32_t len = strlen(name);
+                        size_t len = strlen(name);
                         if (len > 31)
                                 len = 31;
-                        dump_int(len);
+                        dump_int(static_cast<int32_t>(len));
                         dump_text(name, len);
                         dump_int(size);
                         dump_int(2);

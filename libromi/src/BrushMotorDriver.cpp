@@ -29,7 +29,7 @@ namespace romi {
                                            JsonCpp &config,
                                            int encoder_steps,
                                            double max_revolutions_per_sec)
-                : _serial(serial)
+                : _serial(serial), _settings()
         {
                 
                 if (!configure_controller(config, encoder_steps, max_revolutions_per_sec)

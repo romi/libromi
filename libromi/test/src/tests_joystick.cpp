@@ -61,7 +61,7 @@ TEST_F(joystick_tests, throw_exception_when_ioctl_fails_1)
 
 ACTION_P(AssignIoctlValue, param) { *static_cast<__u8*>(arg2) = param; }
 ACTION_P(AssignReadValue, param) { *static_cast<struct js_event*>(arg1) = param; }
-ACTION_P(AssignPollValue, value) { arg0[0].revents = value; }
+ACTION_P(AssignPollValue, value) { arg0[0].revents = static_cast<short>(value); }
 
 TEST_F(joystick_tests, throw_exception_when_ioctl_fails_2)
 {
@@ -124,10 +124,10 @@ TEST_F(joystick_tests, assure_expected_initial_state)
                 ASSERT_EQ(joystick.get_num_axes(), 8);
                 ASSERT_EQ(joystick.get_num_buttons(), 12);
                 
-                for (int i = 0; i < joystick.get_num_axes(); i++) {
+                for (size_t i = 0; i < joystick.get_num_axes(); i++) {
                         ASSERT_EQ(joystick.get_axis(i), 0.0);
                 }
-                for (int i = 0; i < joystick.get_num_buttons(); i++) {
+                for (size_t i = 0; i < joystick.get_num_buttons(); i++) {
                         ASSERT_EQ(joystick.is_button_pressed(i), false);
                 }
                 

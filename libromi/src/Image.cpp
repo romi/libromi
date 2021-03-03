@@ -30,12 +30,15 @@ namespace romi {
 
         static size_t channels_per_type(Image::ImageType type)
         {
-                size_t r = -1;
+                size_t r = 0;
                 switch (type) {
                 case Image::BW:
                         r = 1;
                         break;
                 case Image::RGB:
+                        r = 3;
+                        break;
+                default:
                         r = 3;
                         break;
                 }
@@ -47,13 +50,13 @@ namespace romi {
         }
 
         Image::Image(ImageType type, size_t width, size_t height)
-                : _width(0), _height(0), _data(0)
+                : _width(width), _height(height), _type(type), _channels(3), _data()
         { 
                 do_init(type, width, height);
         }
         
         Image::Image(ImageType type, const uint8_t *data, size_t width, size_t height)
-                : _width(0), _height(0), _data(0)
+                : _width(width), _height(height), _type(type), _channels(3),  _data()
         {
                 do_init(type, width, height);
                 import_data(data);
@@ -70,7 +73,7 @@ namespace romi {
                 _channels = channels_per_type(type);
                 _width = width;
                 _height = height;
-                resize_data();
+                _data.resize(length(), 0.0);
         }
 
         void Image::init(ImageType type, size_t width, size_t height)
@@ -89,32 +92,15 @@ namespace romi {
 
         void Image::import_data(const uint8_t *data)
         {
+                _data.clear();
                 size_t len = length();
-                float *p = _data;
                 for (size_t i = 0; i < len; i++)
-                        *p++ = (float) *data++ / 255.0f;
-        }
-
-        void Image::resize_data()
-        {
-                free_data();
-                alloc_data();
+                        _data.emplace_back((float) *data++ / 255.0f);
         }
 
         void Image::free_data()
         {
-                if (_data) {
-                        r_free(_data);
-                        _data = 0;
-                }
-        }
-
-        void Image::alloc_data()
-        {
-                if (_width * _height > 0) {
-                        _data = (float *) r_alloc(byte_length());
-                        memset(_data, 0, byte_length());
-                }
+            _data.clear();
         }
         
         void Image::fill(size_t channel, float color)
@@ -182,7 +168,8 @@ namespace romi {
 
         void Image::copy_to(Image &to)
         {
+                // TBD: Why not use import?
                 to.init(_type, _width, _height);
-                memcpy(to._data, _data, byte_length());
+                to._data = _data;
         }
 }

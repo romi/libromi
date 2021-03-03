@@ -123,11 +123,11 @@ namespace romi {
                 
                 virtual ~StateMachine() = default;
 
-                virtual const char *get_event_name(int id) {
+                virtual const char *get_event_name(__attribute__((unused))int id) {
                         return "unknown-event";
                 }
                 
-                virtual const char *get_state_name(int id)  {
+                virtual const char *get_state_name(__attribute__((unused))int id)  {
                         return "unknown-state";
                 }
                 

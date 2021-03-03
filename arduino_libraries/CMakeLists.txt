@@ -25,6 +25,6 @@ target_include_directories(romiserial
         "${CMAKE_CURRENT_SOURCE_DIR}/RomiSerial"
         )
 
-target_link_libraries(romiserial rpp)
+target_link_libraries(romiserial rpp r)
 
 add_subdirectory(test)

@@ -1,9 +1,13 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-include_directories( "../include")
+# TBD: This should really link with the libromi library.
+# Remove this include when warnings are complete.
+include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
+MESSAGE("Libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
+MESSAGE("Libromi C Flags = ${CMAKE_C_FLAGS}")
 
-##
+include_directories( "../include")
 
 set(SRCS_V
   src/tests_main.cpp
@@ -11,6 +15,7 @@ set(SRCS_V
   ../include/v.h
   ../src/v.cpp
   )
+
 add_executable(romi_rover_unit_tests_libromi_v ${SRCS_V})
 target_link_libraries(romi_rover_unit_tests_libromi_v rpp gtest gmock)
 
@@ -101,6 +106,7 @@ set(SRCS_IMAGE
   ../include/Image.h
   ../src/Image.cpp
   )
+
 add_executable(romi_rover_unit_tests_libromi_image ${SRCS_IMAGE})
 target_link_libraries(romi_rover_unit_tests_libromi_image rpp gtest gmock)
 

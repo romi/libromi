@@ -100,8 +100,8 @@ namespace romi {
                 
                 if (camera_capture(_camera) == 0) {
                         uint8_t *rgb = camera_getimagebuffer(_camera);
-                        int width = camera_width(_camera);
-                        int height = camera_height(_camera);
+                        size_t width = camera_width(_camera);
+                        size_t height = camera_height(_camera);
                         _image.import(Image::RGB, rgb, width, height);
                         
                 } else {

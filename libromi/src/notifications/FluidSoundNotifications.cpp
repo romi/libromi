@@ -154,7 +154,7 @@ namespace romi {
                 fluid_synth_noteon(_synth, 0, 60, sound.volume);
         }
         
-        void FluidSoundNotifications::stop(const char *name)
+        void FluidSoundNotifications::stop(__attribute__((unused)) const char *name)
         {
                 fluid_synth_noteoff(_synth, 0, 60);
         }

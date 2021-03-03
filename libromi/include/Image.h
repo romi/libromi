@@ -26,6 +26,7 @@
 #define __ROMI_IMAGE_H
 
 #include <stdexcept>
+#include <vector>
 
 namespace romi {
 
@@ -41,7 +42,7 @@ namespace romi {
                 size_t _height;
                 ImageType _type;
                 size_t _channels;
-                float *_data;
+                std::vector<float> _data;
 
                 void resize_data();
                 void free_data();
@@ -73,7 +74,7 @@ namespace romi {
                         return _channels;
                 }
                 
-                float *data() {
+                std::vector<float>& data() {
                         return _data;
                 }
                 

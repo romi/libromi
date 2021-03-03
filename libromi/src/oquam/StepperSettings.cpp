@@ -83,7 +83,7 @@ namespace romi {
         
         void StepperSettings::parse_array(JsonCpp& array, double *values)
         {
-                for (int i = 0; i < 3; i++) {
+                for (size_t i = 0; i < 3; i++) {
                         values[i] = array.num(i);
                 }
         }

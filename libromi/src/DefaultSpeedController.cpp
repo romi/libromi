@@ -31,7 +31,7 @@ namespace romi {
         
         DefaultSpeedController::DefaultSpeedController(Navigation &navigation,
                                                        JsonCpp& config)
-                : _navigation(navigation)
+                : _navigation(navigation), _fast(), _accurate()
         {
                 try {
                         JsonCpp fast_config = (config.get("user-interface")

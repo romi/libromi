@@ -67,7 +67,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_moveat(JsonCpp &params, JsonCpp &result,
+        void NavigationAdaptor::execute_moveat(JsonCpp &params, __attribute__((unused)) JsonCpp &result,
                                                rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_moveat");
@@ -88,7 +88,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_move(JsonCpp &params, JsonCpp &result,
+        void NavigationAdaptor::execute_move(JsonCpp &params, __attribute__((unused)) JsonCpp &result,
                                              rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_move");
@@ -109,7 +109,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_stop(JsonCpp &params, JsonCpp &result,
+        void NavigationAdaptor::execute_stop(__attribute__((unused)) JsonCpp &params, __attribute__((unused)) JsonCpp &result,
                                              rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_stop");
@@ -120,7 +120,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_pause(JsonCpp& params, JsonCpp& result,
+        void NavigationAdaptor::execute_pause(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                      rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_pause");
@@ -130,7 +130,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_continue(JsonCpp& params, JsonCpp& result,
+        void NavigationAdaptor::execute_continue(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                          rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_continue");
@@ -140,7 +140,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_reset(JsonCpp& params, JsonCpp& result,
+        void NavigationAdaptor::execute_reset(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                       rcom::RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_reset");

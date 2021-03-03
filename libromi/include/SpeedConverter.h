@@ -43,14 +43,11 @@ namespace romi {
                 double speed_multiplier;         // range [0.1, 1.0]
                 double direction_multiplier;     // range [0.1, 1.0]
 
-                SpeedConverter() {
-                        // By default, very safe values
-                        use_speed_curve = false;
-                        use_direction_curve = false;
-                        speed_curve_exponent = 0.001;
-                        direction_curve_exponent = 0.001;
-                        speed_multiplier = 0.1;
-                        direction_multiplier = 0.1;
+                SpeedConverter() :
+                use_speed_curve(false),
+                use_direction_curve(false),
+                speed_curve_exponent(0.001),
+                direction_curve_exponent(0.001), speed_multiplier(0.1), direction_multiplier(0.1){
                 }
                 
                 void parse(JsonCpp& config);

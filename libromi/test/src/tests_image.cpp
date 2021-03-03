@@ -88,7 +88,7 @@ TEST_F(image_tests, test_init)
 
 TEST_F(image_tests, test_set_get)
 {
-        uint8_t data[] = { 0,  1,  2,  3,
+        float data[] = { 0,  1,  2,  3,
                            4,  5,  6,  7,
                            8,  9, 10, 11,
                           12, 13, 14, 15 };
@@ -170,7 +170,7 @@ TEST_F(image_tests, test_fill_rgb)
         for (size_t chan = 0; chan < 3; chan++) {
                 for (size_t y = 0; y < 4; y++) {
                         for (size_t x = 0; x < 4; x++) {
-                                ASSERT_EQ(image.get(chan, x, y), chan * 1.0f);
+                                ASSERT_EQ(image.get(chan, x, y), float(chan) * 1.0f);
                         }
                 }
         }

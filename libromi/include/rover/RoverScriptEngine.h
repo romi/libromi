@@ -35,7 +35,7 @@ namespace romi {
 
         struct RoverAndScriptIndex {
                 Rover *rover;
-                int script_index;
+                size_t script_index;
         };
         
         class RoverScriptEngine : public ScriptEngine<Rover>
@@ -51,7 +51,7 @@ namespace romi {
                 static void _run_script(RoverScriptEngine *engine,
                                         RoverAndScriptIndex args);
                 
-                void run_script(Rover* rover, int script_index);
+                void run_script(Rover* rover, size_t script_index);
                 int try_run_script(Rover* rover, Script& script);
                 bool execute_action(Rover* rover, Action& action);
                 bool execute_move(Rover* rover, double distance, double speed);
@@ -69,7 +69,7 @@ namespace romi {
                                   int error_event);
                 virtual ~RoverScriptEngine() override = default;
 
-                void execute_script(Rover& target, int id) override;
+                void execute_script(Rover& target, size_t id) override;
                 int get_next_event() override;                
         };
 }

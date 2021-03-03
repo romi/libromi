@@ -286,7 +286,7 @@ namespace romi {
         }
 
         void ATDC::scale_target_speed(double *p0, double *p1,
-                                      double *v0, double *v, double *v1, 
+                                      __attribute__((unused)) double *v0, double *v, __attribute__((unused)) double *v1,
                                       double *amax,
                                       double *scaled_v)
         {

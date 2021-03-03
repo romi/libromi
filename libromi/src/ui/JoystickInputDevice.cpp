@@ -39,19 +39,19 @@ namespace romi {
                 assure_number_of_buttons(button_last);
         }
         
-        void JoystickInputDevice::assure_number_of_axes(int minimum)
+        void JoystickInputDevice::assure_number_of_axes(size_t minimum)
         {
-                int num_axes = _joystick.get_num_axes();
+                size_t num_axes = _joystick.get_num_axes();
                 if (num_axes < minimum) {
-                        r_err("JoystickInputDevice::assure_number_of_buttons: "
-                              "too few buttons (%d<%d)", num_axes, minimum);
+                        r_err("JoystickInputDevice::assure_number_of_axes: "
+                              "too few axes (%d<%d)", num_axes, minimum);
                         throw std::runtime_error("Joystick has too few buttons.");
                 }
         }
         
-        void JoystickInputDevice::assure_number_of_buttons(int minimum)
+        void JoystickInputDevice::assure_number_of_buttons(size_t minimum)
         {
-                int num_buttons = _joystick.get_num_buttons();
+                size_t num_buttons = _joystick.get_num_buttons();
                 if (num_buttons < minimum) {
                         r_err("JoystickInputDevice::assure_number_of_buttons: "
                               "too few buttons (%d<%d)", num_buttons, minimum);

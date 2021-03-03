@@ -67,7 +67,7 @@ namespace romi {
                 Superpixels slic;
 
                 double d = meters_to_pixels * tool_diameter;
-                double n = 1.1 * (double) mask.width() * mask.height() / (d * d);
+                double n = 1.1 * static_cast<double>(mask.width()) * static_cast<double>(mask.height()) / (d * d);
                 int max_cities = (int) n;
 
                 printf(" **** max cities = %d ****\n", max_cities);
@@ -92,8 +92,8 @@ namespace romi {
                                 file.close();
                         }
                 
-                        SelfOrganizedMap<double> som(centers.size(),
-                                                     (int) (2.5 * centers.size()),
+                        SelfOrganizedMap<double> som(static_cast<int>(centers.size()),
+                                                     (int) (2.5 * static_cast<int>(centers.size())),
                                                      _alpha, _beta, _epsilon);
                         
                         som.init_cities(&cx[0], &cy[0]);

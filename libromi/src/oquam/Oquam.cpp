@@ -144,7 +144,7 @@ namespace romi {
         bool Oquam::spindle(double speed)
         {
                 // TODO
-                r_err("Oquam::spindle NOT IMPLEMENTED YET!");
+                r_err("Oquam::spindle NOT IMPLEMENTED YET! %d", speed);
                 return true;
         }
 

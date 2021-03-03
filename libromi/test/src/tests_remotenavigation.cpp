@@ -29,7 +29,7 @@ protected:
 
 public:
         void set_error(const char *method, JsonCpp& params,
-                       JsonCpp& result, rcom::RPCError& error) {
+                       __attribute((unused))JsonCpp& result, rcom::RPCError& error) {
                 r_debug("method=%s", method);
                 sent_method = method;
                 sent_params = params;

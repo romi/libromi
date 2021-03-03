@@ -87,7 +87,7 @@ namespace romi {
                 }
         }
 
-        void CNCAdaptor::execute_get_range(JsonCpp& params, JsonCpp& result,
+        void CNCAdaptor::execute_get_range(__attribute__((unused))JsonCpp& params, JsonCpp& result,
                                           rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_get_range");
@@ -104,7 +104,7 @@ namespace romi {
                 }
         }
         
-        void CNCAdaptor::execute_moveto(JsonCpp& params, JsonCpp& result,
+        void CNCAdaptor::execute_moveto(JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                        rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_moveto");
@@ -136,7 +136,7 @@ namespace romi {
                 }
         }
         
-        void CNCAdaptor::execute_spindle(JsonCpp& params, JsonCpp& result,
+        void CNCAdaptor::execute_spindle(JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                         rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_spindle");
@@ -155,7 +155,7 @@ namespace romi {
                 }
         }
         
-        void CNCAdaptor::execute_travel(JsonCpp& params, JsonCpp& result,
+        void CNCAdaptor::execute_travel(JsonCpp& params, __attribute__((unused))JsonCpp& result,
                                        rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_travel");

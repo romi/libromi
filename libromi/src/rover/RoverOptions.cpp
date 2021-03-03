@@ -29,8 +29,9 @@ using namespace std;
 
 namespace romi {
         
-        static Option _options[] = {
-                { "help", false, 0,
+ //       static Option _options[] = {
+    static std::vector<Option> options = {
+                { "help", false, nullptr,
                   "Print help message" },
 
                 // File paths
@@ -45,35 +46,31 @@ namespace romi {
                   "The session directory where the output "
                   "files are stored (logs, images...)"},
                 
-                { RoverOptions::camera_image, true, 0, 
+                { RoverOptions::camera_image, true, nullptr,
                   "The path of the image file for the file camera."},
                 
-                { RoverOptions::soundfont, true, 0,
+                { RoverOptions::soundfont, true, nullptr,
                   "The path of the soundfont for the sound notification "},
 
-                { RoverOptions::joystick_device, true, 0,
+                { RoverOptions::joystick_device, true, nullptr,
                   "The path of the system device for the input device" },
                 
-                { RoverOptions::display_device, true, 0,
+                { RoverOptions::display_device, true, nullptr,
                   "The path of the system device for the display "},
                 
-                { RoverOptions::camera_device, true, 0, 
+                { RoverOptions::camera_device, true, nullptr,
                   "The device path for the USB camera."},
                 
-                { RoverOptions::cnc_device, true, 0,
+                { RoverOptions::cnc_device, true, nullptr,
                   "The stepper controller's serial device "},
                 
-                { RoverOptions::navigation_device, true, 0,
+                { RoverOptions::navigation_device, true, nullptr,
                   "The brush motor driver's serial device"
                 },
         };
-        
-        static Option *rover_options = _options;
-        static size_t rover_options_length = (sizeof(_options) / sizeof(Option));
-
 
         RoverOptions::RoverOptions()
-                : GetOpt(rover_options, rover_options_length)
+            : GetOpt(options)
         {}
         
         void RoverOptions::exit_if_help_requested()

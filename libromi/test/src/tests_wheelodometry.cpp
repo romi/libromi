@@ -12,14 +12,13 @@ protected:
         JsonCpp config;
         double epsilon;
         
-	wheelodometry_tests() {
+	wheelodometry_tests() : config(), epsilon(0.000001){
                 const char * config_string = "{"
                         "'wheel_diameter': 1.0,"
                         "'wheel_base': 1.0,"
                         "'encoder_steps': 1000.0,"
                         "'maximum_speed': 3.0 }";
                 config = JsonCpp::parse(config_string);
-                epsilon = 0.000001;
 	}
 
 	~wheelodometry_tests() override = default;

@@ -11,7 +11,7 @@ class navigationsettings_tests : public ::testing::Test
 protected:
         JsonCpp config;
         
-	navigationsettings_tests() {
+	navigationsettings_tests() : config(){
                 const char * config_string = "{"
                         "'wheel_diameter': 1.0,"
                         "'wheel_base': 2.0,"

@@ -41,13 +41,13 @@ namespace romi {
                 Joystick &_joystick;
                 JoystickEventMapper &_event_mapper;
                 
-                void assure_number_of_axes(int minimum);
-                void assure_number_of_buttons(int minimum);
+                void assure_number_of_axes(size_t minimum);
+                void assure_number_of_buttons(size_t minimum);
 
         public:
                 JoystickInputDevice(Joystick &joystick,
                                     JoystickEventMapper &event_mapper);                
-                virtual ~JoystickInputDevice() override = default;
+                ~JoystickInputDevice() override = default;
                 
                 int get_next_event() override;
                 double get_forward_speed() override;

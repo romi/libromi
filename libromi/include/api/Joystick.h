@@ -31,7 +31,7 @@ namespace romi {
                 enum JoystickEventType { None, Button, Axis };
                 
                 JoystickEventType type;
-                int number;
+                uint8_t number;
         };
         
         class Joystick
@@ -40,10 +40,10 @@ namespace romi {
                 virtual ~Joystick() = default;
 
                 virtual JoystickEvent& get_next_event() = 0;
-                virtual int get_num_axes() = 0;
-                virtual double get_axis(int i) = 0;
-                virtual int get_num_buttons() = 0;
-                virtual bool is_button_pressed(int i) = 0;
+                virtual size_t get_num_axes() = 0;
+                virtual double get_axis(size_t i) = 0;
+                virtual size_t get_num_buttons() = 0;
+                virtual bool is_button_pressed(size_t i) = 0;
         };
 }
 

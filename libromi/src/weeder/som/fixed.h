@@ -16,8 +16,8 @@ typedef int64_t double_fixed_t;
 #define FIXED_WIDTH 32
 #define FIXED_IBITS 8
 #define FIXED_FBITS (FIXED_WIDTH-FIXED_IBITS)
-#define FIXED_FMAX ((fixed_t)1 << FIXED_FBITS)
-#define FIXED_FMASK (((fixed_t)1 << FIXED_FBITS) - 1)
+#define FIXED_FMAX (1 << FIXED_FBITS)
+#define FIXED_FMASK ((1 << FIXED_FBITS) - 1)
 
 extern double fx_rounding;
 

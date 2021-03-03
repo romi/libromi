@@ -33,10 +33,10 @@ namespace romi {
         {
         protected:
                 CNCRange _range;
-                int _x0;
-                int _y0;
-                int _width;
-                int _height;
+                size_t _x0;
+                size_t _y0;
+                size_t _width;
+                size_t _height;
 
                 void set_workspace(JsonCpp value);
                 void assert_workspace_dimensions();

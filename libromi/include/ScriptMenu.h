@@ -34,7 +34,7 @@ namespace romi {
         {
         protected:
                 ScriptList& _scripts;
-                int _current_menu;
+                size_t _current_menu;
 
                 bool has_menus();
                 

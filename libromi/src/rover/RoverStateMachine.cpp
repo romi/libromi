@@ -291,7 +291,12 @@ namespace romi {
                 r_debug("execute_script");
                 rover.notifications.notify(RoverNotifications::menu_confirmed);
                 int index = rover.menu.get_current_index();
-                rover.script_engine.execute_script(rover, index);
+                if (index < 0)
+                {
+                        rover.display.show(1, "No selection");
+                        return false;
+                }
+                rover.script_engine.execute_script(rover, (size_t)index);
                 rover.display.show(1, "Running");
                 return true;
         }

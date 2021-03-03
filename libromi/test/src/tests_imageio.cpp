@@ -6,6 +6,16 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
+uint8_t grey[] = { 0,  32,  64,  96,
+                   32, 64,  96,  128,
+                   64, 96,  128, 160,
+                   96, 128, 160, 192 };
+
+uint8_t red[] = { 0,0,0,  32,0,0,  64,0,0,  96,0,0,
+                  32,0,0, 64,0,0,  96,0,0,  128,0,0,
+                  64,0,0, 96,0,0,  128,0,0, 160,0,0,
+                  96,0,0, 128,0,0, 160,0,0, 192,0,0 };
+
 class imageio_tests : public ::testing::Test
 {
 protected:
@@ -17,24 +27,14 @@ protected:
         Image rgb;
         
 	imageio_tests() {
-                uint8_t grey[] = { 0,  32,  64,  96,
-                                   32, 64,  96,  128,
-                                   64, 96,  128, 160,
-                                   96, 128, 160, 192 };
-        
-                bw.import(Image::BW, grey, 4, 4);
-                
-                uint8_t red[] = { 0,0,0,  32,0,0,  64,0,0,  96,0,0,
-                                  32,0,0, 64,0,0,  96,0,0,  128,0,0,
-                                  64,0,0, 96,0,0,  128,0,0, 160,0,0,
-                                  96,0,0, 128,0,0, 160,0,0, 192,0,0 };
-        
-                rgb.import(Image::RGB, red, 4, 4);
+
         }
 
 	~imageio_tests() override = default;
 
 	void SetUp() override {
+                bw.import(Image::BW, grey, 4, 4);
+                rgb.import(Image::RGB, red, 4, 4);
         }
 
 	void TearDown() override {}
@@ -59,14 +59,14 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_1)
 
         Image image;
         success = ImageIO::load(image, jpg_file);
-
+        ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::BW);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 1);
 
-        float *p0 = bw.data();
-        float *p1 = image.data();
+        auto& p0 = bw.data();
+        auto& p1 = image.data();
         for (size_t i = 0; i < image.length(); i++) {
                 ASSERT_NEAR(p0[i], p1[i], 0.004);
         }
@@ -80,16 +80,17 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_2)
         Image image;
         success = ImageIO::load(image, jpg_file);
 
+        ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::RGB);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 3);
 
-        // float *p0 = rgb.data();
-        // float *p1 = image.data();
-        // for (size_t i = 0; i < image.length(); i++) {
-        //         ASSERT_NEAR(p0[i], p1[i], 0.1);
-        // }
+        auto& p0 = rgb.data();
+        auto& p1 = image.data();
+         for (size_t i = 0; i < image.length(); i++) {
+                 ASSERT_NEAR(p0[i], p1[i], 0.1);
+         }
 }
 
 TEST_F(imageio_tests, store_png_returns_error_on_invalid_file)
@@ -111,14 +112,14 @@ TEST_F(imageio_tests, successful_store_and_load_png_1)
 
         Image image;
         success = ImageIO::load(image, png_file);
-
+        ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::BW);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 1);
 
-        float *p0 = bw.data();
-        float *p1 = image.data();
+        auto& p0 = bw.data();
+        auto& p1 = image.data();
         for (size_t i = 0; i < image.length(); i++) {
                 ASSERT_NEAR(p0[i], p1[i], 0.004);
         }
@@ -132,13 +133,14 @@ TEST_F(imageio_tests, successful_store_and_load_png_2)
         Image image;
         success = ImageIO::load(image, png_file);
 
+        ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::RGB);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 3);
 
-        float *p0 = rgb.data();
-        float *p1 = image.data();
+        auto& p0 = rgb.data();
+        auto& p1 = image.data();
         for (size_t i = 0; i < image.length(); i++) {
                 ASSERT_NEAR(p0[i], p1[i], 0.004);
         }

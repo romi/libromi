@@ -28,8 +28,8 @@
 
 namespace romi {
         
-        void WeederAdaptor::execute(const char *method, JsonCpp& params,
-                                    JsonCpp& result, rcom::RPCError &error)
+        void WeederAdaptor::execute(const char *method, __attribute__((unused))JsonCpp& params,
+                                    __attribute__((unused))JsonCpp& result, rcom::RPCError &error)
         {
                 r_debug("WeederAdaptor::execute");
                 

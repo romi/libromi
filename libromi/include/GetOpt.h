@@ -33,8 +33,9 @@
 
 namespace romi {
 
-        struct Option
+        class Option
         {
+        public:
                 const char *name;
                 bool requires_value;
                 const char *default_value;
@@ -44,24 +45,22 @@ namespace romi {
         class GetOpt : public Options
         {
         protected:
-                Option *_options;
-                size_t _length;
-                std::vector<struct option> _long_options;
+                std::vector<Option> _options;
+                std::vector<option> _long_options;
                 std::vector<std::string> _descriptions;
                 std::map<std::string, bool> _flags;
                 std::map<std::string, std::string> _values;
 
-                void init(Option *list, size_t len);
                 void generate_long_options();
                 void append_long_option(Option& option);
                 void append_zero_option();
                 void generate_descriptions();
-                void set_option(int index, const char *value);
+                void set_option(size_t index, const char *value);
                 const char *get_default_value(const char *name);
 
         public:
-                
-                GetOpt(Option *list, size_t len);
+
+                GetOpt(std::vector<Option> &options);
                 virtual ~GetOpt() override = default;
 
                 void parse(int argc, char **argv) override;

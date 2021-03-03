@@ -32,6 +32,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// TBD: Use C++ file system library.
+// TBD: This class needs a major rethink.
+// Temporarily "fix" warnings then rework.
+
 namespace romi {
 
         class DebugWeedingFolder : public IFolder
@@ -42,18 +46,18 @@ namespace romi {
                 
                 std::string make_filename(const char* name, const char *extension);
                 void dump_int(int32_t value);
-                void dump_text(const char *s, ssize_t len);
+                void dump_text(const char *s, size_t len);
                 void dump_double(double value);
 
         public:
-                DebugWeedingFolder() : _dump_fd(-1) {};
+                DebugWeedingFolder() : _directory(), _dump_fd(-1) {};
                 virtual ~DebugWeedingFolder() override = default;
                 
                 void store(const char* name, Image &image) override;
-                void store_jpg(const char* name, Image &image);
-                void store_png(const char* name, Image &image);
-                void store_svg(const char* name, const char *body, int len) override;
-                void store_txt(const char* name, const char *body, int len) override;
+                void store_jpg(const char* name, Image &image) override;
+                void store_png(const char* name, Image &image) override;
+                void store_svg(const char* name, const char *body, size_t len) override;
+                void store_txt(const char* name, const char *body, size_t len) override;
 
                 void open_dump() override;
                 void dump(const char *name, int32_t rows,
@@ -66,9 +70,9 @@ namespace romi {
                                      double *a, double *b) override;
                 void close_dump() override;
                 
-                void print_path(float *x, float *y, int len, int n = -1) override;
-                void print_path(double *x, double *y, int len, int n = -1) override;
-                void print_path(Path &path, int n = -1) override;
+                void print_path(float *x, float *y, int len, int n) override;
+                void print_path(double *x, double *y, int len, int n) override;
+                void print_path(Path &path, int n) override;
                 
                 void set_directory(std::string &path) {
                         _directory = path;
@@ -77,59 +81,64 @@ namespace romi {
         
         class ErrorFolder : public IFolder
         {
+        private:
+            std::string _error_string;
         protected:
-                void print_error_message(const char *name = 0) {
+                void print_error_message(const char *name = nullptr) {
                         r_warn("Failed to create the directory. Can't store %s",
                                name? name : "the data");
                 }
 
         public:
+                ErrorFolder() : _error_string() {};
                 virtual ~ErrorFolder() override = default;
 
                 
-                void store(const char* name, Image &image) override {
+                void store(const char* name, __attribute__((unused))Image &image) override {
                         print_error_message(name);
                 }
-                void store_jpg(const char* name, Image &image) {
+                void store_jpg(const char* name, __attribute__((unused))Image &image) override{
                         print_error_message(name);
                 }
-                void store_png(const char* name, Image &image) {
+                void store_png(const char* name, __attribute__((unused))Image &image) override{
                         print_error_message(name);
                 }
                 
-                void store_svg(const char* name, const char *body, int len) override {
+                void store_svg(const char* name, __attribute__((unused))const char *body, __attribute__((unused))size_t len) override {
                         print_error_message(name);
                 }
-                void store_txt(const char* name, const char *body, int len) override {
+                void store_txt(const char* name, __attribute__((unused))const char *body, __attribute__((unused))size_t len) override {
                         print_error_message(name);
                 }
                 void open_dump() override {
                         print_error_message("the dump");
                 }
-                void dump(const char *name, int32_t rows,
-                          int32_t cols, float *values) override {
-                        print_error_message(name);
+                void dump(const char *name, int32_t rows, int32_t cols, float *values) override {
+                        _error_string = std::string(name) + " " + std::to_string(rows) + " " + std::to_string(cols) + " " + std::to_string(values[0]);
+                        print_error_message(_error_string.c_str());
                 }
-                void dump(const char *name, int32_t rows,
-                          int32_t cols, double *values) override {
-                        print_error_message(name);
+                void dump(const char *name, int32_t rows, int32_t cols, double *values) override {
+                    _error_string = std::string(name) + " " + std::to_string(rows) + " " + std::to_string(cols) + " " + std::to_string(values[0]);
+                    print_error_message(_error_string.c_str());
                 }
-                void dump_interleave(const char *name, int32_t size, 
-                                     float *a, float *b) override {
-                        print_error_message(name);
+                void dump_interleave(const char *name, int32_t size, float *a, float *b) override {
+                    _error_string = std::string(name) + " " + std::to_string(size) + " " + std::to_string(a[0]) + " " + std::to_string(b[0]);
+                    print_error_message(_error_string.c_str());
                 }
-                void dump_interleave(const char *name, int32_t size,
-                                     double *a, double *b) override {
-                        print_error_message(name);
+                void dump_interleave(const char *name, int32_t size, double *a, double *b) override {
+                    _error_string = std::string(name) + " " + std::to_string(size) + " " + std::to_string(a[0]) + " " + std::to_string(b[0]);
+                    print_error_message(_error_string.c_str());
                 }
                 void close_dump() override {}
-                void print_path(float *x, float *y, int len, int n = -1) override {
-                        print_error_message();
+                void print_path(float *x, float *y, int len, int n) override {
+                    _error_string = std::to_string(x[0]) + " " + std::to_string(y[0]) + " " + std::to_string(len) + " " + std::to_string(n);
+                    print_error_message(_error_string.c_str());
                 }
-                void print_path(double *x, double *y, int len, int n = -1) override {
-                        print_error_message();
+                void print_path(double *x, double *y, int len, int n) override {
+                    _error_string = std::to_string(x[0]) + " " + std::to_string(y[0]) + " " + std::to_string(len) + " " + std::to_string(n);
+                    print_error_message(_error_string.c_str());
                 }
-                void print_path(Path &path, int n = -1) override {
+                void print_path(__attribute__((unused))Path &path, __attribute__((unused))int n) override {
                         print_error_message();
                 }
         };
@@ -151,12 +160,12 @@ namespace romi {
                 
                 DebugWeedingSession(const char *basedir,
                                     const char *basename)
-                        : _directory(basedir), _basename(basename), _count(0) {
+                        : _directory(basedir), _basename(basename), _folder(), _error_folder(), _count(0) {
                 }
                 
                 virtual ~DebugWeedingSession() override = default;
                 
-                IFolder &start_new_folder();
+                IFolder &start_new_folder() override;
         };
         
 }

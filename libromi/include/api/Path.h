@@ -31,20 +31,20 @@
 
 namespace romi {
 
-        class Path : public std::vector<v3>
+        class Path final : public std::vector<v3>
         {
         protected:
                 bool clamp(CNCRange& range, size_t index, double allowed_error);
 
         public:
-                virtual ~Path() = default;
+                ~Path() = default; // Non virtual as we are final.
                 
                 void set_z(double z);
                 int closest_point(v3 p);
                 void invert_y();
                 void scale(v3 scale);
                 void translate(v3 t);
-                void rotate(Path &out, int start_index);
+                void rotate(Path &out, size_t start_index);
                 bool clamp(CNCRange& range, double allowed_error);
         };
 }

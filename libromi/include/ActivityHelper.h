@@ -43,7 +43,7 @@ namespace romi {
                 std::atomic<ActivityState> _state;
 
         public:
-                ActivityHelper() : _state(Running) {}
+                ActivityHelper() : _mutex() , _continue_condition(), _state(Running){}
                 virtual ~ActivityHelper() = default;
 
                 void check_pause_or_cancel_execution();

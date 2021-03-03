@@ -43,8 +43,9 @@ namespace romi {
                 void send_image(response_t *response);
                 
         public:
-                
                 CameraServer(Camera &camera, const char *name, const char *topic);
+                CameraServer(const CameraServer&) = delete;
+                CameraServer& operator=(const CameraServer&) = delete;
                 virtual ~CameraServer();
         };
 }

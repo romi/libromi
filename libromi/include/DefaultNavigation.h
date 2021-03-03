@@ -39,12 +39,12 @@ namespace romi {
         {
         protected:
 
-                enum { MOVEAT_CAPABLE, MOVING };
+                enum move_status_t{ MOVEAT_CAPABLE, MOVING };
                 
                 MotorDriver &_driver;
                 NavigationSettings &_settings;
                 std::mutex _mutex;
-                int _status;
+                move_status_t _status;
                 int _stop;
 
                 bool do_move(double distance, double speed);
@@ -55,7 +55,7 @@ namespace romi {
         public:
                 
                 DefaultNavigation(MotorDriver &driver, NavigationSettings &settings)
-                        : _driver(driver), _settings(settings), _status(MOVEAT_CAPABLE) {
+                        : _driver(driver), _settings(settings), _mutex(), _status(MOVEAT_CAPABLE), _stop(0) {
                 }
                 
                 virtual ~DefaultNavigation() override = default;

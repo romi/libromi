@@ -36,14 +36,14 @@ namespace romi {
         int Path::closest_point(v3 p)
         {
                 int r = -1;
-                if (size() > 0) {
+                if (!empty()) {
                         r = 0;
                         // Initial estimate:
                         double dmin = norm(at(0) - p);
                         for (size_t i = 1; i < size(); i++) {
                                 double d = norm(at(i) - p);
                                 if (d < dmin) {
-                                        r = i;
+                                        r = (int)i;
                                         dmin = d;
                                 }
                         }
@@ -72,9 +72,9 @@ namespace romi {
                 }
         }
         
-        void Path::rotate(Path &out, int start_index)
+        void Path::rotate(Path &out, size_t start_index)
         {
-                start_index = std::clamp(start_index, 0, (int) size());
+                start_index = std::clamp(start_index, 0UL, size());
                 for (size_t i = 0; i < size(); i++) {
                         size_t index = (start_index + i) % size();
                         out.push_back(at(index));

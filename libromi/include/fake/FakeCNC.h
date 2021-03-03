@@ -49,20 +49,19 @@ namespace romi {
                         return true;
                 }
                 
-                bool moveto(double x, double y, double z,
-                            double relative_speed = 0.1) override {
+                bool moveto(__attribute__((unused))double x, __attribute__((unused))double y, __attribute__((unused))double z, __attribute__((unused))double relative_speed = 0.1) override {
                         return true;
                 }
                 
-                bool spindle(double speed) override {
+                bool spindle(__attribute__((unused))double speed) override {
                         return true;
                 }
                 
-                bool travel(Path &path, double relative_speed = 0.1) override {
+                bool travel(__attribute__((unused))Path &path, __attribute__((unused))double relative_speed = 0.1) override {
                         return true;
                 }
                 
-                bool homing() {
+                bool homing() override{
                         return true;
                 }
                 

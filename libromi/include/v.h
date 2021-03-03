@@ -25,6 +25,8 @@
 #ifndef _OQUAM_V_H_
 #define _OQUAM_V_H_
 
+#include <stddef.h>
+
 namespace romi {
         
         double *smul(double *w, const double *v, double s);
@@ -89,20 +91,22 @@ namespace romi {
                         return _x[2];
                 }
 
-                void operator=(double v) { 
+                v3& operator=(double v) {
                         set(v);
+                        return *this;
                 }
                 
-                void operator=(const double *v) { 
+                v3& operator=(const double *v) {
                         set(v);
+                        return *this;
                 }
                         
                 void set(double v) {
                         vset(_x, v);
                 }
                         
-                void set(int i , double v) {
-                        if (i >= 0 && i < 3) 
+                void set(size_t i , double v) {
+                        if (i < 3)
                                 _x[i] = v;
                 }
                         

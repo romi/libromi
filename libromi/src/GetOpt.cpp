@@ -27,9 +27,9 @@
 using namespace std;
 
 namespace romi {
-        
-        GetOpt::GetOpt(Option *list, size_t len)
-                : _options(list), _length(len)
+
+    GetOpt::GetOpt(std::vector<Option> &options)
+            : _options(options), _long_options(), _descriptions(), _flags(), _values()
         {
                 generate_long_options();
                 generate_descriptions();
@@ -37,7 +37,7 @@ namespace romi {
 
         void GetOpt::generate_long_options()
         {
-                for (size_t i = 0; i < _length; i++) {
+                for (size_t i = 0; i < _options.size(); i++) {
                         append_long_option(_options[i]);
                 }
                 append_zero_option();
@@ -45,7 +45,7 @@ namespace romi {
         
         void GetOpt::append_long_option(Option& option)
         {
-                struct option long_option = { option.name, no_argument, 0, 0 };
+                struct option long_option = { option.name, no_argument, nullptr, 0 };
                 if (option.requires_value)
                         long_option.has_arg = required_argument;
                 _long_options.push_back(long_option);
@@ -53,14 +53,14 @@ namespace romi {
         
         void GetOpt::append_zero_option()
         {
-                struct option long_option = { 0, 0, 0, 0 };
+                option long_option = {nullptr, 0, nullptr, 0 };
                 _long_options.push_back(long_option);
         }
         
         void GetOpt::generate_descriptions()
         {
-                for (size_t i = 0; i < _length; i++)
-                        _descriptions.push_back(_options[i].description);
+                for (size_t i = 0; i < _options.size(); i++)
+                        _descriptions.emplace_back(_options[i].description);
         }
         
         void GetOpt::parse(int argc, char **argv)
@@ -77,11 +77,11 @@ namespace romi {
                         if (c == '?')
                                 r_warn("Unrecognized option");
                         else
-                                set_option(option_index, optarg);
+                                set_option(static_cast<size_t>(option_index), optarg);
                 }
         }
 
-        void GetOpt::set_option(int index, const char *value)
+        void GetOpt::set_option(size_t index, const char *value)
         {
                 const char *name = _long_options[index].name;
 
@@ -112,8 +112,8 @@ namespace romi {
 
         const char *GetOpt::get_default_value(const char *name)
         {
-                const char *retval = 0;
-                for (size_t i = 0; i < _length; i++) {
+                const char *retval = nullptr;
+                for (size_t i = 0; i < _options.size(); i++) {
                         if (rstreq(_options[i].name, name)) {
                                 retval = _options[i].default_value;
                                 break;
@@ -131,7 +131,7 @@ namespace romi {
         {
                 printf("Usage: romi-rover [options]\n");
                 printf("Options:\n");
-                for (size_t i = 0; i < _length; i++) {
+                for (size_t i = 0; i < _options.size(); i++) {
                         printf("--%s", _options[i].name);
                         if (_options[i].requires_value)
                                 printf(" value");

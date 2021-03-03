@@ -56,9 +56,9 @@ namespace romi {
                 void parse_axis_event(struct js_event& linux_event);
                 void parse_button_event(struct js_event& linux_event);
                 
-                int try_count_axes();
-                int count_axes();                
-                int try_count_buttons();
+                size_t try_count_axes();
+                int count_axes();
+                size_t try_count_buttons();
                 int count_buttons();
                 
         public:
@@ -68,26 +68,26 @@ namespace romi {
                 
                 JoystickEvent& get_next_event() override;
                 
-                double get_axis(int i) override {
+                double get_axis(size_t i) override {
                         double value = 0.0;
-                        if (i >=0 && i < (int) _axes.size())
+                        if (i < _axes.size())
                                 value = _axes[i];
                         return value;
                 }
                 
-                bool is_button_pressed(int i) {
+                bool is_button_pressed(size_t i) override{
                         bool value = false;
-                        if (i >=0 && i < (int) _buttons.size())
+                        if (_buttons.size())
                                 value = _buttons[i];
                         return value;
                 }
-                        
-                int get_num_axes() override {
-                        return (int) _axes.size();
+
+                size_t get_num_axes() override {
+                        return _axes.size();
                 }
-                
-                int get_num_buttons() override {
-                        return (int) _buttons.size();
+
+                size_t get_num_buttons() override {
+                        return _buttons.size();
                 }
 
                 void set_debug(bool value) {

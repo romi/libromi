@@ -12,6 +12,12 @@
 
 using namespace std;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -182,7 +188,7 @@ void SLIC::DrawContoursAroundSegments(
 	int*&					labels,
 	const int&				width,
 	const int&				height,
-	const unsigned int&				color )
+        __attribute__((unused))const unsigned int&				color )
 {
 	const int dx8[8] = {-1, -1,  0,  1, 1, 1, 0, -1};
 	const int dy8[8] = { 0, -1, -1, -1, 0, 1, 1,  1};
@@ -222,10 +228,10 @@ void SLIC::DrawContoursAroundSegments(
 	}*/
 
 
-	int sz = width*height;
+	size_t sz = static_cast<size_t>(width * height);
 	vector<bool> istaken(sz, false);
 	vector<int> contourx(sz);vector<int> contoury(sz);
-	int mainindex(0);int cind(0);
+	size_t mainindex(0);size_t cind(0);
 	for( int j = 0; j < height; j++ )
 	{
 		for( int k = 0; k < width; k++ )
@@ -258,8 +264,8 @@ void SLIC::DrawContoursAroundSegments(
 		}
 	}
 
-	int numboundpix = cind;//int(contourx.size());
-	for( int j = 0; j < numboundpix; j++ )
+	size_t numboundpix = cind;//int(contourx.size());
+	for( size_t j = 0; j < numboundpix; j++ )
 	{
 		int ii = contoury[j]*width + contourx[j];
 		ubuff[ii] = 0xffffff;
@@ -270,7 +276,7 @@ void SLIC::DrawContoursAroundSegments(
 			int y = contoury[j] + dy8[n];
 			if( (x >= 0 && x < width) && (y >= 0 && y < height) )
 			{
-				int ind = y*width + x;
+				size_t ind = static_cast<size_t>(y * width + x);
 				if(!istaken[ind]) ubuff[ind] = 0;
 			}
 		}
@@ -289,7 +295,7 @@ void SLIC::DetectLabEdges(
 	const int&					height,
 	vector<double>&				edges)
 {
-	int sz = width*height;
+	size_t sz = static_cast<size_t>(width * height);
 
 	edges.resize(sz,0);
 	for( int j = 1; j < height-1; j++ )
@@ -307,7 +313,7 @@ void SLIC::DetectLabEdges(
 						(bvec[i-width]-bvec[i+width])*(bvec[i-width]-bvec[i+width]);
 
 			//edges[i] = fabs(dx) + fabs(dy);
-			edges[i] = dx*dx + dy*dy;
+			edges[size_t(i)] = dx*dx + dy*dy;
 		}
 	}
 }
@@ -326,12 +332,12 @@ void SLIC::PerturbSeeds(
 	const int dx8[8] = {-1, -1,  0,  1, 1, 1, 0, -1};
 	const int dy8[8] = { 0, -1, -1, -1, 0, 1, 1,  1};
 	
-	int numseeds = kseedsl.size();
+	size_t numseeds = kseedsl.size();
 
-	for( int n = 0; n < numseeds; n++ )
+	for( size_t n = 0; n < numseeds; n++ )
 	{
-		int ox = kseedsx[n];//original x
-		int oy = kseedsy[n];//original y
+		int ox = static_cast<int>(kseedsx[n]);//original x
+		int oy = static_cast<int>(kseedsy[n]);//original y
 		int oind = oy*m_width + ox;
 
 		int storeind = oind;
@@ -343,7 +349,7 @@ void SLIC::PerturbSeeds(
 			if( nx >= 0 && nx < m_width && ny >= 0 && ny < m_height)
 			{
 				int nind = ny*m_width + nx;
-				if( edges[nind] < edges[storeind])
+				if(edges[static_cast<unsigned long>(nind)] < edges[static_cast<unsigned long>(storeind)])
 				{
 					storeind = nind;
 				}
@@ -378,12 +384,12 @@ void SLIC::GetLABXYSeeds_ForGivenStepSize(
 {
     const bool hexgrid = false;
 	int numseeds(0);
-	int n(0);
+	unsigned long n(0);
 
 	//int xstrips = m_width/STEP;
 	//int ystrips = m_height/STEP;
-	int xstrips = (0.5+double(m_width)/double(STEP));
-	int ystrips = (0.5+double(m_height)/double(STEP));
+	int xstrips = (static_cast<int>(0.5 + double(m_width) / double(STEP)));
+	int ystrips = (static_cast<int>(0.5 + double(m_height) / double(STEP)));
 
     int xerr = m_width  - STEP*xstrips;if(xerr < 0){xstrips--;xerr = m_width - STEP*xstrips;}
     int yerr = m_height - STEP*ystrips;if(yerr < 0){ystrips--;yerr = m_height- STEP*ystrips;}
@@ -396,18 +402,18 @@ void SLIC::GetLABXYSeeds_ForGivenStepSize(
 	//-------------------------
 	numseeds = xstrips*ystrips;
 	//-------------------------
-	kseedsl.resize(numseeds);
-	kseedsa.resize(numseeds);
-	kseedsb.resize(numseeds);
-	kseedsx.resize(numseeds);
-	kseedsy.resize(numseeds);
+	kseedsl.resize(static_cast<size_t>(numseeds));
+	kseedsa.resize(static_cast<size_t>(numseeds));
+	kseedsb.resize(static_cast<size_t>(numseeds));
+	kseedsx.resize(static_cast<size_t>(numseeds));
+	kseedsy.resize(static_cast<size_t>(numseeds));
 
 	for( int y = 0; y < ystrips; y++ )
 	{
-		int ye = y*yerrperstrip;
+		int ye = static_cast<int>(y * yerrperstrip);
 		for( int x = 0; x < xstrips; x++ )
 		{
-			int xe = x*xerrperstrip;
+			int xe = static_cast<int>(x * xerrperstrip);
             int seedx = (x*STEP+xoff+xe);
             if(hexgrid){ seedx = x*STEP+(xoff<<(y&0x1))+xe; seedx = min(m_width-1,seedx); }//for hex grid sampling
             int seedy = (y*STEP+yoff+ye);
@@ -444,12 +450,12 @@ void SLIC::GetKValues_LABXYZ(
         const int&				STEP)
 {
         //const bool hexgrid = false;
-	int numseeds(0);
-	int n(0);
+	size_t numseeds(0);
+	size_t n(0);
 
-	int xstrips = (0.5+double(m_width)/double(STEP));
-	int ystrips = (0.5+double(m_height)/double(STEP));
-	int zstrips = (0.5+double(m_depth)/double(STEP));
+	int xstrips = (static_cast<int>(0.5 + double(m_width) / double(STEP)));
+	int ystrips = (static_cast<int>(0.5 + double(m_height) / double(STEP)));
+	int zstrips = (static_cast<int>(0.5 + double(m_depth) / double(STEP)));
 
     int xerr = m_width  - STEP*xstrips;if(xerr < 0){xstrips--;xerr = m_width - STEP*xstrips;}
     int yerr = m_height - STEP*ystrips;if(yerr < 0){ystrips--;yerr = m_height- STEP*ystrips;}
@@ -463,7 +469,7 @@ void SLIC::GetKValues_LABXYZ(
 	int yoff = STEP/2;
 	int zoff = STEP/2;
 	//-------------------------
-	numseeds = xstrips*ystrips*zstrips;
+	numseeds = static_cast<size_t>(xstrips * ystrips * zstrips);
 	//-------------------------
 	kseedsl.resize(numseeds);
 	kseedsa.resize(numseeds);
@@ -474,14 +480,14 @@ void SLIC::GetKValues_LABXYZ(
 
 	for( int z = 0; z < zstrips; z++ )
 	{
-		int ze = z*zerrperstrip;
+		int ze = static_cast<int>(z * zerrperstrip);
 		int d = (z*STEP+zoff+ze);
 		for( int y = 0; y < ystrips; y++ )
 		{
-			int ye = y*yerrperstrip;
+			int ye = static_cast<int>(y * yerrperstrip);
 			for( int x = 0; x < xstrips; x++ )
 			{
-				int xe = x*xerrperstrip;
+				int xe = static_cast<int>(x * xerrperstrip);
 				int i = (y*STEP+yoff+ye)*m_width + (x*STEP+xoff+xe);
 				
 				kseedsl[n] = m_lvecvec[d][i];
@@ -510,11 +516,11 @@ void SLIC::PerformSuperpixelSLIC(
 	vector<double>&				kseedsy,
         int*&					klabels,
         const int&				STEP,
-        const vector<double>&                   edgemag,
+        __attribute((unused)) const vector<double>&                   edgemag,
 	const double&				M)
 {
-	int sz = m_width*m_height;
-	const int numk = kseedsl.size();
+	size_t sz = static_cast<size_t>(m_width * m_height);
+	const size_t numk = kseedsl.size();
 	//----------------
 	int offset = STEP;
         //if(STEP < 8) offset = STEP*1.5;//to prevent a crash due to a very small step size
@@ -539,19 +545,19 @@ void SLIC::PerformSuperpixelSLIC(
 	for( int itr = 0; itr < 10; itr++ )
 	{
 		distvec.assign(sz, DBL_MAX);
-		for( int n = 0; n < numk; n++ )
+		for( size_t n = 0; n < numk; n++ )
 		{
-                        y1 = max(0.0,			kseedsy[n]-offset);
-                        y2 = min((double)m_height,	kseedsy[n]+offset);
-                        x1 = max(0.0,			kseedsx[n]-offset);
-                        x2 = min((double)m_width,	kseedsx[n]+offset);
+                        y1 = (int) max(0.0,                     kseedsy[n] - offset);
+                        y2 = (int) min((double) m_height,       kseedsy[n] + offset);
+                        x1 = (int) max(0.0,                     kseedsx[n] - offset);
+                        x2 = (int) min((double) m_width,        kseedsx[n] + offset);
 
 
 			for( int y = y1; y < y2; y++ )
 			{
 				for( int x = x1; x < x2; x++ )
 				{
-					int i = y*m_width + x;
+					size_t i = static_cast<size_t>(y * m_width + x);
 
 					l = m_lvec[i];
 					a = m_avec[i];
@@ -570,7 +576,7 @@ void SLIC::PerformSuperpixelSLIC(
 					if( dist < distvec[i] )
 					{
 						distvec[i] = dist;
-						klabels[i]  = n;
+						klabels[i]  = static_cast<int>(n);
 					}
 				}
 			}
@@ -590,7 +596,7 @@ void SLIC::PerformSuperpixelSLIC(
 		//edgesum.assign(numk, 0);
 		//------------------------------------
 
-		{int ind(0);
+		{size_t ind(0);
 		for( int r = 0; r < m_height; r++ )
 		{
 			for( int c = 0; c < m_width; c++ )
@@ -1292,4 +1298,4 @@ void SLIC::DoSupervoxelSegmentation(
 
 	EnforceSupervoxelLabelConnectivity(klabels, width, height, depth, numlabels, STEP);
 }
-
+#pragma GCC diagnostic pop

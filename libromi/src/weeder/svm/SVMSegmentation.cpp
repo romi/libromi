@@ -80,7 +80,7 @@ namespace romi {
                 set_intercept((float) value.num());
         }
 
-        bool SVMSegmentation::segment(IFolder &session, Image &image, Image &mask) 
+        bool SVMSegmentation::segment(__attribute__((unused))IFolder &session, Image &image, Image &mask)
         {
                 if (image.type() != Image::RGB) {
                         r_err("SVMSegmentation::segment: Expected an RGB input image");
@@ -89,15 +89,15 @@ namespace romi {
                 
                 mask.init(Image::BW, image.width(), image.height());
                 
-                int len = image.width() * image.height();
-                float *a = image.data();
-                float *r = mask.data();
+                size_t len = image.width() * image.height();
+                auto& a = image.data();
+                auto& r = mask.data();
                 
-                for (int i = 0, j = 0; i < len; i++, j += 3) {
-                        float x = (255.0 * a[j] * _a[0]
-                                   + 255.0 * a[j+1] * _a[1]
-                                   + 255.0 * a[j+2] * _a[2]
-                                   + _b);
+                for (size_t i = 0, j = 0; i < len; i++, j += 3) {
+                        float x = (static_cast<float>(255.0 * a[j] * _a[0]
+                                                      + 255.0 * a[j + 1] * _a[1]
+                                                      + 255.0 * a[j + 2] * _a[2]
+                                                      + _b));
                         r[i] = (x > 0.0f)? 1.0f : 0.0f;
                 }
                 return true;

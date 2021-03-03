@@ -35,13 +35,12 @@ namespace romi {
         class WheelOdometry
         {
         protected:
-                std::mutex _m;
+                std::mutex _mutex;
                         
                 // The current location and orientation
                 double instantaneous_speed[2];
                 double filtered_speed[2];
                 double encoder[2];
-                int initialized;
                 double last_timestamp;
         
                 // The displacement, in meters, and the change in orientation

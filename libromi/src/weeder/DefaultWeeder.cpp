@@ -172,7 +172,10 @@ namespace romi {
                 r_debug("DefaultWeeder::rotate_path_to_starting_point");
                 v3 starting_point(0.0, _range.max.y(), _z0);
                 int closest_index = path.closest_point(starting_point);
-                path.rotate(out, closest_index);
+                if (closest_index >= 0)
+                        path.rotate(out, (size_t)closest_index);
+                else
+                        throw std::runtime_error("rotate_path_to_starting_point empty path, no closest point");
         }
         
         void DefaultWeeder::travel(Path& path, double v)

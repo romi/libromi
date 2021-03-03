@@ -42,10 +42,10 @@ namespace romi {
 
         void ImageCropper::assert_workspace_dimensions()
         {
-                if ((_x0 < 0) || (_x0 > 10000)
-                    || (_y0 < 0) || (_y0 > 10000)
-                    || (_width < 0) || (_width > 10000)
-                    || (_height < 0) || (_height > 10000)) {
+                if ((_x0 > 10000)
+                    || (_y0 > 10000)
+                    || (_width > 10000)
+                    || (_height > 10000)) {
                         r_err("ImageCropper: Invalid workspace values: "
                               "workspace: x0 %d, y0 %d, width %d px, height %d px", 
                               _x0, _y0, _width, _height);
@@ -55,10 +55,10 @@ namespace romi {
         
         void ImageCropper::set_workspace(JsonCpp w)
         {
-                _x0 = (int) w.num(0);
-                _y0 = (int) w.num(1);
-                _width = (int) w.num(2);
-                _height = (int) w.num(3);
+                _x0 = (size_t)w.num(0);
+                _y0 = (size_t)w.num(1);
+                _width = (size_t)w.num(2);
+                _height = (size_t)w.num(3);
                 assert_workspace_dimensions();
 
                 r_debug("workspace: x0 %d, y0 %d, width %d px, height %d px", 
@@ -81,9 +81,9 @@ namespace romi {
                 bool success = false;
                 double diameter = map_meters_to_pixels(tool_diameter);
                 size_t border = (size_t) (diameter / 2.0);
-                ssize_t x0 = _x0 - border;
+                ssize_t x0 = ssize_t(_x0 - border);
                 size_t width = _width + 2 * border;
-                ssize_t y0 = camera.height() - _y0 - _height - border;
+                ssize_t y0 = ssize_t(camera.height() - _y0 - _height - border);
                 size_t height = _height + 2 * border;
                 
                 session.store("camera", camera);
@@ -99,21 +99,23 @@ namespace romi {
                 } else if (height > camera.height()) {
                         r_err("ImageCropper::crop: camera image height too small");
                                 
-                } else if (0) {
-                        
-                        // With scaling of factor 3
-                        Image cropped;
-                        camera.crop(x0, y0, width, height, cropped);
-                        session.store("cropped_debug", cropped);
-
-                        cropped.scale(3, out);
-                        session.store("scaled_debug", out);
-                        success = true;
-                                
-                } else {
+                }
+//                else if (0) {
+//
+//                        // With scaling of factor 3
+//                        Image cropped;
+//                        camera.crop(x0, y0, width, height, cropped);
+//                        session.store("cropped_debug", cropped);
+//
+//                        cropped.scale(3, out);
+//                        session.store("scaled_debug", out);
+//                        success = true;
+//
+//                }
+                else {
                                 
                         // Without scaling
-                        camera.crop(x0, y0, width, height, out);
+                        camera.crop((size_t)x0, (size_t)y0, width, height, out);
                         session.store("cropped_debug", out);
                         success = true;
                 }

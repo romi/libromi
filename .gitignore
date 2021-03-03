@@ -3,3 +3,5 @@ thirdparty
 *build*
 libr
 rcom
+/libr/
+/rcom/

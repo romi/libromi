@@ -35,7 +35,7 @@ namespace romi {
         public:
                 virtual ~ScriptEngine() = default;
 
-                virtual void execute_script(T& target, int id) = 0;
+                virtual void execute_script(T& target, size_t id) = 0;
         };
 }
 

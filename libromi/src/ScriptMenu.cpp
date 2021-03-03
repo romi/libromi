@@ -39,7 +39,7 @@ namespace romi {
         void ScriptMenu::next_menu_item(std::string& name)
         {
                 if (has_menus()
-                    && _current_menu < (int) _scripts.size() - 1)
+                    && _current_menu < _scripts.size() - 1)
                         _current_menu++;
                 get_current_menu(name);
         }
@@ -61,6 +61,6 @@ namespace romi {
         
         int ScriptMenu::get_current_index() 
         {
-                return has_menus()? _current_menu : -1;
+                return has_menus()? (int)_current_menu : -1;
         }
 }

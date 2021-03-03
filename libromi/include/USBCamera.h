@@ -61,6 +61,8 @@ namespace romi {
         public:
                 
                 USBCamera(const char *device, size_t width, size_t height);
+                USBCamera(const USBCamera&) = delete;
+                USBCamera& operator=(const USBCamera&) = delete;
                 virtual ~USBCamera() override;
                 
                 bool grab(Image &image) override;

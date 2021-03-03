@@ -115,13 +115,13 @@ enum {
 typedef struct _camera_t {
         int fd;
         char* device_name;
-        unsigned int width;
-        unsigned int height;
+        size_t width;
+        size_t height;
         unsigned int frame_rate;
         buffer_t* buffers;
         unsigned int n_buffers;
         unsigned char* rgb_buffer;
-        int rgb_buffer_size;
+        size_t rgb_buffer_size;
         int state;
 } camera_t;
 
@@ -136,14 +136,14 @@ static int camera_read(camera_t *camera);
 static int camera_convert(camera_t *camera, void* p);
 static int camera_set_framerate(camera_t *camera);
 
-static void convert_yuv422_to_rgb888(int width, int height, unsigned char *src,
+static void convert_yuv422_to_rgb888(size_t width, size_t height, unsigned char *src,
                                      unsigned char *dst);
 
 static int camera_mmapinit(camera_t *camera);
-static int xioctl(int fd, int request, void* argp);
+static int xioctl(int fd, unsigned long request, void* argp);
 
 
-camera_t* new_camera(const char* dev, unsigned int width, unsigned int height)
+camera_t* new_camera(const char* dev, size_t width, size_t height)
 {
         camera_t *camera = (camera_t*) malloc(sizeof(camera_t));
         if (camera == NULL) {
@@ -264,12 +264,12 @@ int camera_capture(camera_t *camera)
         return 0;
 }
 
-int camera_width(camera_t* camera)
+size_t camera_width(camera_t* camera)
 {
         return camera->width;
 }
 
-int camera_height(camera_t* camera)
+size_t camera_height(camera_t* camera)
 {
         return camera->height;
 }
@@ -292,7 +292,12 @@ uint8_t *camera_getimagebuffer(camera_t *camera)
 
 #define CLIP(x) (((x) >= 255.0f)? 255 : (((x) <= 0.0f)? 0 : (x)))
 
-void convert_yuv422_to_rgb888(int width, int height, unsigned char *src, unsigned char *dst)
+float clamp(float d, float min, float max) {
+        const float t = d < min ? min : d;
+        return t > max ? max : t;
+}
+
+void convert_yuv422_to_rgb888(size_t width, size_t height, unsigned char *src, unsigned char *dst)
 {
         unsigned char *py, *pu, *pv;
         unsigned char *tmp = dst;
@@ -306,8 +311,8 @@ void convert_yuv422_to_rgb888(int width, int height, unsigned char *src, unsigne
         pu = src + 1;
         pv = src + 3;
 
-        for (int line = 0; line < height; line++) {
-                for (int column = 0; column < width; column++) {
+        for (size_t line = 0; line < height; line++) {
+                for (size_t column = 0; column < width; column++) {
 
                         y = (float) *py;
                         u = (float) *pu;
@@ -317,9 +322,9 @@ void convert_yuv422_to_rgb888(int width, int height, unsigned char *src, unsigne
                         g = y + 1.772f * (u - 128.0f);
                         b = y + 1.402f * (v - 128.0f);
                         
-                        *tmp++ = CLIP(r);
-                        *tmp++ = CLIP(g);
-                        *tmp++ = CLIP(b);
+                        *tmp++ = (uint8_t)clamp(r, 0, 255);
+                        *tmp++ = (uint8_t)clamp(g, 0, 255);
+                        *tmp++ = (uint8_t)clamp(b, 0, 255);
 
                         py += 2;
 
@@ -342,7 +347,7 @@ void convert_yuv422_to_rgb888(int width, int height, unsigned char *src, unsigne
    \param argp argument
    \returns result from ioctl
 */
-static int xioctl(int fd, int request, void* argp)
+static int xioctl(int fd, unsigned long request, void* argp)
 {
         int r;
         do {
@@ -361,7 +366,7 @@ static int camera_set_framerate(camera_t *camera)
         parm.parm.capture.timeperframe.numerator = 1;
         parm.parm.capture.timeperframe.denominator = camera->frame_rate;
 
-        int err = xioctl(camera->fd, (int) VIDIOC_S_PARM, &parm);
+        int err = xioctl(camera->fd,  VIDIOC_S_PARM, &parm);
 
         r_info("Camera: frame rate is set to: %d", (int) parm.parm.capture.timeperframe.denominator);
 
@@ -373,7 +378,7 @@ static int camera_set_framerate(camera_t *camera)
 */
 static int camera_convert(camera_t *camera, void* src)
 {
-        int size = camera->width * camera->height * 3;
+        size_t size = camera->width * camera->height * 3;
         
         if ((camera->rgb_buffer_size != size) 
             && (camera->rgb_buffer != NULL)) {
@@ -403,7 +408,7 @@ static int camera_read(camera_t *camera)
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
  
-        if (-1 == xioctl(camera->fd, (int) VIDIOC_DQBUF, &buf)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_DQBUF, &buf)) {
                 switch (errno) {
                 case EAGAIN:
                         return 1;
@@ -422,7 +427,7 @@ static int camera_read(camera_t *camera)
 
         camera_convert(camera, camera->buffers[buf.index].start);
 
-        if (-1 == xioctl(camera->fd, (int)VIDIOC_QBUF, &buf)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_QBUF, &buf)) {
                 r_err("Camera: VIDIOC_QBUF error %d, %s", errno, strerror(errno));
                 return -1;
         }
@@ -466,7 +471,7 @@ static int camera_capturestart(camera_t *camera)
                 buf.memory = V4L2_MEMORY_MMAP;
                 buf.index = i;
 
-                if (-1 == xioctl(camera->fd, (int) VIDIOC_QBUF, &buf)) {
+                if (-1 == xioctl(camera->fd, VIDIOC_QBUF, &buf)) {
                         r_err("Camera: VIDIOC_QBUF error %d, %s", errno, strerror(errno));
                         return -1;
                 }
@@ -474,7 +479,7 @@ static int camera_capturestart(camera_t *camera)
                 
         type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-        if (-1 == xioctl(camera->fd, (int) VIDIOC_STREAMON, &type)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_STREAMON, &type)) {
                 r_err("Camera: VIDIOC_STREAMON error %d, %s", errno, strerror(errno));
                 return -1;
         }
@@ -520,7 +525,7 @@ static int camera_mmapinit(camera_t *camera)
         req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         req.memory = V4L2_MEMORY_MMAP;
 
-        if (-1 == xioctl(camera->fd, (int) VIDIOC_REQBUFS, &req)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_REQBUFS, &req)) {
                 if (EINVAL == errno) {
                         r_err("Camera: %s does not support memory mapping",
                               camera->device_name);
@@ -552,7 +557,7 @@ static int camera_mmapinit(camera_t *camera)
                 buf.memory = V4L2_MEMORY_MMAP;
                 buf.index = camera->n_buffers;
 
-                if (-1 == xioctl(camera->fd, (int) VIDIOC_QUERYBUF, &buf)) {
+                if (-1 == xioctl(camera->fd, VIDIOC_QUERYBUF, &buf)) {
                         r_err("Camera: VIDIOC_QUERYBUF error %d, %s", errno,
                               strerror(errno));
                         return -1;
@@ -614,7 +619,7 @@ static int camera_open(camera_t *camera)
         return 0;
 }
 
-static int camera_setctrl(camera_t *camera, int id, int value)
+static int camera_setctrl(camera_t *camera, unsigned int id, int value)
 {
         struct v4l2_queryctrl queryctrl;
         struct v4l2_control control;
@@ -647,7 +652,7 @@ static int camera_setctrl(camera_t *camera, int id, int value)
         return 0;
 }
 
-static int camera_setctrl_default(camera_t *camera, int id)
+static int camera_setctrl_default(camera_t *camera, unsigned int id)
 {
         struct v4l2_queryctrl queryctrl;
         struct v4l2_control control;
@@ -693,7 +698,7 @@ static int camera_init(camera_t *camera)
                 return -1;
         }
 
-        if (-1 == xioctl(camera->fd, (int) VIDIOC_QUERYCAP, &cap)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_QUERYCAP, &cap)) {
                 if (EINVAL == errno) {
                         r_err("Camera: %s is no V4L2 device", camera->device_name);
                         return -1;
@@ -720,7 +725,7 @@ static int camera_init(camera_t *camera)
 
         cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-        if (0 == xioctl(camera->fd, (int) VIDIOC_CROPCAP, &cropcap)) {
+        if (0 == xioctl(camera->fd, VIDIOC_CROPCAP, &cropcap)) {
                 crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 crop.c = cropcap.defrect; /* reset to default */
 
@@ -745,12 +750,12 @@ static int camera_init(camera_t *camera)
 
         // v4l2_format
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        fmt.fmt.pix.width = camera->width; 
-        fmt.fmt.pix.height = camera->height;        
+        fmt.fmt.pix.width = (uint32_t)camera->width;
+        fmt.fmt.pix.height = (uint32_t)camera->height;
         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;        
         fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
-        if (-1 == xioctl(camera->fd, (int) VIDIOC_S_FMT, &fmt)) {
+        if (-1 == xioctl(camera->fd, VIDIOC_S_FMT, &fmt)) {
                 r_err("Camera: VIDIOC_S_FMT error %d, %s", errno, strerror(errno));
                 return -1;
         }
