@@ -80,14 +80,17 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_2)
         Image image;
         success = ImageIO::load(image, jpg_file);
 
+        auto& p0 = rgb.data();
+        auto& p1 = image.data();
+
         ASSERT_EQ(success, true);
         ASSERT_EQ(image.type(), Image::RGB);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 3);
+        ASSERT_EQ(rgb.data().size(), image.data().size());
 
-        auto& p0 = rgb.data();
-        auto& p1 = image.data();
+        // No direct comparison of data due to compression. Can pass or fail on different machines.
          for (size_t i = 0; i < image.length(); i++) {
                  ASSERT_NEAR(p0[i], p1[i], 0.1);
          }
