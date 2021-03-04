@@ -236,7 +236,7 @@ namespace romi {
         void Oquam::store_script_svg(IFolder &folder, SmoothPath& script) 
         {
                 membuf_t *svg = plot_to_mem(script, _range, _vmax.values(), _amax.values());
-                if (svg != 0) {
+                if (svg != nullptr) {
                         folder.store_svg("path", membuf_data(svg), membuf_len(svg));
                         delete_membuf(svg);
                 } else {

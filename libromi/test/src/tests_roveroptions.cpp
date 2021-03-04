@@ -29,7 +29,7 @@ TEST_F(roveroptions_tests, test_parse)
         };
         GetOpt options(options_list);
 
-        const char *argv[] = { "app", "--help", "--config", "config.json", 0 };
+        const char *argv[] = { "app", "--help", "--config", "config.json", nullptr };
 
         options.parse(4, (char**) argv);
 

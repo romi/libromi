@@ -36,7 +36,7 @@ namespace romi {
                 
                 try {
 
-                        if (method == 0) {
+                        if (method == nullptr) {
                                 error.code = rcom::RPCError::MethodNotFound;
                                 error.message = "No method specified";
                                 

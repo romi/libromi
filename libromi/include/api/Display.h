@@ -24,6 +24,9 @@
 
 #ifndef __ROMI_DISPLAY_H
 #define __ROMI_DISPLAY_H
+#include <cstddef>
+#include <string>
+
 
 namespace romi {
         class Display
@@ -31,9 +34,9 @@ namespace romi {
         public:
                 virtual ~Display() = default;
 
-                virtual bool show(int line, const char* s) = 0;
-                virtual bool clear(int line) = 0;
-                virtual int count_lines() = 0;
+                virtual bool show(size_t line, const std::string& display_string) = 0;
+                virtual bool clear(size_t line) = 0;
+                virtual size_t count_lines() = 0;
         };
 }
 

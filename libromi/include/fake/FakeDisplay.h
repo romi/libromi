@@ -40,25 +40,25 @@ namespace romi {
                 FakeDisplay() {}
                 virtual ~FakeDisplay() = default;
 
-                bool show(int line, const char* s) override {
+                bool show(size_t line, const std::string& display_string) override {
                         bool success = false;
-                        if (line >= 0 && line < count_lines()) {
-                                _line[line] = s;
+                        if (line < count_lines()) {
+                                _line[line] = display_string;
                                 success = true;
                         }
                         return success;
                 }
                 
-                bool clear(int line) override {
+                bool clear(size_t line) override {
                         bool success = false;
-                        if (line >= 0 && line < count_lines()) {
+                        if (line < count_lines()) {
                                 _line[line].clear();
                                 success = true;
                         }
                         return success;
                 }
                 
-                int count_lines() override {
+                size_t count_lines() override {
                         return 2;
                 }
         };

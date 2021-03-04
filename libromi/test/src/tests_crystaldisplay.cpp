@@ -43,25 +43,13 @@ TEST_F(crystaldisplay_tests, assure_count_lines_is_two)
         ASSERT_EQ(display.count_lines(), 2);
 }
 
-TEST_F(crystaldisplay_tests, assure_invalid_line_returns_false_1)
-{
-        CrystalDisplay display(romi_serial);
-        ASSERT_EQ(display.show(-1, "foo"), false);
-}
-
-TEST_F(crystaldisplay_tests, assure_invalid_line_returns_false_2)
+TEST_F(crystaldisplay_tests, show_invalid_line_returns_false)
 {
         CrystalDisplay display(romi_serial);
         ASSERT_EQ(display.show(display.count_lines(), "foo"), false);
 }
 
-TEST_F(crystaldisplay_tests, assure_invalid_line_returns_false_3)
-{
-        CrystalDisplay display(romi_serial);
-        ASSERT_EQ(display.clear(-1), false);
-}
-
-TEST_F(crystaldisplay_tests, assure_invalid_line_returns_false_4)
+TEST_F(crystaldisplay_tests, clear_invalid_line_returns_fals)
 {
         CrystalDisplay display(romi_serial);
         ASSERT_EQ(display.clear(display.count_lines()), false);

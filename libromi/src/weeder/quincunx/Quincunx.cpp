@@ -251,7 +251,7 @@ namespace romi {
                                         point_t *ptn_pos,
                                         float delta)
         {
-                list_t *positions = 0;
+                list_t *positions = nullptr;
 
                 const int num_pos = 10;
                 point_t pos[num_pos];
@@ -315,7 +315,7 @@ namespace romi {
                                          double meters_to_pixels,
                                          float *confidence)
         {
-                list_t *positions = 0;
+                list_t *positions = nullptr;
                 float dpx_plants = (float) (distance_plants * meters_to_pixels);
                 float dpx_rows = (float) (distance_rows * meters_to_pixels);
                 point_t ptn_pos;
@@ -352,8 +352,8 @@ namespace romi {
                                   Path &waypoints)
         {
                 int success = false;
-                list_t *path = 0;
-                list_t *positions = 0;
+                list_t *path = nullptr;
+                list_t *positions = nullptr;
                 float confidence = 0.0;
                 float radius_zones_px;
                 float diameter_tool_px;
@@ -368,19 +368,19 @@ namespace romi {
                                               _distance_rows,
                                               meters_to_pixels, &confidence);
 
-                if (positions != 0) {
+                if (positions != nullptr) {
                 
                         path = boustrophedon(border_px, mask.width() - border_px,
                                              border_px, mask.height() - border_px, 
                                              diameter_tool_px, radius_zones_px,
                                              positions);
-                        if (path != 0) {
+                        if (path != nullptr) {
 
                                 store_svg(session, mask.width(), mask.height(), 
                                           "scaled.jpg", path, positions,
                                           radius_zones_px, 1.0f);
                                 
-                                for (list_t *l = path; l != NULL; l = list_next(l)) {
+                                for (list_t *l = path; l != nullptr; l = list_next(l)) {
                                         point_t *p = list_get(l, point_t);
                                         waypoints.push_back(v3(p->x, p->y, 0));
                                         delete_point(p);
@@ -392,7 +392,7 @@ namespace romi {
                                 r_warn("Quincunx: Failed to compute the path");
                         }
 
-                        for (list_t *l = positions; l != NULL; l = list_next(l)) {
+                        for (list_t *l = positions; l != nullptr; l = list_next(l)) {
                                 point_t *p = list_get(l, point_t);
                                 delete_point(p);
                         }

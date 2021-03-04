@@ -49,7 +49,7 @@ namespace romi {
                 ATDC *prev;
                 ATDC *next;
 
-                ATDC() : accelerate(), travel(), decelerate(), curve(), prev(0), next(0) {}
+                ATDC() : accelerate(), travel(), decelerate(), curve(), prev(nullptr), next(nullptr) {}
                 
                 void compute_accelerations(double *p0, double *p1,
                                            double *v0, double *v, double *v1,

@@ -34,7 +34,7 @@ TEST_F(cncadaptor_tests, retuns_error_on_null_method)
         RPCError error;
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute(0, params, result, error);
+        adaptor.execute(nullptr, params, result, error);
 
         ASSERT_EQ(error.code, RPCError::MethodNotFound);
         ASSERT_NE(error.message.length(), 0);

@@ -28,14 +28,16 @@
 
 namespace romi {
 
-        bool CrystalDisplay::show(int line, const char* s)
+    constexpr size_t screen_width = 32;
+
+        bool CrystalDisplay::show(size_t line, const std::string& display_string)
         {
                 bool success = false;
-                if (line >= 0 && line < count_lines() && s != 0 && strlen(s) <= 32) {
+                if (line < count_lines() && display_string.length() <= screen_width) {
                         char buffer[64];
                         JsonCpp response;
                         
-                        rprintf(buffer, 64, "S[%d,\"%s\"]", line, s);
+                        rprintf(buffer, 64, "S[%d,\"%s\"]", line, display_string.c_str());
                         
                         _serial.send(buffer, response);
 
@@ -43,15 +45,15 @@ namespace romi {
                         
                 } else {
                         r_warn("CrystalDisplay::show: Invalid line number or string "
-                                "(line=%d, s='%s')", line, s);
+                                "(line=%d, s='%s')", line, display_string.c_str());
                 }
                 return success;
         }
         
-        bool CrystalDisplay::clear(int line)
+        bool CrystalDisplay::clear(size_t line)
         {
                 bool success = false;
-                if (line >= 0 && line < count_lines()) {
+                if (line < count_lines()) {
                         char buffer[64];
                         JsonCpp response;
                         

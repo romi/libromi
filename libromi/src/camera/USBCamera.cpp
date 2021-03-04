@@ -30,8 +30,8 @@ namespace romi {
         using SynchonizedCodeBlock = std::lock_guard<std::mutex>;
 
         USBCamera::USBCamera(const char *device, size_t width, size_t height)
-                : _camera(0), _device(device), _mutex(),
-                  _thread(0), _done(false), _image()
+                : _camera(nullptr), _device(device), _mutex(),
+                  _thread(nullptr), _done(false), _image()
         {
                 if (_device.length() == 0)
                         throw std::runtime_error("USBCamera: Invalid device");
@@ -65,7 +65,7 @@ namespace romi {
                        width, height);
 
                 _camera = new_camera(_device.c_str(), width, height);
-                if (_camera != 0) {
+                if (_camera != nullptr) {
                         start_capture_thread();
                         success = true;
                 } else {
@@ -112,6 +112,7 @@ namespace romi {
         bool USBCamera::grab(Image &image)
         {
                 SynchonizedCodeBlock synchonized(_mutex);
+                // TBD: Why not have an assignment operator?
                 _image.copy_to(image);
                 return true;
         }

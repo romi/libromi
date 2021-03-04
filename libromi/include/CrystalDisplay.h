@@ -34,6 +34,7 @@ namespace romi {
         {
         public:
                 static constexpr const char *ClassName = "crystal-display";
+                static constexpr size_t lines = 2;
 
         protected:
                 IRomiSerialClient &_serial;
@@ -47,11 +48,11 @@ namespace romi {
                 
                 virtual ~CrystalDisplay() override = default;
 
-                bool show(int line, const char* s) override;
-                bool clear(int line) override;
+                bool show(size_t line, const std::string& display_string) override;
+                bool clear(size_t line) override;
                 
-                int count_lines() override{
-                        return 2;
+                size_t count_lines() override{
+                        return lines;
                 }
         };
 }

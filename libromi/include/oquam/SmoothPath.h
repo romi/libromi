@@ -63,7 +63,7 @@ namespace romi {
                 Segment *prev;
                 Segment *next;
 
-                Segment() : prev(0), next(0) {}
+                Segment() : prev(nullptr), next(nullptr) {}
 
                 double *displacement(double *d) {
                         vsub(d, p1, p0);

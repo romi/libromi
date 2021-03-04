@@ -34,7 +34,7 @@ TEST_F(rpcnavigation_tests, test_execute_invalid_command_returns_error)
         JsonCpp result;
         rcom::RPCError error;
         
-        adaptor.execute(0, params, result, error);
+        adaptor.execute(nullptr, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
