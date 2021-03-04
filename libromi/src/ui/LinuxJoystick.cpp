@@ -117,6 +117,8 @@ namespace romi {
                 case JS_EVENT_AXIS:
                         parse_axis_event(linux_event);
                         break;
+                default:
+                        r_err("LinuxJoystick::parse_event unknown event type. %d",linux_event.type);
                 }
         }
         

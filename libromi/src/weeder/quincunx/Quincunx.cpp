@@ -615,7 +615,7 @@ namespace romi {
                 // Check whether the starting corner is free. If not, move the
                 // starting point.
                 pos = list_sort(pos, (compare_func_t) largest_y_first);
-                for (list_t *l = pos; l != NULL; l = list_next(l)) {
+                for (list_t *l = pos; l != nullptr; l = list_next(l)) {
                         float ys0, ys1;
                         point_t *p = list_get(l, point_t);
                         int deviation = intersects_y(x, y0, y1, p, radius, &ys0, &ys1);
@@ -639,6 +639,8 @@ namespace romi {
                         case INTERSECTS_BOTH_POINTS_INSIDE:
                                 r_warn("TODO: starting point: unhandled case: both points inside!");
                                 break;
+                        default:
+                                r_warn("boustrophedon unknown deviation. %d",deviation);
                         }
                 }
 
@@ -646,13 +648,14 @@ namespace romi {
                 path = path_append(path, x, y, z);
 
                 /* return path; // DEBUG */
-        
+
+                // coule be (xt <= x1) or do while if bottom check!
                 while (1) {
 
                         //// at y1, going to y0
                         float yt = y0, xt;
                         pos = list_sort(pos, (compare_func_t) largest_y_first);
-                        for (list_t *l = pos; l != NULL; l = list_next(l)) {
+                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
                                 float ys0, ys1, dy, alpha0, alpha1, d_alpha;
                                 int segments;
                                 point_t *p = list_get(l, point_t);
@@ -733,6 +736,8 @@ namespace romi {
                                 case INTERSECTS_BOTH_POINTS_INSIDE:
                                         r_warn("TODO: unhandled case: both points inside (at y1, moving to y0)!");
                                         break;
+                                default:
+                                        r_warn("boustrophedon at y1, going to y0 unknown deviation. %d",deviation);
                                 }
                         }
                         if (y > yt) {
@@ -748,7 +753,7 @@ namespace romi {
 
                         
                         pos = list_sort(pos, (compare_func_t) smallest_x_first);
-                        for (list_t *l = pos; l != NULL; l = list_next(l)) {
+                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
                                 float xs0, xs1, dxp, dxt, alpha0, alpha1, d_alpha;
                                 int segments;
                                 point_t *p = list_get(l, point_t);
@@ -790,6 +795,8 @@ namespace romi {
                                 case INTERSECTS_BOTH_POINTS_INSIDE:
                                         r_warn("TODO: unhandled case: both points inside (at y0, moving right)!");
                                         break;
+                                default:
+                                        r_warn("boustrophedon at y0, moving right unknown deviation. %d",deviation);
                                 }
                         }
                         if (x < xt) {
@@ -801,7 +808,7 @@ namespace romi {
                         //// at y0, moving to y1
                         yt = y1;
                         pos = list_sort(pos, (compare_func_t) smallest_y_first);
-                        for (list_t *l = pos; l != NULL; l = list_next(l)) {
+                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
                                 float ys0, ys1, dy, alpha0, alpha1, d_alpha;
                                 int segments;
                                 point_t *p = list_get(l, point_t);
@@ -879,6 +886,8 @@ namespace romi {
                                 case INTERSECTS_BOTH_POINTS_INSIDE:
                                         r_warn("TODO: unhandled case: both points inside (at y0, moving to y1)!");
                                         break;
+                                default:
+                                        r_warn("boustrophedon at y0, moving right unknown deviation. %d",deviation);
                                 }
                         }
                         if (y < yt) {
@@ -892,7 +901,7 @@ namespace romi {
                                 break;
                         
                         pos = list_sort(pos, (compare_func_t) smallest_x_first);
-                        for (list_t *l = pos; l != NULL; l = list_next(l)) {
+                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
                                 float xs0, xs1, dxp, dxt, alpha0, alpha1, d_alpha;
                                 int segments;
                                 point_t *p = list_get(l, point_t);
@@ -941,6 +950,8 @@ namespace romi {
                                 case INTERSECTS_BOTH_POINTS_INSIDE:
                                         r_warn("TODO: unhandled case: both points inside (at y1, moving right)!");
                                         break;
+                                default:
+                                        r_warn("boustrophedon at y1, moving right unknown deviation. %d",deviation);
                                 }
                         }
                         if (x < xt) {
