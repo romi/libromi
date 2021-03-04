@@ -15,7 +15,7 @@ protected:
         SpeedConverter fast;
         SpeedConverter accurate;
          
-	speedcontroller_tests() {
+	speedcontroller_tests() : navigation(), fast(), accurate() {
 	}
 
 	~speedcontroller_tests() override = default;

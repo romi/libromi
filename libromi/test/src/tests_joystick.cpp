@@ -14,7 +14,7 @@ class joystick_tests : public ::testing::Test
 protected:
         rpp::LinuxMock linux;
         
-	joystick_tests() {
+	joystick_tests() : linux() {
 	}
 
 	~joystick_tests() override = default;

@@ -22,15 +22,10 @@ using namespace std;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SLIC::SLIC()
+SLIC::SLIC() : m_width(0), m_height(0), m_depth(0),
+                m_lvec(nullptr), m_avec(nullptr), m_bvec(nullptr),
+                m_lvecvec(nullptr), m_avecvec(nullptr), m_bvecvec(nullptr)
 {
-	m_lvec = NULL;
-	m_avec = NULL;
-	m_bvec = NULL;
-
-	m_lvecvec = NULL;
-	m_avecvec = NULL;
-	m_bvecvec = NULL;
 }
 
 SLIC::~SLIC()

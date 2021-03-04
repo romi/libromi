@@ -30,8 +30,8 @@ namespace romi {
         using SynchonizedCodeBlock = std::lock_guard<std::mutex>;
 
         USBCamera::USBCamera(const char *device, size_t width, size_t height)
-                : _camera(0), _device(device),
-                  _thread(0), _done(false)
+                : _camera(0), _device(device), _mutex(),
+                  _thread(0), _done(false), _image()
         {
                 if (_device.length() == 0)
                         throw std::runtime_error("USBCamera: Invalid device");

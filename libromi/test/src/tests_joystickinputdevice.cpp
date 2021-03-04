@@ -16,7 +16,7 @@ protected:
         MockJoystick joystick;
         MockEventMapper event_mapper;
         
-	joystickinputdevice_tests() {
+	joystickinputdevice_tests() : joystick(), event_mapper() {
 	}
 
 	~joystickinputdevice_tests() override = default;

@@ -24,6 +24,8 @@ class SLIC
 {
 public:
 	SLIC();
+	SLIC(const SLIC&) = delete;
+	SLIC& operator=(const SLIC&) = delete;
 	virtual ~SLIC();
 	//============================================================================
 	// Superpixel segmentation for a given step size (superpixel size ~= step*step)

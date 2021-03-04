@@ -12,7 +12,8 @@ class scriptmenu_tests : public ::testing::Test
 protected:
         JsonCpp json;
         
-	scriptmenu_tests() {
+	scriptmenu_tests() : json()
+	{
                 json = JsonCpp::parse("[{ 'id': 'foo', 'title': 'Foo', "
                                       "  'actions': [{'action':'move', 'distance': 1, 'speed': 0.5}]},"
                                       "{ 'id': 'bar', 'title': 'Bar', "

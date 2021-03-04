@@ -28,7 +28,7 @@
 namespace romi {
 
 
-        Section::Section()
+        Section::Section() : duration(0.0), start_time(0.0)
         {
                 zero();
         }
@@ -36,7 +36,7 @@ namespace romi {
         Section::Section(double duration_, double start_time_,
                          const double *p0_, const double *p1_,
                          const double *v0_, const double *v1_,
-                         const double *a_)
+                         const double *a_) : duration(0.0), start_time(0.0)
         {
                 set(duration_, start_time_, p0_, p1_, v0_, v1_, a_);
         }

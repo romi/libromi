@@ -12,8 +12,11 @@ public:
         virtual bool do_transition_1() = 0;
         virtual bool do_transition_2() = 0;
         virtual bool do_transition_3() = 0;
+        virtual ~Foo(){};
 };
-        
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 class MockFoo : public Foo
 {
 public:
@@ -21,6 +24,7 @@ public:
         MOCK_METHOD(bool, do_transition_2, (), (override));
         MOCK_METHOD(bool, do_transition_3, (), (override));
 };
+#pragma GCC diagnostic pop
 
 bool state_transition_1(Foo& target)
 {
@@ -47,7 +51,7 @@ class statemachine_tests : public ::testing::Test
 protected:
         MockFoo foo;
         
-	statemachine_tests() {
+	statemachine_tests() : foo() {
 	}
 
 	~statemachine_tests() override = default;

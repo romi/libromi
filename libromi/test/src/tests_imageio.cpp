@@ -26,9 +26,8 @@ protected:
         Image bw;
         Image rgb;
         
-	imageio_tests() {
-
-        }
+	imageio_tests() : bw(), rgb()
+	{}
 
 	~imageio_tests() override = default;
 

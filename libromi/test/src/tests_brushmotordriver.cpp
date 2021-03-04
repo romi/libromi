@@ -7,6 +7,9 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
+const int default_encoder_steps = 123;
+const double default_maximum_revolutions_per_second = 1.7;
+
 class brushmotordriver_tests : public ::testing::Test
 {
 protected:
@@ -18,15 +21,15 @@ protected:
         int encoder_steps;
         double maximum_revolutions_per_second;
         
-	brushmotordriver_tests() {
+	brushmotordriver_tests()
+	: serial(), expected_output(), observed_output(), mock_response(), driver_config(),
+	        encoder_steps(default_encoder_steps), maximum_revolutions_per_second(default_maximum_revolutions_per_second){
                 const char * config_string = "{"
                         "'maximum_signal_amplitude': 71,"
                         "'use_pid': false,"
                         "'pid': {'kp': 1.1, 'ki': 2.2, 'kd': 3.3},"
                         "'encoder_directions': {'left': -1, 'right': 1 }}";
                 driver_config = JsonCpp::parse(config_string);
-                encoder_steps = 123;
-                maximum_revolutions_per_second = 1.7;
 	}
 
 	~brushmotordriver_tests() override = default;
@@ -39,13 +42,13 @@ protected:
 
         void append_output(const char *s, JsonCpp& response) {
                 size_t index = observed_output.size();
-                observed_output.push_back(s);
+                observed_output.emplace_back(s);
                 response = JsonCpp::parse(mock_response[index].c_str());
         }
 
         void add_expected_output(const char *command, const char *response) {
-                expected_output.push_back(command);
-                mock_response.push_back(response);
+                expected_output.emplace_back(command);
+                mock_response.emplace_back(response);
                 EXPECT_CALL(serial, send(_,_))
                         .WillOnce(Invoke(this, &brushmotordriver_tests::append_output))
                         .RetiresOnSaturation();
@@ -54,7 +57,7 @@ protected:
 
 TEST_F(brushmotordriver_tests, parse_config)
 {
-        BrushMotorDriverSettings settings;
+        BrushMotorDriverSettings settings{};
 
         settings.parse(driver_config);
         

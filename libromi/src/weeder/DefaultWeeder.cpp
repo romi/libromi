@@ -25,6 +25,8 @@
 #include "DebugWeedingSession.h"
 #include "weeder/DefaultWeeder.h"
 
+const double diameter_tool_default = 0.05;
+
 namespace romi {
 
         DefaultWeeder::DefaultWeeder(Camera& camera,
@@ -33,10 +35,9 @@ namespace romi {
                                  double z0,
                                  double speed,
                                  IFileCabinet &filecabinet)
-                : _camera(camera), _pipeline(pipeline), _cnc(cnc),
-                  _z0(z0), _speed(speed), _filecabinet(filecabinet)
+                : _camera(camera), _pipeline(pipeline), _cnc(cnc), _range(),
+                  _z0(z0), _speed(speed), _diameter_tool(diameter_tool_default), _filecabinet(filecabinet)
         {
-                _diameter_tool = 0.05;
                 _cnc.get_range(_range);
         }
         

@@ -15,7 +15,7 @@ protected:
         std::string firmware_reply;
         std::string observed_output;
         
-	crystaldisplay_tests() {
+	crystaldisplay_tests() : romi_serial(), firmware_reply(), observed_output(){
 	}
 
 	~crystaldisplay_tests() override = default;

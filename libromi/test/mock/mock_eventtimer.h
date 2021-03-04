@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "EventTimer.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 class MockEventTimer : public romi::EventTimer
 {
 public:
@@ -8,3 +10,4 @@ public:
         MOCK_METHOD(void, set_timeout, (double timeout), (override));
         MOCK_METHOD(void, reset, (), (override));
 };
+#pragma GCC diagnostic pop

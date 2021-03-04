@@ -16,7 +16,7 @@ protected:
         std::string sent_method;
         JsonCpp sent_params;
         
-	remotenavigation_tests() {
+	remotenavigation_tests() : rpc_handler(), return_error(), sent_method(), sent_params(){
 	}
 
 	~remotenavigation_tests() override = default;

@@ -61,14 +61,12 @@ namespace romi {
         DefaultSpeedController::DefaultSpeedController(Navigation &navigation,
                                                        SpeedConverter &fast,
                                                        SpeedConverter &accurate)
-                : _navigation(navigation)
+                : _navigation(navigation), _fast(fast), _accurate(accurate)
         {
-                _fast = fast;
                 if (!_fast.is_valid()) 
                         throw std::range_error("Invalid settings for "
                                                "fast speed controller");
-                
-                _accurate = accurate;
+
                 if (!_accurate.is_valid()) 
                         throw std::range_error("Invalid settings for "
                                                "accurate speed controller");

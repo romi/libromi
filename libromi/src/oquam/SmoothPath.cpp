@@ -50,7 +50,7 @@ namespace romi {
         }
 
         
-        SmoothPath::SmoothPath(v3 start_position)
+        SmoothPath::SmoothPath(v3 start_position) : _moves(), _segments(), _atdc(), _slices(), _start_position(), _current_position()
         {
                 _start_position = start_position;
                 set_current_position(start_position);
@@ -67,7 +67,7 @@ namespace romi {
                         r_warn("script_moveto: speed must be positive");
                         throw std::runtime_error("SmoothPath::moveto: invalid speed");
                 }
-                _moves.push_back(Move(x, y, z, v));
+                _moves.emplace_back(x, y, z, v);
         }
 
         void SmoothPath::moveto(v3 p, double v)
@@ -76,7 +76,7 @@ namespace romi {
                         r_warn("script_moveto: speed must be positive");
                         throw std::runtime_error("SmoothPath::moveto: invalid speed");
                 }
-                _moves.push_back(Move(p, v));
+                _moves.emplace_back(p, v);
         }
 
         void SmoothPath::convert(double *vmax, double *amax, double deviation,

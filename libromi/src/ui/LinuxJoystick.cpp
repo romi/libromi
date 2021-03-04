@@ -30,7 +30,7 @@
 namespace romi {
         
         LinuxJoystick::LinuxJoystick(rpp::ILinux &linux, const char *device)
-                : _linux(linux), _fd(-1), _debug(false) {
+                : _linux(linux), _fd(-1), _debug(false), _event(), _buttons(), _axes() {
                 
                 try_open_device(device);
                 try_initialize();

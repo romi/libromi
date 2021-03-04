@@ -14,7 +14,7 @@ class rpcnavigation_tests : public ::testing::Test
 protected:
         MockNavigation navigation;
         
-	rpcnavigation_tests() {
+	rpcnavigation_tests() : navigation() {
 	}
 
 	~rpcnavigation_tests() override = default;

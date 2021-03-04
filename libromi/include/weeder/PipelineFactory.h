@@ -54,7 +54,7 @@ namespace romi {
                 void build_planner(const char *name, JsonCpp& properties);
                 
         public:
-                PipelineFactory() {}
+                PipelineFactory() : _cropper(), _segmentation(), _planner(), _pipeline() {}
                 virtual ~PipelineFactory() = default;
                 
                 IPipeline& build(CNCRange &range, JsonCpp& config);

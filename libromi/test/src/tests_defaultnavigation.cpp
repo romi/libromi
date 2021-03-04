@@ -14,7 +14,7 @@ protected:
         JsonCpp config;
         MockMotorDriver driver;
         
-	defaultnavigation_tests() {
+	defaultnavigation_tests() : config(), driver() {
                 const char * config_string = "{"
                         "'wheel_diameter': 1.0,"
                         "'wheel_base': 1.0,"

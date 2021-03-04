@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "Menu.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 class MockMenu : public romi::Menu
 {
 public:
@@ -10,3 +12,4 @@ public:
         MOCK_METHOD(void, get_current_menu, (std::string& name), (override));
         MOCK_METHOD(int, get_current_index, (), (override));
 };
+#pragma GCC diagnostic pop

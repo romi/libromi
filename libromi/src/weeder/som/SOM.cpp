@@ -29,7 +29,7 @@
 
 namespace romi {
 
-        SOM::SOM(JsonCpp& params) : _print(false)
+        SOM::SOM(JsonCpp& params) : _alpha(0), _beta(0), _epsilon(0), _print(false)
         {
                 try {
                         _alpha = params.num("alpha", 0.2);

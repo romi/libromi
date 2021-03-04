@@ -119,7 +119,11 @@ namespace romi {
         public:
                 StateMachine(T& target)
                         : _target(target),
-                          _current_state(STATE_START) {}
+                          _current_state(STATE_START),
+                          _handled(false),
+                          _success(false),
+                          _transitions()
+                          {}
                 
                 virtual ~StateMachine() = default;
 

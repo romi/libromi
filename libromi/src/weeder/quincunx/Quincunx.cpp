@@ -48,7 +48,7 @@ namespace romi {
                                      float radius,
                                      list_t *positions);
 
-        Quincunx::Quincunx(JsonCpp& params)
+        Quincunx::Quincunx(JsonCpp& params) : _distance_plants(0.0), _distance_rows(0.0), _radius_zones(0.0), _threshold(0.0)
         {
                 try {
                         _distance_plants = (double) params["distance-plants"];

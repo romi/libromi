@@ -42,8 +42,10 @@ namespace romi {
         {
         public:
                 CNCController& _controller;
+
+                //TBD: NO raw pointer.
                 IFileCabinet *_file_cabinet;
-                std::mutex _m;
+                std::mutex _mutex;
                 
                 CNCRange _range;
                 v3 _vmax; // in m/s
@@ -64,6 +66,9 @@ namespace romi {
                       const double *scale_meters_to_steps, 
                       double path_max_deviation,
                       double path_slice_duration);
+
+                Oquam(const Oquam&) = delete;
+                Oquam& operator=(const Oquam&) = delete;
                 
                 virtual ~Oquam() = default;
 

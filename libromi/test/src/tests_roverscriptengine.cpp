@@ -30,7 +30,8 @@ protected:
         MockWeeder weeder;
         JsonCpp json;
         
-	roverscriptengine_tests() {
+	roverscriptengine_tests() : input_device(), display(), speed_controller(), navigation(), event_timer(),
+	                                menu(), notifications(), weeder(), json(){
                 json = JsonCpp::parse("[{ 'id': 'foo', 'title': 'Foo', "
                                       "  'actions': [{'action':'move', 'distance': 1, 'speed': 0.5}]},"
                                       "{ 'id': 'bar', 'title': 'Bar', "

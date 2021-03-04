@@ -31,7 +31,7 @@ namespace romi {
 
         FluidSoundNotifications::FluidSoundNotifications(const char *soundfont,
                                                          JsonCpp& sounds)
-                : _settings(0), _synth(0), _adriver(0)
+                : _settings(nullptr), _synth(nullptr), _adriver(nullptr), _sfont_id(0), _sounds()
         {
                 try {
                         init_settings();

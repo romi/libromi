@@ -1,7 +1,5 @@
 .idea
 thirdparty
-*build*
 libr
 rcom
-/libr/
-/rcom/
+*build*

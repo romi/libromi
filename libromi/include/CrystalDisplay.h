@@ -42,7 +42,7 @@ namespace romi {
                         
         public:
                 CrystalDisplay(IRomiSerialClient &serial)
-                        : _serial(serial) {
+                        : _serial(serial), observed_output() {
                 }
                 
                 virtual ~CrystalDisplay() override = default;
@@ -50,7 +50,7 @@ namespace romi {
                 bool show(int line, const char* s) override;
                 bool clear(int line) override;
                 
-                int count_lines() {
+                int count_lines() override{
                         return 2;
                 }
         };

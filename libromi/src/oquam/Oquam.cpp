@@ -40,18 +40,18 @@ namespace romi {
                      double path_max_deviation,
                      double path_slice_duration)
                 : _controller(controller),
-                  _file_cabinet(0),
+                  _file_cabinet(nullptr),
+                  _mutex(),
                   _range(range),
                   _vmax(vmax),
                   _amax(amax),
                   _path_max_deviation(path_max_deviation),
-                  _path_slice_duration(path_slice_duration)
+                  _path_slice_duration(path_slice_duration),
+                  _path_max_slice_duration(32.0),
+                  _script_count(0)
         {
-                _path_max_slice_duration = 32.0;
-                
+
                 vcopy(_scale_meters_to_steps, scale_meters_to_steps);
-                
-                _script_count = 0;
 
                 // if (!_controller.configure_homing(AxisZ, AxisX, AxisY)) 
                 //         throw std::runtime_error("Oquam: configure_homing failed");
@@ -98,7 +98,7 @@ namespace romi {
         
         bool Oquam::moveto(double x, double y, double z, double relative_speed)
         {
-                SynchronizedCodeBlock synchronize(_m);
+                SynchronizedCodeBlock synchronize(_mutex);
                 return moveto_synchronized(x, y, z, relative_speed);
         }
 
@@ -150,13 +150,13 @@ namespace romi {
 
         bool Oquam::homing()
         {
-                SynchronizedCodeBlock synchronize(_m);
+                SynchronizedCodeBlock synchronize(_mutex);
                 return _controller.homing();
         }
                 
         bool Oquam::travel(Path &path, double relative_speed)
         {
-                SynchronizedCodeBlock synchronize(_m);
+                SynchronizedCodeBlock synchronize(_mutex);
                 return travel_synchronized(path, relative_speed);
         }
         
@@ -346,13 +346,13 @@ namespace romi {
 
         bool Oquam::enable_driver()
         {
-                SynchronizedCodeBlock synchronize(_m);
+                SynchronizedCodeBlock synchronize(_mutex);
                 return _controller.enable();
         }
 
         bool Oquam::disable_driver()
         {
-                SynchronizedCodeBlock synchronize(_m);
+                SynchronizedCodeBlock synchronize(_mutex);
                 return _controller.disable();
         }
 

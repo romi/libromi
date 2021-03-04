@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "api/Joystick.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 class MockJoystick : public romi::Joystick
 {
 public:
@@ -10,3 +12,4 @@ public:
         MOCK_METHOD(size_t, get_num_buttons, (), (override));
         MOCK_METHOD(bool, is_button_pressed, (size_t i), (override));
 };
+#pragma GCC diagnostic pop

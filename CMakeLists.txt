@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(libromi_adruino)
+project(libromi_arduino)
 
 set(romi_VERSION_MAJOR 0)
 set(romi_VERSION_MINOR 1)

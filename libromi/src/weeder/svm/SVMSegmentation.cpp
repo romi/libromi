@@ -27,7 +27,7 @@
 
 namespace romi {
         
-        SVMSegmentation::SVMSegmentation(JsonCpp& params)
+        SVMSegmentation::SVMSegmentation(JsonCpp& params) : _b(0.0)
         {
                 try {
                         set_parameter_a(params["a"]);
@@ -39,7 +39,7 @@ namespace romi {
                 }
         }
         
-        SVMSegmentation::SVMSegmentation(float a[3], float b)
+        SVMSegmentation::SVMSegmentation(float a[3], float b) : _b(0.0)
         {
                 set_coefficients(a);
                 set_intercept(b);

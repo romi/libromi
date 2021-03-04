@@ -39,12 +39,11 @@ namespace romi {
                 v3 p;
                 double v;
 
-                Move(double x, double y, double z, double speed) {
-                        p.set(x, y, z);
+                Move(double x, double y, double z, double speed) : p(x,y,z), v(speed){
                         v = speed;
                 }
                 
-                Move(v3 p_, double speed) {
+                Move(v3& p_, double speed) : p(p_), v(speed){
                         p = p_;
                         v = speed;
                 }

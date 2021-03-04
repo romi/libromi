@@ -23,7 +23,7 @@ protected:
         CNCRange range;
         MockCNCController controller;
         
-	oquam_tests() : range(xmin, xmax) {
+	oquam_tests() : range(xmin, xmax), controller() {
         }
 
 	~oquam_tests() override = default;

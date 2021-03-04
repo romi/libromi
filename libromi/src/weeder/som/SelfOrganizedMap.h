@@ -32,7 +32,7 @@
 namespace romi {
 
         //-----------------------------------------------------------
-        
+        // TBD: Some of them do nothing.
         static inline double radd(double const& a, double const& b) {
                 return a + b;
         }
@@ -228,7 +228,12 @@ namespace romi {
                 
         public:
                 SelfOrganizedMap(int num_cities, int path_length,
-                                 double alpha, double beta, double epsilon) {
+                                 double alpha, double beta, double epsilon)
+                                 : _alpha(), _beta(), _epsilon(), _k(), _dmax2(), _n(0), _ne_ke(), _num_cities(0), _path_length(0),
+                                 _cx(nullptr), _cy(nullptr), _px(nullptr), _py(nullptr), _dfx(nullptr), _dfy(nullptr), _tx(nullptr), _ty(nullptr),
+                                 _dx(nullptr), _dy(nullptr), _d2(nullptr), _w(nullptr), _sum(nullptr), _two()
+
+                {
                         exp_init();
                         //fx_init();
 
@@ -239,6 +244,7 @@ namespace romi {
                         _num_cities = num_cities;
                         _path_length = path_length;
 
+                        // TBD: Vectors.
                         _cx = new T[num_cities];
                         _cy = new T[num_cities];
                         _px = new T[path_length];
@@ -254,6 +260,10 @@ namespace romi {
                         _sum = new T[_num_cities];
                         _two = dtor(_two, 2.0);
                 }
+
+            SelfOrganizedMap(const SelfOrganizedMap&) = delete;
+            SelfOrganizedMap& operator=(const SelfOrganizedMap&) = delete;
+
                 
                 virtual ~SelfOrganizedMap() {
                         delete[] _cx;

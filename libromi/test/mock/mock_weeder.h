@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "api/Weeder.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 class MockWeeder : public romi::Weeder
 {
 public:
@@ -14,3 +16,4 @@ public:
         MOCK_METHOD(bool, stand_by, (), (override));
         MOCK_METHOD(bool, wake_up, (), (override));
 };
+#pragma GCC diagnostic pop

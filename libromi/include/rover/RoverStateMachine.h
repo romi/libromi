@@ -33,8 +33,6 @@ namespace romi {
         {
         protected:
 
-                int saved_state;
-
                 void init_state_transitions();
                 void init_system_transitions();
                 

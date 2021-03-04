@@ -38,9 +38,7 @@ namespace romi {
                 int preset;
                 int volume;
 
-                Sound(int p, int v) {
-                        preset = p;
-                        volume = v;
+                Sound(int preset, int volume) : preset(preset), volume(volume){
                 }
         };
               
@@ -71,6 +69,8 @@ namespace romi {
 
         public:
                 FluidSoundNotifications(const char *soundfont, JsonCpp& sounds);
+                FluidSoundNotifications(const FluidSoundNotifications&) = delete;
+                FluidSoundNotifications& operator=(const FluidSoundNotifications&) = delete;
                 virtual ~FluidSoundNotifications();
                         
                 void notify(const char *name) override;

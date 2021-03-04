@@ -35,7 +35,8 @@ namespace romi {
                 : _scripts(scripts),
                   _finished_event(finished_event),
                   _error_event(error_event),
-                  _result(0)
+                  _result(0),
+                  _mutex()
         {}
         
         void RoverScriptEngine::_run_script(RoverScriptEngine *engine,

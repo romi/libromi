@@ -18,7 +18,7 @@ protected:
         CNCRange range;
         MockCNC cnc;
         
-	cncadaptor_tests() : range(xmin, xmax) {}
+	cncadaptor_tests() : range(xmin, xmax), cnc() {}
 
 	~cncadaptor_tests() override = default;
 

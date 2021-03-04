@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
 namespace rpp {
         class LinuxMock : public ILinux {
         public:
@@ -31,3 +33,4 @@ namespace rpp {
                 MOCK_METHOD3(read, ssize_t(int fd, void *buf, size_t count));
         };
 }
+#pragma GCC diagnostic pop
