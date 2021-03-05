@@ -106,15 +106,16 @@ namespace romi {
                         return false;
                 }
 
-                png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+                png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr,
+                                                  nullptr, nullptr);
                 if (png_ptr == NULL) {
                         r_err("ImageIO::store_png: png_create_write_struct failed");
                         return false;
                 }
                 
                 info_ptr = png_create_info_struct(png_ptr);
-                if (info_ptr == NULL) {
-                        png_destroy_write_struct(&png_ptr, NULL);
+                if (info_ptr == nullptr) {
+                        png_destroy_write_struct(&png_ptr, nullptr);
                         r_err("ImageIO::store_png: png_create_info_struct failed");
                         return false;
                 }
@@ -166,7 +167,7 @@ namespace romi {
                 
                 png_init_io(png_ptr, fp);
                 png_set_rows(png_ptr, info_ptr, row_pointers);
-                png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+                png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
                 
                 for (y = 0; y < image.height(); y++)
                         png_free(png_ptr, row_pointers[y]);

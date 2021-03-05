@@ -149,7 +149,7 @@ namespace romi {
         void DebugWeedingFolder::dump_double(double value)
         {
                 ssize_t n = write(_dump_fd, (void *) &value, sizeof(double));
-                if (n != sizeof(double))
+                if (n != (ssize_t) sizeof(double))
                         r_err("dump: write error");
         }
         
