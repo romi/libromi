@@ -81,6 +81,10 @@ namespace romi {
                         return "event_script_finished";
                 case event_script_error:
                         return "event_script_error";
+                case event_system_failure:
+                        return "event_system_failure";
+                case event_timer_timeout:
+                                return "event_timer_timeout";
                 default:
                         return "unknown event";
                 }
@@ -121,6 +125,10 @@ namespace romi {
                         return "state_executing_script";
                 case state_script_paused:
                         return "state_script_paused";
+                case state_system_failure:
+                                return "state_system_failure";
+                case state_script_show_failure:
+                        return "state_script_show_failure";
                 default:
                         return "unkown state";
                 }
