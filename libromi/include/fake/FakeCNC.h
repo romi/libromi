@@ -37,9 +37,8 @@ namespace romi {
                 CNCRange _range;
                 
         public:
-                FakeCNC(JsonCpp& range) {
-                        //_range.init(config.get("cnc").get("range"));
-                        _range.init(range);
+                FakeCNC(JsonCpp& range) : _range(range){
+
                 }
                 
                 virtual ~FakeCNC() override = default;
