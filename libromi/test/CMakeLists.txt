@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 
 # TBD: This should really link with the libromi library.
 # Remove this include when warnings are complete.
-include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
 MESSAGE("Libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
 MESSAGE("Libromi C Flags = ${CMAKE_C_FLAGS}")
 
