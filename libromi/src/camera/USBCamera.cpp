@@ -112,8 +112,7 @@ namespace romi {
         bool USBCamera::grab(Image &image)
         {
                 SynchonizedCodeBlock synchonized(_mutex);
-                // TBD: Why not have an assignment operator?
-                _image.copy_to(image);
+                image = _image;
                 return true;
         }
 }

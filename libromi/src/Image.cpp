@@ -64,7 +64,7 @@ namespace romi {
         
         Image::~Image()
         {
-                free_data();
+                _data.clear();
         }
 
         void Image::do_init(ImageType type, size_t width, size_t height)
@@ -96,11 +96,6 @@ namespace romi {
                 size_t len = length();
                 for (size_t i = 0; i < len; i++)
                         _data.emplace_back((float) *data++ / 255.0f);
-        }
-
-        void Image::free_data()
-        {
-            _data.clear();
         }
         
         void Image::fill(size_t channel, float color)
@@ -166,10 +161,13 @@ namespace romi {
                 return length() * sizeof(float);
         }
 
-        void Image::copy_to(Image &to)
+        Image &Image::operator=(const Image &other)
         {
-                // TBD: Why not use import?
-                to.init(_type, _width, _height);
-                to._data = _data;
+                if (&other != this)
+                {
+                    init(other._type, other._width, other._height);
+                    _data = other._data;
+                }
+            return *this;
         }
 }

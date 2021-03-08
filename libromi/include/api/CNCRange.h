@@ -42,7 +42,7 @@ namespace romi {
                 
                 void init(JsonCpp &range);
                 
-                v3 dimensions();
+                v3 dimensions() const;
                 
                 bool is_inside(double x, double y, double z);
                 bool is_inside(v3 p);
@@ -52,7 +52,7 @@ namespace romi {
                 double error(double x, double y, double z);
                 double error(v3 p);
 
-                v3 clamp(v3 p);
+                v3 clamp(v3 p) const;
         };
 }
 

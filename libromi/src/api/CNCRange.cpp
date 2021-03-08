@@ -49,7 +49,7 @@ namespace romi {
                 }
         }
 
-        v3 CNCRange::dimensions()
+        v3 CNCRange::dimensions() const
         {
                 return max - min;
         }
@@ -93,7 +93,7 @@ namespace romi {
                 return error(v.x(), v.y(), v.z());
         }
         
-        v3 CNCRange::clamp(v3 p)
+        v3 CNCRange::clamp(v3 p) const
         {
                 return p.clamp(min, max);
         }

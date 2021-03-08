@@ -45,7 +45,7 @@ namespace romi {
         
         bool FileCamera::grab(Image &image)
         {
-                _image.copy_to(image);
+                image = _image;
                 return true;
         }
 

@@ -286,7 +286,7 @@ TEST_F(image_tests, test_copy_to_bw)
         
         Image image(Image::BW, data, 4, 4);
         Image copy;
-        image.copy_to(copy);
+        copy = image;
         
         ASSERT_EQ(copy.type(), Image::BW);
         ASSERT_EQ(copy.width(), 4);
@@ -308,7 +308,7 @@ TEST_F(image_tests, test_copy_to_rgb)
         image.fill(1, 1.0f);
         image.fill(2, 2.0f);
         Image copy(Image::BW, 2, 2);
-        image.copy_to(copy);
+        copy = image;
 
         ASSERT_EQ(copy.type(), Image::RGB);
         ASSERT_EQ(copy.width(), 4);
