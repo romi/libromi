@@ -8,7 +8,7 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
-class script_tests : public ::testing::Test
+class oquam_script_tests : public ::testing::Test
 {
 protected:
 
@@ -21,10 +21,10 @@ protected:
         double maxlen = 32.0;
         CNCRange range;
         
-	script_tests() : range(xmin, xmax) {
+	oquam_script_tests() : range(xmin, xmax) {
 	}
 
-	~script_tests() override = default;
+	~oquam_script_tests() override = default;
 
 	void SetUp() override {
 	}
@@ -33,7 +33,7 @@ protected:
 	}
 };
 
-TEST_F(script_tests, test_constructor)
+TEST_F(oquam_script_tests, test_constructor)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -46,7 +46,7 @@ TEST_F(script_tests, test_constructor)
         ASSERT_EQ(script.count_slices(), 0);
 }
 
-TEST_F(script_tests, test_moveto)
+TEST_F(oquam_script_tests, test_moveto)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -112,7 +112,7 @@ TEST_F(script_tests, test_moveto)
         ASSERT_EQ(second, (ATDC *) 0);
 }
 
-TEST_F(script_tests, test_move_and_back)
+TEST_F(oquam_script_tests, test_move_and_back)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -220,7 +220,7 @@ TEST_F(script_tests, test_move_and_back)
         ASSERT_EQ(second.curve.a[1], 0.0);
 }
 
-TEST_F(script_tests, test_move_forward_twice)
+TEST_F(oquam_script_tests, test_move_forward_twice)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -235,7 +235,7 @@ TEST_F(script_tests, test_move_forward_twice)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
 }
 
-TEST_F(script_tests, test_moves_at_90degrees)
+TEST_F(oquam_script_tests, test_moves_at_90degrees)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -250,7 +250,7 @@ TEST_F(script_tests, test_moves_at_90degrees)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
 }
 
-TEST_F(script_tests, test_three_small_moves_in_u)
+TEST_F(oquam_script_tests, test_three_small_moves_in_u)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -271,7 +271,7 @@ TEST_F(script_tests, test_three_small_moves_in_u)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
 }
 
-TEST_F(script_tests, test_reduce_exit_speed)
+TEST_F(oquam_script_tests, test_reduce_exit_speed)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -290,7 +290,7 @@ TEST_F(script_tests, test_reduce_exit_speed)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, test_amax));
 }
 
-TEST_F(script_tests, test_reduce_entry_speed)
+TEST_F(oquam_script_tests, test_reduce_entry_speed)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -309,7 +309,7 @@ TEST_F(script_tests, test_reduce_entry_speed)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, test_amax));
 }
 
-TEST_F(script_tests, moveto_throws_exception_if_negative_speed_1)
+TEST_F(oquam_script_tests, moveto_throws_exception_if_negative_speed_1)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -326,7 +326,7 @@ TEST_F(script_tests, moveto_throws_exception_if_negative_speed_1)
         }
 }
 
-TEST_F(script_tests, moveto_throws_exception_if_negative_speed_2)
+TEST_F(oquam_script_tests, moveto_throws_exception_if_negative_speed_2)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -344,7 +344,7 @@ TEST_F(script_tests, moveto_throws_exception_if_negative_speed_2)
         }
 }
 
-TEST_F(script_tests, test_zero_acceleration)
+TEST_F(oquam_script_tests, test_zero_acceleration)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -363,7 +363,7 @@ TEST_F(script_tests, test_zero_acceleration)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax_));
 }
 
-TEST_F(script_tests, test_zero_max_speed)
+TEST_F(oquam_script_tests, test_zero_max_speed)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -382,7 +382,7 @@ TEST_F(script_tests, test_zero_max_speed)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax_, amax));
 }
 
-TEST_F(script_tests, test_negative_deviation)
+TEST_F(oquam_script_tests, test_negative_deviation)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -399,7 +399,7 @@ TEST_F(script_tests, test_negative_deviation)
         ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
 }
 
-TEST_F(script_tests, test_zero_deviation)
+TEST_F(oquam_script_tests, test_zero_deviation)
 {
         // Arrange
         v3 start_position(0, 0, 0);

@@ -10,7 +10,7 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
-class section_tests : public ::testing::Test
+class oquam_section_tests : public ::testing::Test
 {
 protected:
         
@@ -28,17 +28,17 @@ protected:
         double v1[3] = {1.5, 0.0, 0.0};
         double a[3] =  {1.0, 0.0, 0.0};
         
-	section_tests() {
+	oquam_section_tests() {
         }
 
-	~section_tests() override = default;
+	~oquam_section_tests() override = default;
 
 	void SetUp() override {}
 
 	void TearDown() override {}
 };
 
-TEST_F(section_tests, test_constructor)
+TEST_F(oquam_section_tests, test_constructor)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 
@@ -54,7 +54,7 @@ TEST_F(section_tests, test_constructor)
         }
 }
 
-TEST_F(section_tests, test_get_speed_at_1)
+TEST_F(oquam_section_tests, test_get_speed_at_1)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 
@@ -66,14 +66,14 @@ TEST_F(section_tests, test_get_speed_at_1)
         ASSERT_EQ(v[2], 0.0);
 }
 
-TEST_F(section_tests, test_is_valid_1)
+TEST_F(oquam_section_tests, test_is_valid_1)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
         bool valid = is_valid(section, "test", 120.0, xmin, xmax, vmax,  amax);
         ASSERT_EQ(valid, true);
 }
 
-TEST_F(section_tests, test_is_valid_fails_1)
+TEST_F(oquam_section_tests, test_is_valid_fails_1)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 
@@ -127,7 +127,7 @@ TEST_F(section_tests, test_is_valid_fails_1)
         section.p1[2] = p1[2];
 }
 
-TEST_F(section_tests, test_is_valid_fails_2)
+TEST_F(oquam_section_tests, test_is_valid_fails_2)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 
@@ -183,7 +183,7 @@ TEST_F(section_tests, test_is_valid_fails_2)
         section.v1[2] = v1[2];
 }
 
-TEST_F(section_tests, test_is_valid_fails_3)
+TEST_F(oquam_section_tests, test_is_valid_fails_3)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 
@@ -213,7 +213,7 @@ TEST_F(section_tests, test_is_valid_fails_3)
         section.a[2] = a[2];
 }
 
-TEST_F(section_tests, test_is_valid_fails_4)
+TEST_F(oquam_section_tests, test_is_valid_fails_4)
 {
         Section section(1.0, 2.0, p0, p1, v0, v1, a);
 

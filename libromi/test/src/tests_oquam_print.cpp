@@ -8,7 +8,7 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
-class print_tests : public ::testing::Test
+class oquam_print_tests : public ::testing::Test
 {
 protected:
 
@@ -18,10 +18,10 @@ protected:
         double period = 0.100;
         double maxlen = 32.0;
         
-	print_tests() {
+	oquam_print_tests() {
 	}
 
-	~print_tests() override = default;
+	~oquam_print_tests() override = default;
 
 	void SetUp() override {
 	}
@@ -30,7 +30,7 @@ protected:
 	}
 };
 
-TEST_F(print_tests, test_valid_json_without_slices)
+TEST_F(oquam_print_tests, test_valid_json_without_slices)
 {
         // Arrange
         v3 start_position(0, 0, 0);
@@ -55,7 +55,7 @@ TEST_F(print_tests, test_valid_json_without_slices)
         delete_membuf(text);
 }
 
-TEST_F(print_tests, test_valid_json_with_slices)
+TEST_F(oquam_print_tests, test_valid_json_with_slices)
 {
         // Arrange
         v3 start_position(0, 0, 0);

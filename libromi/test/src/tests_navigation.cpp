@@ -8,13 +8,13 @@ using namespace std;
 using namespace testing;
 using namespace romi;
 
-class defaultnavigation_tests : public ::testing::Test
+class navigation_tests : public ::testing::Test
 {
 protected:
         JsonCpp config;
         MockMotorDriver driver;
         
-	defaultnavigation_tests() : config(), driver() {
+	navigation_tests() : config(), driver() {
                 const char * config_string = "{"
                         "'wheel_diameter': 1.0,"
                         "'wheel_base': 1.0,"
@@ -23,7 +23,7 @@ protected:
                 config = JsonCpp::parse(config_string);
 	}
 
-	~defaultnavigation_tests() override = default;
+	~navigation_tests() override = default;
 
 	void SetUp() override {
 	}
@@ -32,7 +32,7 @@ protected:
 	}
 };
 
-TEST_F(defaultnavigation_tests, test_moveat)
+TEST_F(navigation_tests, test_moveat)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -43,7 +43,7 @@ TEST_F(defaultnavigation_tests, test_moveat)
         navigation.moveat(0.1, 0.2);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_1)
+TEST_F(navigation_tests, move_fails_with_invalid_speed_1)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -55,7 +55,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_1)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_2)
+TEST_F(navigation_tests, move_fails_with_invalid_speed_2)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -67,7 +67,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_2)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_1)
+TEST_F(navigation_tests, move_fails_with_invalid_distance_1)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -79,7 +79,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_1)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_2)
+TEST_F(navigation_tests, move_fails_with_invalid_distance_2)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -91,7 +91,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_2)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, successful_move)
+TEST_F(navigation_tests, successful_move)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -136,7 +136,7 @@ TEST_F(defaultnavigation_tests, successful_move)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, successfully_move_distance_with_negative_speed)
+TEST_F(navigation_tests, successfully_move_distance_with_negative_speed)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -181,7 +181,7 @@ TEST_F(defaultnavigation_tests, successfully_move_distance_with_negative_speed)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_positive_speed)
+TEST_F(navigation_tests, successfully_move_negative_distance_with_positive_speed)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -226,7 +226,7 @@ TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_positiv
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_negative_speed)
+TEST_F(navigation_tests, successfully_move_negative_distance_with_negative_speed)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -271,7 +271,7 @@ TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_negativ
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_on_zero_speed)
+TEST_F(navigation_tests, move_fails_on_zero_speed)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -284,7 +284,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_zero_speed)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_returns_true_on_zero_distance)
+TEST_F(navigation_tests, move_returns_true_on_zero_distance)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -297,7 +297,7 @@ TEST_F(defaultnavigation_tests, move_returns_true_on_zero_distance)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_1)
+TEST_F(navigation_tests, move_fails_on_bad_speed_1)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -310,7 +310,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_1)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_2)
+TEST_F(navigation_tests, move_fails_on_bad_speed_2)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -323,7 +323,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_2)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_3)
+TEST_F(navigation_tests, move_fails_on_bad_speed_3)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -336,7 +336,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_3)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_returns_false_on_failing_stop)
+TEST_F(navigation_tests, move_returns_false_on_failing_stop)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -353,7 +353,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_on_failing_stop)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_returns_false_on_failing_get_encoders)
+TEST_F(navigation_tests, move_returns_false_on_failing_get_encoders)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -374,7 +374,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_on_failing_get_encoders)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, move_returns_false_when_moveat_fails)
+TEST_F(navigation_tests, move_returns_false_when_moveat_fails)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -408,7 +408,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_when_moveat_fails)
         ASSERT_EQ(success, false);
 }
 
-TEST_F(defaultnavigation_tests, stop_succeeds)
+TEST_F(navigation_tests, stop_succeeds)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
@@ -421,7 +421,7 @@ TEST_F(defaultnavigation_tests, stop_succeeds)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(defaultnavigation_tests, stop_fails_when_stop_driver_fails)
+TEST_F(navigation_tests, stop_fails_when_stop_driver_fails)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
