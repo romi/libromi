@@ -122,9 +122,9 @@ namespace romi {
                         
                 } else {
                         
-                        double x = params.num("x", CNC::UNCHANGED);
-                        double y = params.num("y", CNC::UNCHANGED);
-                        double z = params.num("z", CNC::UNCHANGED);
+                        double x = params.num("x", ICNC::UNCHANGED);
+                        double y = params.num("y", ICNC::UNCHANGED);
+                        double z = params.num("z", ICNC::UNCHANGED);
                         double v = params.num("speed", 0.2);
                         
                         r_debug("CNCAdaptor::execute_moveto: %f, %f, %f", x, y, z);

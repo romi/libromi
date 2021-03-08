@@ -21,22 +21,30 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _ROMI_WEEDER_H_
-#define _ROMI_WEEDER_H_
-
-#include "api/Activity.h"
-#include "api/PowerDevice.h"
+#ifndef __ROMI_MOTORDRIVER_H
+#define __ROMI_MOTORDRIVER_H
 
 namespace romi {
         
-        class Weeder : public Activity, public PowerDevice
+        class IMotorDriver
         {
         public:
-                virtual ~Weeder() = default;
+                
+                virtual ~IMotorDriver() = default;
 
-                virtual bool hoe() = 0;
+                /** The left and right speed are relative speeds. They
+                 * must have a value between -1 and 1, and indicate
+                 * the fraction of the maximum allowed speed. */
+                virtual bool moveat(double left, double right) = 0;
+
+                /** Stop as quick as possible. */
                 virtual bool stop() = 0;
+
+                /** Returns the values of the encoders. The timestamp
+                 * is in seconds. */
+                virtual bool get_encoder_values(double &left, double &right,
+                                                double &timestamp) = 0;
         };
 }
 
-#endif // _ROMI_WEEDER_H_
+#endif // __ROMI_MOTORDRIVER_H

@@ -25,17 +25,17 @@
 #define _ROMI_FAKE_WEEDER_H_
 
 #include <r.h>
-#include "api/Weeder.h"
+#include "api/IWeeder.h"
 
 namespace romi {
         
-        class FakeWeeder : public Weeder
+        class FakeWeeder : public IWeeder
         {
         public:
                 static constexpr const char *ClassName = "fake-weeder";
                 
-                FakeWeeder() {}
-                virtual ~FakeWeeder() override = default;
+                FakeWeeder() = default;
+                ~FakeWeeder() override = default;
 
                 bool hoe() override {
                         r_debug("FakeWeeder::hoe");

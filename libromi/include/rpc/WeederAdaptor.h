@@ -27,14 +27,14 @@
 
 #include <string>
 #include <IRPCHandler.h>
-#include "api/Weeder.h"
+#include "api/IWeeder.h"
 
 namespace romi {
 
         class WeederAdaptor : public rcom::IRPCHandler
         {
         protected:
-                Weeder& _weeder;
+                IWeeder& _weeder;
 
                 void execute_hoe(rcom::RPCError &error);
                 void execute_stop(rcom::RPCError &error);
@@ -47,10 +47,10 @@ namespace romi {
                 void execute_wake_up(rcom::RPCError &error);
 
         public:
-                WeederAdaptor(Weeder& weeder) : _weeder(weeder) {
+                explicit WeederAdaptor(IWeeder& weeder) : _weeder(weeder) {
                 }
                 
-                virtual ~WeederAdaptor() override = default;
+                ~WeederAdaptor() override = default;
 
                 void execute(const char *method, JsonCpp& params,
                              JsonCpp& result, rcom::RPCError &error) override;

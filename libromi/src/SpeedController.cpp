@@ -24,13 +24,13 @@
 
 #include <r.h>
 #include <algorithm>
-#include "DefaultSpeedController.h"
+#include "SpeedController.h"
 #include <stdexcept>
 
 namespace romi {
         
-        DefaultSpeedController::DefaultSpeedController(Navigation &navigation,
-                                                       JsonCpp& config)
+        SpeedController::SpeedController(INavigation &navigation,
+                                         JsonCpp& config)
                 : _navigation(navigation), _fast(), _accurate()
         {
                 try {
@@ -45,7 +45,7 @@ namespace romi {
                         _accurate.parse(accurate_config);
                         
                 } catch (JSONError &je) {
-                        r_err("DefaultSpeedController::DefaultSpeedController: failed to "
+                        r_err("SpeedController::SpeedController: failed to "
                               "parse the configuration");
                         throw je;
                 }
@@ -58,9 +58,9 @@ namespace romi {
                                                "fast speed controller");
         }
 
-        DefaultSpeedController::DefaultSpeedController(Navigation &navigation,
-                                                       SpeedConverter &fast,
-                                                       SpeedConverter &accurate)
+        SpeedController::SpeedController(INavigation &navigation,
+                                         SpeedConverter &fast,
+                                         SpeedConverter &accurate)
                 : _navigation(navigation), _fast(fast), _accurate(accurate)
         {
                 if (!_fast.is_valid()) 
@@ -72,32 +72,32 @@ namespace romi {
                                                "accurate speed controller");
         }
 
-        bool DefaultSpeedController::send_moveat(double left, double right)
+        bool SpeedController::send_moveat(double left, double right)
         {
-                // r_debug("SpeedController::moveat(left=%.3f,right=%.3f)", left, right); 
+                // r_debug("ISpeedController::moveat(left=%.3f,right=%.3f)", left, right);
                 left = std::clamp(left, -1.0, 1.0); 
                 right = std::clamp(right, -1.0, 1.0);
                 return _navigation.moveat(left, right);
         }
                 
-        bool DefaultSpeedController::stop()
+        bool SpeedController::stop()
         {
                 return _navigation.stop();
         }
         
-        bool DefaultSpeedController::drive_at(double speed, double direction)
+        bool SpeedController::drive_at(double speed, double direction)
         {
                 WheelSpeeds speeds = _fast.compute_speeds(speed, direction);
                 return send_moveat(speeds.left, speeds.right);
         }
                 
-        bool DefaultSpeedController::drive_accurately_at(double speed, double direction)
+        bool SpeedController::drive_accurately_at(double speed, double direction)
         {
                 WheelSpeeds speeds = _accurate.compute_speeds(speed, direction);
                 return send_moveat(speeds.left, speeds.right);
         }
 
-        bool DefaultSpeedController::spin(double direction)
+        bool SpeedController::spin(double direction)
         {
                 WheelSpeeds speeds = _accurate.compute_speeds(0.0, direction);
                 return send_moveat(speeds.left, speeds.right);

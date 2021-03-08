@@ -21,29 +21,35 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _ROMI_DEFAULT_EVENT_TIMER_H
-#define _ROMI_DEFAULT_EVENT_TIMER_H
-
+#include <r.h>
 #include "EventTimer.h"
 
 namespace romi {
-        
-        class DefaultEventTimer : public EventTimer
+
+        void EventTimer::reset()
         {
-        protected:
-                int _event;
-                double _event_time;
+                _event_time = 0.0;
+        }
 
-                bool has_timed_out();
+        bool EventTimer::has_timed_out()
+        {
+                return (_event_time != 0.0
+                        && clock_time() >= _event_time);
+        }
 
-        public:
-                DefaultEventTimer(int event) : _event(event), _event_time(0) {}
-                virtual ~DefaultEventTimer() override = default;
-
-                int get_next_event() override;
-                void set_timeout(double timeout) override;
-                void reset() override;
-        };
+        int EventTimer::get_next_event()
+        {
+                int event = 0;
+                if (has_timed_out()) {
+                        event = _event;
+                        reset();
+                }
+                return event;
+        }
+        
+        void EventTimer::set_timeout(double timeout)
+        {
+                _event_time = clock_time() + timeout;
+        }
 }
 
-#endif // _ROMI_DEFAULT_EVENT_TIMER_H

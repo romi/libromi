@@ -23,11 +23,11 @@
  */
 
 #include <r.h>
-#include "DefaultNavigation.h" 
+#include "Navigation.h"
 
 namespace romi {
 
-        double DefaultNavigation::compute_timeout(double distance, double speed)
+        double Navigation::compute_timeout(double distance, double speed)
         {
                 double timeout = 0.0;
                 if (speed != 0.0) {
@@ -38,7 +38,7 @@ namespace romi {
                 return timeout;
         }
 
-        bool DefaultNavigation::wait_travel(WheelOdometry &odometry, double distance,
+        bool Navigation::wait_travel(WheelOdometry &odometry, double distance,
                                      double timeout)
         {
                 bool success = false;
@@ -70,7 +70,7 @@ namespace romi {
 
                         double now = clock_time();
                         if (now - start_time >= timestamp) {
-                                r_err("DefaultNavigation::wait_travel: time out (%f s)", timeout);
+                                r_err("Navigation::wait_travel: time out (%f s)", timeout);
                                 _driver.moveat(0, 0);
                                 success = false;
                                 _stop = true;
@@ -82,7 +82,7 @@ namespace romi {
                 return success;
         }
         
-        bool DefaultNavigation::do_move2(double distance, double speed)
+        bool Navigation::do_move2(double distance, double speed)
         {
                 bool success = false;
                 double left, right, timestamp;
@@ -99,16 +99,16 @@ namespace romi {
                                                         compute_timeout(distance, speed));
                                 
                         } else {
-                                r_err("DefaultNavigation::do_move2: moveat failed");
+                                r_err("Navigation::do_move2: moveat failed");
                         }
                 } else {
-                        r_err("DefaultNavigation::do_move2: get_encoder_values failed");
+                        r_err("Navigation::do_move2: get_encoder_values failed");
                 }
                                         
                 return success;
         }
         
-        bool DefaultNavigation::do_move(double distance, double speed)
+        bool Navigation::do_move(double distance, double speed)
         {
                 bool success = false;
                 
@@ -136,11 +136,11 @@ namespace romi {
                                 success = do_move2(distance, speed);
                                 
                         } else {
-                                r_err("DefaultNavigation::do_move: stop failed");
+                                r_err("Navigation::do_move: stop failed");
                         }
                         
                 } else {
-                        r_err("DefaultNavigation::do_move: invalid speed or distance: "
+                        r_err("Navigation::do_move: invalid speed or distance: "
                               "speed=%f, distance=%f", speed, distance);
                 }
                 
@@ -152,18 +152,18 @@ namespace romi {
         }
 
 
-        bool DefaultNavigation::moveat(double left, double right)
+        bool Navigation::moveat(double left, double right)
         {
                 SynchronizedCodeBlock sync(_mutex);
                 bool success = false;
                 if (_status == MOVEAT_CAPABLE) 
                         success = _driver.moveat(left, right);
                 else
-                        r_warn("DefaultNavigation::moveat: still moving");
+                        r_warn("Navigation::moveat: still moving");
                 return success;
         }
         
-        bool DefaultNavigation::move(double distance, double speed)
+        bool Navigation::move(double distance, double speed)
         {
                 bool success = false;
                 {
@@ -171,7 +171,7 @@ namespace romi {
                         if (_status == MOVEAT_CAPABLE) {
                                 _status = MOVING;
                         } else {
-                                r_warn("DefaultNavigation::move: already moving");
+                                r_warn("Navigation::move: already moving");
                         }
                 }
                         
@@ -183,7 +183,7 @@ namespace romi {
                 return success;
         }
         
-        bool DefaultNavigation::stop()
+        bool Navigation::stop()
         {
                 // This flag should assure that we break out
                 // the wait_travel loop.
@@ -193,20 +193,20 @@ namespace romi {
                 return success;
         }
 
-        bool DefaultNavigation::pause_activity()
+        bool Navigation::pause_activity()
         {
-                r_warn("*** DefaultNavigation::pause_activity NOT YET IMPLEMENTED");
+                r_warn("*** Navigation::pause_activity NOT YET IMPLEMENTED");
                 stop();
                 return true;
         }
         
-        bool DefaultNavigation::continue_activity()
+        bool Navigation::continue_activity()
         {
-                r_warn("*** DefaultNavigation::continue_activity NOT YET IMPLEMENTED");
+                r_warn("*** Navigation::continue_activity NOT YET IMPLEMENTED");
                 return true;
         }
         
-        bool DefaultNavigation::reset_activity()
+        bool Navigation::reset_activity()
         {
                 stop();
                 return true;

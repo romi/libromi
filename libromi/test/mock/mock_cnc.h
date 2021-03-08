@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/CNC.h"
+#include "api/ICNC.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockCNC : public romi::CNC
+class MockCNC : public romi::ICNC
 {
 public:
         MOCK_METHOD(bool, get_range, (romi::CNCRange &range), (override));

@@ -26,7 +26,7 @@
 
 #include <string>
 #include <vector>
-#include "ScriptEngine.h"
+#include "IScriptEngine.h"
 
 namespace romi {
 
@@ -41,7 +41,7 @@ namespace romi {
                 }
         };
                         
-        class FakeScriptEngine : public ScriptEngine
+        class FakeScriptEngine : public IScriptEngine
         {
         protected:
                 std::vector<FakeScript> _scripts;

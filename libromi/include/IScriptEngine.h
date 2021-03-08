@@ -21,18 +21,22 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _ROMI_EVENT_SOURCE_H
-#define _ROMI_EVENT_SOURCE_H
+#ifndef _ROMI_SCRIPT_ENGINE_H
+#define _ROMI_SCRIPT_ENGINE_H
+
+#include "ScriptList.h"
+#include "api/IEventSource.h"
 
 namespace romi {
         
-        class EventSource
+        template <class T>
+                class IScriptEngine : public IEventSource
         {
         public:
-                virtual ~EventSource() = default;
+                ~IScriptEngine() override = default;
 
-                virtual int get_next_event() = 0;
+                virtual void execute_script(T& target, size_t id) = 0;
         };
 }
 
-#endif // _ROMI_EVENT_SOURCE_H
+#endif // _ROMI_SCRIPT_ENGINE_H

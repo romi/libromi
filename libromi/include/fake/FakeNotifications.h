@@ -25,15 +25,15 @@
 #ifndef _ROMI_FAKE_NOTIFICATIONS_H
 #define _ROMI_FAKE_NOTIFICATIONS_H
 
-#include "api/Notifications.h"
+#include "api/INotifications.h"
 
 namespace romi {
 
-        class FakeNotifications : public Notifications
+        class FakeNotifications : public INotifications
         {
         public:
-                FakeNotifications() {}
-                virtual ~FakeNotifications() override = default;
+                FakeNotifications() = default;
+                ~FakeNotifications() override = default;
 
                 void notify(const char *name) override {
                         r_info("FakeNotifications: notify %s", name);

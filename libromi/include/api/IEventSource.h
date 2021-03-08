@@ -21,32 +21,18 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_NAVIGATION_H
-#define __ROMI_NAVIGATION_H
-
-#include "Activity.h"
+#ifndef _ROMI_IEVENT_SOURCE_H
+#define _ROMI_IEVENT_SOURCE_H
 
 namespace romi {
         
-        class Navigation : public Activity
+        class IEventSource
         {
         public:
-                
-                virtual ~Navigation() = default;
+                virtual ~IEventSource() = default;
 
-                /** The left and right speed are relative speeds. They
-                 * must have a value between -1 and 1, and indicate
-                 * the fraction of the maximum allowed speed. */
-                virtual bool moveat(double left, double right) = 0;
-
-                /** Move a given distance in meters. The speed is
-                 * relative to the maximum speed, i.e. its valus
-                 * should be in the range [-1,1]. */
-                virtual bool move(double distance, double speed) = 0;
-
-                /** Stops immediately. */
-                virtual bool stop() = 0;
+                virtual int get_next_event() = 0;
         };
 }
 
-#endif // __ROMI_NAVIGATION_H
+#endif // _ROMI_EVENT_SOURCE_H

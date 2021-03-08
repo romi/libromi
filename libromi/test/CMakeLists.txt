@@ -175,8 +175,8 @@ set(SRCS_DEFAULTNAVIGATION
   src/tests_main.cpp
   src/tests_defaultnavigation.cpp
   mock/mock_motordriver.h
-  ../include/DefaultNavigation.h
-  ../src/DefaultNavigation.cpp
+        ../include/Navigation.h
+        ../src/Navigation.cpp
   )
 
 add_executable(romi_rover_unit_tests_libromi_defaultnavigation ${SRCS_DEFAULTNAVIGATION})
@@ -343,8 +343,8 @@ set(SRCS_SPEEDCONTROLLER
   src/tests_main.cpp
   src/tests_speedcontroller.cpp
   mock/mock_navigation.h
-  ../include/DefaultSpeedController.h
-  ../src/DefaultSpeedController.cpp
+        ../include/SpeedController.h
+        ../src/SpeedController.cpp
   ../include/SpeedConverter.h
   ../src/SpeedConverter.cpp
   )

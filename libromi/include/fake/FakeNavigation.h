@@ -25,17 +25,17 @@
 #define __ROMI_DEBUG_NAVIGATION_H
 
 #include <r.h>
-#include "api/Navigation.h"
+#include "api/INavigation.h"
 
 namespace romi {
 
-        class FakeNavigation : public Navigation
+        class FakeNavigation : public INavigation
         {
         public:
                 static constexpr const char *ClassName = "fake-navigation";
                 
-                FakeNavigation() {}
-                virtual ~FakeNavigation() override = default;
+                FakeNavigation() = default;
+                ~FakeNavigation() override = default;
                 
                 bool moveat(double left, double right) override {
                         r_debug("FakeNavigation: moveat(left=%0.3f, right=%0.3f)",

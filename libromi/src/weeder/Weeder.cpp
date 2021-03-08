@@ -23,27 +23,27 @@
  */
 
 #include "DebugWeedingSession.h"
-#include "weeder/DefaultWeeder.h"
+#include "weeder/Weeder.h"
 
 const double diameter_tool_default = 0.05;
 
 namespace romi {
 
-        DefaultWeeder::DefaultWeeder(Camera& camera,
-                                 IPipeline& pipeline,
-                                 CNC& cnc,
-                                 double z0,
-                                 double speed,
-                                 IFileCabinet &filecabinet)
+        Weeder::Weeder(ICamera& camera,
+                       IPipeline& pipeline,
+                       ICNC& cnc,
+                       double z0,
+                       double speed,
+                       IFileCabinet &filecabinet)
                 : _camera(camera), _pipeline(pipeline), _cnc(cnc), _range(),
                   _z0(z0), _speed(speed), _diameter_tool(diameter_tool_default), _filecabinet(filecabinet)
         {
                 _cnc.get_range(_range);
         }
         
-        bool DefaultWeeder::hoe()
+        bool Weeder::hoe()
         {
-                r_debug("DefaultWeeder::hoe");
+                r_debug("Weeder::hoe");
                 bool success = false;
                 
                 try {
@@ -56,7 +56,7 @@ namespace romi {
                         // Whatever happens, make sure the spindle
                         // stops and the arm goes back up
                         
-                        r_debug("DefaultWeeder::hoe: catch: %s", re.what());
+                        r_debug("Weeder::hoe: catch: %s", re.what());
                         try {
                                 stop_spindle_and_move_arm_up();
                         } catch (...) {}
@@ -65,7 +65,7 @@ namespace romi {
                 return success;
         }
         
-        void DefaultWeeder::try_hoe()
+        void Weeder::try_hoe()
         {
                 Image image;
                 Path path;
@@ -75,54 +75,54 @@ namespace romi {
                 do_hoe(path);
         }
 
-        void DefaultWeeder::grab_image(Image& image)
+        void Weeder::grab_image(Image& image)
         {
                 move_arm_to_camera_position();
                 camera_grab(image);
         }
 
-        void DefaultWeeder::camera_grab(Image& image)
+        void Weeder::camera_grab(Image& image)
         {
                 if (!_camera.grab(image)) {
-                        r_err("DefaultWeeder: grab failed");
-                        throw std::runtime_error("DefaultWeeder: grab failed");
+                        r_err("Weeder: grab failed");
+                        throw std::runtime_error("Weeder: grab failed");
                 }
         }
 
-        void DefaultWeeder::compute_path(Image& image, Path& path)
+        void Weeder::compute_path(Image& image, Path& path)
         {
                 Path normalized_path;
                 analyse_image(image, normalized_path);
                 adjust_path(normalized_path, path);
         }
 
-        void DefaultWeeder::analyse_image(Image& image, Path& path)
+        void Weeder::analyse_image(Image& image, Path& path)
         {
                 IFolder &folder = _filecabinet.start_new_folder();
                 
                 if (!_pipeline.run(folder, image, _diameter_tool, path)) {
-                        r_err("DefaultWeeder: pipeline run failed");
-                        throw std::runtime_error("DefaultWeeder: pipeline run failed");
+                        r_err("Weeder: pipeline run failed");
+                        throw std::runtime_error("Weeder: pipeline run failed");
                 }
         }
         
-        void DefaultWeeder::do_hoe(Path &path)
+        void Weeder::do_hoe(Path &path)
         {
-                r_debug("DefaultWeeder::do_hoe");
+                r_debug("Weeder::do_hoe");
                 move_arm_to_start_position(path[0]);
                 travel(path, 0.4);
                 stop_spindle_and_move_arm_up();                
         }
         
-        void DefaultWeeder::move_arm_to_camera_position()
+        void Weeder::move_arm_to_camera_position()
         {
                 stop_spindle_and_move_arm_up();
                 moveto(0.0, _range.max.y(), 0.0);
         }
 
-        void DefaultWeeder::move_arm_to_start_position(v3 p)
+        void Weeder::move_arm_to_start_position(v3 p)
         {
-                r_debug("DefaultWeeder::move_arm_to_start_position");
+                r_debug("Weeder::move_arm_to_start_position");
 
                 stop_spindle_and_move_arm_up();
                 moveto(p.x(), p.y(), 0.0);
@@ -130,16 +130,16 @@ namespace romi {
                 moveto(p.x(), p.y(), _z0);
         }
 
-        void DefaultWeeder::stop_spindle_and_move_arm_up()
+        void Weeder::stop_spindle_and_move_arm_up()
         {
-                r_debug("DefaultWeeder::stop_spindle_and_move_arm_up");
+                r_debug("Weeder::stop_spindle_and_move_arm_up");
                 stop_spindle();
-                moveto(CNC::UNCHANGED, CNC::UNCHANGED, 0.0);
+                moveto(ICNC::UNCHANGED, ICNC::UNCHANGED, 0.0);
         }
         
-        void DefaultWeeder::adjust_path(Path &path, Path &out)
+        void Weeder::adjust_path(Path &path, Path &out)
         {
-                r_debug("DefaultWeeder::adjust_path");
+                r_debug("Weeder::adjust_path");
                 scale_to_range(path);
                 rotate_path_to_starting_point(path, out);
                 
@@ -149,9 +149,9 @@ namespace romi {
                 }
         }
 
-        void DefaultWeeder::scale_to_range(Path &path)
+        void Weeder::scale_to_range(Path &path)
         {
-                r_debug("DefaultWeeder::scale_to_range");
+                r_debug("Weeder::scale_to_range");
 
                 // The y-axis of the rover is inverted with respect to
                 // the image coordinates.
@@ -168,9 +168,9 @@ namespace romi {
                         throw std::runtime_error("Computed path out of range");
         }
         
-        void DefaultWeeder::rotate_path_to_starting_point(Path &path, Path &out)
+        void Weeder::rotate_path_to_starting_point(Path &path, Path &out)
         {
-                r_debug("DefaultWeeder::rotate_path_to_starting_point");
+                r_debug("Weeder::rotate_path_to_starting_point");
                 v3 starting_point(0.0, _range.max.y(), _z0);
                 int closest_index = path.closest_point(starting_point);
                 if (closest_index >= 0)
@@ -179,74 +179,74 @@ namespace romi {
                         throw std::runtime_error("rotate_path_to_starting_point empty path, no closest point");
         }
         
-        void DefaultWeeder::travel(Path& path, double v)
+        void Weeder::travel(Path& path, double v)
         {
                 if (!_cnc.travel(path, v)) {
-                        r_err("DefaultWeeder: travel failed");
-                        throw std::runtime_error("DefaultWeeder: travel failed");
+                        r_err("Weeder: travel failed");
+                        throw std::runtime_error("Weeder: travel failed");
                 }
         }
 
-        void DefaultWeeder::moveto(double x, double y, double z)
+        void Weeder::moveto(double x, double y, double z)
         {
                 if (!_cnc.moveto(x, y, z, _speed)) {
-                        r_err("DefaultWeeder: moveto failed");
-                        throw std::runtime_error("DefaultWeeder: moveto failed");
+                        r_err("Weeder: moveto failed");
+                        throw std::runtime_error("Weeder: moveto failed");
                 }
         }
 
-        void DefaultWeeder::start_spindle()
+        void Weeder::start_spindle()
         {
                 if (!_cnc.spindle(1.0)) {
-                        r_err("DefaultWeeder: start spindle failed");
-                        throw std::runtime_error("DefaultWeeder: start spindle failed");
+                        r_err("Weeder: start spindle failed");
+                        throw std::runtime_error("Weeder: start spindle failed");
                 }
         }
         
-        void DefaultWeeder::stop_spindle()
+        void Weeder::stop_spindle()
         {
                 if (!_cnc.spindle(0.0)) {
-                        r_err("DefaultWeeder: stop spindle failed");
-                        throw std::runtime_error("DefaultWeeder: stop spindle failed");
+                        r_err("Weeder: stop spindle failed");
+                        throw std::runtime_error("Weeder: stop spindle failed");
                 }
         }
 
-        bool DefaultWeeder::stop()
+        bool Weeder::stop()
         {
                 return _cnc.spindle(0.0);
         }
         
-        bool DefaultWeeder::pause_activity()
+        bool Weeder::pause_activity()
         {
                 return _cnc.pause_activity();
         }
         
-        bool DefaultWeeder::continue_activity()
+        bool Weeder::continue_activity()
         {
                 return _cnc.continue_activity();
         }
         
-        bool DefaultWeeder::reset_activity()
+        bool Weeder::reset_activity()
         {
                 return _cnc.reset_activity();
         }
 
-        bool DefaultWeeder::power_up()
+        bool Weeder::power_up()
         {
                 return _cnc.power_up();
         }
         
-        bool DefaultWeeder::power_down()
+        bool Weeder::power_down()
         {
                 return _cnc.power_down();
         }
         
-        bool DefaultWeeder::stand_by()
+        bool Weeder::stand_by()
         {
                 return _cnc.stand_by();
         }
         
-        bool DefaultWeeder::wake_up()
+        bool Weeder::wake_up()
         {
                 return _cnc.wake_up();
         }

@@ -24,7 +24,7 @@
 #include <thread>
 #include <stdexcept>
 #include <r.h>
-#include "api/Activity.h"
+#include "api/IActivity.h"
 #include "rover/RoverScriptEngine.h"
 
 namespace romi {

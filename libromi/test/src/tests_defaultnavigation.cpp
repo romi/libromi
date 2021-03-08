@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "JsonCpp.h"
-#include "DefaultNavigation.h"
+#include "Navigation.h"
 #include "../mock/mock_motordriver.h"
 
 using namespace std;
@@ -35,7 +35,7 @@ protected:
 TEST_F(defaultnavigation_tests, test_moveat)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         EXPECT_CALL(driver, moveat(0.1, 0.2))
                 .WillOnce(Return(true));
@@ -46,7 +46,7 @@ TEST_F(defaultnavigation_tests, test_moveat)
 TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_1)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true));
@@ -58,7 +58,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_1)
 TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_2)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true));
@@ -70,7 +70,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_speed_2)
 TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_1)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true));
@@ -82,7 +82,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_1)
 TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_2)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true));
@@ -94,7 +94,7 @@ TEST_F(defaultnavigation_tests, move_fails_with_invalid_distance_2)
 TEST_F(defaultnavigation_tests, successful_move)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         {
                 InSequence seq;
@@ -139,7 +139,7 @@ TEST_F(defaultnavigation_tests, successful_move)
 TEST_F(defaultnavigation_tests, successfully_move_distance_with_negative_speed)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         {
                 InSequence seq;
@@ -184,7 +184,7 @@ TEST_F(defaultnavigation_tests, successfully_move_distance_with_negative_speed)
 TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_positive_speed)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         {
                 InSequence seq;
@@ -229,7 +229,7 @@ TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_positiv
 TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_negative_speed)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         {
                 InSequence seq;
@@ -274,7 +274,7 @@ TEST_F(defaultnavigation_tests, successfully_move_negative_distance_with_negativ
 TEST_F(defaultnavigation_tests, move_fails_on_zero_speed)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -287,7 +287,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_zero_speed)
 TEST_F(defaultnavigation_tests, move_returns_true_on_zero_distance)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -300,7 +300,7 @@ TEST_F(defaultnavigation_tests, move_returns_true_on_zero_distance)
 TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_1)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -313,7 +313,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_1)
 TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_2)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -326,7 +326,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_2)
 TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_3)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -339,7 +339,7 @@ TEST_F(defaultnavigation_tests, move_fails_on_bad_speed_3)
 TEST_F(defaultnavigation_tests, move_returns_false_on_failing_stop)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(false))
@@ -356,7 +356,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_on_failing_stop)
 TEST_F(defaultnavigation_tests, move_returns_false_on_failing_get_encoders)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -377,7 +377,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_on_failing_get_encoders)
 TEST_F(defaultnavigation_tests, move_returns_false_when_moveat_fails)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
 
         {
                 InSequence seq;
@@ -411,7 +411,7 @@ TEST_F(defaultnavigation_tests, move_returns_false_when_moveat_fails)
 TEST_F(defaultnavigation_tests, stop_succeeds)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(true))
@@ -424,7 +424,7 @@ TEST_F(defaultnavigation_tests, stop_succeeds)
 TEST_F(defaultnavigation_tests, stop_fails_when_stop_driver_fails)
 {
         NavigationSettings rover(config);
-        DefaultNavigation navigation(driver, rover);
+        Navigation navigation(driver, rover);
         
         EXPECT_CALL(driver, stop())
                 .WillOnce(Return(false))

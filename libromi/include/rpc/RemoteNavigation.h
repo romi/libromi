@@ -25,20 +25,20 @@
 #define __ROMI_REMOTE_NAVIGATION_H
 
 #include <IRPCClient.h>
-#include "api/Navigation.h"
+#include "api/INavigation.h"
 #include "rpc/RemoteStub.h"
 
 namespace romi {
         
-        class RemoteNavigation : public Navigation, public RemoteStub
+        class RemoteNavigation : public INavigation, public RemoteStub
         {
         public:
                 static constexpr const char *ClassName = "remote-navigation";
                 
         public:
                 
-                RemoteNavigation(rcom::IRPCHandler &client) : RemoteStub(client) {}
-                virtual ~RemoteNavigation() override = default;
+                explicit RemoteNavigation(rcom::IRPCHandler &client) : RemoteStub(client) {}
+                ~RemoteNavigation() override = default;
 
                 bool moveat(double left, double right) override;
                 bool move(double distance, double speed) override;

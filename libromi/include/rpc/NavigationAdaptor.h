@@ -25,14 +25,14 @@
 #define __ROMI_NAVIGATION_ADAPTOR_H
 
 #include <IRPCHandler.h>
-#include "api/Navigation.h"
+#include "api/INavigation.h"
 
 namespace romi {
         
         class NavigationAdaptor : public rcom::IRPCHandler
         {
         protected:
-                Navigation &_navigation;
+                INavigation &_navigation;
                 
                 void execute_moveat(JsonCpp& params, JsonCpp& result,
                                     rcom::RPCError &error);
@@ -48,12 +48,12 @@ namespace romi {
                                    rcom::RPCError &error);
                 
         public:
-                NavigationAdaptor(Navigation &navigation)
+                NavigationAdaptor(INavigation &navigation)
                         : _navigation(navigation) {}
-                virtual ~NavigationAdaptor() override = default;
+                ~NavigationAdaptor() override = default;
 
                 void execute(const char *method, JsonCpp& params, JsonCpp& result,
-                             rcom::RPCError &error);
+                             rcom::RPCError &error) override;
         };
 }
 

@@ -21,22 +21,22 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_CNC_H
-#define __ROMI_CNC_H
+#ifndef __ROMI_ICNC_H
+#define __ROMI_ICNC_H
 
 #include "api/Path.h"
 #include "api/CNCRange.h"
-#include "api/Activity.h"
-#include "api/PowerDevice.h"
+#include "api/IActivity.h"
+#include "api/IPowerDevice.h"
 
 namespace romi {
         
-        class CNC : public Activity, public PowerDevice
+        class ICNC : public IActivity, public IPowerDevice
         {
         public:
                 static constexpr double UNCHANGED = -999999.0;
                 
-                virtual ~CNC() = default;
+                virtual ~ICNC() = default;
 
                 virtual bool get_range(CNCRange &range) = 0;
 

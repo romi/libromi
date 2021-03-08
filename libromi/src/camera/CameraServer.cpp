@@ -27,7 +27,7 @@
 
 namespace romi {
 
-        CameraServer::CameraServer(Camera &camera, const char *name, const char *topic)
+        CameraServer::CameraServer(ICamera &camera, const char *name, const char *topic)
                 : _camera(camera), _service(nullptr), _image()
         {
                 _service = registry_open_service(name, topic, 0);

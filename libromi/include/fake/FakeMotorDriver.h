@@ -25,15 +25,15 @@
 #define __ROMI_FAKE_MOTORDRIVER_H
 
 #include "r.h"
-#include "MotorDriver.h"
+#include "IMotorDriver.h"
 
 namespace romi {
         
-        class FakeMotorDriver : public MotorDriver
+        class FakeMotorDriver : public IMotorDriver
         {
         public:
                 
-                virtual ~FakeMotorDriver() override = default;
+                ~FakeMotorDriver() override = default;
 
                 // TODO: simulate displacements over time
                 bool moveat(double left, double right) override {

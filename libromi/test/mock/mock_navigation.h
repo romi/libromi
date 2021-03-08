@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/Navigation.h"
+#include "api/INavigation.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockNavigation : public romi::Navigation
+class MockNavigation : public romi::INavigation
 {
 public:
         MOCK_METHOD(bool, moveat, (double left, double right), (override));

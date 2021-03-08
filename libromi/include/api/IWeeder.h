@@ -21,35 +21,22 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#include <r.h>
-#include "DefaultEventTimer.h"
+#ifndef _ROMI_IWEEDER_H_
+#define _ROMI_IWEEDER_H_
+
+#include "api/IActivity.h"
+#include "api/IPowerDevice.h"
 
 namespace romi {
-
-        void DefaultEventTimer::reset()
-        {
-                _event_time = 0.0;
-        }
-
-        bool DefaultEventTimer::has_timed_out()
-        {
-                return (_event_time != 0.0
-                        && clock_time() >= _event_time);
-        }
-
-        int DefaultEventTimer::get_next_event()
-        {
-                int event = 0;
-                if (has_timed_out()) {
-                        event = _event;
-                        reset();
-                }
-                return event;
-        }
         
-        void DefaultEventTimer::set_timeout(double timeout)
+        class IWeeder : public IActivity, public IPowerDevice
         {
-                _event_time = clock_time() + timeout;
-        }
+        public:
+                virtual ~IWeeder() = default;
+
+                virtual bool hoe() = 0;
+                virtual bool stop() = 0;
+        };
 }
 
+#endif // _ROMI_WEEDER_H_

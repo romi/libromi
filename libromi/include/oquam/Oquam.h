@@ -27,7 +27,7 @@
 #include <r.h>
 #include <mutex>
 
-#include "api/CNC.h"
+#include "api/ICNC.h"
 #include "v.h"
 #include "IFileCabinet.h"
 
@@ -38,7 +38,7 @@ namespace romi {
 
         using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
         
-        class Oquam : public CNC
+        class Oquam : public ICNC
         {
         public:
                 CNCController& _controller;
@@ -70,13 +70,13 @@ namespace romi {
                 Oquam(const Oquam&) = delete;
                 Oquam& operator=(const Oquam&) = delete;
                 
-                virtual ~Oquam() = default;
+                ~Oquam() override = default;
 
                 void set_file_cabinet(IFileCabinet *cabinet) {
                         _file_cabinet = cabinet;
                 }
                 
-                // CNC interface, See CNC.h for more info
+                // ICNC interface, See ICNC.h for more info
                 bool moveto(double x, double y, double z,
                             double relative_speed = 0.1) override;
                 bool travel(Path &path, double relative_speed = 0.1) override;
@@ -84,7 +84,7 @@ namespace romi {
                 bool homing() override;
                 bool get_range(CNCRange &range) override;
 
-                // Activity interface
+                // IActivity interface
                 bool pause_activity() override;
                 bool continue_activity() override;
                 bool reset_activity() override;

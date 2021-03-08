@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/InputDevice.h"
+#include "api/IInputDevice.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockInputDevice : public romi::InputDevice
+class MockInputDevice : public romi::IInputDevice
 {
 public:
         MOCK_METHOD(int, get_next_event, (), (override));

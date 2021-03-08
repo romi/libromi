@@ -25,42 +25,42 @@
 #ifndef __ROMI_ROVER_H
 #define __ROMI_ROVER_H
 
-#include "api/InputDevice.h"
-#include "api/Display.h"
-#include "api/Notifications.h"
-#include "api/Weeder.h"
-#include "api/Navigation.h"
+#include "api/IInputDevice.h"
+#include "api/IDisplay.h"
+#include "api/INotifications.h"
+#include "api/IWeeder.h"
+#include "api/INavigation.h"
 #include "api/StateMachine.h"
 
-#include "SpeedController.h"
-#include "EventTimer.h"
+#include "ISpeedController.h"
+#include "IEventTimer.h"
 #include "Menu.h"
-#include "ScriptEngine.h"
+#include "IScriptEngine.h"
 
 namespace romi {
         
         class Rover
         {
         public:
-                InputDevice& input_device;
-                Display& display;
-                SpeedController& speed_controller;
-                Navigation& navigation;
-                EventTimer& event_timer;
+                IInputDevice& input_device;
+                IDisplay& display;
+                ISpeedController& speed_controller;
+                INavigation& navigation;
+                IEventTimer& event_timer;
                 Menu& menu;
-                ScriptEngine<Rover>& script_engine;
-                Notifications& notifications;
-                Weeder& weeder;
+                IScriptEngine<Rover>& script_engine;
+                INotifications& notifications;
+                IWeeder& weeder;
                 
-                Rover(InputDevice& input_device_,
-                      Display& display_,
-                      SpeedController& speed_controller_,
-                      Navigation& navigation_,
-                      EventTimer& event_timer,
+                Rover(IInputDevice& input_device_,
+                      IDisplay& display_,
+                      ISpeedController& speed_controller_,
+                      INavigation& navigation_,
+                      IEventTimer& event_timer,
                       Menu& menu,
-                      ScriptEngine<Rover>& script_engine,
-                      Notifications& notifications,
-                      Weeder& weeder);
+                      IScriptEngine<Rover>& script_engine,
+                      INotifications& notifications,
+                      IWeeder& weeder);
                 
                 virtual ~Rover() = default;
 

@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
-#include "MotorDriver.h"
+#include "IMotorDriver.h"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockMotorDriver : public romi::MotorDriver
+class MockMotorDriver : public romi::IMotorDriver
 {
 public:
         MOCK_METHOD(bool, moveat, (double left, double right), (override));

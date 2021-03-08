@@ -26,22 +26,22 @@
 
 #include <mutex>
 
-#include "api/Navigation.h" 
+#include "api/INavigation.h"
 #include "NavigationSettings.h"
-#include "MotorDriver.h"
+#include "IMotorDriver.h"
 #include "WheelOdometry.h" 
 
 namespace romi {
 
         using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
 
-        class DefaultNavigation : public Navigation
+        class Navigation : public INavigation
         {
         protected:
 
                 enum move_status_t{ MOVEAT_CAPABLE, MOVING };
                 
-                MotorDriver &_driver;
+                IMotorDriver &_driver;
                 NavigationSettings &_settings;
                 std::mutex _mutex;
                 move_status_t _status;
@@ -54,11 +54,11 @@ namespace romi {
                                         
         public:
                 
-                DefaultNavigation(MotorDriver &driver, NavigationSettings &settings)
+                Navigation(IMotorDriver &driver, NavigationSettings &settings)
                         : _driver(driver), _settings(settings), _mutex(), _status(MOVEAT_CAPABLE), _stop(0) {
                 }
                 
-                virtual ~DefaultNavigation() override = default;
+                ~Navigation() override = default;
 
                 bool moveat(double left, double right) override;
                 bool move(double distance, double speed) override;

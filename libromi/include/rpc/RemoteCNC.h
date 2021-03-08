@@ -25,19 +25,19 @@
 #define __ROMI_REMOTE_CNC_H
 
 #include "rpc/RemoteStub.h"
-#include "api/CNC.h"
+#include "api/ICNC.h"
 
 namespace romi {
 
-        class RemoteCNC : public CNC, public RemoteStub
+        class RemoteCNC : public ICNC, public RemoteStub
         {
         public:
                 static constexpr const char *ClassName = "remote-cnc";
                 
         public:
-                RemoteCNC(rcom::IRPCHandler& rpc_handler)
+                explicit RemoteCNC(rcom::IRPCHandler& rpc_handler)
                         : RemoteStub(rpc_handler) {}
-                virtual ~RemoteCNC() override = default;
+                ~RemoteCNC() override = default;
 
                 bool get_range(CNCRange &range) override;
                 bool moveto(double x, double y, double z,

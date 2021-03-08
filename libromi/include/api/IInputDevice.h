@@ -21,32 +21,22 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_ACTIVITY_H
-#define __ROMI_ACTIVITY_H
+#ifndef _ROMI_IINPUT_DEVICE_H
+#define _ROMI_IINPUT_DEVICE_H
 
-#include <stdexcept>
+#include "IEventSource.h"
 
 namespace romi {
-
-        class ActivityResetException : public std::exception
+        
+        class IInputDevice : public IEventSource
         {
         public:
-                ActivityResetException() : std::exception() {}
+                virtual ~IInputDevice() = default;
                 
-                virtual const char* what() const noexcept override {
-                        return "The activity was cancelled"; 
-                }
-        };
-
-        class Activity
-        {
-        public:
-                virtual ~Activity() = default;
-                
-                virtual bool pause_activity() = 0;
-                virtual bool continue_activity() = 0;
-                virtual bool reset_activity() = 0;
+                virtual double get_forward_speed() = 0;
+                virtual double get_backward_speed() = 0;
+                virtual double get_direction() = 0;
         };
 }
 
-#endif // __ROMI_ACTIVITY_H
+#endif // _ROMI_INPUT_DEVICE_H

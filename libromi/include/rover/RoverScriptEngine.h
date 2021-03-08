@@ -25,7 +25,7 @@
 #define _ROMI_ROVER_SCRIPT_ENGINE_H
 
 #include <mutex>
-#include "ScriptEngine.h"
+#include "IScriptEngine.h"
 #include "ScriptList.h"
 #include "rover/Rover.h"
 
@@ -38,7 +38,7 @@ namespace romi {
                 size_t script_index;
         };
         
-        class RoverScriptEngine : public ScriptEngine<Rover>
+        class RoverScriptEngine : public IScriptEngine<Rover>
         {
         protected:
 
@@ -67,7 +67,7 @@ namespace romi {
                 RoverScriptEngine(ScriptList& scripts,
                                   int finished_event,
                                   int error_event);
-                virtual ~RoverScriptEngine() override = default;
+                ~RoverScriptEngine() override = default;
 
                 void execute_script(Rover& target, size_t id) override;
                 int get_next_event() override;                

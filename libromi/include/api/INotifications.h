@@ -1,7 +1,7 @@
 /*
   romi-rover
 
-  Copyright (C) 2019 Sony Computer Science Laboratories
+  Copyright (C) 2019-2020 Sony Computer Science Laboratories
   Author(s) Peter Hanappe
 
   romi-rover is collection of applications for the Romi Rover.
@@ -21,22 +21,21 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef _ROMI_SCRIPT_ENGINE_H
-#define _ROMI_SCRIPT_ENGINE_H
 
-#include "ScriptList.h"
-#include "api/EventSource.h"
+#ifndef _ROMI_INOTIFICATIONS_H
+#define _ROMI_INOTIFICATIONS_H
 
 namespace romi {
-        
-        template <class T>
-                class ScriptEngine : public EventSource
+
+        class INotifications
         {
         public:
-                virtual ~ScriptEngine() = default;
+                virtual ~INotifications() = default;
 
-                virtual void execute_script(T& target, size_t id) = 0;
+                virtual void notify(const char *name) = 0;
+                virtual void stop(const char *name) = 0;
+                virtual void reset() = 0;
         };
 }
 
-#endif // _ROMI_SCRIPT_ENGINE_H
+#endif // _ROMI_NOTIFICATIONS_H

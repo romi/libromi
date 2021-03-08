@@ -21,21 +21,40 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_SPEEDCONTROLLER_H
-#define __ROMI_SPEEDCONTROLLER_H
+#ifndef __ROMI_DEFAULT_SPEEDCONTROLLER_H
+#define __ROMI_DEFAULT_SPEEDCONTROLLER_H
+
+#include <math.h>
+#include <JsonCpp.h>
+
+#include "api/INavigation.h"
+#include "ISpeedController.h"
+#include "SpeedConverter.h"
 
 namespace romi {
 
-        class SpeedController
+        class SpeedController : public ISpeedController
         {
-        public:
-                virtual ~SpeedController() = default;
+        protected:
+                INavigation &_navigation;
+                SpeedConverter _fast;
+                SpeedConverter _accurate;
                 
-                virtual bool stop() = 0;
-                virtual bool drive_at(double speed, double direction) = 0;
-                virtual bool drive_accurately_at(double speed, double direction) = 0;
-                virtual bool spin(double speed) = 0;
+                bool send_moveat(double left, double right);
+                
+        public:
+                
+                SpeedController(INavigation &navigation, JsonCpp& config);
+                SpeedController(INavigation &navigation,
+                                SpeedConverter &fast,
+                                SpeedConverter &accurate);
+                ~SpeedController() override = default;
+                
+                bool stop() override;
+                bool drive_at(double speed, double direction) override;
+                bool drive_accurately_at(double speed, double direction) override;
+                bool spin(double direction) override;
         };
 }
 
-#endif // __ROMI_I_SPEEDCONTROLLER_H
+#endif // __ROMI_DEFAULT_SPEEDCONTROLLER_H

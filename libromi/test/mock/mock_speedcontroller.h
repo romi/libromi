@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "SpeedController.h"
+#include "ISpeedController.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockSpeedController : public romi::SpeedController
+class MockSpeedController : public romi::ISpeedController
 {
 public:
         MOCK_METHOD(bool, stop, (), (override));

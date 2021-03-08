@@ -28,11 +28,11 @@
 #include <string>
 #include <r.h>
 #include "ImageIO.h"
-#include "api/Camera.h"
+#include "api/ICamera.h"
 
 namespace romi {
 
-        class FileCamera : public Camera
+        class FileCamera : public ICamera
         {
         public:
                 static constexpr const char *ClassName = "file-camera";
@@ -45,8 +45,8 @@ namespace romi {
                 
         public:
                 
-                FileCamera(const char *filename);
-                virtual ~FileCamera() override = default;
+                explicit FileCamera(const char *filename);
+                ~FileCamera() override = default;
         
                 bool grab(Image &image) override;
         };

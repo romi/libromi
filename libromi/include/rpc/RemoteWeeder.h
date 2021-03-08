@@ -25,18 +25,18 @@
 #define _ROMI_REMOTE_WEEDER_H_
 
 #include <IRPCClient.h>
-#include "api/Weeder.h"
+#include "api/IWeeder.h"
 #include "rpc/RemoteStub.h"
 
 namespace romi {
         
-        class RemoteWeeder : public Weeder, public RemoteStub
+        class RemoteWeeder : public IWeeder, public RemoteStub
         {
         public:
                 static constexpr const char *ClassName = "remote-weeder";
                 
-                RemoteWeeder(rcom::IRPCHandler& client);
-                virtual ~RemoteWeeder() override = default;
+                explicit RemoteWeeder(rcom::IRPCHandler& client);
+                ~RemoteWeeder() override = default;
 
                 bool hoe() override;
                 bool stop() override;

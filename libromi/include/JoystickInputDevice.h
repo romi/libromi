@@ -26,13 +26,13 @@
 
 #include <string>
 #include <vector>
-#include "api/InputDevice.h"
+#include "api/IInputDevice.h"
 #include "api/Joystick.h"
 #include "JoystickEventMapper.h"
 
 namespace romi {
         
-        class JoystickInputDevice : public InputDevice
+        class JoystickInputDevice : public IInputDevice
         {
         public:
                 static constexpr const char *ClassName = "joystick";

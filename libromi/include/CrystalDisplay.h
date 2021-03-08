@@ -26,11 +26,11 @@
 #define __ROMI_CRYSTAL_DISPLAY_H
 
 #include <IRomiSerialClient.h>
-#include "api/Display.h"
+#include "api/IDisplay.h"
 
 namespace romi {
         
-        class CrystalDisplay : public Display
+        class CrystalDisplay : public IDisplay
         {
         public:
                 static constexpr const char *ClassName = "crystal-display";
@@ -42,11 +42,11 @@ namespace romi {
 
                         
         public:
-                CrystalDisplay(IRomiSerialClient &serial)
+                explicit CrystalDisplay(IRomiSerialClient &serial)
                         : _serial(serial), observed_output() {
                 }
                 
-                virtual ~CrystalDisplay() override = default;
+                ~CrystalDisplay() override = default;
 
                 bool show(size_t line, const std::string& display_string) override;
                 bool clear(size_t line) override;

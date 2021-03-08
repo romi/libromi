@@ -1,7 +1,7 @@
 /*
   romi-rover
 
-  Copyright (C) 2019-2020 Sony Computer Science Laboratories
+  Copyright (C) 2019 Sony Computer Science Laboratories
   Author(s) Peter Hanappe
 
   romi-rover is collection of applications for the Romi Rover.
@@ -21,21 +21,29 @@
   <http://www.gnu.org/licenses/>.
 
  */
-
-#ifndef _ROMI_NOTIFICATIONS_H
-#define _ROMI_NOTIFICATIONS_H
+#ifndef __ROMI_IPOWER_DEVICE_H
+#define __ROMI_IPOWER_DEVICE_H
 
 namespace romi {
-
-        class Notifications
+        
+        class IPowerDevice
         {
         public:
-                virtual ~Notifications() = default;
+                virtual ~IPowerDevice() = default;
 
-                virtual void notify(const char *name) = 0;
-                virtual void stop(const char *name) = 0;
-                virtual void reset() = 0;
+                // Do the initial power-up sequence once the power has
+                // been supplied after a fresh reboot.
+                virtual bool power_up() = 0;
+                
+                // Do the power-down sequence before shutting down.
+                virtual bool power_down() = 0;
+
+                // Go into a lower-power state due to inactivity.
+                virtual bool stand_by() = 0;
+
+                // Exit the lower-power state and prepare for action.
+                virtual bool wake_up() = 0;
         };
 }
 
-#endif // _ROMI_NOTIFICATIONS_H
+#endif // __ROMI_POWER_DEVICE_H

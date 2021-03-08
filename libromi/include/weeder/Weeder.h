@@ -28,20 +28,20 @@
 #include <string>
 #include <IRPCHandler.h>
 
-#include "api/Camera.h"
-#include "api/CNC.h"
-#include "api/Weeder.h"
+#include "api/ICamera.h"
+#include "api/ICNC.h"
+#include "api/IWeeder.h"
 #include "IFileCabinet.h"
 #include "weeder/IPipeline.h"
 
 namespace romi {
 
-        class DefaultWeeder : public Weeder
+        class Weeder : public IWeeder
         {
         protected:
-                Camera& _camera;
+                ICamera& _camera;
                 IPipeline& _pipeline;
-                CNC& _cnc;
+                ICNC& _cnc;
                 CNCRange _range;
                 double _z0;
                 double _speed;
@@ -67,16 +67,16 @@ namespace romi {
 
         public:
                 
-                DefaultWeeder(Camera& camera, IPipeline& pipeline, CNC& cnc,
-                            double z0, double speed, IFileCabinet &filecabinet);
+                Weeder(ICamera& camera, IPipeline& pipeline, ICNC& cnc,
+                       double z0, double speed, IFileCabinet &filecabinet);
                 
-                virtual ~DefaultWeeder() override = default;
+                ~Weeder() override = default;
 
-                // Weeder interface
+                // IWeeder interface
                 bool hoe() override;
                 bool stop() override;
                 
-                // Activity interface
+                // IActivity interface
                 bool pause_activity() override;
                 bool continue_activity() override;
                 bool reset_activity() override;

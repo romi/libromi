@@ -25,7 +25,7 @@
 #define __ROMI_BRUSH_MOTORDRIVER_H
 
 #include <stdexcept>
-#include "MotorDriver.h"
+#include "IMotorDriver.h"
 #include "RomiSerialClient.h"
 
 namespace romi {
@@ -49,7 +49,7 @@ namespace romi {
                 }
         };
         
-        class BrushMotorDriver : public MotorDriver
+        class BrushMotorDriver : public IMotorDriver
         {
         protected:
                 IRomiSerialClient &_serial;
@@ -67,7 +67,7 @@ namespace romi {
                                  int encoder_steps,
                                  double max_revolutions_per_sec);
                 
-                virtual ~BrushMotorDriver() override = default;
+                ~BrushMotorDriver() override = default;
 
                 bool stop() override;
                 bool moveat(double left, double right) override;

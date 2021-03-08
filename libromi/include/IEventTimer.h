@@ -21,20 +21,21 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#ifndef _ROMI_EVENT_TIMER_H_
+#define _ROMI_EVENT_TIMER_H_
 
-#ifndef __ROMI_CAMERA_H
-#define __ROMI_CAMERA_H
-
-#include "Image.h"
-#include "JsonCpp.h"
+#include "api/IEventSource.h"
 
 namespace romi {
-
-        class Camera {
+        
+        class IEventTimer : public IEventSource
+        {
         public:
-                virtual ~Camera() = default;
-                virtual bool grab(Image &image) = 0;
+                ~IEventTimer() override = default;
+
+                virtual void set_timeout(double timeout) = 0;
+                virtual void reset() = 0;
         };
 }
 
-#endif // __ROMI_CAMERA_H
+#endif // _ROMI_EVENT_TIMER_H_

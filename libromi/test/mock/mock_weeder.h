@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/Weeder.h"
+#include "api/IWeeder.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockWeeder : public romi::Weeder
+class MockWeeder : public romi::IWeeder
 {
 public:
         MOCK_METHOD(bool, hoe, (), (override));

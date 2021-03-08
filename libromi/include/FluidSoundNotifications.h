@@ -29,7 +29,7 @@
 #include <fluidsynth.h>
 #include <map>
 
-#include "api/Notifications.h"
+#include "api/INotifications.h"
 
 namespace romi {
 
@@ -43,7 +43,7 @@ namespace romi {
         };
               
         
-        class FluidSoundNotifications : public Notifications
+        class FluidSoundNotifications : public INotifications
         {
         protected:
                 fluid_settings_t *_settings;
@@ -71,7 +71,7 @@ namespace romi {
                 FluidSoundNotifications(const char *soundfont, JsonCpp& sounds);
                 FluidSoundNotifications(const FluidSoundNotifications&) = delete;
                 FluidSoundNotifications& operator=(const FluidSoundNotifications&) = delete;
-                virtual ~FluidSoundNotifications();
+                ~FluidSoundNotifications() override;
                         
                 void notify(const char *name) override;
                 void stop(const char *name) override;

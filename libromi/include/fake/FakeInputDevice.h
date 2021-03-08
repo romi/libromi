@@ -26,18 +26,18 @@
 
 #include <string>
 #include <vector>
-#include "api/InputDevice.h"
+#include "api/IInputDevice.h"
 
 namespace romi {
         
-        class FakeInputDevice : public InputDevice
+        class FakeInputDevice : public IInputDevice
         {
         public:
                 static constexpr const char *ClassName = "fake-input-device";
 
         public:
-                FakeInputDevice() {}                
-                virtual ~FakeInputDevice() override = default;
+                FakeInputDevice() = default;
+                ~FakeInputDevice() override = default;
                 
                 int get_next_event() override {
                         return 0;

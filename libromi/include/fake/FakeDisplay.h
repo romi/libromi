@@ -25,11 +25,11 @@
 #ifndef __ROMI_FAKE_DISPLAY_H
 #define __ROMI_FAKE_DISPLAY_H
 
-#include "api/Display.h"
+#include "api/IDisplay.h"
 
 namespace romi {
         
-        class FakeDisplay : public Display
+        class FakeDisplay : public IDisplay
         {
         public:
                 static constexpr const char *ClassName = "fake-display";
@@ -37,8 +37,8 @@ namespace romi {
                 std::string _line[2];
                 
         public:
-                FakeDisplay() {}
-                virtual ~FakeDisplay() = default;
+                FakeDisplay() = default;
+                ~FakeDisplay() override = default;
 
                 bool show(size_t line, const std::string& display_string) override {
                         bool success = false;

@@ -30,14 +30,14 @@
 #include <mutex>
 #include <JsonCpp.h>
 
-#include "api/Camera.h"
+#include "api/ICamera.h"
 #include "Image.h"
 
 typedef struct _camera_t camera_t;
 
 namespace romi {
 
-        class USBCamera : public Camera
+        class USBCamera : public ICamera
         {
         public:
                 static constexpr const char *ClassName = "usb-camera";
@@ -63,7 +63,7 @@ namespace romi {
                 USBCamera(const char *device, size_t width, size_t height);
                 USBCamera(const USBCamera&) = delete;
                 USBCamera& operator=(const USBCamera&) = delete;
-                virtual ~USBCamera() override;
+                ~USBCamera() override;
                 
                 bool grab(Image &image) override;
         };

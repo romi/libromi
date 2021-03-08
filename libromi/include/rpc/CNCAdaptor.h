@@ -25,14 +25,14 @@
 #define __ROMI_CNC_ADAPTER_H
 
 #include <IRPCHandler.h>
-#include "api/CNC.h"
+#include "api/ICNC.h"
 
 namespace romi {
         
         class CNCAdaptor : public rcom::IRPCHandler
         {
         protected:
-                CNC &_cnc;
+                ICNC &_cnc;
                 
                 void execute_get_range(JsonCpp& params, JsonCpp& result,
                                        rcom::RPCError &error);
@@ -53,8 +53,8 @@ namespace romi {
 
 
         public:
-                CNCAdaptor(CNC &cnc) : _cnc(cnc) {}
-                virtual ~CNCAdaptor() override = default;
+                CNCAdaptor(ICNC &cnc) : _cnc(cnc) {}
+                ~CNCAdaptor() override = default;
                 
                 void execute(const char *method, JsonCpp& params,
                              JsonCpp& result, rcom::RPCError &error) override;

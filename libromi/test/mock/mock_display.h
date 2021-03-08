@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/Display.h"
+#include "api/IDisplay.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockDisplay : public romi::Display
+class MockDisplay : public romi::IDisplay
 {
 public:
         MOCK_METHOD(bool, show, (size_t line, const std::string& display_string), (override));

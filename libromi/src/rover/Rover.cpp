@@ -25,15 +25,15 @@
 
 namespace romi {
         
-        Rover::Rover(InputDevice &input_device_,
-                     Display &display_,
-                     SpeedController &speed_controller_,
-                     Navigation& navigation_,
-                     EventTimer &event_timer_,
+        Rover::Rover(IInputDevice &input_device_,
+                     IDisplay &display_,
+                     ISpeedController &speed_controller_,
+                     INavigation& navigation_,
+                     IEventTimer &event_timer_,
                      Menu &menu_,
-                     ScriptEngine<Rover>& script_engine_,
-                     Notifications& notifications_,
-                     Weeder& weeder_)
+                     IScriptEngine<Rover>& script_engine_,
+                     INotifications& notifications_,
+                     IWeeder& weeder_)
                 : input_device(input_device_),
                   display(display_),
                   speed_controller(speed_controller_),

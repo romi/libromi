@@ -1,7 +1,7 @@
 /*
   romi-rover
 
-  Copyright (C) 2019-2020 Sony Computer Science Laboratories
+  Copyright (C) 2019 Sony Computer Science Laboratories
   Author(s) Peter Hanappe
 
   romi-rover is collection of applications for the Romi Rover.
@@ -21,23 +21,32 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#ifndef __ROMI_IACTIVITY_H
+#define __ROMI_IACTIVITY_H
 
-#ifndef __ROMI_DISPLAY_H
-#define __ROMI_DISPLAY_H
-#include <cstddef>
-#include <string>
-
+#include <stdexcept>
 
 namespace romi {
-        class Display
+
+        class ActivityResetException : public std::exception
         {
         public:
-                virtual ~Display() = default;
+                ActivityResetException() : std::exception() {}
+                
+                virtual const char* what() const noexcept override {
+                        return "The activity was cancelled"; 
+                }
+        };
 
-                virtual bool show(size_t line, const std::string& display_string) = 0;
-                virtual bool clear(size_t line) = 0;
-                virtual size_t count_lines() = 0;
+        class IActivity
+        {
+        public:
+                virtual ~IActivity() = default;
+                
+                virtual bool pause_activity() = 0;
+                virtual bool continue_activity() = 0;
+                virtual bool reset_activity() = 0;
         };
 }
 
-#endif // __ROMI_DISPLAY_H
+#endif // __ROMI_ACTIVITY_H

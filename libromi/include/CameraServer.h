@@ -26,13 +26,13 @@
 #define __ROMI_CAMERA_SERVER_H
 
 #include <rcom.h>
-#include "api/Camera.h"
+#include "api/ICamera.h"
 
 namespace romi {
 
         class CameraServer {
         protected:
-                Camera &_camera;
+                ICamera &_camera;
                 service_t *_service;
                 Image _image;
 
@@ -43,7 +43,7 @@ namespace romi {
                 void send_image(response_t *response);
                 
         public:
-                CameraServer(Camera &camera, const char *name, const char *topic);
+                CameraServer(ICamera &camera, const char *name, const char *topic);
                 CameraServer(const CameraServer&) = delete;
                 CameraServer& operator=(const CameraServer&) = delete;
                 virtual ~CameraServer();

@@ -12,10 +12,10 @@ set(SOURCES
         include/CameraServer.h
         include/CrystalDisplay.h
         include/DebugWeedingSession.h
-        include/DefaultEventTimer.h
-        include/DefaultNavigation.h
-        include/DefaultSpeedController.h
         include/EventTimer.h
+        include/Navigation.h
+        include/SpeedController.h
+        include/IEventTimer.h
         include/FileCamera.h
         include/FluidSoundNotifications.h
         include/GetOpt.h
@@ -27,33 +27,33 @@ set(SOURCES
         include/JoystickEventMapper.h
         include/LinuxJoystick.h
         include/Menu.h
-        include/MotorDriver.h
+        include/IMotorDriver.h
         include/NavigationSettings.h
         include/Options.h
-        include/ScriptEngine.h
+        include/IScriptEngine.h
         include/ScriptList.h
         include/ScriptMenu.h
-        include/SpeedController.h
+        include/ISpeedController.h
         include/SpeedConverter.h
         include/UIEventMapper.h
         include/USBCamera.h
         include/v.h
         include/WheelOdometry.h
 
-        include/api/Activity.h
-        include/api/Camera.h
-        include/api/CNC.h
+        include/api/IActivity.h
+        include/api/ICamera.h
+        include/api/ICNC.h
         include/api/CNCRange.h
-        include/api/Display.h
-        include/api/EventSource.h
-        include/api/InputDevice.h
+        include/api/IDisplay.h
+        include/api/IEventSource.h
+        include/api/IInputDevice.h
         include/api/Joystick.h
-        include/api/Navigation.h
-        include/api/Notifications.h
+        include/api/INavigation.h
+        include/api/INotifications.h
         include/api/Path.h
-        include/api/PowerDevice.h
+        include/api/IPowerDevice.h
         include/api/StateMachine.h
-        include/api/Weeder.h
+        include/api/IWeeder.h
 
         include/fake/FakeCNC.h
         include/fake/FakeDisplay.h
@@ -96,7 +96,7 @@ set(SOURCES
         include/rpc/RemoteWeeder.h
         include/rpc/WeederAdaptor.h
 
-        include/weeder/DefaultWeeder.h
+        include/weeder/Weeder.h
         include/weeder/IImageCropper.h
         include/weeder/IImageSegmentation.h
         include/weeder/ImageCropper.h
@@ -111,9 +111,9 @@ set(SOURCES
         src/ActivityHelper.cpp
         src/BrushMotorDriver.cpp
         src/DebugWeedingSession.cpp
-        src/DefaultEventTimer.cpp
-        src/DefaultNavigation.cpp
-        src/DefaultSpeedController.cpp
+        src/EventTimer.cpp
+        src/Navigation.cpp
+        src/SpeedController.cpp
         src/GetOpt.cpp
         src/Image.cpp
         src/ImageIO.cpp
@@ -158,7 +158,7 @@ set(SOURCES
         src/ui/LinuxJoystick.cpp
         src/ui/UIEventMapper.cpp
 
-        src/weeder/DefaultWeeder.cpp
+        src/weeder/Weeder.cpp
         src/weeder/ImageCropper.cpp
         src/weeder/Pipeline.cpp
         src/weeder/PipelineFactory.cpp

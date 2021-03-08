@@ -24,25 +24,25 @@
 #ifndef _OQUAM_CNC_CONTROLLER_HPP_
 #define _OQUAM_CNC_CONTROLLER_HPP_
 
-#include "api/Activity.h"
+#include "api/IActivity.h"
 
 namespace romi {
 
-        class CNCController : public Activity
+        class CNCController : public IActivity
         {
         public:
                 enum { RUNNING, HOMING, ERROR };
 
                 enum AxisIndex { NoAxis = -1, AxisX = 0, AxisY = 1, AxisZ = 2 };
                         
-                virtual ~CNCController() = default;
+                ~CNCController() override = default;
 
                 virtual bool configure_homing(AxisIndex axis1, AxisIndex axis2,
                                               AxisIndex axis3) = 0;
 
                 virtual bool get_position(int32_t *pos) = 0;
 
-                /** The homing operation sets the CNC in the home
+                /** The homing operation sets the ICNC in the home
                  * position AND resets the origin to the location
                  * after the homing operation. */
                 virtual bool homing() = 0;

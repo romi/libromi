@@ -24,11 +24,11 @@
 #ifndef __ROMI_FAKE_CNC_H
 #define __ROMI_FAKE_CNC_H
 
-#include "api/CNC.h"
+#include "api/ICNC.h"
 
 namespace romi {
         
-        class FakeCNC : public CNC
+        class FakeCNC : public ICNC
         {
         public:
                 static constexpr const char *ClassName = "fake-cnc";
@@ -37,18 +37,18 @@ namespace romi {
                 CNCRange _range;
                 
         public:
-                FakeCNC(JsonCpp& range) : _range(range){
+                explicit FakeCNC(JsonCpp& range) : _range(range){
 
                 }
                 
-                virtual ~FakeCNC() override = default;
+                ~FakeCNC() override = default;
                 
                 bool get_range(CNCRange &range) override {
                         range = _range;
                         return true;
                 }
                 
-                bool moveto(__attribute__((unused))double x, __attribute__((unused))double y, __attribute__((unused))double z, __attribute__((unused))double relative_speed = 0.1) override {
+                bool moveto(__attribute__((unused))double x, __attribute__((unused))double y, __attribute__((unused))double z, __attribute__((unused))double relative_speed) override {
                         return true;
                 }
                 
@@ -56,7 +56,7 @@ namespace romi {
                         return true;
                 }
                 
-                bool travel(__attribute__((unused))Path &path, __attribute__((unused))double relative_speed = 0.1) override {
+                bool travel(__attribute__((unused))Path &path, __attribute__((unused))double relative_speed) override {
                         return true;
                 }
                 
