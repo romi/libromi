@@ -108,7 +108,7 @@ TEST_F(imageio_tests, store_jpg_to_buffer_correct)
         ASSERT_EQ(success, true);
 
         std::vector<uint8_t> inbuffer;
-        success = FileUtils::ReadFileAsVector(jpg_file, inbuffer);
+        FileUtils::TryReadFileAsVector(jpg_file, inbuffer);
 
         ASSERT_EQ(success, true);
         ASSERT_EQ(outbuffer.size(), inbuffer.size());

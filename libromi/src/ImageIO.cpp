@@ -77,6 +77,8 @@ namespace romi {
 
     bool ImageIO::store_jpg(Image& image, bytevector& out)
     {
+            std::vector<uint8_t> buffer(image.channels() * image.width());
+            JSAMPLE* pBuffer = &buffer[0];
             struct jpeg_compress_struct cinfo{};
             struct jpeg_error_mgr jerr{};
             size_t index = 0;
@@ -100,8 +102,6 @@ namespace romi {
             jpeg_set_quality(&cinfo, 90, TRUE);
             jpeg_start_compress(&cinfo, TRUE);
 
-            std::vector<uint8_t> buffer(image.channels() * image.width());
-            JSAMPLE* pBuffer = &buffer[0];
             auto& data = image.data();
 
             while (cinfo.next_scanline < cinfo.image_height) {
@@ -129,7 +129,7 @@ namespace romi {
                 std::vector<uint8_t> outbuffer;
                 store_jpg(image, outbuffer);
                 try {
-                        FileUtils::WriteVectorAsFile(filename, outbuffer);
+                        FileUtils::TryWriteVectorAsFile(filename, outbuffer);
                 }
                 catch (const std::exception &ex) {
                         retval = false;
@@ -284,12 +284,15 @@ namespace romi {
                 longjmp(setjmp_buffer, 1);
         }
 
+
+
         bool ImageIO::load_jpg(Image& image, const char *filename)
         {
                 bool retval = true;
                 std::vector<uint8_t> image_file_data;
+                std::vector<float> image_file_data_f;
                 try {
-                        FileUtils::ReadFileAsVector(filename, image_file_data);
+                        FileUtils::TryReadFileAsVector(filename, image_file_data);
                         retval = load_jpg(image, image_file_data.data(), image_file_data.size());
                 }
                 catch (const std::exception &ex) {
