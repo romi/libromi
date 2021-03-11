@@ -43,7 +43,7 @@ namespace romi {
         std::vector<uint8_t>& data;
     };
 
-    static void mem_init_destination( j_compress_ptr cinfo )
+    static void jpeg_buffer_init( j_compress_ptr cinfo )
     {
             auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
             dst->data.resize( JPEG_MEM_DST_MGR_BUFFER_SIZE, 0 );
@@ -51,13 +51,13 @@ namespace romi {
             cinfo->dest->free_in_buffer = dst->data.size();
     }
 
-    static void mem_term_destination( j_compress_ptr cinfo )
+    static void jpeg_buffer_terminate( j_compress_ptr cinfo )
     {
             auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
             dst->data.resize( dst->data.size() - cinfo->dest->free_in_buffer );
     }
 
-    static boolean mem_empty_output_buffer( j_compress_ptr cinfo )
+    static boolean jpeg_output_buffer_empty( j_compress_ptr cinfo )
     {
             auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
             size_t oldsize = dst->data.size();
@@ -70,9 +70,9 @@ namespace romi {
     static void jpeg_mem_dest( j_compress_ptr cinfo, jpeg_destination_mem_mgr * dst )
     {
             cinfo->dest = (jpeg_destination_mgr*)dst;
-            cinfo->dest->init_destination = mem_init_destination;
-            cinfo->dest->term_destination = mem_term_destination;
-            cinfo->dest->empty_output_buffer = mem_empty_output_buffer;
+            cinfo->dest->init_destination = jpeg_buffer_init;
+            cinfo->dest->term_destination = jpeg_buffer_terminate;
+            cinfo->dest->empty_output_buffer = jpeg_output_buffer_empty;
     }
 
     bool ImageIO::store_jpg(Image& image, bytevector& out)
