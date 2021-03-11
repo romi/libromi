@@ -27,88 +27,132 @@
 #include <png.h>
 #include <setjmp.h>
 #include <r.h>
+#include <FileUtils.h>
 #include "ImageIO.h"
 
 namespace romi {
 
+    // 4mb for jpeg file should be fine and will limit reallocates.
+    constexpr int JPEG_MEM_DST_MGR_BUFFER_SIZE  = (4096*1024);
+    class jpeg_destination_mem_mgr
+    {
+    public:
+        explicit jpeg_destination_mem_mgr(std::vector<uint8_t>& data) : mgr(), data(data){
+        }
+        jpeg_destination_mgr mgr;
+        std::vector<uint8_t>& data;
+    };
+
+    static void mem_init_destination( j_compress_ptr cinfo )
+    {
+            auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
+            dst->data.resize( JPEG_MEM_DST_MGR_BUFFER_SIZE, 0 );
+            cinfo->dest->next_output_byte = dst->data.data();
+            cinfo->dest->free_in_buffer = dst->data.size();
+    }
+
+    static void mem_term_destination( j_compress_ptr cinfo )
+    {
+            auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
+            dst->data.resize( dst->data.size() - cinfo->dest->free_in_buffer );
+    }
+
+    static boolean mem_empty_output_buffer( j_compress_ptr cinfo )
+    {
+            auto* dst = (jpeg_destination_mem_mgr*)cinfo->dest;
+            size_t oldsize = dst->data.size();
+            dst->data.resize( oldsize + JPEG_MEM_DST_MGR_BUFFER_SIZE );
+            cinfo->dest->next_output_byte = dst->data.data() + oldsize;
+            cinfo->dest->free_in_buffer = JPEG_MEM_DST_MGR_BUFFER_SIZE;
+            return true;
+    }
+
+    static void jpeg_mem_dest( j_compress_ptr cinfo, jpeg_destination_mem_mgr * dst )
+    {
+            cinfo->dest = (jpeg_destination_mgr*)dst;
+            cinfo->dest->init_destination = mem_init_destination;
+            cinfo->dest->term_destination = mem_term_destination;
+            cinfo->dest->empty_output_buffer = mem_empty_output_buffer;
+    }
+
+    bool ImageIO::store_jpg(Image& image, bytevector& out)
+    {
+            struct jpeg_compress_struct cinfo{};
+            struct jpeg_error_mgr jerr{};
+            size_t index = 0;
+
+            cinfo.err = jpeg_std_error(&jerr);
+            jpeg_create_compress(&cinfo);
+            jpeg_destination_mem_mgr dst_mem(out);
+            jpeg_mem_dest( &cinfo, &dst_mem);
+
+            cinfo.image_width = static_cast<JDIMENSION>(image.width());
+            cinfo.image_height = static_cast<JDIMENSION>(image.height());
+            if (image.type() == Image::BW) {
+                    cinfo.input_components = 1;
+                    cinfo.in_color_space = JCS_GRAYSCALE;
+            } else {
+                    cinfo.input_components = 3;
+                    cinfo.in_color_space = JCS_RGB;
+            }
+
+            jpeg_set_defaults(&cinfo);
+            jpeg_set_quality(&cinfo, 90, TRUE);
+            jpeg_start_compress(&cinfo, TRUE);
+
+            std::vector<uint8_t> buffer(image.channels() * image.width());
+            JSAMPLE* pBuffer = &buffer[0];
+            auto& data = image.data();
+
+            while (cinfo.next_scanline < cinfo.image_height) {
+                    if (image.type() == Image::BW) {
+                            for (size_t i = 0; i < image.width(); i++)
+                                    buffer[i] = (uint8_t) (data[index++] * 255.0f);
+                    } else {
+                            for (size_t i = 0, j = 0; i < image.width(); i++) {
+                                    buffer[j++] = (uint8_t) (data[index++] * 255.0f);
+                                    buffer[j++] = (uint8_t) (data[index++] * 255.0f);
+                                    buffer[j++] = (uint8_t) (data[index++] * 255.0f);
+                            }
+                    }
+                    jpeg_write_scanlines(&cinfo, &pBuffer, 1);
+            }
+
+            jpeg_finish_compress(&cinfo);
+            jpeg_destroy_compress(&cinfo);
+            return true;
+    }
+
         bool ImageIO::store_jpg(Image& image, const char *filename)
         {
-                struct jpeg_compress_struct cinfo;
-                struct jpeg_error_mgr jerr;
-                FILE* outfile;	 
-                JSAMPLE* buffer;
-
-                if ((outfile = fopen(filename, "wb")) == NULL) {
-                        r_err("Failed to open the file: %s\n", filename);
-                        return false;
+                bool retval = true;
+                std::vector<uint8_t> outbuffer;
+                store_jpg(image, outbuffer);
+                try {
+                        FileUtils::WriteVectorAsFile(filename, outbuffer);
                 }
-        
-                cinfo.err = jpeg_std_error(&jerr);
-                jpeg_create_compress(&cinfo);
-                
-                jpeg_stdio_dest(&cinfo, outfile);
-
-                cinfo.image_width = static_cast<JDIMENSION>(image.width());
-                cinfo.image_height = static_cast<JDIMENSION>(image.height());
-                
-                if (image.type() == Image::BW) {
-                        cinfo.input_components = 1;	
-                        cinfo.in_color_space = JCS_GRAYSCALE;
-                } else { 
-                        cinfo.input_components = 3;	
-                        cinfo.in_color_space = JCS_RGB;
+                catch (const std::exception &ex) {
+                        retval = false;
                 }
-        
-                jpeg_set_defaults(&cinfo);
-                jpeg_set_quality(&cinfo, 90, TRUE);
-
-                jpeg_start_compress(&cinfo, TRUE);
-
-                buffer = (JSAMPLE*) r_alloc(image.channels() * image.width());
-
-                size_t index = 0;
-                std::vector<float>& data = image.data();
-                
-                while (cinfo.next_scanline < cinfo.image_height) {
-                        if (image.type() == Image::BW) {
-                                for (size_t i = 0; i < image.width(); i++){
-                                        buffer[i] = (uint8_t) (data[index++] * 255.0f);
-                                }
-                        } else {
-                                for (size_t i = 0, j = 0; i < image.width(); i++) {
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                }
-                        }
-                        jpeg_write_scanlines(&cinfo, &buffer, 1);
-                }
-
-                jpeg_finish_compress(&cinfo);
-                fclose(outfile);
-                
-                jpeg_destroy_compress(&cinfo);
-                r_free(buffer);
-
-                return true;
+                return retval;
         }
         
         bool ImageIO::store_png(Image& image, const char *filename)
         {
-                png_structp png_ptr = NULL;
-                png_infop info_ptr = NULL;
+                png_structp png_ptr = nullptr;
+                png_infop info_ptr = nullptr;
                 size_t x, y, k;
                 png_bytepp row_pointers;
 
                 FILE *fp = fopen(filename, "wb");
-                if (fp == NULL) {
+                if (fp == nullptr) {
                         r_err("ImageIO::store_png: Failed to open the file '%s'", filename);
                         return false;
                 }
 
                 png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr,
                                                   nullptr, nullptr);
-                if (png_ptr == NULL) {
+                if (png_ptr == nullptr) {
                         r_err("ImageIO::store_png: png_create_write_struct failed");
                         return false;
                 }
@@ -202,7 +246,7 @@ namespace romi {
                 FILE *fp;
                 unsigned char buf[4];
 
-                if ((fp = fopen(filename, "rb")) == NULL)
+                if ((fp = fopen(filename, "rb")) == nullptr)
                         return 0;
 
                 if (fread(buf, 1, 4, fp) != 4) {
@@ -219,7 +263,7 @@ namespace romi {
                 FILE *fp;
                 unsigned char buf[3];
 
-                if ((fp = fopen(filename, "rb")) == NULL)
+                if ((fp = fopen(filename, "rb")) == nullptr)
                         return 0;
                 ;
                 if (fread(buf, 1, 3, fp) != 3) {
@@ -242,148 +286,85 @@ namespace romi {
 
         bool ImageIO::load_jpg(Image& image, const char *filename)
         {
-                struct jpeg_error_mgr pub;
-                struct jpeg_decompress_struct cinfo;
-                JSAMPARRAY buffer;
-                size_t row_stride;
-                FILE *infile;
-        
-                if ((infile = fopen(filename, "rb")) == nullptr) {
-                        fprintf(stderr, "Failed to open the file %s\n", filename);
-                        return false;
+                bool retval = true;
+                std::vector<uint8_t> image_file_data;
+                try {
+                        FileUtils::ReadFileAsVector(filename, image_file_data);
+                        retval = load_jpg(image, image_file_data.data(), image_file_data.size());
+                }
+                catch (const std::exception &ex) {
+                        retval = false;
                 }
 
-                /* Step 1: allocate and initialize JPEG decompression object */
-		
-                /* We set up the normal JPEG error routines, then
-                 * override error_exit. */
-                cinfo.err = jpeg_std_error(&pub);
-                pub.error_exit = exit_error;
-
-                /* Establish the setjmp return context for
-                 * exit_error to use. */
-                if (setjmp(setjmp_buffer)) {
-                        jpeg_destroy_decompress(&cinfo);
-                        fclose(infile);
-                        r_err("ImageIO::load_jpg: Failed to load the file: %s", filename);
-                        return false;
-                }
-
-                /* Now we can initialize the JPEG decompression object. */
-                jpeg_create_decompress(&cinfo);
-
-                /* Step 2: specify data source (eg, a file) */
-                jpeg_stdio_src(&cinfo, infile);
-
-                /* Step 3: read file parameters with jpeg_read_header() */
-                jpeg_read_header(&cinfo, TRUE);
-
-                /* Step 4: set parameters for decompression */
-		
-                /* In this example, we don't need to change any of the
-                 * defaults set by jpeg_read_header(), so we do
-                 * nothing here.
-                 */
-		
-                /* Step 5: Start decompressor */		
-                jpeg_start_decompress(&cinfo);
-
-                /* We may need to do some setup of our own at this
-                 * point before reading the data.  After
-                 * jpeg_start_decompress() we have the correct scaled
-                 * output image dimensions available, as well as the
-                 * output colormap if we asked for color quantization.
-                 * In this example, we need to make an output work
-                 * buffer of the right size.
-                 */
-                if (cinfo.output_components == 1
-                    && cinfo.jpeg_color_space == JCS_GRAYSCALE) {
-                        //fprintf(stderr, "8-bit grayscale JPEG\n");
-                        image.init(Image::BW, cinfo.output_width, cinfo.output_height);
-                        
-                } else if (cinfo.output_components == 3
-                           && cinfo.out_color_space == JCS_RGB) {
-                        //fprintf(stderr, "24-bit RGB JPEG\n");
-                        image.init(Image::RGB, cinfo.output_width, cinfo.output_height);
-                        
-                } else {
-                        r_err("Unhandled JPEG format");
-                        return false;
-                }
-
-                /* JSAMPLEs per row in output buffer */
-                row_stride = cinfo.output_width * size_t(cinfo.output_components);
-
-                /* Make a one-row-high sample array that will go away
-                 * when done with image */
-                buffer = (*cinfo.mem->alloc_sarray)
-                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, static_cast<JDIMENSION>(row_stride), 1);
-
-                /* Step 6: while (scan lines remain to be read) */
-                /*           jpeg_read_scanlines(...); */
-
-                /* Here we use the library's state variable
-                 * cinfo.output_scanline as the loop counter, so that
-                 * we don't have to keep track ourselves.
-                 */
-                while (cinfo.output_scanline < cinfo.output_height) {
-                        /* jpeg_read_scanlines expects an array of
-                         * pointers to scanlines.  Here the array is
-                         * only one element long, but you could ask
-                         * for more than one scanline at a time if
-                         * that's more convenient.
-                         */
-                        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-
-                        unsigned int offset;
-                        unsigned char* p = buffer[0];
-                        auto& imagedata = image.data();
-                        
-                        if (image.type() == Image::BW) {
-                                offset = (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++, offset++) {
-                                        imagedata[offset] = (float) p[i] / 255.0f;
-                                }
-                        } else {
-                                offset = 3 * (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++) {
-                                        imagedata[offset++] = (float) *p++ / 255.0f;
-                                        imagedata[offset++] = (float) *p++ / 255.0f;
-                                        imagedata[offset++] = (float) *p++ / 255.0f;
-                                }
-                        }
-                }
-
-                /* Step 7: Finish decompression */
-
-                jpeg_finish_decompress(&cinfo);
-
-                /* We can ignore the return value since suspension is
-                 * not possible with the stdio data source.
-                 */
-
-                /* Step 8: Release JPEG decompression object */
-
-                /* This is an important step since it will release a
-                 * good deal of memory. */
-                jpeg_destroy_decompress(&cinfo);
-
-                /* After finish_decompress, we can close the input
-                 * file.  Here we postpone it until after no more JPEG
-                 * errors are possible, so as to simplify the setjmp
-                 * error logic above.  (Actually, I don't think that
-                 * jpeg_destroy can do an error exit, but why assume
-                 * anything...)
-                 */
-                fclose(infile);
-
-                /* At this point you may want to check to see whether
-                 * any corrupt-data warnings occurred (test whether
-                 * jerr.pub.num_warnings is nonzero).
-                 */
-
-                return true;
+                return retval;
         }
+
+    bool ImageIO::load_jpg(Image& image, const uint8_t *data, size_t len)
+    {
+            struct jpeg_error_mgr pub;
+            struct jpeg_decompress_struct cinfo;
+            JSAMPARRAY buffer;
+            size_t row_stride;
+
+            cinfo.err = jpeg_std_error(&pub);
+            pub.error_exit = exit_error;
+
+            if (setjmp(setjmp_buffer)) {
+                    jpeg_destroy_decompress(&cinfo);
+                    r_err("Failed to load the data. Not a JPEG?");
+                    return false;
+            }
+
+            jpeg_create_decompress(&cinfo);
+            jpeg_mem_src(&cinfo, data, len);
+            jpeg_read_header(&cinfo, TRUE);
+            jpeg_start_decompress(&cinfo);
+
+            if (cinfo.output_components == 1
+                && cinfo.jpeg_color_space == JCS_GRAYSCALE) {
+                    r_debug("8-bit grayscale JPEG");
+                    image.init(Image::BW, cinfo.output_width, cinfo.output_height);
+            } else if (cinfo.output_components == 3
+                       && cinfo.out_color_space == JCS_RGB) {
+                    r_debug("24-bit RGB JPEG");
+                    image.init(Image::RGB, cinfo.output_width, cinfo.output_height);
+            } else {
+                    r_err("load_jpg: Unhandled JPEG format");
+                    return false;
+            }
+
+            row_stride = cinfo.output_width * (size_t)cinfo.output_components;
+            buffer = (*cinfo.mem->alloc_sarray)
+                            ((j_common_ptr) &cinfo, JPOOL_IMAGE, static_cast<JDIMENSION>(row_stride), 1);
+
+
+            while (cinfo.output_scanline < cinfo.output_height) {
+                    jpeg_read_scanlines(&cinfo, buffer, 1);
+
+                    unsigned int offset;
+                    unsigned char* p = buffer[0];
+                    auto& img = image.data();
+
+                    if (image.type() == Image::BW) {
+                            offset = (cinfo.output_scanline - 1) * cinfo.output_width;
+                            for (size_t i = 0; i < cinfo.output_width; i++, offset++)
+                                    img[offset] = (float) p[i] / 255.0f;
+
+                    } else {
+                            offset = 3 * (cinfo.output_scanline - 1) * cinfo.output_width;
+                            for (size_t i = 0; i < cinfo.output_width; i++) {
+                                    img[offset++] = (float) *p++ / 255.0f;
+                                    img[offset++] = (float) *p++ / 255.0f;
+                                    img[offset++] = (float) *p++ / 255.0f;
+                            }
+                    }
+            }
+
+            jpeg_finish_decompress(&cinfo);
+            jpeg_destroy_decompress(&cinfo);
+
+            return true;
+    }
 
         bool ImageIO::load_png(Image& image, const char *filename) {
             size_t x, y, i, k;
@@ -512,166 +493,5 @@ namespace romi {
         return success;
         }
 
-        bool ImageIO::load_jpg(Image& image, const uint8_t *data, size_t len)
-        {
-                struct jpeg_error_mgr pub;
-                struct jpeg_decompress_struct cinfo;
-                JSAMPARRAY buffer;
-                size_t row_stride;
-                
-                cinfo.err = jpeg_std_error(&pub);
-                pub.error_exit = exit_error;
 
-                if (setjmp(setjmp_buffer)) {
-                        jpeg_destroy_decompress(&cinfo);
-                        r_err("Failed to load the data. Not a JPEG?");
-                        return false;
-                }
-
-                jpeg_create_decompress(&cinfo);
-                jpeg_mem_src(&cinfo, data, len);
-                jpeg_read_header(&cinfo, TRUE);
-                jpeg_start_decompress(&cinfo);
-
-                if (cinfo.output_components == 1
-                    && cinfo.jpeg_color_space == JCS_GRAYSCALE) {
-                        r_debug("8-bit grayscale JPEG");
-                        image.init(Image::BW, cinfo.output_width, cinfo.output_height);
-                } else if (cinfo.output_components == 3
-                           && cinfo.out_color_space == JCS_RGB) {
-                        r_debug("24-bit RGB JPEG");
-                        image.init(Image::RGB, cinfo.output_width, cinfo.output_height);
-                } else {
-                        r_err("load_jpg: Unhandled JPEG format");
-                        return false;
-                }
-
-                row_stride = cinfo.output_width * (size_t)cinfo.output_components;
-                buffer = (*cinfo.mem->alloc_sarray)
-                        ((j_common_ptr) &cinfo, JPOOL_IMAGE, static_cast<JDIMENSION>(row_stride), 1);
-
-
-                while (cinfo.output_scanline < cinfo.output_height) {
-                        jpeg_read_scanlines(&cinfo, buffer, 1);
-
-                        unsigned int offset;
-                        unsigned char* p = buffer[0];
-                        auto& img = image.data();
-
-                        if (image.type() == Image::BW) {
-                                offset = (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++, offset++)
-                                        img[offset] = (float) p[i] / 255.0f;
-
-                        } else {
-                                offset = 3 * (cinfo.output_scanline - 1) * cinfo.output_width;
-                                for (size_t i = 0; i < cinfo.output_width; i++) {
-                                        img[offset++] = (float) *p++ / 255.0f;
-                                        img[offset++] = (float) *p++ / 255.0f;
-                                        img[offset++] = (float) *p++ / 255.0f;
-                                }
-                        }
-                }
-
-                jpeg_finish_decompress(&cinfo);
-                jpeg_destroy_decompress(&cinfo);
-
-                return true;
-        }
-
-
-#define BLOCKSIZE 4096
-
-        typedef struct _jpeg_dest_t {
-                struct jpeg_destination_mgr mgr;
-                bytevector *buffer;
-        } jpeg_dest_t;
-
-
-        static void jpeg_bufferinit(j_compress_ptr cinfo)
-        {
-                jpeg_dest_t* p = (jpeg_dest_t*) cinfo->dest;
-                p->buffer->resize(BLOCKSIZE);
-                cinfo->dest->next_output_byte = &p->buffer->at(0);
-                cinfo->dest->free_in_buffer = BLOCKSIZE;                
-        }
-
-        static boolean jpeg_bufferemptyoutput(j_compress_ptr cinfo)
-        {
-                jpeg_dest_t* p = (jpeg_dest_t*) cinfo->dest;
-                size_t size = p->buffer->size();
-                p->buffer->resize(size + BLOCKSIZE);
-                cinfo->dest->next_output_byte = &p->buffer->at(0) + size;
-                cinfo->dest->free_in_buffer = BLOCKSIZE;
-                return 1;
-        }
-
-        static void jpeg_bufferterminate(j_compress_ptr cinfo)
-        {
-                jpeg_dest_t* p = (jpeg_dest_t*) cinfo->dest;
-                size_t size = p->buffer->size() - cinfo->dest->free_in_buffer;
-                p->buffer->resize(size);
-        }
-
-        bool ImageIO::store_jpg(Image& image, bytevector& out)
-        {
-                struct jpeg_compress_struct cinfo;
-                struct jpeg_error_mgr jerr;
-                jpeg_dest_t* my_mgr;
-                JSAMPLE* buffer;
-                size_t index = 0;
-
-                cinfo.err = jpeg_std_error(&jerr);
-                jpeg_create_compress(&cinfo);
-
-                cinfo.dest = (struct jpeg_destination_mgr *) 
-                        (*cinfo.mem->alloc_small) ((j_common_ptr) &cinfo, JPOOL_PERMANENT,
-                                                   sizeof(jpeg_dest_t));       
-                cinfo.dest->init_destination = &jpeg_bufferinit;
-                cinfo.dest->empty_output_buffer = &jpeg_bufferemptyoutput;
-                cinfo.dest->term_destination = &jpeg_bufferterminate;
-
-                my_mgr = (jpeg_dest_t*) cinfo.dest;
-                my_mgr->buffer = &out;
-
-                cinfo.image_width = static_cast<JDIMENSION>(image.width());
-                cinfo.image_height = static_cast<JDIMENSION>(image.height());
-                if (image.type() == Image::BW) {
-                        cinfo.input_components = 1;	
-                        cinfo.in_color_space = JCS_GRAYSCALE;
-                } else {
-                        cinfo.input_components = 3;	
-                        cinfo.in_color_space = JCS_RGB;
-                }
-
-                jpeg_set_defaults(&cinfo);
-                jpeg_set_quality(&cinfo, 90, TRUE);
-
-                jpeg_start_compress(&cinfo, TRUE);
-
-                buffer = (JSAMPLE*) r_alloc(image.channels() * image.width()); 
-
-                auto& data = image.data();
-                
-                while (cinfo.next_scanline < cinfo.image_height) {
-                        if (image.type() == Image::BW) {
-                                for (size_t i = 0; i < image.width(); i++)
-                                        buffer[i] = (uint8_t) (data[index++] * 255.0f);
-                        } else {
-                                for (size_t i = 0, j = 0; i < image.width(); i++) {
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                        buffer[j++] = (uint8_t) (data[index++] * 255.0f);
-                                }
-                        }
-                        jpeg_write_scanlines(&cinfo, &buffer, 1);
-                }
-
-                jpeg_finish_compress(&cinfo);
-
-                jpeg_destroy_compress(&cinfo);
-                r_free(buffer);
-
-                return true;
-        }
 }

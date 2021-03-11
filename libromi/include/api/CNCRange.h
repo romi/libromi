@@ -36,7 +36,7 @@ namespace romi {
                 v3 max;
                 
                 CNCRange();
-                CNCRange(JsonCpp &range);
+                explicit CNCRange(JsonCpp &range);
                 CNCRange(const double *min, const double *max);
                 CNCRange(v3 min, v3 max);
                 

@@ -26,6 +26,7 @@
 #define __ROMI_IMAGEIO_H
 
 #include <vector>
+#include "FileUtils.h"
 #include "Image.h"
 
 namespace romi {
@@ -34,6 +35,7 @@ namespace romi {
         
         class ImageIO
         {
+
         public:
                 static bool store_jpg(Image& image, const char *path);
                 static bool store_jpg(Image& image, bytevector& out);
@@ -45,8 +47,8 @@ namespace romi {
         protected:
                 static bool is_png(const char *filename);
                 static bool is_jpg(const char *filename);
-                static bool load_jpg(Image& image, const char *filename);
                 static bool load_png(Image& image, const char *filename);
+                static bool load_jpg(Image& image, const char *filename);
         };
 }
 

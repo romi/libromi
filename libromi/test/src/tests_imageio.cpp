@@ -1,6 +1,12 @@
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <vector>
+
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "ImageIO.h"
+#include <FileUtils.h>
 
 using namespace std;
 using namespace testing;
@@ -51,7 +57,7 @@ TEST_F(imageio_tests, successful_store_jpg)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(imageio_tests, successful_store_and_load_jpg_1)
+TEST_F(imageio_tests, successful_store_and_load_jpg_BW)
 {
         bool success = ImageIO::store_jpg(bw, jpg_file);
         ASSERT_EQ(success, true);
@@ -71,7 +77,7 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_1)
         }
 }
 
-TEST_F(imageio_tests, successful_store_and_load_jpg_2)
+TEST_F(imageio_tests, successful_store_and_load_jpg_RGB)
 {
         bool success = ImageIO::store_jpg(rgb, jpg_file);
         ASSERT_EQ(success, true);
@@ -90,6 +96,43 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_2)
         //  for (size_t i = 0; i < image.length(); i++) {
         //          ASSERT_NEAR(p0[i], p1[i], 0.1);
         //  }
+}
+
+TEST_F(imageio_tests, store_jpg_to_buffer_correct)
+{
+        bool success = ImageIO::store_jpg(rgb, jpg_file);
+        ASSERT_EQ(success, true);
+
+        std::vector<uint8_t> outbuffer;
+        success = ImageIO::store_jpg(rgb, outbuffer);
+        ASSERT_EQ(success, true);
+
+        std::vector<uint8_t> inbuffer;
+        success = FileUtils::ReadFileAsVector(jpg_file, inbuffer);
+
+        ASSERT_EQ(success, true);
+        ASSERT_EQ(outbuffer.size(), inbuffer.size());
+        ASSERT_EQ(outbuffer, inbuffer);
+}
+
+TEST_F(imageio_tests, load_jpg_from_buffer_correct)
+{
+        bool success = ImageIO::store_jpg(rgb, jpg_file);
+        ASSERT_EQ(success, true);
+
+        std::vector<uint8_t> outbuffer;
+        success = ImageIO::store_jpg(rgb, outbuffer);
+        ASSERT_EQ(success, true);
+
+        Image image_from_buffer;
+        success = ImageIO::load_jpg(image_from_buffer, outbuffer.data(), outbuffer.size());
+
+        Image image_from_file;
+        success = ImageIO::load(image_from_file, jpg_file);
+
+        ASSERT_EQ(success, true);
+        ASSERT_EQ(image_from_buffer.data().size(), image_from_file.data().size());
+        ASSERT_EQ(image_from_buffer.data(), image_from_file.data());
 }
 
 TEST_F(imageio_tests, store_png_returns_error_on_invalid_file)
