@@ -109,7 +109,7 @@ TEST_F(oquam_script_tests, test_moveto)
         ASSERT_EQ(first.curve.a[1], 0.0);
 
         ATDC *second = first.next;
-        ASSERT_EQ(second, (ATDC *) 0);
+        ASSERT_EQ(second, nullptr);
 }
 
 TEST_F(oquam_script_tests, test_move_and_back)
