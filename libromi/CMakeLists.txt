@@ -171,6 +171,22 @@ set(SOURCES
         src/weeder/quincunx/point.c
         )
 
+set(DATA_PROVIDER_SOURCES
+        include/data_provider/JsonFieldNames.h
+        include/data_provider/IGPS.h
+        include/data_provider/ILocationProvider.h
+        include/data_provider/GpsLocationProvider.h
+        src/data_provider/GpsLocationProvider.cpp
+        include/data_provider/IIdentityProvider.h
+        include/data_provider/RoverIdentityProvider.h
+        src/data_provider/RoverIdentityProvider.cpp
+        include/data_provider/ISoftwareVersion.h
+        include/data_provider/SoftwareVersion.h
+        src/data_provider/SoftwareVersion.cpp
+        include/data_provider/RomiDeviceData.h
+        src/data_provider/RomiDeviceData.cpp
+        )
+
 set(NO_CONV_SOURCES
         src/weeder/som/slic.cpp
         src/weeder/quincunx/Quincunx.h
@@ -184,7 +200,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp P
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-add_library(romi SHARED ${SOURCES} ${NO_CONV_SOURCES})
+add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES})
 
 
 target_include_directories(romi

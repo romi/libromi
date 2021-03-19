@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_cnccontroller.h"
+#include "mock_cnccontroller.h"
 #include "DebugWeedingSession.h"
 #include "oquam/Oquam.h"
 

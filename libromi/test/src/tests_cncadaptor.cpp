@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_cnc.h"
+#include "mock_cnc.h"
 #include "rpc/CNCAdaptor.h"
 #include "rpc/MethodsCNC.h"
 #include "rpc/MethodsActivity.h"

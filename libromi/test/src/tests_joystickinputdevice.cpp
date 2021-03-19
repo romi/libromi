@@ -1,8 +1,8 @@
 #include <linux/joystick.h>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_joystick.h"
-#include "../mock/mock_eventmapper.h"
+#include "mock_joystick.h"
+#include "mock_eventmapper.h"
 #include "JoystickInputDevice.h"
 #include "rover/EventsAndStates.h"
 

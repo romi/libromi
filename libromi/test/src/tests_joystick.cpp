@@ -3,7 +3,7 @@
 #include "gmock/gmock.h"
 #include "LinuxJoystick.h"
 
-#include "../mock/Linux-Mock.cpp"
+#include "mock_linux.h"
 
 using namespace std;
 using namespace testing;

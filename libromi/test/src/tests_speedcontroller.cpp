@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_navigation.h"
+#include "mock_navigation.h"
 #include "SpeedController.h"
 #include "SpeedConverter.h"
 
