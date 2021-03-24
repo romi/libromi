@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.10)
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/mock" )
 
 set(SRCS_V
-  src/tests_main.cpp
-  src/tests_v.cpp
+        src/tests_main.cpp
+        src/v_tests.cpp
   )
 
 add_executable(libromi_unit_tests_v ${SRCS_V})
@@ -19,9 +19,9 @@ add_test(
 ##
 
 set(SRCS_CNC
-    src/tests_main.cpp
-    src/tests_cncrange.cpp
-    src/tests_cncadaptor.cpp
+        src/tests_main.cpp
+        src/cncrange_tests.cpp
+        src/cncadaptor_tests.cpp
   )
 add_executable(libromi_unit_tests_cnc ${SRCS_CNC})
 target_link_libraries(libromi_unit_tests_cnc romi rpp gtest gmock)
@@ -34,8 +34,8 @@ add_test(
 ##
 
 set(SRCS_PATH
-  src/tests_main.cpp
-  src/tests_path.cpp
+        src/tests_main.cpp
+        src/path_tests.cpp
   )
 add_executable(libromi_unit_tests_path ${SRCS_PATH})
 target_link_libraries(libromi_unit_tests_path romi rpp gtest gmock)
@@ -49,8 +49,8 @@ add_test(
 
 set(SRCS_DATA_PROVIDER
         src/tests_main.cpp
-        src/tests_gps_location_provider.cpp
-        src/tests_rover_identity_provider.cpp
+        src/gps_location_provider_tests.cpp
+        src/rover_identity_provider_tests.cpp
         )
 add_executable(libromi_unit_tests_data_provider ${SRCS_DATA_PROVIDER})
 target_link_libraries(libromi_unit_tests_data_provider romi rpp gtest gmock)
@@ -63,8 +63,8 @@ add_test(
 ##
 
 set(SRCS_WHEELODOMETRY 
-  src/tests_main.cpp
-  src/tests_wheelodometry.cpp
+        src/tests_main.cpp
+        src/wheelodometry_tests.cpp
   )
 
 add_executable(libromi_unit_tests_wheelodometry ${SRCS_WHEELODOMETRY})
@@ -78,9 +78,9 @@ add_test(
 ##
 
 set(SRCS_IMAGE_TESTS
-    src/tests_main.cpp
-    src/tests_image.cpp
-    src/tests_imageio.cpp
+        src/tests_main.cpp
+        src/image_tests.cpp
+        src/imageio_tests.cpp
   )
 
 add_executable(libromi_unit_tests_image ${SRCS_IMAGE_TESTS})
@@ -94,9 +94,9 @@ add_test(
 ##
 
 set(SRCS_ROVER
-  src/tests_main.cpp
-  src/tests_roveroptions.cpp
-  src/tests_roverscriptengine.cpp
+        src/tests_main.cpp
+        src/roveroptions_tests.cpp
+        src/roverscriptengine_tests.cpp
   )
 add_executable(libromi_unit_tests_rover ${SRCS_ROVER})
 target_link_libraries(libromi_unit_tests_rover romi rpp gtest gmock)
@@ -109,11 +109,11 @@ add_test(
 ##
 
 set(SRCS_NAVIGATION
-    src/tests_main.cpp
-    src/tests_navigationsettings.cpp
-    src/tests_navigationadaptor.cpp
-    src/tests_remotenavigation.cpp
-    src/tests_navigation.cpp
+        src/tests_main.cpp
+        src/navigationsettings_tests.cpp
+        src/navigationadaptor_tests.cpp
+        src/remotenavigation_tests.cpp
+        src/navigation_tests.cpp
   )
 
 add_executable(libromi_unit_tests_navigation ${SRCS_NAVIGATION})
@@ -127,8 +127,8 @@ add_test(
 ##
 
 set(SRCS_CRYSTALDISPLAY 
-  src/tests_main.cpp
-  src/tests_crystaldisplay.cpp
+        src/tests_main.cpp
+        src/crystaldisplay_tests.cpp
   )
 
 add_executable(libromi_unit_tests_crystaldisplay ${SRCS_CRYSTALDISPLAY})
@@ -142,9 +142,9 @@ add_test(
 ##
 
 set(SRCS_JOYSTICK 
-    src/tests_main.cpp
-    src/tests_joystick.cpp
-    src/tests_joystickinputdevice.cpp
+        src/tests_main.cpp
+        src/joystick_tests.cpp
+        src/joystickinputdevice_tests.cpp
   )
 
 add_executable(libromi_unit_tests_joystick ${SRCS_JOYSTICK})
@@ -158,8 +158,8 @@ add_test(
 ##
 
 set(SRCS_SCRIPTLIST 
-  src/tests_main.cpp
-  src/tests_scriptlist.cpp
+        src/tests_main.cpp
+        src/scriptlist_tests.cpp
   )
 
 add_executable(libromi_unit_tests_scriptlist ${SRCS_SCRIPTLIST})
@@ -173,8 +173,8 @@ add_test(
 ##
 
 set(SRCS_STATEMACHINE 
-  src/tests_main.cpp
-  src/tests_statemachine.cpp
+        src/tests_main.cpp
+        src/statemachine_tests.cpp
   )
 
 add_executable(libromi_unit_tests_statemachine ${SRCS_STATEMACHINE})
@@ -189,8 +189,8 @@ add_test(
 
 set(SRCS_SPEEDTESTS
   src/tests_main.cpp
-  src/tests_speedconverter.cpp
-  src/tests_speedcontroller.cpp
+        src/speedconverter_tests.cpp
+        src/speedcontroller_tests.cpp
   )
 
 add_executable(libromi_unit_tests_speed ${SRCS_SPEEDTESTS})
@@ -204,8 +204,8 @@ add_test(
 ##
 
 set(SRCS_SCRIPTMENU 
-  src/tests_main.cpp
-  src/tests_scriptmenu.cpp
+        src/tests_main.cpp
+        src/scriptmenu_tests.cpp
   )
 
 add_executable(libromi_unit_tests_scriptmenu ${SRCS_SCRIPTMENU})
@@ -219,8 +219,8 @@ add_test(
 ##
 
 set(SRCS_STEPPERSETTINGS
-  src/tests_main.cpp
-  src/tests_steppersettings.cpp
+        src/tests_main.cpp
+        src/steppersettings_tests.cpp
   )
 add_executable(libromi_unit_tests_steppersettings ${SRCS_STEPPERSETTINGS})
 target_link_libraries(libromi_unit_tests_steppersettings rpp romi gtest gmock)
@@ -233,11 +233,11 @@ add_test(
 ##
 
 set(SRCS_OQUAM
-    src/tests_main.cpp
-    src/tests_oquam_section.cpp
-    src/tests_oquam_print.cpp
-    src/tests_oquam_script.cpp
-    src/tests_oquam.cpp
+        src/tests_main.cpp
+        src/oquam_section_tests.cpp
+        src/oquam_print_tests.cpp
+        src/oquam_script_tests.cpp
+        src/oquam_tests.cpp
   )
 add_executable(libromi_unit_tests_oquam ${SRCS_OQUAM})
 target_link_libraries(libromi_unit_tests_oquam rpp romi gtest gmock)
@@ -250,8 +250,8 @@ add_test(
 ##
   
 set(SRCS_BRUSHMOTORDRIVER 
-  src/tests_main.cpp
-  src/tests_brushmotordriver.cpp
+        src/tests_main.cpp
+        src/brushmotordriver_tests.cpp
   )
 
 add_executable(libromi_unit_tests_brushmotordriver ${SRCS_BRUSHMOTORDRIVER})
