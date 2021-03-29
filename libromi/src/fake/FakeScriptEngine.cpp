@@ -26,69 +26,32 @@
 #include "fake/FakeScriptEngine.h"
 
 namespace romi {
-        
-        int FakeScriptEngine::count_scripts()
+
+        FakeScriptEngine::FakeScriptEngine(ScriptList& scripts, int event)
+                : _scripts(scripts),
+                  _finished_event(event),
+                  _send_finished_event(false) {
+        }
+                
+        void FakeScriptEngine::_run_script(FakeScriptEngine *engine)
         {
-                return (int) _scripts.size();
+                engine->run_script();
         }
         
-        void FakeScriptEngine::get_script(int index,
-                                          std::string& id,
-                                          std::string& name)
+        void FakeScriptEngine::run_script()
         {
-                if (index >= 0 && index < (int) _scripts.size()) {
-                        id = _scripts[index].id;
-                        name = _scripts[index].name;
-                } else {
-                        id = "";
-                        name = "";
-                }
-        }
-        
-        void FakeScriptEngine::_run_script(FakeScriptEngine *engine,
-                                           FakeScript *script)
-        {
-                engine->run_script(script);
-        }
-        
-        void FakeScriptEngine::run_script(FakeScript *script)
-        {
-                r_debug("FakeScriptEngine::run_script: %s", script->id.c_str());
+                r_debug("FakeScriptEngine::run_script");
                 clock_sleep(10.0);
                 _send_finished_event = true;                
-                r_debug("FakeScriptEngine::run_script: finished %s", script->id.c_str());
-        }
-        
-        int FakeScriptEngine::find_script(std::string& id)
-        {
-                int index = -1;
-                for (size_t i = 0; i < _scripts.size(); i++) {
-                        if (id.compare(_scripts[i].id) == 0) {
-                                index = (int) i;
-                                break;
-                        }
-                }
-                return index;
+                r_debug("FakeScriptEngine::run_script: finished");
         }
 
-        void FakeScriptEngine::execute_script(std::string& id)
+        void FakeScriptEngine::execute_script(Rover& target, size_t id)
         {
-                r_debug("FakeScriptEngine::execute_script: %s", id.c_str());
-
-                int index = find_script(id);
-                _send_finished_event = false;
-                
-                if (index >= 0) {
-                        std::thread t(_run_script, this, &_scripts[index]); 
-                        t.detach();
-                } else {
-                        _send_finished_event = true;
-                }
-        }
-
-        void FakeScriptEngine::add_script(const char *id, const char *name)
-        {
-                _scripts.push_back(FakeScript(id, name));
+                (void) target;
+                r_debug("RoverScriptEngine::execute_script: '%d'", id);
+                std::thread t(_run_script, this); 
+                t.detach();
         }
 
         int FakeScriptEngine::get_next_event()

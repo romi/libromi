@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include "IScriptEngine.h"
+#include "rover/Rover.h"
 
 namespace romi {
 
@@ -35,40 +36,28 @@ namespace romi {
                 std::string id;
                 std::string name;
 
-                FakeScript(const char *id_, const char *name_) {
-                        id = id_;
-                        name = name_;
-                }
+                FakeScript(const char *id_, const char *name_)
+                        : id(id_), name(name_) {}
         };
                         
-        class FakeScriptEngine : public IScriptEngine
+        class FakeScriptEngine : public IScriptEngine<Rover>
         {
         protected:
-                std::vector<FakeScript> _scripts;
+                ScriptList& _scripts;
                 int _finished_event;
                 bool _send_finished_event;
 
-                static void _run_script(FakeScriptEngine *engine, FakeScript *script);
+                static void _run_script(FakeScriptEngine *engine);
                 
-                void run_script(FakeScript *script);
-                int find_script(std::string& id);
+                void run_script();
 
         public:
-                FakeScriptEngine(int event)
-                        : _finished_event(event),
-                          _send_finished_event(false) {}
+                FakeScriptEngine(ScriptList& scripts, int event);
                 
                 virtual ~FakeScriptEngine() override = default;
-
-                int count_scripts() override;
-                void get_script(int index,
-                                std::string& id,
-                                std::string& name) override;
-                void execute_script(std::string& id) override;
-
+                
+                void execute_script(Rover& target, size_t id) override;
                 int get_next_event() override;
-
-                void add_script(const char *id, const char *name);
         };
 }
 
