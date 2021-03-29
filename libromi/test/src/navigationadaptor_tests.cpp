@@ -2,8 +2,7 @@
 #include "gmock/gmock.h"
 #include "rpc/NavigationAdaptor.h"
 #include "rpc/MethodsNavigation.h"
-#include "rpc/MethodsActivity.h"
-#include "../mock/mock_navigation.h"
+#include "mock_navigation.h"
 
 using namespace std;
 using namespace testing;

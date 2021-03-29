@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_rpchandler.h"
+#include "mock_rpchandler.h"
 #include "rpc/RemoteNavigation.h"
 #include "rpc/MethodsRover.h"
 

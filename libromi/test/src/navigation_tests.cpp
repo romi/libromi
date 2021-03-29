@@ -2,7 +2,7 @@
 #include "gmock/gmock.h"
 #include "JsonCpp.h"
 #include "Navigation.h"
-#include "../mock/mock_motordriver.h"
+#include "mock_motordriver.h"
 
 using namespace std;
 using namespace testing;

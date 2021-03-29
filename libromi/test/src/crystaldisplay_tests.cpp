@@ -1,7 +1,7 @@
 #include <linux/joystick.h>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "../mock/mock_romiserialclient.h"
+#include "mock_romiserialclient.h"
 #include "CrystalDisplay.h"
 
 using namespace std;

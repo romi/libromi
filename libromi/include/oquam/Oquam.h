@@ -54,7 +54,7 @@ namespace romi {
                 // The maximum deviation allowed when computed a
                 // continuous path, in m.
                 double _path_max_deviation;
-                double _scale_meters_to_steps[3];
+                double _scale_meters_to_steps[3]{};
                 double _path_slice_duration;
                 double _path_max_slice_duration;
                 int _script_count;
