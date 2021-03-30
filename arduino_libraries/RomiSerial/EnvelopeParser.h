@@ -53,7 +53,7 @@ protected:
         char _message[MAX_MESSAGE_LENGTH+1];
         uint8_t _message_length;
                 
-        void set_error(char character, char what);
+        void set_error(char character, int8_t what);
         void append_char(char c);
 
 public:

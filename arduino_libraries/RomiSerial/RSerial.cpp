@@ -90,7 +90,7 @@ int RSerial::readchar(char& c)
         ssize_t rc = ::read(_fd, &readc, 1);
         if (rc == 1) {
                 c = readc;
-                retval = (int)rc;
+                retval = 1;
                 //printf("%c 0x%02x\n", c, (int) c);
         } 
         return retval;

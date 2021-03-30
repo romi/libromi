@@ -49,7 +49,7 @@
 #define VALID_HEX_CHAR(_c)    (('a' <= (_c) && (_c) <= 'f') \
                                || ('0' <= (_c) && (_c) <= '9'))
 
-void MessageParser::set_error(char character, char what)
+void MessageParser::set_error(char character, int8_t what)
 {
         log_print("set_error");
         log_print((int) what);
