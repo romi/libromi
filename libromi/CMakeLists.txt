@@ -63,6 +63,7 @@ set(SOURCES
         include/fake/FakeMotorDriver.h
         include/fake/FakeNavigation.h
         include/fake/FakeNotifications.h
+        include/fake/FakeScriptEngine.h
         include/fake/FakeWeeder.h
 
         include/oquam/ATDC.h
@@ -110,6 +111,8 @@ set(SOURCES
         src/api/CNCRange.cpp
         src/api/Path.cpp
 
+        src/fake/FakeScriptEngine.cpp
+        
         src/ActivityHelper.cpp
         src/BrushMotorDriver.cpp
         src/DebugWeedingSession.cpp

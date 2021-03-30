@@ -153,13 +153,9 @@ void RomiSerial::send_message(const char *message)
     finalize_message();
 }
 
-
-// void RomiSerial::log(const char *message)
-// {
-//         if (_out == 0)
-//                 _out = get_default_output();
-//         _out->write('!');
-//         _out->print(message);
-//         _out->write('\r');
-//         _out->write('\n');
-// }
+void RomiSerial::log(const char *message)
+{
+        _out.print("#!");
+        _out.print(message);
+        _out.print(":xxxx\r\n");
+}

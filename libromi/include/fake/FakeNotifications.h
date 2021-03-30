@@ -42,6 +42,8 @@ namespace romi {
                 void stop(const char *name) override {
                         r_info("FakeNotifications: stop %s", name);
                 }
+
+                void reset() override {}
         };
 }
 
