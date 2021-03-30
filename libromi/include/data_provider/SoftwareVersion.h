@@ -4,12 +4,15 @@
 #include <string>
 #include "ISoftwareVersion.h"
 
-class SoftwareVersion : public ISoftwareVersion{
-        public:
-                ~SoftwareVersion() override = default;
-                std::string SoftwareVersionCurrent() override;
-                std::string SoftwareVersionAlternate() override;
-};
+namespace romi {
 
+    class SoftwareVersion : public ISoftwareVersion {
+    public:
+        ~SoftwareVersion() override = default;
+        std::string SoftwareVersionCurrent() override;
+        std::string SoftwareVersionAlternate() override;
+    };
+
+}
 
 #endif //ROMI_ROVER_BUILD_AND_TEST_SOFTWAREVERSION_H

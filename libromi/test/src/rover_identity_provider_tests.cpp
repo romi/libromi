@@ -45,7 +45,7 @@ TEST_F(rover_identity_provider_tests, can_construct)
 
         // Act
         // Assert
-        ASSERT_NO_THROW(RoverIdentityProvider identityProvider(romiDeviceData, softwareVersion));
+        ASSERT_NO_THROW(romi::RoverIdentityProvider identityProvider(romiDeviceData, softwareVersion));
 }
 
 TEST_F(rover_identity_provider_tests, will_create_identity)
@@ -69,7 +69,7 @@ TEST_F(rover_identity_provider_tests, will_create_identity)
         EXPECT_CALL(softwareVersion, SoftwareVersionAlternate())
                         .WillOnce(Return(expected_sw_alternate));
 
-        RoverIdentityProvider identityProvider(romiDeviceData, softwareVersion);
+        romi::RoverIdentityProvider identityProvider(romiDeviceData, softwareVersion);
         std::string identity = identityProvider.identity();
 
  //       "{\"identity\":{\"romi_hardware_id\":\"dead_beef_12fe_34ef\",\"romi_device_type\":\"Rover_V1\",\"software_version_alternate\":\"N/A\",\"software_version_current\":\"V0.1RC1\"}}"

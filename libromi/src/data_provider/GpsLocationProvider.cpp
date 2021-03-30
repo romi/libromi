@@ -2,26 +2,30 @@
 #include "data_provider/GpsLocationProvider.h"
 #include "JsonCpp.h"
 
-GpsLocationProvider::GpsLocationProvider(IGps& gps) : latitude_(0.0), longitude_(0.0), gps_(gps) {
-}
+namespace romi {
 
-std::string GpsLocationProvider::location() {
+    GpsLocationProvider::GpsLocationProvider(IGps &gps) : latitude_(0.0), longitude_(0.0), gps_(gps) {
+    }
 
-        gps_.CurrentLocation(latitude_, longitude_);
+    std::string GpsLocationProvider::location() {
 
-        json_object_t coordinate_object = json_object_create();
-        json_object_t location_object = json_object_create();
-        json_object_setnum(coordinate_object, JsonFieldNames::latitude.data(), latitude_);
-        json_object_setnum(coordinate_object, JsonFieldNames::longitude.data(), longitude_);
+            gps_.CurrentLocation(latitude_, longitude_);
 
-        json_object_set(location_object, JsonFieldNames::location.data(), coordinate_object);
+            json_object_t coordinate_object = json_object_create();
+            json_object_t location_object = json_object_create();
+            json_object_setnum(coordinate_object, JsonFieldNames::latitude.data(), latitude_);
+            json_object_setnum(coordinate_object, JsonFieldNames::longitude.data(), longitude_);
 
-        std::string locationString;
-        JsonCpp locationData(location_object);
-        locationData.tostring(locationString);
+            json_object_set(location_object, JsonFieldNames::location.data(), coordinate_object);
 
-        json_unref(location_object);
-        json_unref(coordinate_object);
+            std::string locationString;
+            JsonCpp locationData(location_object);
+            locationData.tostring(locationString);
 
-        return locationString;
+            json_unref(location_object);
+            json_unref(coordinate_object);
+
+            return locationString;
+    }
+
 }

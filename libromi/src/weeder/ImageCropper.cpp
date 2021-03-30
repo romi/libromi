@@ -86,7 +86,7 @@ namespace romi {
                 ssize_t y0 = ssize_t(camera.height() - _y0 - _height - border);
                 size_t height = _height + 2 * border;
                 
-                session.store("camera", camera);
+                session.store_jpg("camera", camera);
 
                 if (x0 < 0) {
                         r_err("ImageCropper::crop: camera position is not good: "
@@ -116,7 +116,7 @@ namespace romi {
                                 
                         // Without scaling
                         camera.crop((size_t)x0, (size_t)y0, width, height, out);
-                        session.store("cropped_debug", out);
+                        session.store_jpg("cropped_debug", out);
                         success = true;
                 }
 

@@ -3,7 +3,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockRomiDeviceData : public IRomiDeviceData
+class MockRomiDeviceData : public romi::IRomiDeviceData
 {
 public:
         MOCK_METHOD(std::string, RomiDeviceType, (), (override));

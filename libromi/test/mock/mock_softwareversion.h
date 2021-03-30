@@ -3,7 +3,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockSoftwareVersion : public ISoftwareVersion
+class MockSoftwareVersion : public romi::ISoftwareVersion
 {
 public:
         MOCK_METHOD(std::string, SoftwareVersionCurrent, (), (override));

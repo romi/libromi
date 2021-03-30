@@ -66,7 +66,8 @@ namespace romi {
                 // meters_to_pixels = meters_to_pixels / 3.0; // image scaled 1/3
                 
                 trace_path(session, mask, tool_diameter, meters_to_pixels, path);
-                session.print_path(path);
+                // TBD: PATH NUMBER
+                session.print_path(path, -1);
         }
 
         bool Pipeline::run(IFolder& session, Image& camera,
