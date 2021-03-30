@@ -52,6 +52,7 @@ set(SRCS_DATA_PROVIDER
         src/gps_location_provider_tests.cpp
         src/rover_identity_provider_tests.cpp
         src/weedersesion_tests.cpp
+        src/metafolder_tests.cpp
         )
 add_executable(libromi_unit_tests_data_provider ${SRCS_DATA_PROVIDER})
 target_link_libraries(libromi_unit_tests_data_provider romi rpp rppmocks gtest gmock)

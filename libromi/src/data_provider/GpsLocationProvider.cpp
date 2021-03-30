@@ -20,7 +20,7 @@ namespace romi {
 
             std::string locationString;
             JsonCpp locationData(location_object);
-            locationData.tostring(locationString);
+            locationData.tostring(locationString, k_json_pretty);
 
             json_unref(location_object);
             json_unref(coordinate_object);

@@ -31,7 +31,7 @@ namespace romi {
 
             std::string identityString;
             JsonCpp identity(identity_object);
-            identity.tostring(identityString);
+            identity.tostring(identityString, k_json_pretty);
 
             json_unref(identity_object);
             json_unref(identity_data_object);

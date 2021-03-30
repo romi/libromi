@@ -6,18 +6,26 @@
 namespace romi {
     MetaFolder::MetaFolder(std::unique_ptr<IIdentityProvider> identityProvider,
                            std::unique_ptr<ILocationProvider> locationProvider)
-                    : identityProvider_(std::move(identityProvider)), locationProvider_(std::move(locationProvider)),
-                      path_(), meta_data_() {
+        : identityProvider_(std::move(identityProvider)), locationProvider_(std::move(locationProvider)),
+        path_(), meta_data_() {
+
+        if(nullptr == identityProvider_){
+                throw std::invalid_argument("identityProvider");
+        }
+        if(nullptr == locationProvider_){
+                throw std::invalid_argument("locationProvider");
+        }
 
     }
 
-    void MetaFolder::try_create(std::filesystem::path &path) {
+    void MetaFolder::try_create(const std::filesystem::path& path) {
             path_ = path;
             std::filesystem::create_directories(path_);
             meta_data_ = std::make_unique<JsonCpp>();
             std::string identity = identityProvider_->identity();
             auto meta_data_object = json_string_create(identity.c_str());
-            json_tofile(meta_data_object, k_json_pretty, (path /= meta_data_filename_).c_str());
+            json_tofile(meta_data_object, k_json_pretty, (path_ / meta_data_filename_).c_str());
+            json_unref(meta_data_object);
     }
 
     void MetaFolder::try_store_jpg(const std::string &filename, romi::Image &image) {

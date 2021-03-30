@@ -8,12 +8,12 @@
 #include "data_provider/RoverIdentityProvider.h"
 
 namespace romi {
+
     WeederSession::WeederSession(rpp::ILinux &linux, const std::string &base_directory,
                                  IRomiDeviceData &device_data, ISoftwareVersion &softwareVersion,
                                  std::unique_ptr<ILocationProvider> location)
             :
-            base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(),
-            observation_id_() {
+            base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(), observation_id_() {
 
             auto roverIdentity = std::make_unique<RoverIdentityProvider>(device_data, softwareVersion);
             meta_folder_ = std::make_unique<MetaFolder>(std::move(roverIdentity), std::move(location));

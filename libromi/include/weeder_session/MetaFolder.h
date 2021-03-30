@@ -15,7 +15,7 @@ namespace romi {
     public:
         MetaFolder(std::unique_ptr<IIdentityProvider> identityProvider,
                    std::unique_ptr<ILocationProvider> locationProvider);
-        void try_create(std::filesystem::path &path) override;
+        void try_create(const std::filesystem::path &path) override;
         void try_store_jpg(const std::string &filename, romi::Image &image) override;
         void try_store_png(const std::string &filename, romi::Image &image) override;
         void try_store_svg(const std::string &filename, const char *body, size_t len) override;
