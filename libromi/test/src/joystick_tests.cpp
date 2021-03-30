@@ -12,7 +12,7 @@ using namespace romi;
 class joystick_tests : public ::testing::Test
 {
 protected:
-        rpp::LinuxMock linux;
+        rpp::MockLinux linux;
         
 	joystick_tests() : linux() {
 	}

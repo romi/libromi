@@ -9,16 +9,22 @@
 #include "JsonFieldNames.h"
 #include "IGPS.h"
 
-class GpsLocationProvider : public ILocationProvider {
-        public:
-                explicit GpsLocationProvider(IGps& Gps);
-                ~GpsLocationProvider() override = default;
-                std::string location() override;
-        private:
-                double latitude_;
-                double longitude_;
-                IGps& gps_;
-};
+namespace romi {
 
+    class GpsLocationProvider : public ILocationProvider {
+    public:
+        explicit GpsLocationProvider(IGps &Gps);
+
+        ~GpsLocationProvider() override = default;
+
+        std::string location() override;
+
+    private:
+        double latitude_;
+        double longitude_;
+        IGps &gps_;
+    };
+
+}
 
 #endif //ROMI_ROVER_BUILD_AND_TEST_GPSLOCATIONPROVIDER_H

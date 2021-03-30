@@ -51,9 +51,11 @@ set(SRCS_DATA_PROVIDER
         src/tests_main.cpp
         src/gps_location_provider_tests.cpp
         src/rover_identity_provider_tests.cpp
+        src/weedersesion_tests.cpp
+        src/metafolder_tests.cpp
         )
 add_executable(libromi_unit_tests_data_provider ${SRCS_DATA_PROVIDER})
-target_link_libraries(libromi_unit_tests_data_provider romi rpp gtest gmock)
+target_link_libraries(libromi_unit_tests_data_provider romi rpp rppmocks gtest gmock)
 
 add_test(
         NAME libromi_unit_tests_data_provider
@@ -148,7 +150,7 @@ set(SRCS_JOYSTICK
   )
 
 add_executable(libromi_unit_tests_joystick ${SRCS_JOYSTICK})
-target_link_libraries(libromi_unit_tests_joystick rpp romi gtest gmock)
+target_link_libraries(libromi_unit_tests_joystick rpp rppmocks romi gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_joystick

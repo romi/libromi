@@ -59,7 +59,7 @@ protected:
         int16_t _tmpval;
         int16_t _sign;
 
-        void set_error(char character, char what);
+        void set_error(char character, int8_t what);
         void reset_string();
         void reset_values();
         void reset();

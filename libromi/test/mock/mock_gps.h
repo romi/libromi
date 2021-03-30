@@ -3,7 +3,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockGps : public IGps
+class MockGps : public romi::IGps
 {
 public:
         MOCK_METHOD2(CurrentLocation, void(double& latitude, double& longitude));

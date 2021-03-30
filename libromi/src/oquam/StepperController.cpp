@@ -69,7 +69,7 @@ namespace romi {
                                 
                         } else {
                                 std::string s;
-                                response.tostring(s);
+                                response.tostring(s, k_json_compact);
                                 r_debug("StepperController::send_command: "
                                         "invalid response: %s", s.c_str());
                         }

@@ -4,6 +4,8 @@ project(libromi)
 set(romi_VERSION_MAJOR 0)
 set(romi_VERSION_MINOR 1)
 
+MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
+MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 ############################################################
 
 set(SOURCES
@@ -174,6 +176,12 @@ set(SOURCES
         src/weeder/quincunx/point.c
         )
 
+# These files have no conversion warning set at the top of each file.
+set(NO_CONV_SOURCES
+        src/weeder/som/slic.cpp
+        src/weeder/quincunx/Quincunx.h
+        src/weeder/quincunx/Quincunx.cpp)
+
 set(DATA_PROVIDER_SOURCES
         include/data_provider/JsonFieldNames.h
         include/data_provider/IGPS.h
@@ -188,13 +196,12 @@ set(DATA_PROVIDER_SOURCES
         src/data_provider/SoftwareVersion.cpp
         include/data_provider/RomiDeviceData.h
         src/data_provider/RomiDeviceData.cpp
-        )
+        src/weeder_session/WeederSession.cpp
+        include/weeder_session/WeederSession.h
+        include/weeder_session/MetaFolder.h
+        include/weeder_session/IMetaFolder.h
+        src/weeder_session/MetaFolder.cpp)
 
-set(NO_CONV_SOURCES
-        src/weeder/som/slic.cpp
-        src/weeder/quincunx/Quincunx.h
-        src/weeder/quincunx/Quincunx.cpp
-        )
 
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-conversion)
