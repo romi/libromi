@@ -37,12 +37,7 @@ TEST_F(gps_location_provider_tests, will_create_location)
         double longitude = 0.2;
 
         // Normally we use lat/long but the JSON parser retrieves things in reverse.
-        std::string expected;
-        expected =   R"({"location":{"longitude":)";
-        expected += to_string(longitude);
-        expected += R"(,"latitude":)";
-        expected += to_string(latitude);
-        expected += "}}";
+        std::string expected("{\n    \"location\": {\n        \"longitude\": 0.200000, \n        \"latitude\": 0.100000\n    }\n}");
 
         MockGps gps;
         EXPECT_CALL(gps, CurrentLocation(_,_))
