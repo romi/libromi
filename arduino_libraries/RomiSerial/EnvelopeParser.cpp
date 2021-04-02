@@ -35,7 +35,7 @@
 
 
 
-void EnvelopeParser::set_error(__attribute((unused))char character, char what)
+void EnvelopeParser::set_error(__attribute((unused))char character, int8_t what)
 {
         _message[_message_length] = '\0';
 #if defined(ARDUINO) 

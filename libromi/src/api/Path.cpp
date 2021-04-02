@@ -74,7 +74,7 @@ namespace romi {
         
         void Path::rotate(Path &out, size_t start_index)
         {
-                start_index = std::clamp(start_index, 0UL, size());
+                start_index = std::clamp(start_index, (size_t) 0, size());
                 for (size_t i = 0; i < size(); i++) {
                         size_t index = (start_index + i) % size();
                         out.push_back(at(index));
