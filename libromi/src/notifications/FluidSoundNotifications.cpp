@@ -22,6 +22,12 @@
 
  */
 
+#ifdef __arm__
+typedef uint fluid_int;
+#else
+typedef int fluid_int;
+#endif
+
 #include <r.h>
 #include <string>
 #include <stdexcept>
@@ -150,8 +156,8 @@ namespace romi {
                 Sound& sound = get_sound(name);
                 r_debug("FluidSoundNotification: play %s, preset %d, volume %d",
                         name, sound.preset, sound.volume);
-                fluid_synth_program_select(_synth, 0, (unsigned int) _sfont_id,
-                                           0, (unsigned int) sound.preset); // TODO
+                fluid_synth_program_select(_synth, 0, (fluid_int)_sfont_id,
+                                           0, (fluid_int)sound.preset); // TODO
                 fluid_synth_noteon(_synth, 0, 60, sound.volume);
         }
         
