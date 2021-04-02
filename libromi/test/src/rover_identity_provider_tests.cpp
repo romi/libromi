@@ -2,6 +2,7 @@
 #include "gmock/gmock.h"
 #include "data_provider/JsonFieldNames.h"
 #include "data_provider/RoverIdentityProvider.h"
+#include "JsonCpp.h"
 #include "mock_softwareversion.h"
 #include "mock_romidevicedata.h"
 
@@ -71,17 +72,15 @@ TEST_F(rover_identity_provider_tests, will_create_identity)
 
         romi::RoverIdentityProvider identityProvider(romiDeviceData, softwareVersion);
         std::string identity = identityProvider.identity();
+        JsonCpp identityJson(identity.c_str());
 
- //       "{\"identity\":{\"romi_hardware_id\":\"dead_beef_12fe_34ef\",\"romi_device_type\":\"Rover_V1\",\"software_version_alternate\":\"N/A\",\"software_version_current\":\"V0.1RC1\"}}"
-
-        ASSERT_THAT(identity, HasSubstr(JsonFieldNames::identity.data()));
-        ASSERT_THAT(identity, HasSubstr(JsonFieldNames::romi_device_type.data()));
-        ASSERT_THAT(identity, HasSubstr(expected_device_type));
-        ASSERT_THAT(identity, HasSubstr(JsonFieldNames::romi_hardware_id.data()));
-        ASSERT_THAT(identity, HasSubstr(expected_hardware_id));
-        ASSERT_THAT(identity, HasSubstr(JsonFieldNames::software_version_current.data()));
-        ASSERT_THAT(identity, HasSubstr(expected_sw_current));
-        ASSERT_THAT(identity, HasSubstr(JsonFieldNames::software_version_alternate.data()));
-        ASSERT_THAT(identity, HasSubstr(expected_sw_alternate));
+        ASSERT_TRUE(identityJson.has(JsonFieldNames::romi_device_type));
+        ASSERT_EQ(identityJson.get(JsonFieldNames::romi_device_type).str(), expected_device_type);
+        ASSERT_TRUE(identityJson.has(JsonFieldNames::romi_hardware_id));
+        ASSERT_EQ(identityJson.get(JsonFieldNames::romi_hardware_id).str(), expected_hardware_id);
+        ASSERT_TRUE(identityJson.has(JsonFieldNames::software_version_current));
+        ASSERT_EQ(identityJson.get(JsonFieldNames::software_version_current).str(), expected_sw_current);
+        ASSERT_TRUE(identityJson.has(JsonFieldNames::software_version_alternate));
+        ASSERT_EQ(identityJson.get(JsonFieldNames::software_version_alternate).str(), expected_sw_alternate);
 
 }

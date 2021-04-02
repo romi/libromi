@@ -39,7 +39,7 @@ set(SOURCES
         include/SpeedConverter.h
         include/UIEventMapper.h
         include/USBCamera.h
-        include/v.h
+        include/v3.h
         include/WheelOdometry.h
 
         include/api/IActivity.h
@@ -125,7 +125,7 @@ set(SOURCES
         src/ScriptList.cpp
         src/ScriptMenu.cpp
         src/SpeedConverter.cpp
-        src/v.cpp
+        src/v3.cpp
         src/WheelOdometry.cpp
         src/camera/CameraServer.cpp
         src/camera/FileCamera.cpp

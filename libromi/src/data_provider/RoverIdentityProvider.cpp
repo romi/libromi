@@ -17,7 +17,6 @@ namespace romi {
 
     std::string RoverIdentityProvider::identity() {
 
-            json_object_t identity_object = json_object_create();
             json_object_t identity_data_object = json_object_create();
             json_object_setstr(identity_data_object, JsonFieldNames::romi_device_type.data(),
                                romi_device_type_.c_str());
@@ -27,15 +26,12 @@ namespace romi {
                                current_software_version_.c_str());
             json_object_setstr(identity_data_object, JsonFieldNames::software_version_alternate.data(),
                                alternate_software_version_.c_str());
-            json_object_set(identity_object, JsonFieldNames::identity.data(), identity_data_object);
 
             std::string identityString;
-            JsonCpp identity(identity_object);
+            JsonCpp identity(identity_data_object);
             identity.tostring(identityString, k_json_pretty);
 
-            json_unref(identity_object);
             json_unref(identity_data_object);
-
             return identityString;
     }
 
