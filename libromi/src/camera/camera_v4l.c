@@ -567,7 +567,7 @@ static int camera_mmapinit(camera_t *camera)
                                                                 buf.length, 
                                                                 PROT_READ | PROT_WRITE, 
                                                                 MAP_SHARED /*recommended*/, 
-                                                                camera->fd, buf.m.offset);
+                                                                camera->fd, (off_t) buf.m.offset);
 
                 if (MAP_FAILED == camera->buffers[camera->n_buffers].start) {
                         r_err("Camera: mmap error %d, %s", errno, strerror(errno));
