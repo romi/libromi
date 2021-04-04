@@ -111,7 +111,7 @@ namespace romi {
 
                 {
                         char buffer[256];
-                        json_tostring(params.ptr(), buffer, 256);
+                        json_tostring(params.ptr(), k_json_compact, buffer, 256);
                         r_debug("CNCAdaptor::execute_moveto: %s", buffer);
                 }
 

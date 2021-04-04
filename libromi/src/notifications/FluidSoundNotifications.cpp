@@ -23,7 +23,7 @@
  */
 
 #ifdef __arm__
-typedef uint fluid_int;
+typedef unsigned int fluid_int;
 #else
 typedef int fluid_int;
 #endif
