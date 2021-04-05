@@ -30,27 +30,20 @@
 class CRC8
 {
 protected:
-        uint8_t _crc;
-        uint8_t _table[256];
+        uint8_t crc_;
+        static uint8_t table_[256];
+        static bool table_initialized_;
         
 public:
         
-        CRC8(uint8_t poly = 0x07) : _crc(0){
-                init_table(poly);
-        }
+        CRC8();
+        virtual ~CRC8() = default;
         
-        void init_table(uint8_t poly = 0x07) {
-                uint8_t crc;                
-                for (uint16_t i = 0; i <= UINT8_MAX; i++) {
-                        crc = (uint8_t) i;
-                        for (uint8_t j = 0; j < 8; j++)
-                                crc = (uint8_t) ((uint8_t)(crc << 1) ^ (uint8_t) ((crc & (uint8_t) 0x80) ? poly : 0));
-                        _table[i] = crc;
-                }
-        }
+        void init_table(uint8_t poly = 0x07);
+        void do_init_table(uint8_t poly);
         
         void start(uint8_t start_value = 0) {
-                _crc = start_value;
+                crc_ = start_value;
         }
 
         void update(const char c) {
@@ -58,7 +51,7 @@ public:
         }
 
         void update(uint8_t c) {
-                _crc = _table[_crc ^ c];
+                crc_ = table_[crc_ ^ c];
         }
         
         void update(const char *s, size_t len) {
@@ -72,11 +65,11 @@ public:
         }
         
         uint8_t finalize() {
-                return _crc;
+                return crc_;
         }
         
         uint8_t get() {
-                return _crc;
+                return crc_;
         }
         
         uint8_t compute(const char *s, size_t len) {

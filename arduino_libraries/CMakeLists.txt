@@ -9,11 +9,16 @@ set(SOURCES
   RomiSerial/IInputStream.h
   RomiSerial/IOutputStream.h
   RomiSerial/CRC8.h
+  RomiSerial/CRC8.cpp
   RomiSerial/EnvelopeParser.h
   RomiSerial/EnvelopeParser.cpp
+  RomiSerial/MessageParser.h
+  RomiSerial/MessageParser.cpp
   RomiSerial/IRomiSerialClient.h
   RomiSerial/RomiSerialClient.h
   RomiSerial/RomiSerialClient.cpp
+  RomiSerial/RomiSerial.h
+  RomiSerial/RomiSerial.cpp
   RomiSerial/RSerial.h
   RomiSerial/RSerial.cpp
 )

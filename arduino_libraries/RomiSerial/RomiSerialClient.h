@@ -78,7 +78,7 @@ public:
         
         void send(const char *command, JsonCpp& response) override;
         
-        void set_debug(bool value) {
+        void set_debug(bool value) override {
                 _debug = value;
         }
         

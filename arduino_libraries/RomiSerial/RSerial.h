@@ -22,6 +22,7 @@
 
  */
 
+#include <string>
 #include "IInputStream.h"
 #include "IOutputStream.h"
 

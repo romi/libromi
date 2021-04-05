@@ -7,6 +7,7 @@ set(SRCS_ENVELOPE_PARSER
   ../RomiSerial/RomiSerialErrors.h
   ../RomiSerial/EnvelopeParser.cpp
   ../RomiSerial/EnvelopeParser.h
+  ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
 add_executable(romi_rover_unit_tests_romiserial_envelope_parser ${SRCS_ENVELOPE_PARSER})
@@ -59,6 +60,7 @@ set(SRCS_ROMISERIAL
   ../RomiSerial/MessageParser.h
   ../RomiSerial/EnvelopeParser.cpp
   ../RomiSerial/EnvelopeParser.h
+  ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
 add_executable(romi_rover_unit_tests_romiserial ${SRCS_ROMISERIAL})
@@ -88,6 +90,7 @@ set(SRCS_ROMISERIALCLIENT
   ../RomiSerial/RomiSerialClient.h
   ../RomiSerial/EnvelopeParser.cpp
   ../RomiSerial/EnvelopeParser.h
+  ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
 add_executable(romi_rover_unit_tests_romiserialclient ${SRCS_ROMISERIALCLIENT})
@@ -110,6 +113,7 @@ set(SRCS_ROMISERIAL_ARDUINO
   ../RomiSerial/IOutputStream.h
   ../RomiSerial/RSerial.cpp
   ../RomiSerial/RSerial.h
+  ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h
   ../RomiSerial/EnvelopeParser.cpp
   ../RomiSerial/EnvelopeParser.h

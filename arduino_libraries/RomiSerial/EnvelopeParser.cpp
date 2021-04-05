@@ -124,8 +124,8 @@ bool EnvelopeParser::process(char c)
                 } else if (END_ENVELOPE(c)) {
                         set_error(c, romiserial_envelope_missing_metadata);
                 } else {
-                        append_char(c);
                         _crc.update(c);
+                        append_char(c);
                 }
                 break;
                 
@@ -188,6 +188,9 @@ bool EnvelopeParser::process(char c)
                                 Serial.print("crc=");
                                 Serial.print(crc, HEX);
                                 Serial.println(":xxxx");
+#else
+                                r_warn("CRC mismatch: got %02x, expected %02x",
+                                       _crc_metadata, crc) ;
 #endif
                         }
                 } else {

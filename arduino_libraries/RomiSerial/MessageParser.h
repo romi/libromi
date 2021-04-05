@@ -26,8 +26,8 @@
 
 #include <stdint.h>
 
-#define PARSER_MAXIMUM_ARGUMENTS 12
-#define PARSER_MAXIMUM_STRING_LENGTH 32
+#define PARSER_MAXIMUM_ARGUMENTS 10
+#define PARSER_MAXIMUM_STRING_LENGTH 24
 
 enum message_parser_state_t {
     wait_opcode,
@@ -38,11 +38,6 @@ enum message_parser_state_t {
     wait_end_message,
     wait_string,
     wait_comma_or_bracket
-    //,
-//    wait_id1,
-//    wait_id2,
-//    wait_crc1,
-//    wait_crc2
 };
 
 class MessageParser
@@ -74,7 +69,9 @@ protected:
 
 public:
         
-        MessageParser() : _state(wait_opcode), _error(0), _opcode('0'), _length(0), _has_string(false), _string_length(0), _tmpval(0), _sign(0)
+        MessageParser()
+                : _state(wait_opcode), _error(0), _opcode('0'),
+                  _length(0), _has_string(false), _string_length(0), _tmpval(0), _sign(0)
         {
                 reset();
         }

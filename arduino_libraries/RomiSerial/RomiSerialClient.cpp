@@ -41,8 +41,10 @@ using namespace std;
                                || ('0' <= (_c) && (_c) <= '9'))
 
 
-RomiSerialClient::RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out)
-        :   _in(in), _out(out), _mutex(std::unique_ptr<mutex_t, _mutex_deleter>(new_mutex(), _mutex_deleter())),
+RomiSerialClient::RomiSerialClient(std::shared_ptr<IInputStream> in,
+                                   std::shared_ptr<IOutputStream> out)
+        :   _in(in), _out(out),
+            _mutex(std::unique_ptr<mutex_t, _mutex_deleter>(new_mutex(), _mutex_deleter())),
             _id(255), _debug(false), _parser()
 {
         in->set_timeout(0.1f);

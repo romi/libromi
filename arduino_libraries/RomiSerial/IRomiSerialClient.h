@@ -48,6 +48,8 @@ public:
          *  array is a string with a human-readable error message.
          */
         virtual void send(const char *request, JsonCpp& response) = 0;
+
+        virtual void set_debug(bool value) = 0;
 };
 
 #endif
