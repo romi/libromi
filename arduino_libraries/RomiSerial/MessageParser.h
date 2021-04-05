@@ -26,8 +26,8 @@
 
 #include <stdint.h>
 
-#define PARSER_MAXIMUM_ARGUMENTS 10
-#define PARSER_MAXIMUM_STRING_LENGTH 24
+#define PARSER_MAXIMUM_ARGUMENTS 12
+#define PARSER_MAXIMUM_STRING_LENGTH 32
 
 enum message_parser_state_t {
     wait_opcode,
