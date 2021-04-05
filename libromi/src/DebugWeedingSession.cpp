@@ -250,7 +250,7 @@ namespace romi {
                         snprintf(name, 64, "path-%05d", n);
                 else
                         snprintf(name, 64, "path");
-                        
+
                 std::string filename = make_filename(name, "txt");
                 std::ofstream file;
                 file.open(filename);
@@ -258,7 +258,7 @@ namespace romi {
                         file << x[i] << "\t" << y[i] << std::endl;
                 file.close();
         }
-        
+
         void DebugWeedingFolder::print_path(double *x, double *y, int len, int n)
         {
                 char name[64];
@@ -266,7 +266,7 @@ namespace romi {
                         snprintf(name, 64, "path-%05d", n);
                 else
                         snprintf(name, 64, "path");
-                        
+
                 std::string filename = make_filename(name, "txt");
                 std::ofstream file;
                 file.open(filename);

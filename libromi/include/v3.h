@@ -25,7 +25,7 @@
 #ifndef _OQUAM_V_H_
 #define _OQUAM_V_H_
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace romi {
         

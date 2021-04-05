@@ -207,13 +207,18 @@ namespace romi {
                 }
 
                 void print_path(IFolder &session, int n) {
-                        std::vector<double> x;
-                        std::vector<double> y;
+//                        std::vector<double> x;
+//                        std::vector<double> y;
+//                        for (int i = 0; i < _path_length; i++) {
+//                                x.push_back(rtod(_px[i]));
+//                                y.push_back(rtod(_py[i]));
+//                        }
+//                        session.print_path(&x[0], &y[0], _path_length, n);
+                        Path sessionPath;
                         for (int i = 0; i < _path_length; i++) {
-                                x.push_back(rtod(_px[i]));
-                                y.push_back(rtod(_py[i]));
+                                sessionPath.emplace_back(v3(rtod(_px[i]), rtod(_py[i]), 0.0));
                         }
-                        session.print_path(&x[0], &y[0], _path_length, n);
+                        session.print_path(sessionPath, n);
                 }
 
                 void dump_cities(IFolder &session) {
