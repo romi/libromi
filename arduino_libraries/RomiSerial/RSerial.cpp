@@ -83,7 +83,7 @@ int RSerial::available()
         return retval;
 }
 
-int RSerial::readchar(char& c)
+int RSerial::read(char& c)
 {
         char readc;
         int retval = -1;
@@ -94,44 +94,6 @@ int RSerial::readchar(char& c)
                 //printf("%c 0x%02x\n", c, (int) c);
         } 
         return retval;
-}
-
-bool RSerial::readline(char *buffer, size_t buflen)
-{
-        enum readstate_t{ READ, NL, DONE };
-
-        readstate_t state = READ;
-        size_t n = 0;
-        bool success = false;
-        
-        while (available() && (state != DONE)){
-                char c;
-                if (readchar(c) > 0) {
-                    switch (state) {
-                        case READ:
-                            buffer[n++] = c;
-                            if (c == '\r')
-                                state = NL;
-                            break;
-                        case NL:
-                            if (c == '\n') {
-                                buffer[n++] = c;
-                                success = true;
-                                state = DONE;
-                            } else {
-                                state = READ;
-                            }
-                            break;
-                        case DONE:
-                        default:
-                            break;
-                    }
-                }
-                if (n == buflen-1)
-                        break;
-        }
-        buffer[n] = '\0';
-        return success;
 }
 
 bool RSerial::poll_write()
@@ -180,18 +142,6 @@ size_t RSerial::print(const char *s)
                 if (write(*s++) != 1)
                         break;
                 n++;
-        }
-        return n;
-}
-
-size_t RSerial::println(const char *s)
-{        
-        size_t len = strlen(s);
-        size_t n = print(s);
-        if (n == len) {
-                size_t m = print("\r\n");
-                if (m > 0)
-                        n += m;
         }
         return n;
 }
