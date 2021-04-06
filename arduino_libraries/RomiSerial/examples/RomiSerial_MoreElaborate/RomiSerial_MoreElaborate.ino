@@ -78,7 +78,8 @@ const static MessageHandler handlers[] = {
         { 'f', 0, false, handler_returning_an_error },
 };
 
-RomiSerial romiSerial(handlers, 6);
+ArduinoSerial serial(Serial);
+RomiSerial romiSerial(serial, serial, handlers, 6);
 
 void setup()
 {
