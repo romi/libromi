@@ -187,7 +187,7 @@ bool EnvelopeParser::process(char c)
                                 Serial.print("#!");
                                 Serial.print("crc=");
                                 Serial.print(crc, HEX);
-                                Serial.println(":xxxx");
+                                Serial.print(":xxxx\r\n");
 #else
                                 r_warn("CRC mismatch: got %02x, expected %02x",
                                        _crc_metadata, crc) ;

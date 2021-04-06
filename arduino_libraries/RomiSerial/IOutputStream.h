@@ -33,7 +33,6 @@ public:
         virtual ~IOutputStream() = default;
         virtual size_t write(char c) = 0;
         virtual size_t print(const char *s) = 0;
-        virtual size_t println(const char *s) = 0;
 };
 
 #endif // __IOUTPUTSTREAM_H

@@ -30,7 +30,7 @@
 #define log_print(__x)   { \
                 Serial.print("#!"); \
                 Serial.print(__x); ; \
-                Serial.println(":xxxx"); }
+                Serial.print(":xxxx\r\n"); }
 
 #else
 #include <r.h>

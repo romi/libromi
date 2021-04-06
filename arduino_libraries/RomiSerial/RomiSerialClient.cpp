@@ -259,7 +259,7 @@ bool RomiSerialClient::handle_one_char()
 {
         bool has_message = false;
         char c;
-        if (_in->readchar(c) > 0) {
+        if (_in->read(c) > 0) {
 
                 has_message = parse_char(c);
                 

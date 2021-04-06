@@ -32,8 +32,7 @@ class IInputStream
 public:
         virtual ~IInputStream() = default;
         virtual int available() = 0;
-        virtual int readchar(char& c) = 0;
-        virtual bool readline(char *buffer, size_t buflen) = 0;
+        virtual int read(char& c) = 0;
         virtual void set_timeout(float seconds) = 0;
 };
 

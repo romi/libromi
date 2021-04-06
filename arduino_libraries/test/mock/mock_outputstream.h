@@ -12,7 +12,6 @@ class MockOutputStream : public IOutputStream
 public:
         MOCK_METHOD1(write, size_t(char c));
         MOCK_METHOD1(print, size_t(const char *s));
-        MOCK_METHOD1(println,size_t (const char *s));
 };
 #pragma GCC diagnostic pop
 

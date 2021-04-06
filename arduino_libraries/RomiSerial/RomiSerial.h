@@ -27,7 +27,6 @@
 #include "IRomiSerial.h"
 #include "IInputStream.h"
 #include "IOutputStream.h"
-//#include "Parser.h"
 #include "EnvelopeParser.h"
 #include "MessageParser.h"
 #include "CRC8.h"
@@ -40,7 +39,7 @@ typedef void (*MessageCallback)(RomiSerial *romi_serial,
 
 struct MessageHandler 
 {
-        uint8_t opcode;
+        char opcode;
         uint8_t number_arguments;
         bool requires_string;
         MessageCallback callback;
@@ -53,14 +52,20 @@ protected:
         IOutputStream& _out;
         const MessageHandler *_handlers;
         uint8_t _num_handlers;
-        //Parser _parser;
         EnvelopeParser _envelopeParser;
         MessageParser _messageParser;
         bool _sent_response;
         CRC8 _crc;
         uint8_t _last_id;
         
+        void process_message();
+        void handle_char(char c);
+        void parse_and_handle_message();
         void handle_message();
+        int get_handler();
+        bool assert_valid_arguments(int index);
+        bool assert_valid_argument_count(int index);
+        bool assert_valid_string_argument(int index);
 
         void start_message();
         void append_char(const char c);
@@ -71,17 +76,7 @@ protected:
 public:
 
         RomiSerial(IInputStream& in, IOutputStream& out,
-                   const MessageHandler *handlers, uint8_t num_handlers)
-                : _in(in), _out(out),
-                  _handlers(handlers),
-                  _num_handlers(num_handlers),
-                  _envelopeParser(),
-                  _messageParser(),
-                  _sent_response(false),
-                  _crc(),
-                  _last_id(255)
-        {
-        }
+                   const MessageHandler *handlers, uint8_t num_handlers);
         RomiSerial(const RomiSerial&) = delete;
         RomiSerial& operator=(const RomiSerial&) = delete;
 
@@ -92,30 +87,13 @@ public:
         void send_error(int code, const char *message) override;
         void send(const char *message) override;
         void log(const char *message) override;
-private:
-
 
 protected:
 
-    // TBD: This code is duplicated in 3 places.
-    // test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
-        char convert_4bits_to_hex(uint8_t value) {
-                value &= 0x0f;
-                return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
-        }
-
-        void append_hex(uint8_t value) {
-                append_char(convert_4bits_to_hex((uint8_t)(value >> 4)));
-                append_char(convert_4bits_to_hex(value));
-        }
-
-        void append_id() {
-                append_hex(_envelopeParser.id());
-        }
-
-        void append_crc() {
-                append_hex(_crc.get());
-        }
+        char convert_4bits_to_hex(uint8_t value);
+        void append_hex(uint8_t value);
+        void append_id();
+        void append_crc();
 
 };
 

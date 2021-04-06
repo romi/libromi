@@ -31,56 +31,36 @@
 
 class ArduinoSerial : public IInputStream, public IOutputStream
 {
+protected:
+        Stream& stream_;
+        
 public:
-        ArduinoSerial() = default;
+        ArduinoSerial(Stream& stream) : stream_(stream) {}
         
         virtual ~ArduinoSerial() = default;
 
-        void init(long baudrate) {
-                Serial.begin(baudrate);
-                while (!Serial)
-                        ;
-        }
-
         void set_timeout(float seconds) override {
-                Serial.setTimeout((int) (seconds * 1000.0f));                
+                stream_.setTimeout((int) (seconds * 1000.0f));                
         }
         
         int available() override {
-                return Serial.available();
+                return stream_.available();
         }
         
-        int readchar(char& c) override {
+        int read(char& c) override {
                 char charread;
-                size_t n = Serial.readBytes(&charread, 1);
+                size_t n = stream_.readBytes(&charread, 1);
                 c = charread;
                 return (n == 1)? 1 : -1;
         }
-        
-        bool readline(char *buffer, size_t buflen) override {
-                size_t n = Serial.readBytesUntil('\n', buffer, buflen);
-                if (n < buflen) {
-                        buffer[n] = '\0';
-                } else {
-                        buffer[buflen-1] = '\0';
-                }
-                return n > 0 && n < buflen;
-        }
 
         size_t write(char c) {
-                return Serial.write(c);
+                return stream_.write(c);
         }
         
         size_t print(const char *s) override {
-                return Serial.print(s);
-        }
-        
-        size_t println(const char *s) override {
-                return Serial.println(s);
+                return stream_.print(s);
         }
 };
-
-IInputStream &get_default_input();
-IOutputStream &get_default_output();
 
 #endif // __ARDUINO_SERIAL_H
