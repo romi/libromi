@@ -1,3 +1,6 @@
+#include <fstream>
+#include <string>
+#include <future>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
@@ -1368,6 +1371,7 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(sesion_path_/filename2));
         ASSERT_TRUE(fs::exists(sesion_path_/filename3));
 }
+
 TEST_F(metafolder_tests, store_path_empty_image_throws)
 {
         // Arrange
@@ -1390,4 +1394,70 @@ TEST_F(metafolder_tests, store_path_empty_image_throws)
         // Assert
         ASSERT_THROW(meta_folder.try_store_path(filename1, testPath, observation), std::runtime_error);
 }
+
+const int max_files = 20;
+
+int Write_multiple_thread_png(romi::MetaFolder& MetaFolder, romi::Image& image)
+{
+        int file_index = 0;
+        std::string filename("file");
+        std::string observation_id("png_observer");
+        for (file_index = 0; file_index < 20; file_index++)
+        {
+                MetaFolder.try_store_png((filename + to_string(file_index)), image, observation_id);
+        }
+        return 0;
+}
+int Write_multiple_thread_jpg(romi::MetaFolder& MetaFolder, romi::Image& image)
+{
+        int file_index = 0;
+        std::string filename("file");
+        std::string observation_id("png_observer");
+        for (file_index = 0; file_index < 20; file_index++)
+        {
+                MetaFolder.try_store_jpg((filename + to_string(file_index)), image, observation_id);
+        }
+        return 0;
+}
+
+TEST_F(metafolder_tests, store_multiple_threads_does_not_corrupt_metafolder)
+{
+        // Arrange
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .Times(AnyNumber())
+                        .WillRepeatedly(Return(std::string("10:25:02-25/01/2020")));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .Times(AnyNumber())
+                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
+
+        auto png_future = std::thread(Write_multiple_thread_png, std::ref(meta_folder), std::ref(image));
+        auto jpg_future = std::thread(Write_multiple_thread_jpg, std::ref(meta_folder), std::ref(image));
+
+        // Act
+        jpg_future.join();
+        png_future.join();
+
+        JsonCpp metaDataJson;
+
+        // Assert
+        ASSERT_NO_THROW(        metaDataJson = JsonCpp::load(meta_data_filename.c_str()));
+
+        ASSERT_NO_THROW(auto file0Json = metaDataJson["file0.jpg"]);
+        ASSERT_NO_THROW(auto file0Json = metaDataJson["file19.jpg"]);
+        ASSERT_NO_THROW(auto file0Json = metaDataJson["file0.png"]);
+        ASSERT_NO_THROW(auto file0Json = metaDataJson["file19.png"]);
+}
+
 
