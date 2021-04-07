@@ -190,15 +190,13 @@ void RSerial::configure_termios()
                 tty.c_cflag |= HUPCL;
 
         tty.c_lflag |= ICANON | ISIG;  /* canonical input */
-        tty.c_lflag &= (tcflag_t)~(ECHO | ECHOE | ECHONL | IEXTEN);
+        tty.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHONL | IEXTEN);
 
-        tty.c_iflag &= (tcflag_t)~IGNCR;   /* Preserve carriage return (= don't ignore CR)*/
-        //tty.c_iflag |= IGNCR;  /* preserve carriage return */
-        tty.c_iflag &= (tcflag_t)~INPCK;   /* Disable input parity checking. */
-        tty.c_iflag &= (tcflag_t)~INLCR;   /* Don't translate newline to carriage return */
-        tty.c_iflag &= (tcflag_t)~ICRNL;   /* Don't translate carriage return to newline */
-        //tty.c_iflag &= ~(IUCLC | IMAXBEL);  (not in POSIX)
-        tty.c_iflag &= (tcflag_t)~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
+        tty.c_iflag &= (tcflag_t) ~IGNCR;   /* Preserve carriage return (= don't ignore CR)*/
+        tty.c_iflag &= (tcflag_t) ~INPCK;   /* Disable input parity checking. */
+        tty.c_iflag &= (tcflag_t) ~INLCR;   /* Don't translate newline to carriage return */
+        tty.c_iflag &= (tcflag_t) ~ICRNL;   /* Don't translate carriage return to newline */
+        tty.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
 
 //    tty.c_oflag &= ~OPOST;
         tty.c_oflag = 0;
