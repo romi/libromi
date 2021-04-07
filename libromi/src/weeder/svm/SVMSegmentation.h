@@ -25,6 +25,7 @@
 #ifndef __ROMI_SVM_SEGMENTATION_H
 #define __ROMI_SVM_SEGMENTATION_H
 
+#include "weeder_session/ISession.h"
 #include "weeder/IImageSegmentation.h"
 
 namespace romi {
@@ -39,7 +40,7 @@ namespace romi {
                 void set_parameter_b(JsonCpp value);
 
         public:
-                SVMSegmentation(JsonCpp& params);
+                explicit SVMSegmentation(JsonCpp& params);
                 SVMSegmentation(float a[3], float b);
                 
                 virtual ~SVMSegmentation() override = default;
@@ -49,7 +50,7 @@ namespace romi {
                 void set_intercept(float b);
                 float get_intercept();
 
-                bool segment(IFolder &session, Image &image, Image &mask) override;
+                bool create_mask(Image &image, Image &mask) override;
         };
 }
 

@@ -26,6 +26,9 @@
 #include "weeder/Weeder.h"
 
 const double diameter_tool_default = 0.05;
+// ToDo: Observation_id
+const std::string observation_id = "row_1";
+
 
 namespace romi {
 
@@ -34,9 +37,9 @@ namespace romi {
                        ICNC& cnc,
                        double z0,
                        double speed,
-                       IFileCabinet &filecabinet)
+                       ISession &session)
                 : _camera(camera), _pipeline(pipeline), _cnc(cnc), _range(),
-                  _z0(z0), _speed(speed), _diameter_tool(diameter_tool_default), _filecabinet(filecabinet)
+                  _z0(z0), _speed(speed), _diameter_tool(diameter_tool_default), session_(session)
         {
                 _cnc.get_range(_range);
         }
@@ -47,7 +50,7 @@ namespace romi {
                 bool success = false;
                 
                 try {
-
+                        session_.start(observation_id);
                         try_hoe();
                         success = true;
                         
@@ -98,9 +101,9 @@ namespace romi {
 
         void Weeder::analyse_image(Image& image, Path& path)
         {
-                IFolder &folder = _filecabinet.start_new_folder();
+//                IFolder &folder = _filecabinet.start_new_folder();
                 
-                if (!_pipeline.run(folder, image, _diameter_tool, path)) {
+                if (!_pipeline.run(session_, image, _diameter_tool, path)) {
                         r_err("Weeder: pipeline run failed");
                         throw std::runtime_error("Weeder: pipeline run failed");
                 }

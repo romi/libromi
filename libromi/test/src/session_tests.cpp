@@ -4,7 +4,7 @@
 #include "FileUtils.h"
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "weeder_session/WeederSession.h"
+#include "weeder_session/Session.h"
 #include "mock_romidevicedata.h"
 #include "mock_softwareversion.h"
 #include "mock_linux.h"
@@ -14,20 +14,19 @@
 using namespace std;
 using namespace testing;
 
-class weedersession_tests : public ::testing::Test
+class weedersession : public ::testing::Test
 {
 protected:
         
-	weedersession_tests() : mockClock_(std::make_shared<rpp::MockClock>()), mockGps_(),
+	weedersession() : mockClock_(std::make_shared<rpp::MockClock>()), mockGps_(),
 	mockLocationProvider_(), deviceData_(), softwareVersion_(), sessions_basedir_("weedersession_test"),
 	homedir_("."), versionCurrent_("V1.0.1"), versionAlternate_("V1.0.1"), devicetype_("Rover"), devicID_("DEAD-BEEF")
 	{
         }
 
-	~weedersession_tests() override = default;
+	~weedersession() override = default;
 
 	void SetUp() override {
-//	        basedir_ = "./weedersession";
                 rpp::ClockAccessor::SetInstance(mockClock_);
                 mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
         }
@@ -76,7 +75,7 @@ protected:
         const std::string devicID_;
 };
 
-TEST_F(weedersession_tests, can_construct_with_valid_directory)
+TEST_F(weedersession, can_construct_with_valid_directory)
 {
         // Arrange
         rpp::Linux linux;
@@ -91,10 +90,10 @@ TEST_F(weedersession_tests, can_construct_with_valid_directory)
 
         // Act
         // Assert
-        ASSERT_NO_THROW(romi::WeederSession session(linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_)));
+        ASSERT_NO_THROW(romi::Session session(linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_)));
 }
 
-TEST_F(weedersession_tests, can_construct_when_directory_exists)
+TEST_F(weedersession, can_construct_when_directory_exists)
 {
         // Arrange
         rpp::MockLinux mock_linux;
@@ -114,11 +113,11 @@ TEST_F(weedersession_tests, can_construct_when_directory_exists)
 
         // Act
         // Assert
-        ASSERT_NO_THROW(romi::WeederSession session(mock_linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_)));
+        ASSERT_NO_THROW(romi::Session session(mock_linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_)));
         ASSERT_TRUE(create);
 }
 
-TEST_F(weedersession_tests, fail_construct_when_fails_to_create_directory)
+TEST_F(weedersession, fail_construct_when_fails_to_create_directory)
 {
         // Arrange
         rpp::MockLinux mock_linux;
@@ -135,7 +134,7 @@ TEST_F(weedersession_tests, fail_construct_when_fails_to_create_directory)
 
         // Act
         try {
-                romi::WeederSession session(mock_linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_));
+                romi::Session session(mock_linux, session_dir, deviceData_, softwareVersion_, std::move(mockLocationProvider_));
         }
         catch(std::runtime_error& e){
                 std::cout << e.what();
@@ -146,7 +145,7 @@ TEST_F(weedersession_tests, fail_construct_when_fails_to_create_directory)
         ASSERT_TRUE(exception_thrown);
 }
 
-TEST_F(weedersession_tests, start_creates_correct_directory)
+TEST_F(weedersession, start_creates_correct_directory)
 {
         // Arrange
         rpp::MockLinux mock_linux;
@@ -170,8 +169,8 @@ TEST_F(weedersession_tests, start_creates_correct_directory)
 
         // Act
         try {
-                romi::WeederSession session(mock_linux, sessions_basedir_, deviceData_, softwareVersion_, std::move(mockLocationProvider_));
-                session.Start(observation_id);
+                romi::Session session(mock_linux, sessions_basedir_, deviceData_, softwareVersion_, std::move(mockLocationProvider_));
+                session.start(observation_id);
         }
         catch(std::runtime_error& e){
                 std::cout << e.what();

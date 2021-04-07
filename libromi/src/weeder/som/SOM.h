@@ -25,6 +25,7 @@
 #ifndef __ROMI_SOM_H
 #define __ROMI_SOM_H
 
+#include "weeder_session/ISession.h"
 #include "weeder/IPathPlanner.h"
 #include "SelfOrganizedMap.h"
 #include "Superpixels.h"
@@ -42,10 +43,10 @@ namespace romi {
                 void assert_settings();
 
         public:
-                SOM(JsonCpp& params);
-                virtual ~SOM() override = default;
+                explicit SOM(JsonCpp& params);
+                ~SOM() override = default;
                 
-                bool trace_path(IFolder &session,
+                bool trace_path(ISession &session,
                                 Image &mask,
                                 double tool_diameter,
                                 double meters_to_pixels,

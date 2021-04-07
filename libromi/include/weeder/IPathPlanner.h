@@ -28,6 +28,7 @@
 #include <vector>
 #include "r.h"
 #include "api/Path.h"
+#include "weeder_session/ISession.h"
 #include "Image.h"
 
 namespace romi {
@@ -39,7 +40,7 @@ namespace romi {
         public:
                 virtual ~IPathPlanner() = default;
 
-                virtual bool trace_path(IFolder &session,
+                virtual bool trace_path(ISession &session,
                                         Image &mask,
                                         double tool_diameter, // in meters
                                         double meters_to_pixels,

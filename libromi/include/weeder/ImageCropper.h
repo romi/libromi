@@ -43,9 +43,9 @@ namespace romi {
 
         public:
                 ImageCropper(CNCRange& range, JsonCpp& properties);
-                virtual ~ImageCropper() override = default;
+                ~ImageCropper() override = default;
                 
-                bool crop(IFolder &session,
+                bool crop(ISession &session,
                           Image &camera_image,
                           double tool_diameter,
                           Image &cropped_image) override;

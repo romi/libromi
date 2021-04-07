@@ -58,7 +58,7 @@ namespace romi {
                 }
         }
                 
-        bool SOM::trace_path(IFolder &session,
+        bool SOM::trace_path(ISession &session,
                              Image &mask,
                              double tool_diameter,
                              double meters_to_pixels,

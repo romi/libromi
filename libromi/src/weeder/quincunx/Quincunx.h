@@ -41,10 +41,10 @@ namespace romi {
                 void assert_settings();
                 
         public:
-                Quincunx(JsonCpp& params);
-                virtual ~Quincunx() override = default;
+                explicit Quincunx(JsonCpp& params);
+                ~Quincunx() override = default;
                 
-                bool trace_path(IFolder &session,
+                bool trace_path(ISession &session,
                                 Image &mask,
                                 double tool_diameter,
                                 double meters_to_pixels,

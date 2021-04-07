@@ -196,11 +196,13 @@ set(DATA_PROVIDER_SOURCES
         src/data_provider/SoftwareVersion.cpp
         include/data_provider/RomiDeviceData.h
         src/data_provider/RomiDeviceData.cpp
-        src/weeder_session/WeederSession.cpp
-        include/weeder_session/WeederSession.h
+        src/weeder_session/Session.cpp
+        include/weeder_session/Session.h
         include/weeder_session/MetaFolder.h
         include/weeder_session/IMetaFolder.h
-        src/weeder_session/MetaFolder.cpp)
+        src/weeder_session/MetaFolder.cpp
+        src/data_provider/Gps.cpp
+        include/data_provider/Gps.h)
 
 
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)

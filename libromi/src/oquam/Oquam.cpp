@@ -38,9 +38,9 @@ namespace romi {
                      const double *amax,
                      const double *scale_meters_to_steps, 
                      double path_max_deviation,
-                     double path_slice_duration)
+                     double path_slice_duration, ISession& session)
                 : _controller(controller),
-                  _file_cabinet(nullptr),
+                  session_(session),
                   _mutex(),
                   _range(range),
                   _vmax(vmax),
@@ -226,29 +226,26 @@ namespace romi {
 
         void Oquam::store_script(SmoothPath& script) 
         {
-                if (_file_cabinet) {
-                        IFolder &folder = _file_cabinet->start_new_folder();
-                        store_script_svg(folder, script); 
-                        store_script_json(folder, script); 
-                }
+                store_script_svg(script);
+                store_script_json(script);
         }
 
-        void Oquam::store_script_svg(IFolder &folder, SmoothPath& script) 
+        void Oquam::store_script_svg(SmoothPath &script)
         {
                 membuf_t *svg = plot_to_mem(script, _range, _vmax.values(), _amax.values());
                 if (svg != nullptr) {
-                        folder.store_svg("path", membuf_data(svg), membuf_len(svg));
+                        session_.store_svg("path.svg", membuf_data(svg), membuf_len(svg));
                         delete_membuf(svg);
                 } else {
                         r_warn("Oquam::store_script: plot failed");
                 }
         }
 
-        void Oquam::store_script_json(IFolder &folder, SmoothPath& script) 
+        void Oquam::store_script_json(SmoothPath &script)
         {
                 membuf_t *text = new_membuf();
                 print(script, text);
-                folder.store_txt("script", membuf_data(text), membuf_len(text));
+                session_.store_txt("script.txt", membuf_data(text), membuf_len(text));
                 delete_membuf(text);
         }
 

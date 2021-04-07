@@ -33,6 +33,7 @@
 #include "api/IWeeder.h"
 #include "IFileCabinet.h"
 #include "weeder/IPipeline.h"
+#include "weeder_session/ISession.h"
 
 namespace romi {
 
@@ -46,8 +47,8 @@ namespace romi {
                 double _z0;
                 double _speed;
                 double _diameter_tool;
-                IFileCabinet &_filecabinet;
-                
+                ISession &session_;
+
                 void scale_to_range(Path &path);
                 void rotate_path_to_starting_point(Path &path, Path &out);
                 void adjust_path(Path &path, Path &out);
@@ -66,9 +67,9 @@ namespace romi {
                 void compute_path(Image& image, Path& path);
 
         public:
-                
+
                 Weeder(ICamera& camera, IPipeline& pipeline, ICNC& cnc,
-                       double z0, double speed, IFileCabinet &filecabinet);
+                   double z0, double speed, ISession &session);
                 
                 ~Weeder() override = default;
 

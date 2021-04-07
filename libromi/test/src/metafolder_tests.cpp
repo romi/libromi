@@ -236,7 +236,7 @@ TEST_F(metafolder_tests, try_create_multiple_times_does_not_leak)
 
 }
 
-TEST_F(metafolder_tests, store_jpeg_before_create_throws)
+TEST_F(metafolder_tests, store_jpg_before_create_throws)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
@@ -247,7 +247,7 @@ TEST_F(metafolder_tests, store_jpeg_before_create_throws)
         romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
 
         romi::Image image;
-        std::string filename("file1.jpeg");
+        std::string filename("file1.jpg");
         std::string observation("observe");
 
         // Act
@@ -256,7 +256,75 @@ TEST_F(metafolder_tests, store_jpeg_before_create_throws)
 
 }
 
-TEST_F(metafolder_tests, store_jpeg_same_file_rewrites_metadata)
+TEST_F(metafolder_tests, store_jpg_no_extension_creates_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
+        std::string filename("file1");
+        std::string filename_jpg("file1.jpg");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_jpg(filename, image, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_jpg.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_jpg_wrong_extension_changes_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
+        std::string filename("file1.xxx");
+        std::string filename_jpg("file1.jpg");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_jpg(filename, image, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_jpg.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_jpg_same_file_rewrites_metadata)
 {
         // Arrange
         const int number_files(2);
@@ -281,7 +349,7 @@ TEST_F(metafolder_tests, store_jpeg_same_file_rewrites_metadata)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
-        std::string filename("file1.jpeg");
+        std::string filename("file1.jpg");
         std::string observation("observe");
 
         // Act
@@ -295,7 +363,7 @@ TEST_F(metafolder_tests, store_jpeg_same_file_rewrites_metadata)
         ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
 }
 
-TEST_F(metafolder_tests, store_jpeg_write_error_does_not_write_metadata)
+TEST_F(metafolder_tests, store_jpg_write_error_does_not_write_metadata)
 {
         // Arrange
         std::string expected("10:25:13-25/01/2020");
@@ -320,7 +388,7 @@ TEST_F(metafolder_tests, store_jpeg_write_error_does_not_write_metadata)
         ASSERT_THROW(metaDataJson[filename.c_str()], JSONKeyError);
 }
 
-TEST_F(metafolder_tests, store_jpeg_creates_files_and_correct_meta_data)
+TEST_F(metafolder_tests, store_jpg_creates_files_and_correct_meta_data)
 {
         // Arrange
         const int number_files(3);
@@ -346,9 +414,9 @@ TEST_F(metafolder_tests, store_jpeg_creates_files_and_correct_meta_data)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
-        std::string filename1("file1.jpeg");
-        std::string filename2("file2.jpeg");
-        std::string filename3("file3.jpeg");
+        std::string filename1("file1.jpg");
+        std::string filename2("file2.jpg");
+        std::string filename3("file3.jpg");
         std::string observation("observe");
 
         // Act
@@ -366,7 +434,7 @@ TEST_F(metafolder_tests, store_jpeg_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(sesion_path_/filename2));
         ASSERT_TRUE(fs::exists(sesion_path_/filename3));
 }
-TEST_F(metafolder_tests, store_jpeg_empty_image_throws)
+TEST_F(metafolder_tests, store_jpg_empty_image_throws)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
@@ -379,7 +447,7 @@ TEST_F(metafolder_tests, store_jpeg_empty_image_throws)
         meta_folder.try_create(sesion_path_);
 
         romi::Image image;
-        std::string filename1("file1.jpeg");
+        std::string filename1("file1.jpg");
         std::string observation("observe");
 
         // Act
@@ -409,6 +477,75 @@ TEST_F(metafolder_tests, store_png_before_create_throws)
         ASSERT_THROW(meta_folder.try_store_png(filename, image, observation), std::runtime_error);
 
 }
+
+TEST_F(metafolder_tests, store_png_no_extension_creates_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
+        std::string filename("file1");
+        std::string filename_png("file1.png");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_png(filename, image, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_png.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_png_wrong_extension_changes_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
+        std::string filename("file1.xxx");
+        std::string filename_png("file1.png");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_png(filename, image, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_png.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
 
 TEST_F(metafolder_tests, store_png_same_file_rewrites_metadata)
 {
@@ -564,6 +701,75 @@ TEST_F(metafolder_tests, store_svg_before_create_throws)
         ASSERT_THROW(meta_folder.try_store_svg(filename, svg_body, observation), std::runtime_error);
 
 }
+
+TEST_F(metafolder_tests, store_svg_no_extension_creates_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string svg_body("body");
+        std::string filename("file1");
+        std::string filename_svg("file1.svg");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_svg(filename, svg_body, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_svg.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_svg_wrong_extension_changes_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string svg_body("body");
+        std::string filename("file1.xxx");
+        std::string filename_svg("file1.svg");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_svg(filename, svg_body, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_svg.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
 
 TEST_F(metafolder_tests, store_svg_same_file_rewrites_metadata)
 {
@@ -722,6 +928,75 @@ TEST_F(metafolder_tests, store_txt_before_create_throws)
         ASSERT_THROW(meta_folder.try_store_txt(filename, txt_body, observation), std::runtime_error);
 
 }
+
+TEST_F(metafolder_tests, store_txt_no_extension_creates_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string txt_body("body");
+        std::string filename("file1");
+        std::string filename_txt("file1.txt");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_txt(filename, txt_body, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_txt.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_txt_wrong_extension_changes_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string txt_body("body");
+        std::string filename("file1.xxx");
+        std::string filename_txt("file1.txt");
+        std::string observation("observe");
+
+        // Act
+        meta_folder.try_store_txt(filename, txt_body, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_txt.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
 
 TEST_F(metafolder_tests, store_txt_same_file_rewrites_metadata)
 {
@@ -883,6 +1158,88 @@ TEST_F(metafolder_tests, store_path_before_create_throws)
 
 }
 
+
+TEST_F(metafolder_tests, store_path_no_extension_creates_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string filename("file1");
+        std::string filename_txt("file1.txt");
+        std::string observation("observe");
+
+        double data(0.0);
+        romi::Path testPath;
+        for (int i = 0; i < 10; i++) {
+                data+=0.1;
+                testPath.emplace_back(romi::v3(data, data, 0.0));
+        }
+
+        // Act
+        meta_folder.try_store_path(filename, testPath, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_txt.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+TEST_F(metafolder_tests, store_path_wrong_extension_changes_extension)
+{
+        // Arrange
+        std::string expected("10:25:13-25/01/2020");
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+        auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
+        romi::MetaFolder meta_folder(std::move(roverIdentity), std::move(mockLocationProvider_));
+        fs::path meta_data_filename = sesion_path_/romi::MetaFolder::meta_data_filename_;
+        meta_folder.try_create(sesion_path_);
+
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(expected));
+
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
+
+        std::string filename("file1.xxx");
+        std::string filename_txt("file1.txt");
+        std::string observation("observe");
+
+        double data(0.0);
+        romi::Path testPath;
+        for (int i = 0; i < 10; i++) {
+                data+=0.1;
+                testPath.emplace_back(romi::v3(data, data, 0.0));
+        }
+
+        // Act
+        meta_folder.try_store_path(filename, testPath, observation);
+        auto metaDataJson = JsonCpp::load(meta_data_filename.c_str());
+        auto fileJson = metaDataJson[filename_txt.c_str()];
+
+        // Assert
+        ASSERT_TRUE(fileJson.has(JsonFieldNames::date_time));
+        ASSERT_EQ(fileJson.get(JsonFieldNames::date_time).str(), expected);
+}
+
+
 TEST_F(metafolder_tests, store_path_same_file_rewrites_metadata)
 {
         // Arrange
@@ -907,7 +1264,7 @@ TEST_F(metafolder_tests, store_path_same_file_rewrites_metadata)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
-        std::string filename("file1.path");
+        std::string filename("file1.txt");
         std::string observation("observe");
         std::string path_body("body");
 
@@ -943,7 +1300,7 @@ TEST_F(metafolder_tests, store_path_write_error_does_not_write_metadata)
         meta_folder.try_create(sesion_path_);
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
-        std::string filename("invalid*/*86.path");
+        std::string filename("invalid*/*86.txt");
         std::string observation("observe");
         std::string path_body("body");
 
@@ -983,9 +1340,9 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
-        std::string filename1("file1.path");
-        std::string filename2("file2.path");
-        std::string filename3("file3.path");
+        std::string filename1("file1.txt");
+        std::string filename2("file2.txt");
+        std::string filename3("file3.txt");
         std::string observation("observe");
         std::string path_body("body");
 
@@ -1024,7 +1381,7 @@ TEST_F(metafolder_tests, store_path_empty_image_throws)
         meta_folder.try_create(sesion_path_);
 
         romi::Image image;
-        std::string filename1("file1.path");
+        std::string filename1("file1.txt");
         std::string observation("observe");
 
         romi::Path testPath;

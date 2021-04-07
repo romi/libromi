@@ -28,12 +28,13 @@ namespace romi {
         inline static const std::string meta_data_filename_ = "meta_data.json";
 
     private:
+        std::filesystem::path build_filename_with_extension(const std::string& filename, const std::string& extension);
         void add_file_metadata(const std::string &filename, const std::string &ovservationId);
         void CheckInput(Image& image) const;
         void CheckInput(const std::string& string_data) const;
         std::unique_ptr<IIdentityProvider> identityProvider_;
         std::unique_ptr<ILocationProvider> locationProvider_;
-        std::filesystem::path path_;
+        std::filesystem::path folderPath_;
         std::unique_ptr<JsonCpp> meta_data_;
     };
 

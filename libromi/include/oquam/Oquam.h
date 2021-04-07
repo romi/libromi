@@ -27,10 +27,11 @@
 #include <r.h>
 #include <mutex>
 
+#include "weeder_session/ISession.h"
+
 #include "api/ICNC.h"
 #include "v3.h"
 #include "IFileCabinet.h"
-
 #include "oquam/CNCController.h"
 #include "oquam/SmoothPath.h" 
 
@@ -43,8 +44,7 @@ namespace romi {
         public:
                 CNCController& _controller;
 
-                //TBD: NO raw pointer.
-                IFileCabinet *_file_cabinet;
+                ISession& session_;
                 std::mutex _mutex;
                 
                 CNCRange _range;
@@ -65,16 +65,12 @@ namespace romi {
                       const double *vmax, const double *amax,
                       const double *scale_meters_to_steps, 
                       double path_max_deviation,
-                      double path_slice_duration);
+                      double path_slice_duration, ISession& session);
 
                 Oquam(const Oquam&) = delete;
                 Oquam& operator=(const Oquam&) = delete;
                 
                 ~Oquam() override = default;
-
-                void set_file_cabinet(IFileCabinet *cabinet) {
-                        _file_cabinet = cabinet;
-                }
                 
                 // ICNC interface, See ICNC.h for more info
                 bool moveto(double x, double y, double z,
@@ -105,8 +101,8 @@ namespace romi {
                 void convert_path_to_script(Path &path, double speed, SmoothPath& script); 
                 void convert_script(SmoothPath& script, v3& vmax);
                 void store_script(SmoothPath& script);
-                void store_script_svg(IFolder &folder, SmoothPath& script);
-                void store_script_json(IFolder &folder, SmoothPath& script);
+                void store_script_svg(SmoothPath &script);
+                void store_script_json(SmoothPath &script);
                 void check_script(SmoothPath& script, v3& vmax);
                 void execute_script(SmoothPath& script);
                 void execute_move(Section& section, int32_t *pos_steps);

@@ -27,7 +27,7 @@
 
 #include "api/Path.h"
 #include "Image.h"
-#include "IFolder.h"
+#include "weeder_session/ISession.h"
 
 namespace romi {
         
@@ -36,7 +36,7 @@ namespace romi {
         public:
                 virtual ~IPipeline() = default;
                 
-                virtual bool run(IFolder &session,
+                virtual bool run(ISession &session,
                                  Image &camera,
                                  double tool_diameter,
                                  Path &path) = 0;

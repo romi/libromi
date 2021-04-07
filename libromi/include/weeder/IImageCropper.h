@@ -26,7 +26,7 @@
 #define __ROMI_I_IMAGE_CROPPER_H
 
 #include "api/CNCRange.h"
-#include "IFolder.h"
+#include "weeder_session/ISession.h"
 #include "Image.h"
 
 namespace romi {
@@ -37,7 +37,7 @@ namespace romi {
                 virtual ~IImageCropper() = default; 
                 virtual double map_meters_to_pixels(double meters) = 0;
                 
-                virtual bool crop(IFolder &session,
+                virtual bool crop(ISession &session,
                                   Image &camera_image,
                                   double tool_diameter,
                                   Image &cropped_image) = 0;

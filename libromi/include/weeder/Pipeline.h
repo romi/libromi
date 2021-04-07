@@ -41,15 +41,15 @@ namespace romi {
                 IImageSegmentation& _segmentation;
                 IPathPlanner& _planner;
                 
-                void segment_image(IFolder& session, Image& crop, Image& mask);
+                void create_mask(Image &crop, Image &mask);
 
-                void trace_path(IFolder& session, Image& mask, double tool_diameter,
+                void trace_path(ISession& session, Image& mask, double tool_diameter,
                                 double meters_to_pixels, Path& path);
                 
-                void crop_image(IFolder& ession, Image& camera,
+                void crop_image(ISession& session, Image& camera,
                                 double tool_diameter, Image& crop);
                 
-                void try_run(IFolder& ession, Image& camera,
+                void try_run(ISession& session, Image& camera,
                              double tool_diameter, Path& path);
 
         public:
@@ -59,10 +59,10 @@ namespace romi {
                         : _cropper(cropper),
                           _segmentation(segmentation),
                           _planner(planner) {}
+
+                ~Pipeline() override = default;
                 
-                virtual ~Pipeline() override = default;
-                
-                bool run(IFolder& ession, Image& camera,
+                bool run(ISession& session, Image& camera,
                          double tool_diameter, Path& path) override;
         };
 }

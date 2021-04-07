@@ -23,7 +23,7 @@
  */
 
 #include <math.h>
-#include "IFolder.h"
+#include "weeder_session/ISession.h"
 #include "Quincunx.h"
 
 #pragma GCC diagnostic push
@@ -34,7 +34,7 @@
 
 namespace romi {
         
-        static void store_svg(IFolder &session,
+        static void store_svg(ISession &session,
                               int w, int h,
                               const char *image,
                               list_t *path,
@@ -308,12 +308,9 @@ namespace romi {
                 return positions;
         }
         
-        static list_t *compute_positions(__attribute((unused))IFolder &session,
-                                         Image& mask,
-                                         double distance_plants,
-                                         double distance_rows,
-                                         double meters_to_pixels,
-                                         float *confidence)
+        static list_t *
+        compute_positions(Image &mask, double distance_plants, double distance_rows, double meters_to_pixels,
+                          float *confidence)
         {
                 list_t *positions = nullptr;
                 float dpx_plants = (float) (distance_plants * meters_to_pixels);
@@ -345,7 +342,7 @@ namespace romi {
                 return positions;
         }
                 
-        bool Quincunx::trace_path(IFolder &session,
+        bool Quincunx::trace_path(ISession &session,
                                   Image &mask,
                                   double tool_diameter,
                                   double meters_to_pixels,
@@ -363,7 +360,7 @@ namespace romi {
                 diameter_tool_px = (float) (meters_to_pixels * tool_diameter);
                 border_px = diameter_tool_px / 2.0f;
 
-                positions = compute_positions(session, mask,
+                positions = compute_positions(mask,
                                               _distance_plants,
                                               _distance_rows,
                                               meters_to_pixels, &confidence);
@@ -1015,7 +1012,7 @@ namespace romi {
                 }
         }
 
-        static void store_svg(IFolder &session,
+        static void store_svg(ISession &session,
                               int w, int h,
                               const char *image,
                               list_t *path,

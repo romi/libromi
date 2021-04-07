@@ -25,7 +25,7 @@
 #ifndef __ROMI_I_IMAGE_SEGMENTATION_H
 #define __ROMI_I_IMAGE_SEGMENTATION_H
 
-#include "IFolder.h"
+#include "weeder_session/ISession.h"
 #include "JsonCpp.h"
 
 namespace romi {
@@ -35,7 +35,7 @@ namespace romi {
         public:
                 virtual ~IImageSegmentation() = default;
                 
-                virtual bool segment(IFolder &session, Image &image, Image &mask) = 0;
+                virtual bool create_mask(Image &image, Image &mask) = 0;
         };
 }
 

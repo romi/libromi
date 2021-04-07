@@ -26,7 +26,7 @@
 #define __ROMI_SELF_ORGANIZED_MAP_H
 
 #include <cmath>
-#include "IFolder.h"
+#include "weeder_session/ISession.h"
 #include "fixed.h"
 
 namespace romi {
@@ -190,13 +190,8 @@ namespace romi {
                 void update_distance_forces();                
                 void update_tension();
                 void update_positions();
-                
-                void make_circle(T *cx, T *cy,
-                                 std::vector<T> &px,
-                                 std::vector<T> &py,
-                                 double radius);
 
-                void dump_path(IFolder &session) {
+                void dump_path(ISession &session) {
                         std::vector<double> x;
                         std::vector<double> y;
                         for (int i = 0; i < _path_length; i++) {
@@ -206,7 +201,7 @@ namespace romi {
                         session.dump_interleave("path", _path_length, &x[0], &y[0]);
                 }
 
-                void print_path(IFolder &session, int n) {
+                void print_path(ISession &session, int n) {
 //                        std::vector<double> x;
 //                        std::vector<double> y;
 //                        for (int i = 0; i < _path_length; i++) {
@@ -218,10 +213,10 @@ namespace romi {
                         for (int i = 0; i < _path_length; i++) {
                                 sessionPath.emplace_back(v3(rtod(_px[i]), rtod(_py[i]), 0.0));
                         }
-                        session.print_path(sessionPath, n);
+                        session.store_path("Path", n, sessionPath);
                 }
 
-                void dump_cities(IFolder &session) {
+                void dump_cities(ISession &session) {
                         std::vector<double> x;
                         std::vector<double> y;
                         for (int i = 0; i < _num_cities; i++) {
@@ -340,12 +335,12 @@ namespace romi {
                         }
                 }
                 
-                bool compute_path(IFolder &session, bool print = false);
+                bool compute_path(ISession &session, bool print = false);
         };
 
 
         template <typename T>
-        bool SelfOrganizedMap<T>::compute_path(IFolder &session, bool print)
+        bool SelfOrganizedMap<T>::compute_path(ISession &session, bool print)
         {
                 int N = 10000;
 
