@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 
 #include "Linux.h"
 #include "FileUtils.h"
@@ -110,6 +109,10 @@ namespace romi {
                     throw;
             }
             return retval;
+        }
+
+        std::filesystem::path Session::current_path() {
+            return session_directory_;
         }
 
 
@@ -235,4 +238,5 @@ namespace romi {
                     _dump_fd = -1;
             }
         }
+
 }

@@ -185,6 +185,40 @@ TEST_F(weedersession, start_creates_correct_directory)
         ASSERT_TRUE(fs::is_directory(session_dir));
 }
 
+TEST_F(weedersession, current_directory_correct)
+{
+        // Arrange
+        rpp::MockLinux mock_linux;
+        EXPECT_CALL(mock_linux, secure_getenv)
+                        .WillOnce(Return((char*)homedir_.c_str()));
+        SetDeviceIDDataExpectations(devicetype_, devicID_, 2);
+        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+
+        std::string date_time("01012025");
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .WillOnce(Return(date_time));
+
+        std::string observation_id("obs_id_1");
+
+        std::filesystem::path session_dir = BuildSessionDirName(devicetype_, devicID_, date_time);
+        fs::remove_all(session_dir);
+        std::filesystem::path current_path;
+        // Act
+        try {
+                romi::Session session(mock_linux, sessions_basedir_, deviceData_, softwareVersion_, std::move(mockLocationProvider_));
+                session.start(observation_id);
+                current_path = session.current_path();
+
+        }
+        catch(std::runtime_error& e){
+                std::cout << e.what();
+        }
+
+        // Assert
+        ASSERT_TRUE(fs::is_directory(session_dir));
+        ASSERT_EQ(current_path, session_dir);
+}
+
 TEST_F(weedersession, store_functions_store_files)
 {
         // Arrange
