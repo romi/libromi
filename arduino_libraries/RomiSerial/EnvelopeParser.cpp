@@ -27,7 +27,8 @@
 #include "Log.h"
 
 #define START_ENVELOPE(_c)      ((_c) == '#')
-#define END_ENVELOPE(_c)        ((_c) == '\r')
+#define END_METADATA(_c)        ((_c) == '\r')
+#define END_ENVELOPE(_c)        ((_c) == '\n')
 #define START_METADATA(_c)      ((_c) == ':')
 #define DUMMY_METADATA_CHAR(_c) ((_c) == 'x')
 #define VALID_HEX_CHAR(_c)      (('a' <= (_c) && (_c) <= 'f') \
@@ -102,9 +103,6 @@ bool EnvelopeParser::process(char c)
         
         switch(_state) {
         case expect_start_envelope:
-#if !defined(ARDUINO)
-                // r_debug("expect_start_envelope");
-#endif
                 if (START_ENVELOPE(c)) {
                         reset();
                         _state = expect_payload_or_start_metadata;
@@ -115,13 +113,10 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_payload_or_start_metadata:
-#if !defined(ARDUINO)
-                // r_debug("expect_payload_or_start_metadata");
-#endif
                 if (START_METADATA(c)) {
                         _state = expect_id_char_1;
                         _crc.update(c);
-                } else if (END_ENVELOPE(c)) {
+                } else if (END_METADATA(c) || END_ENVELOPE(c)) {
                         set_error(c, romiserial_envelope_missing_metadata);
                 } else {
                         _crc.update(c);
@@ -130,9 +125,6 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_id_char_1:
-#if !defined(ARDUINO)
-                // r_debug("expect_id_char_1");
-#endif
                 if (DUMMY_METADATA_CHAR(c)) {
                         _has_id = false;
                         _state = expect_dummy_metadata_char_2;
@@ -147,9 +139,6 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_id_char_2:
-#if !defined(ARDUINO)
-                // r_debug("expect_id_char_2");
-#endif
                 if (VALID_HEX_CHAR(c)) {
                         _id = (uint8_t)(16 * _id + hex_to_int(c));
                         _state = expect_crc_char_1;
@@ -160,9 +149,6 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_crc_char_1:
-#if !defined(ARDUINO)
-                // r_debug("expect_crc_char_1");
-#endif
                 if (VALID_HEX_CHAR(c)) {
                         _crc_metadata = hex_to_int(c);
                         _state = expect_crc_char_2;
@@ -172,9 +158,6 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_crc_char_2:
-#if !defined(ARDUINO)
-                // r_debug("expect_crc_char_2");
-#endif
                 if (VALID_HEX_CHAR(c)) {
                         uint8_t crc = _crc.finalize();
                         
@@ -199,9 +182,6 @@ bool EnvelopeParser::process(char c)
                 break;
                 
         case expect_dummy_metadata_char_2:
-#if !defined(ARDUINO)
-                // r_debug("expect_dummy_metadata_char_2");
-#endif
                 if (DUMMY_METADATA_CHAR(c)) {
                         _state = expect_dummy_metadata_char_3;
                 } else {
@@ -209,9 +189,6 @@ bool EnvelopeParser::process(char c)
                 }
                 break;
         case expect_dummy_metadata_char_3:
-#if !defined(ARDUINO)
-                // r_debug("expect_dummy_metadata_char_3");
-#endif
                 if (DUMMY_METADATA_CHAR(c)) {
                         _state = expect_dummy_metadata_char_4;
                 } else {
@@ -219,9 +196,6 @@ bool EnvelopeParser::process(char c)
                 }
                 break;
         case expect_dummy_metadata_char_4:
-#if !defined(ARDUINO)
-                // r_debug("expect_dummy_metadata_char_4");
-#endif
                 if (DUMMY_METADATA_CHAR(c)) {
                         _state = expect_end_envelope;
                 } else {
@@ -229,12 +203,16 @@ bool EnvelopeParser::process(char c)
                 }
                 break;
                 
-        case expect_end_envelope:
-#if !defined(ARDUINO)
-                // r_debug("expect_end_envelope");
-#endif
-                if (END_ENVELOPE(c)) {
+        case expect_end_metadata:
+                if (END_METADATA(c)) {
                         append_char('\0');
+                        _state = expect_end_envelope;
+                } else {
+                        set_error(c, romiserial_envelope_expected_end);
+                }
+                break;
+        case expect_end_envelope:
+                if (END_ENVELOPE(c)) {
                         has_message = true;
                         _state = expect_start_envelope;
                 } else {

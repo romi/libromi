@@ -38,6 +38,7 @@ enum envelope_parser_state_t {
     expect_dummy_metadata_char_2,
     expect_dummy_metadata_char_3,
     expect_dummy_metadata_char_4,
+    expect_end_metadata,
     expect_end_envelope
 };
 
