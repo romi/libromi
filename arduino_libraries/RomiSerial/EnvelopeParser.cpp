@@ -163,7 +163,7 @@ bool EnvelopeParser::process(char c)
                         
                         _crc_metadata = (uint8_t)(16 * _crc_metadata + hex_to_int(c));
                         if (_crc_metadata == crc) {
-                                _state = expect_end_envelope;
+                                _state = expect_end_metadata;
                         } else {
                                 set_error(c, romiserial_envelope_crc_mismatch);
 #if defined(ARDUINO)
@@ -197,7 +197,7 @@ bool EnvelopeParser::process(char c)
                 break;
         case expect_dummy_metadata_char_4:
                 if (DUMMY_METADATA_CHAR(c)) {
-                        _state = expect_end_envelope;
+                        _state = expect_end_metadata;
                 } else {
                         set_error(c, romiserial_envelope_invalid_dummy_metadata);
                 }

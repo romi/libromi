@@ -138,7 +138,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_opcode_without_metadata)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#e\r";
+        const char *s = "#e\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
@@ -153,7 +153,7 @@ TEST_F(envelope_parser_tests, parser_returns_correct_id)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#e:7b04\r";
+        const char *s = "#e:7b04\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
@@ -172,7 +172,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_bad_crc)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#e:7b00\r";
+        const char *s = "#e:7b00\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
@@ -187,7 +187,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_1)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#e:\r";
+        const char *s = "#e:\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
@@ -202,7 +202,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_2)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#e:7b2\r";
+        const char *s = "#e:7b2\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
@@ -217,7 +217,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_too_long_message)
         EnvelopeParser parser;
 
         // Act
-        const char *s = "#012345678901234567890123456789012345678901234567890123456789\r";
+        const char *s = "#012345678901234567890123456789012345678901234567890123456789\r\n";
         vector<bool> r;
         vector<int8_t> e;
         send_command(parser, s, r, e);
