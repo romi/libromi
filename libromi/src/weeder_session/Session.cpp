@@ -45,7 +45,7 @@ namespace romi {
             session_directory_.clear();
         }
 
-        bool Session::store_jpg(const char *name, Image &image) {
+        bool Session::store_jpg(const std::string &name, Image &image) {
             bool retval = false;
             try{
                     meta_folder_->try_store_jpg(name, image, observation_id_);
@@ -57,7 +57,7 @@ namespace romi {
             return retval;
         }
 
-        bool Session::store_png(const char *name, Image &image) {
+        bool Session::store_png(const std::string &name, Image &image) {
             bool retval = false;
             try{
                     meta_folder_->try_store_png(name, image, observation_id_);
@@ -69,10 +69,10 @@ namespace romi {
             return retval;
         }
 
-        bool Session::store_svg(const char *name, const char *body, size_t len) {
+        bool Session::store_svg(const std::string &name, const std::string &body) {
             bool retval = false;
             try{
-                    meta_folder_->try_store_svg(name, std::string(body, len), observation_id_);
+                    meta_folder_->try_store_svg(name, body, observation_id_);
                     retval = true;
             }
             catch (std::exception& ex) {
@@ -81,10 +81,10 @@ namespace romi {
             return retval;
         }
 
-        bool Session::store_txt(const char *name, const char *body, size_t len) {
+        bool Session::store_txt(const std::string &name, const std::string &body) {
             bool retval = false;
             try{
-                    meta_folder_->try_store_txt(name, std::string(body, len), observation_id_);
+                    meta_folder_->try_store_txt(name, body, observation_id_);
                     retval = true;
             }
             catch (std::exception& ex) {

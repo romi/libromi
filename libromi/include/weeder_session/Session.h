@@ -23,10 +23,10 @@ namespace romi {
         ~Session() override = default;
         void start(const std::string &observation_id) override;
         void stop() override;
-        bool store_jpg(const char* name, Image &image)  override;
-        bool store_png(const char* name, Image &image)  override;
-        bool store_svg(const char* name, const char *body, size_t len) override;
-        bool store_txt(const char* name, const char *body, size_t len)  override;
+        bool store_jpg(const std::string &name, Image &image)  override;
+        bool store_png(const std::string &name, Image &image)  override;
+        bool store_svg(const std::string &name, const std::string &body) override;
+        bool store_txt(const std::string &name, const std::string &body) override;
         bool store_path(const std::string &filename, int32_t path_number, Path &weeder_path) override;
 
         // DEBUG

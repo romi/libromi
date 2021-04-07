@@ -1037,7 +1037,7 @@ namespace romi {
                 store_zones(buffer, positions, radius_zones, h, scale);
                 membuf_printf(buffer, "</svg>\n");
 
-                session.store_svg("path", membuf_data(buffer), membuf_len(buffer));
+                session.store_svg("path", std::string(membuf_data(buffer), membuf_len(buffer)));
                 delete_membuf(buffer);
         }
 
