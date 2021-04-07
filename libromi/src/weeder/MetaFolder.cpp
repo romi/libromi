@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "data_provider/JsonFieldNames.h"
-#include "weeder_session/MetaFolder.h"
+#include "weeder/MetaFolder.h"
 #include "ClockAccessor.h"
 
 

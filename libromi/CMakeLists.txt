@@ -196,11 +196,11 @@ set(DATA_PROVIDER_SOURCES
         src/data_provider/SoftwareVersion.cpp
         include/data_provider/RomiDeviceData.h
         src/data_provider/RomiDeviceData.cpp
-        src/weeder_session/Session.cpp
-        include/weeder_session/Session.h
-        include/weeder_session/MetaFolder.h
-        include/weeder_session/IMetaFolder.h
-        src/weeder_session/MetaFolder.cpp
+        src/weeder/Session.cpp
+        include/weeder/Session.h
+        include/weeder/MetaFolder.h
+        include/weeder/IMetaFolder.h
+        src/weeder/MetaFolder.cpp
         src/data_provider/Gps.cpp
         include/data_provider/Gps.h)
 

@@ -26,7 +26,7 @@
 #define __ROMI_SELF_ORGANIZED_MAP_H
 
 #include <cmath>
-#include "weeder_session/ISession.h"
+#include "weeder/ISession.h"
 #include "fixed.h"
 
 namespace romi {
