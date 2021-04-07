@@ -234,7 +234,7 @@ namespace romi {
         {
                 membuf_t *svg = plot_to_mem(script, _range, _vmax.values(), _amax.values());
                 if (svg != nullptr) {
-                        session_.store_svg("path.svg", membuf_data(svg), membuf_len(svg));
+                        session_.store_svg("path.svg", std::string(membuf_data(svg), membuf_len(svg)));
                         delete_membuf(svg);
                 } else {
                         r_warn("Oquam::store_script: plot failed");
@@ -245,7 +245,7 @@ namespace romi {
         {
                 membuf_t *text = new_membuf();
                 print(script, text);
-                session_.store_txt("script.txt", membuf_data(text), membuf_len(text));
+                session_.store_txt("script.txt", std::string(membuf_data(text), membuf_len(text)));
                 delete_membuf(text);
         }
 

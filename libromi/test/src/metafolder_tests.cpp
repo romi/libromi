@@ -1182,7 +1182,7 @@ TEST_F(metafolder_tests, store_path_no_extension_creates_extension)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1");
-        std::string filename_txt("file1.txt");
+        std::string filename_txt("file1.path");
         std::string observation("observe");
 
         double data(0.0);
@@ -1222,7 +1222,7 @@ TEST_F(metafolder_tests, store_path_wrong_extension_changes_extension)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1.xxx");
-        std::string filename_txt("file1.txt");
+        std::string filename_txt("file1.path");
         std::string observation("observe");
 
         double data(0.0);
@@ -1267,7 +1267,7 @@ TEST_F(metafolder_tests, store_path_same_file_rewrites_metadata)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
-        std::string filename("file1.txt");
+        std::string filename("file1.path");
         std::string observation("observe");
         std::string path_body("body");
 
@@ -1343,9 +1343,9 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
                         .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
-        std::string filename1("file1.txt");
-        std::string filename2("file2.txt");
-        std::string filename3("file3.txt");
+        std::string filename1("file1.path");
+        std::string filename2("file2.path");
+        std::string filename3("file3.path");
         std::string observation("observe");
         std::string path_body("body");
 

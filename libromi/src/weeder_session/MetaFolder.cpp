@@ -109,7 +109,10 @@ namespace romi {
                     v3 p = *ptr;
                     ss << p.x() << "\t" << p.y() << "\r\n";
             }
-            try_store_txt(filename, ss.str(), observationId);
+            CheckInput(ss.str());
+            auto filename_extension = build_filename_with_extension(filename, "path");
+            FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), ss.str());
+            add_file_metadata(filename_extension, observationId);
     }
 
 
