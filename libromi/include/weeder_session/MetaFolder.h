@@ -36,6 +36,7 @@ namespace romi {
         std::unique_ptr<ILocationProvider> locationProvider_;
         std::filesystem::path folderPath_;
         std::unique_ptr<JsonCpp> meta_data_;
+        std::recursive_mutex metadata_file_mutex_;
     };
 
 }

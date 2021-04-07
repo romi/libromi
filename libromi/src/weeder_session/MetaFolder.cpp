@@ -9,7 +9,7 @@ namespace romi {
     MetaFolder::MetaFolder(std::unique_ptr<IIdentityProvider> identityProvider,
                            std::unique_ptr<ILocationProvider> locationProvider)
         : identityProvider_(std::move(identityProvider)), locationProvider_(std::move(locationProvider)),
-          folderPath_(), meta_data_() {
+          folderPath_(), meta_data_(), metadata_file_mutex_() {
 
         if(nullptr == identityProvider_){
                 throw std::invalid_argument("identityProvider");
@@ -66,6 +66,7 @@ namespace romi {
     }
 
     void MetaFolder::try_store_jpg(const std::string &filename, romi::Image &image, const std::string &observationId) {
+            std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
             CheckInput(image);
             auto filename_extension = build_filename_with_extension(filename, "jpg");
             if (!ImageIO::store_jpg(image, (folderPath_ / filename_extension).c_str()))
@@ -74,6 +75,7 @@ namespace romi {
     }
 
     void MetaFolder::try_store_png(const std::string &filename, romi::Image &image, const std::string &observationId) {
+            std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
             CheckInput(image);
             auto filename_extension = build_filename_with_extension(filename, "png");
             if (!ImageIO::store_png(image, (folderPath_ / filename_extension).c_str()))
@@ -82,6 +84,7 @@ namespace romi {
     }
 
     void MetaFolder::try_store_svg(const std::string &filename, const std::string& body, const std::string &observationId) {
+            std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
             CheckInput(body);
             auto filename_extension = build_filename_with_extension(filename, "svg");
             FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), body);
@@ -90,6 +93,7 @@ namespace romi {
 
     void MetaFolder::try_store_txt(const std::string &filename, const std::string& text,
                                    const std::string &observationId) {
+            std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
             CheckInput(text);
             auto filename_extension = build_filename_with_extension(filename, "txt");
             FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), text);
@@ -98,6 +102,7 @@ namespace romi {
 
     void
     MetaFolder::try_store_path(const std::string &filename, romi::Path &weeder_path, const std::string &observationId) {
+            std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
             std::stringstream ss;
             Path::iterator ptr;
             for (ptr = weeder_path.begin(); ptr < weeder_path.end(); ptr++)  {
