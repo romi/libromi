@@ -54,6 +54,10 @@ set(SRCS_DATA_PROVIDER
         src/session_tests.cpp
         src/metafolder_tests.cpp
         )
+
+# The following tests exist to compare old code with new and are deprecated.
+#        src/debug_data_dumper_tests.cpp
+
 add_executable(libromi_unit_tests_data_provider ${SRCS_DATA_PROVIDER})
 target_link_libraries(libromi_unit_tests_data_provider romi rpp rppmocks gtest gmock)
 

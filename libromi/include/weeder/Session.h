@@ -9,8 +9,6 @@
 #include "MetaFolder.h"
 #include "ISession.h"
 
-const int INVALID_FD = -1;
-
 namespace romi {
 
     class Session : public ISession {
@@ -30,25 +28,12 @@ namespace romi {
         bool store_path(const std::string &filename, int32_t path_number, Path &weeder_path) override;
         std::filesystem::path current_path() override;
 
-        // DEBUG
-        void open_dump() override;
-        void dump(const char *name, int32_t rows, int32_t cols, float *values) override;
-        void dump(const char *name, int32_t rows, int32_t cols, double *values) override;
-        void dump_interleave(const char *name, int32_t size, float *a, float *b) override;
-        void dump_interleave(const char *name, int32_t size, double *a, double *b) override;
-        void close_dump() override;
-        void dump_int(int32_t value);
-        void dump_text(const char *s, size_t len);
-        void dump_double(double value);
-
     private:
         std::filesystem::path base_directory_;
         std::filesystem::path session_directory_;
         IRomiDeviceData &device_data_;
         std::shared_ptr<IMetaFolder> meta_folder_;
         std::string observation_id_;
-
-        int _dump_fd;
 
     };
 

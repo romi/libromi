@@ -202,7 +202,9 @@ set(DATA_PROVIDER_SOURCES
         include/weeder/IMetaFolder.h
         src/weeder/MetaFolder.cpp
         src/data_provider/Gps.cpp
-        include/data_provider/Gps.h)
+        include/data_provider/Gps.h
+        include/debug_tools/debug_data_dumper.h
+        src/debug_tools/debug_data_dumper.cpp)
 
 
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)

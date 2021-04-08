@@ -1,5 +1,5 @@
 
-#include "fixed.h"
+#include "weeder/som/fixed.h"
 
 double fx_rounding = 0.0;
 static fixed_t fx_reciptab[256];

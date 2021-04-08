@@ -26,6 +26,7 @@
 #define __ROMI_SELF_ORGANIZED_MAP_H
 
 #include <cmath>
+#include "debug_tools/debug_data_dumper.h"
 #include "weeder/ISession.h"
 #include "fixed.h"
 
@@ -191,14 +192,14 @@ namespace romi {
                 void update_tension();
                 void update_positions();
 
-                void dump_path(ISession &session) {
+                void dump_path() {
                         std::vector<double> x;
                         std::vector<double> y;
                         for (int i = 0; i < _path_length; i++) {
                                 x.push_back(rtod(_px[i]));
                                 y.push_back(rtod(_py[i]));
                         }
-                        session.dump_interleave("path", _path_length, &x[0], &y[0]);
+                        DUMP_INTERLEAVE("path", _path_length, &x[0], &y[0]);
                 }
 
                 void print_path(ISession &session, int n) {
@@ -216,14 +217,14 @@ namespace romi {
                         session.store_path("Path", n, sessionPath);
                 }
 
-                void dump_cities(ISession &session) {
+                void dump_cities() {
                         std::vector<double> x;
                         std::vector<double> y;
                         for (int i = 0; i < _num_cities; i++) {
                                 x.push_back(rtod(_cx[i]));
                                 y.push_back(rtod(_cy[i]));
                         }
-                        session.dump_interleave("cities", _num_cities, &x[0], &y[0]);
+                        DUMP_INTERLEAVE("cities", _num_cities, &x[0], &y[0]);
                 }
                 
         public:
@@ -347,15 +348,15 @@ namespace romi {
                 _k = 0.2;
                 _dmax2 = 10000.0;
 
-                dump_cities(session);
-                dump_path(session);
+                dump_cities();
+                dump_path();
 
                 T eps2 = rmul(_epsilon, _epsilon);
                 
                 for (_n = 1; _n < N; _n++) {
                         update();
 
-                        dump_path(session);
+                        dump_path();
                         if (print) print_path(session, _n);
                         
                         if (_dmax2 < eps2)

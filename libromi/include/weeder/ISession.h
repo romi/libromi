@@ -21,13 +21,6 @@ namespace romi {
         virtual bool store_path(const std::string &filename, int32_t path_number, Path &weeder_path) = 0;
         virtual std::filesystem::path current_path() = 0;
 
-        // DEBUG
-        virtual void open_dump() = 0;
-        virtual void dump(const char *name, int32_t rows, int32_t cols, float *values) = 0;
-        virtual void dump(const char *name, int32_t rows, int32_t cols, double *values) = 0;
-        virtual void dump_interleave(const char *name, int32_t size, float *a, float *b) = 0;
-        virtual void dump_interleave(const char *name, int32_t size, double *a, double *b) = 0;
-        virtual void close_dump() = 0;
     };
 
 }
