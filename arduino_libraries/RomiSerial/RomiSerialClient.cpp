@@ -84,6 +84,7 @@ int RomiSerialClient::make_request(const std::string &command, std::string &requ
                                 request += hex((uint8_t)(code >> 4));
                                 request += hex(code);
                                 request += "\r";
+                                request += "\n";
                                 
                         } else {
                                 err = romiserialclient_invalid_opcode;

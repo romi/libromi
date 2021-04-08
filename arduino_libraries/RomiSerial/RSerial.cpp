@@ -171,62 +171,48 @@ void RSerial::configure_termios()
         case 38400: speed_constant = B38400; break;
         case 57600: speed_constant = B57600; break;
         case 115200: speed_constant = B115200; break;
+        case 230400: speed_constant = B230400; break;
+        case 460800: speed_constant = B460800; break;
         default:
                 r_err("open_serial: only the following speeds are valid: "
-                      "9600, 19200, 38400, 57600, 115200");
+                      "9600, 19200, 38400, 57600, 115200, 230400, 460800");
                 throw std::runtime_error("Invalid baudrate");
         }
 
         get_termios(&tty);
-
+        
         tty.c_cflag |= CLOCAL | CREAD;
-        tty.c_cflag &= (tcflag_t)~CSIZE;
-        tty.c_cflag |= CS8;         /* 8-bit characters */
-        tty.c_cflag &= (tcflag_t)~PARENB;     /* no parity bit */
-        tty.c_cflag &= (tcflag_t)~CSTOPB;     /* only need 1 stop bit */
-        tty.c_cflag &= (tcflag_t)~CRTSCTS;    /* no hardware flowcontrol */
-        tty.c_cflag &= (tcflag_t)~HUPCL;
+        tty.c_cflag &= (tcflag_t) ~CSIZE;
+        tty.c_cflag |= CS8;                 /* 8-bit characters */
+        tty.c_cflag &= (tcflag_t) ~PARENB;  /* no parity bit */
+        tty.c_cflag &= (tcflag_t) ~CSTOPB;  /* only need 1 stop bit */
+        tty.c_cflag &= (tcflag_t) ~CRTSCTS; /* no hardware flowcontrol */
+        tty.c_cflag &= (tcflag_t) ~HUPCL;
         if (_reset)
                 tty.c_cflag |= HUPCL;
 
-        tty.c_lflag |= ICANON | ISIG;  /* canonical input */
-        tty.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHONL | IEXTEN);
+        
+        tty.c_lflag &= (tcflag_t) ~ICANON;   /* No canonical input (line editing) */
+        tty.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHONL); /* No echo */
+        tty.c_lflag &= (tcflag_t) ~ISIG;     /* Don't send signals */
+        tty.c_lflag &= (tcflag_t) ~IEXTEN;   /* No input processing */
 
-        tty.c_iflag &= (tcflag_t) ~IGNCR;   /* Preserve carriage return (= don't ignore CR)*/
-        tty.c_iflag &= (tcflag_t) ~INPCK;   /* Disable input parity checking. */
-        tty.c_iflag &= (tcflag_t) ~INLCR;   /* Don't translate newline to carriage return */
-        tty.c_iflag &= (tcflag_t) ~ICRNL;   /* Don't translate carriage return to newline */
-        tty.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
+        
+        tty.c_iflag &= (tcflag_t) ~IGNCR;    /* Preserve carriage return */
+        tty.c_iflag &= (tcflag_t) ~INPCK;    /* Disable input parity checking. */
+        tty.c_iflag &= (tcflag_t) ~INLCR;    /* Don't translate NL to CR */
+        tty.c_iflag &= (tcflag_t) ~ICRNL;    /* Don't translate CR to NL */
+        tty.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY); /* no SW flowcontrol */
 
-//    tty.c_oflag &= ~OPOST;
-        tty.c_oflag = 0;
+        
+        tty.c_oflag = 0; /* no remapping; no delays; no post-processing */
 
-//
-//    // ToDo: Whats going on here, Shouldn't these values be != into the c_cflag?
-//    // cflag: 8n1 (8bit, no parity, 1 stopbit) CLOCAL: ignore modem controls CREAD: enable reading CS8: 8-bit characters
-//    tty.c_cflag = CLOCAL | CREAD | CS8;
-//
-//    // disable hang-up-on-close to avoid reset
-//    if(reset)
-//        tty.c_cflag |= HUPCL;
-////    tty.c_cflag &= ~HUPCL;
-//
-//    // lflag: no signaling chars; no echo; ...
-//    tty.c_lflag = ICANON;    // enable canonical processing
-//
-//    // iflag
-//    // no parity check; no break processing; don't map NL to CR,
-//    // CR to NL, uppercase to lowercase; ring bell; shut off
-//    // xon/xoff ctrl; ...
-//    tty.c_iflag = IGNCR;    // ignore carriage-return '\r'
-//
-//    // oflag: no remapping; no delays; no post-processing
-//    tty.c_oflag = 0;
-
-        // Use for non-canonical input
-        /* tty.c_cc[VMIN]  = 0; */
-        /* tty.c_cc[VTIME] = 5; */
-
+        /* Use for non-canonical input.
+         * See http://unixwiz.net/techtips/termios-vmin-vtime.html
+         */
+        tty.c_cc[VMIN]  = 1; /* Wait for one character */
+        tty.c_cc[VTIME] = 0; /* No timing: calls are blocking */
+        
         cfsetspeed(&tty, speed_constant);
 
         set_termios(&tty);
