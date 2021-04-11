@@ -25,7 +25,7 @@
 #ifndef __ROMI_I_IMAGE_SEGMENTATION_H
 #define __ROMI_I_IMAGE_SEGMENTATION_H
 
-#include "weeder_session/ISession.h"
+#include "weeder/ISession.h"
 #include "JsonCpp.h"
 
 namespace romi {

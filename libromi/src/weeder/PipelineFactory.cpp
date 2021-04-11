@@ -27,7 +27,7 @@
 #include "weeder/ImageCropper.h"
 
 #include "svm/SVMSegmentation.h"
-#include "som/SOM.h"
+#include "weeder/som/SOM.h"
 #include "quincunx/Quincunx.h"
 
 namespace romi {

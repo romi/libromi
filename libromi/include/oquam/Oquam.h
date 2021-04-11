@@ -27,7 +27,7 @@
 #include <r.h>
 #include <mutex>
 
-#include "weeder_session/ISession.h"
+#include "weeder/ISession.h"
 
 #include "api/ICNC.h"
 #include "v3.h"

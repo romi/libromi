@@ -24,8 +24,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "SOM.h"
-#include "Real.h"
+#include "weeder/som/SOM.h"
 
 namespace romi {
 

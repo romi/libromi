@@ -28,7 +28,7 @@
 #include <vector>
 #include "r.h"
 #include "api/Path.h"
-#include "weeder_session/ISession.h"
+#include "weeder/ISession.h"
 #include "Image.h"
 
 namespace romi {

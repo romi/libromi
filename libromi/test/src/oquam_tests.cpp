@@ -2,14 +2,13 @@
 #include "gmock/gmock.h"
 #include "mock_cnccontroller.h"
 #include "mock_clock.h"
-#include "DebugWeedingSession.h"
 #include "oquam/Oquam.h"
 
 #include <ClockAccessor.h>
 #include "Linux.h"
 #include "data_provider/RomiDeviceData.h"
 #include "data_provider/SoftwareVersion.h"
-#include "weeder_session/Session.h"
+#include "weeder/Session.h"
 #include "data_provider/Gps.h"
 #include "data_provider/GpsLocationProvider.h"
 
@@ -366,11 +365,10 @@ TEST_F(oquam_tests, test_oquam_moveto_2)
 
 TEST_F(oquam_tests, test_oquam_travel_empty_path)
 {
-        DebugWeedingSession debug_session(".", "travel_empty");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_empty");
         Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
 
         Path path;
@@ -380,13 +378,11 @@ TEST_F(oquam_tests, test_oquam_travel_empty_path)
 
 TEST_F(oquam_tests, test_oquam_travel_square)
 {
-        DebugWeedingSession debug_session(".", "travel_square");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_square");
         Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         v3 p0(0.1, 0.0, 0.0);
@@ -404,13 +400,11 @@ TEST_F(oquam_tests, test_oquam_travel_square)
 
 TEST_F(oquam_tests, test_oquam_travel_square_fast)
 {
-        DebugWeedingSession debug_session(".", "travel_fast");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_fast");
         Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         v3 p0(0.1, 0.0, 0.0);
@@ -428,13 +422,11 @@ TEST_F(oquam_tests, test_oquam_travel_square_fast)
 
 TEST_F(oquam_tests, test_oquam_travel_snake)
 {
-        DebugWeedingSession debug_session(".", "travel_snake");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_snake");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         int N = 10;
@@ -454,13 +446,11 @@ TEST_F(oquam_tests, test_oquam_travel_snake)
 
 TEST_F(oquam_tests, test_oquam_travel_snake_2)
 {
-        DebugWeedingSession debug_session(".", "travel_snake_2");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_snake_2");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         int N = 11;
         Path path;
@@ -486,13 +476,11 @@ TEST_F(oquam_tests, test_oquam_travel_snake_2)
 
 TEST_F(oquam_tests, test_oquam_travel_round_trip)
 {
-        DebugWeedingSession debug_session(".", "travel_round_trip");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_round_trip");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -505,13 +493,11 @@ TEST_F(oquam_tests, test_oquam_travel_round_trip)
 
 TEST_F(oquam_tests, test_oquam_travel_collinear)
 {
-        DebugWeedingSession debug_session(".", "travel_round_collinear");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_round_collinear");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -525,13 +511,11 @@ TEST_F(oquam_tests, test_oquam_travel_collinear)
 
 TEST_F(oquam_tests, test_oquam_travel_large_displacement)
 {
-        DebugWeedingSession debug_session(".", "travel_large_displacement");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_large_displacement");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -546,13 +530,11 @@ TEST_F(oquam_tests, test_oquam_travel_large_displacement)
 
 TEST_F(oquam_tests, test_oquam_travel_small_displacement)
 {
-        DebugWeedingSession debug_session(".", "travel_small_displacement");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_small_displacement");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -567,11 +549,10 @@ TEST_F(oquam_tests, test_oquam_travel_small_displacement)
 
 TEST_F(oquam_tests, test_oquam_travel_tiny_displacement)
 {
-        DebugWeedingSession debug_session(".", "travel_tiny_displacement");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_tiny_displacement");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
         //oquam.set_file_cabinet(&debug_session);
 
@@ -588,13 +569,11 @@ TEST_F(oquam_tests, test_oquam_travel_tiny_displacement)
 
 TEST_F(oquam_tests, test_oquam_travel_zigzag)
 {
-        DebugWeedingSession debug_session(".", "travel_zigzag");
         DefaultSetUp();
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
-        session.start(observation_id);
+        session.start("travel_zigzag");
         Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
-        //oquam.set_file_cabinet(&debug_session);
 
         Path path;
         v3 p(0.0, 0.0, 0.0);

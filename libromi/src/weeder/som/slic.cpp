@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-#include "slic.h"
+#include "weeder/som/slic.h"
 
 using namespace std;
 

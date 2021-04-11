@@ -23,8 +23,8 @@
  */
 
 #include <iostream>
-#include "Superpixels.h"
-#include "slic.h"
+#include "weeder/som/Superpixels.h"
+#include "weeder/som/slic.h"
 
 namespace romi {
 

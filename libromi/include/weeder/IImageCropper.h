@@ -26,7 +26,7 @@
 #define __ROMI_I_IMAGE_CROPPER_H
 
 #include "api/CNCRange.h"
-#include "weeder_session/ISession.h"
+#include "weeder/ISession.h"
 #include "Image.h"
 
 namespace romi {
