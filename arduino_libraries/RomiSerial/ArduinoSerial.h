@@ -43,19 +43,26 @@ public:
                 stream_.setTimeout((int) (seconds * 1000.0f));                
         }
         
-        int available() override {
-                return stream_.available();
+        bool available() override {
+                return stream_.available() > 0;
         }
         
-        int read(char& c) override {
-                char charread;
-                size_t n = stream_.readBytes(&charread, 1);
-                c = charread;
-                return (n == 1)? 1 : -1;
+        bool read(char& c) override {
+                size_t n = stream_.readBytes(&c, 1);
+                return (n == 1)? true : false;
+        }
+        
+        bool read(uint8_t *data, size_t length) override {
+                size_t n = stream_.readBytes(data, length);
+                return (n == length)? true : false;
         }
 
-        size_t write(char c) {
-                return stream_.write(c);
+        bool write(char c) {
+                return stream_.write(c) == 1;
+        }
+
+        bool write(uint8_t *data, size_t length) {
+                return stream_.write(data, len);
         }
         
         size_t print(const char *s) override {

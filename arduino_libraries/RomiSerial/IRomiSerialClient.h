@@ -49,6 +49,9 @@ public:
          */
         virtual void send(const char *request, JsonCpp& response) = 0;
 
+        virtual bool read(uint8_t *data, size_t length) = 0;
+        virtual bool write(uint8_t *data, size_t length) = 0;
+
         virtual void set_debug(bool value) = 0;
 };
 

@@ -33,6 +33,8 @@ public:
         virtual void send_ok() = 0;
         virtual void send_error(int code, const char *message) = 0;
         virtual void send(const char *message) = 0;
+        virtual bool read(uint8_t *data, size_t length) = 0;
+        virtual bool write(uint8_t *data, size_t length) = 0;
         virtual void log(const char *message) = 0;
 };
 

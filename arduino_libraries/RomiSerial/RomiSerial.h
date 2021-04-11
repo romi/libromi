@@ -48,15 +48,15 @@ struct MessageHandler
 class RomiSerial : public IRomiSerial
 {
 protected:
-        IInputStream& _in;
-        IOutputStream& _out;
-        const MessageHandler *_handlers;
-        uint8_t _num_handlers;
-        EnvelopeParser _envelopeParser;
-        MessageParser _messageParser;
-        bool _sent_response;
-        CRC8 _crc;
-        uint8_t _last_id;
+        IInputStream& in_;
+        IOutputStream& out_;
+        const MessageHandler *handlers_;
+        uint8_t num_handlers_;
+        EnvelopeParser envelope_parser_;
+        MessageParser message_parser_;
+        bool sent_response_;
+        CRC8 crc_;
+        uint8_t last_id_;
         
         void process_message();
         void handle_char(char c);
@@ -88,6 +88,9 @@ public:
         void send(const char *message) override;
         void log(const char *message) override;
 
+        bool read(uint8_t *data, size_t length) override;
+        bool write(uint8_t *data, size_t length) override;
+        
 protected:
 
         char convert_4bits_to_hex(uint8_t value);

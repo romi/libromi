@@ -75,7 +75,7 @@ protected:
                 InSequence seq;
                 size_t len = strlen(s);
                 for (size_t i = 0; i < len; i++) {
-                        EXPECT_CALL(in, read)
+                        EXPECT_CALL(in, read(_))
                                 .WillOnce(DoAll(SetArgReferee<0>(s[i]), Return(1)))
                                 .RetiresOnSaturation();;
                 }

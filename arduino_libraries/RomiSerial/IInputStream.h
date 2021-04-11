@@ -31,8 +31,9 @@ class IInputStream
 {
 public:
         virtual ~IInputStream() = default;
-        virtual int available() = 0;
-        virtual int read(char& c) = 0;
+        virtual bool available() = 0;
+        virtual bool read(char& c) = 0;
+        virtual bool read(uint8_t *data, size_t length) = 0;
         virtual void set_timeout(float seconds) = 0;
 };
 

@@ -9,8 +9,9 @@
 class MockInputStream : public IInputStream
 {
 public:
-        MOCK_METHOD(int, available, (), (override));
-        MOCK_METHOD(int, read, (char& c), (override));
+        MOCK_METHOD(bool, available, (), (override));
+        MOCK_METHOD(bool, read, (char& c), (override));
+        MOCK_METHOD(bool, read, (uint8_t *data, size_t length), (override));
         MOCK_METHOD(void, set_timeout, (float seconds), (override));
 };
 #pragma GCC diagnostic pop

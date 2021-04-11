@@ -31,7 +31,8 @@ class IOutputStream
 {
 public:
         virtual ~IOutputStream() = default;
-        virtual size_t write(char c) = 0;
+        virtual bool write(char c) = 0;
+        virtual bool write(uint8_t *data, size_t length) = 0;
         virtual size_t print(const char *s) = 0;
 };
 

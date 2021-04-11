@@ -60,10 +60,10 @@ void RSerial::set_timeout(float seconds)
         _timeout_ms = (int) (_timeout * 1000.0f);
 }
 
-int RSerial::available()
+bool RSerial::available()
 {
         //printf("RSerial::available %d\n", _timeout_ms);
-        int retval = -1;
+        bool retval = false;
         struct pollfd fds[1];
         fds[0].fd = _fd;
         fds[0].events = POLLIN;
@@ -71,26 +71,28 @@ int RSerial::available()
         int pollrc = poll(fds, 1, _timeout_ms);
         if (pollrc < 0) {
                 r_err("serial_read_timeout poll error %d on %s", errno, _device.c_str());
-                retval = 0;
                 
         } else if ((pollrc > 0) && (fds[0].revents & POLLIN)) {
-                retval = 1;
+                retval = true;
         } else{
                 //r_warn("serial_read_timeout poll timed out on %s", _device.c_str());
-                retval = 0;
+                //retval = 0;
         }
         
         return retval;
 }
 
-int RSerial::read(char& c)
+bool RSerial::read(char& c)
 {
-        char readc;
-        int retval = -1;
-        ssize_t rc = ::read(_fd, &readc, 1);
-        if (rc == 1) {
-                c = readc;
-                retval = 1;
+        return read((uint8_t *) &c, 1);
+}
+
+bool RSerial::read(uint8_t *data, size_t length)
+{
+        bool retval = false;
+        ssize_t rc = ::read(_fd, data, length);
+        if (rc == (ssize_t) length) {
+                retval = true;
                 //printf("%c 0x%02x\n", c, (int) c);
         } 
         return retval;
@@ -121,18 +123,22 @@ bool RSerial::can_write()
                 return poll_write();
 }
 
-size_t RSerial::write(char c)
+bool RSerial::write(char c)
 {
-        size_t n = 0;
+        return write((uint8_t *) &c, 1);
+}
+
+bool RSerial::write(uint8_t *data, size_t length)
+{
+        bool success = false;
         if (can_write()) {
-                ssize_t m = ::write(_fd, &c, 1);
-                //printf("%c %d\n", c, (int) m);
-                if (m == 1)
-                        n = 1;
+                ssize_t m = ::write(_fd, data, length);
                 if (m < 0)
-                        r_err("serial_put");
+                        r_err("RSerial::write");
+                else if ((size_t) m == length)
+                        success = true;
         }
-        return n;
+        return success;
 }
 
 size_t RSerial::print(const char *s)

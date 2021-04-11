@@ -51,9 +51,13 @@ public:
         virtual ~RSerial();
 
         void set_timeout(float seconds) override;
-        int available() override;
-        int read(char& c) override;
-        size_t write(char c) override;
+        
+        bool available() override;        
+        bool read(char& c) override;
+        bool read(uint8_t *data, size_t length) override;
+        
+        bool write(char c) override;
+        bool write(uint8_t *data, size_t length) override;
         size_t print(const char *s) override;
 };
 

@@ -29,22 +29,22 @@
 
 RomiSerial::RomiSerial(IInputStream& in, IOutputStream& out,
                        const MessageHandler *handlers, uint8_t num_handlers)
-        : _in(in), _out(out),
-          _handlers(handlers),
-          _num_handlers(num_handlers),
-          _envelopeParser(),
-          _messageParser(),
-          _sent_response(false),
-          _crc(),
-          _last_id(255)
+        : in_(in), out_(out),
+          handlers_(handlers),
+          num_handlers_(num_handlers),
+          envelope_parser_(),
+          message_parser_(),
+          sent_response_(false),
+          crc_(),
+          last_id_(255)
 {
 }
 
 void RomiSerial::handle_input()
 {
         char c;
-        while (_in.available()) {
-                if (_in.read(c) > 0) {
+        while (in_.available()) {
+                if (in_.read(c)) {
                         handle_char(c);
                 }
         }
@@ -52,19 +52,19 @@ void RomiSerial::handle_input()
 
 void RomiSerial::handle_char(char c)
 {
-        bool has_message = _envelopeParser.process(c);
+        bool has_message = envelope_parser_.process(c);
         if (has_message) {
                 process_message();
                 
-        } else if (_envelopeParser.error() != 0) {
-                send_error(_envelopeParser.error(), nullptr);
+        } else if (envelope_parser_.error() != 0) {
+                send_error(envelope_parser_.error(), nullptr);
         }
 }
 
 void RomiSerial::process_message()
 {
-        if (_envelopeParser.has_id()) {
-                if (_envelopeParser.id() == _last_id) {
+        if (envelope_parser_.has_id()) {
+                if (envelope_parser_.id() == last_id_) {
                         // This message was already handled.
                         send_error(romiserial_duplicate, nullptr);
                 } else {
@@ -80,13 +80,13 @@ void RomiSerial::process_message()
 
 void RomiSerial::parse_and_handle_message()
 {
-        bool ok = _messageParser.parse(_envelopeParser.message(),
-                                       _envelopeParser.length());
+        bool ok = message_parser_.parse(envelope_parser_.message(),
+                                       envelope_parser_.length());
         if (ok) {
                 handle_message();
 
         } else {
-                send_error(_messageParser.error(), nullptr);
+                send_error(message_parser_.error(), nullptr);
         }
 }
 
@@ -98,11 +98,11 @@ void RomiSerial::handle_message()
                 send_error(romiserial_unknown_opcode, nullptr);
 
         } else if (assert_valid_arguments(index)) {
-                _sent_response = false;
-                _handlers[index].callback(this,
-                                          _messageParser.values(),
-                                          _messageParser.string());
-                if (!_sent_response) {
+                sent_response_ = false;
+                handlers_[index].callback(this,
+                                          message_parser_.values(),
+                                          message_parser_.string());
+                if (!sent_response_) {
                         send_error(romiserial_bad_handler, nullptr);
                 }
         }
@@ -111,8 +111,8 @@ void RomiSerial::handle_message()
 int RomiSerial::get_handler()
 {
         int index = -1;
-        for (int i = 0; i < _num_handlers; i++) {
-                if (_messageParser.opcode() == _handlers[i].opcode) {
+        for (int i = 0; i < num_handlers_; i++) {
+                if (message_parser_.opcode() == handlers_[i].opcode) {
                         index = i;
                         break;
                 }
@@ -129,7 +129,7 @@ bool RomiSerial::assert_valid_arguments(int index)
 bool RomiSerial::assert_valid_argument_count(int index)
 {
         bool retval = false;
-        if (_messageParser.length() == _handlers[index].number_arguments) {
+        if (message_parser_.length() == handlers_[index].number_arguments) {
                 retval = true;
         } else {
                 send_error(romiserial_bad_number_of_arguments, nullptr);
@@ -140,10 +140,10 @@ bool RomiSerial::assert_valid_argument_count(int index)
 bool RomiSerial::assert_valid_string_argument(int index)
 {
         bool retval = false;
-        if (_messageParser.has_string() == _handlers[index].requires_string) {
+        if (message_parser_.has_string() == handlers_[index].requires_string) {
                 retval = true;
         } else {
-                if (_handlers[index].requires_string)
+                if (handlers_[index].requires_string)
                         send_error(romiserial_missing_string, nullptr);
                 else
                         send_error(romiserial_bad_string, nullptr);
@@ -153,8 +153,8 @@ bool RomiSerial::assert_valid_string_argument(int index)
 
 void RomiSerial::append_char(const char c)
 {        
-        _crc.update(c);
-        _out.write(c);
+        crc_.update(c);
+        out_.write(c);
 }
 
 void RomiSerial::append_message(const char *s)
@@ -165,10 +165,10 @@ void RomiSerial::append_message(const char *s)
 
 void RomiSerial::start_message()
 {
-        _crc.start();
+        crc_.start();
         append_char('#');
-        if (_messageParser.opcode()) 
-                append_char(_messageParser.opcode());
+        if (message_parser_.opcode()) 
+                append_char(message_parser_.opcode());
         else
                 append_char('_');
 }
@@ -190,21 +190,21 @@ void RomiSerial::send_error(int code, const char *message)
         else
                 snprintf(buffer, sizeof(buffer), "[%d]", code);
         send_message(buffer);
-        _sent_response = true;
+        sent_response_ = true;
 }
 
 void RomiSerial::send_ok()
 {
         send_message("[0]");
-        _sent_response = true;
-        _last_id = _envelopeParser.id();
+        sent_response_ = true;
+        last_id_ = envelope_parser_.id();
 }
 
 void RomiSerial::send(const char *message)
 {
         send_message(message);
-        _sent_response = true;
-        _last_id = _envelopeParser.id();
+        sent_response_ = true;
+        last_id_ = envelope_parser_.id();
 }
 
 void RomiSerial::send_message(const char *message)
@@ -230,17 +230,27 @@ void RomiSerial::append_hex(uint8_t value)
 
 void RomiSerial::append_id()
 {
-        append_hex(_envelopeParser.id());
+        append_hex(envelope_parser_.id());
 }
 
 void RomiSerial::append_crc()
 {
-        append_hex(_crc.get());
+        append_hex(crc_.get());
 }
 
 void RomiSerial::log(const char *message)
 {
-        _out.print("#!");
-        _out.print(message);
-        _out.print(":xxxx\r\n");
+        out_.print("#!");
+        out_.print(message);
+        out_.print(":xxxx\r\n");
+}
+
+bool RomiSerial::read(uint8_t *data, size_t length)
+{
+        return in_.read(data, length);
+}
+
+bool RomiSerial::write(uint8_t *data, size_t length)
+{
+        return out_.write(data, length);
 }

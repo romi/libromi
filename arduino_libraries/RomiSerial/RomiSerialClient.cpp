@@ -260,7 +260,7 @@ bool RomiSerialClient::handle_one_char()
 {
         bool has_message = false;
         char c;
-        if (_in->read(c) > 0) {
+        if (_in->read(c)) {
 
                 has_message = parse_char(c);
                 
@@ -288,10 +288,8 @@ JsonCpp RomiSerialClient::read_response()
         start_time = clock_time();
         
         while (!has_response) {
-
-                int available = _in->available();
                 
-                if (available > 0) {
+                if (_in->available()) {
                         
                         bool has_message = handle_one_char();
                         
@@ -376,6 +374,24 @@ void RomiSerialClient::send(const char *command, JsonCpp& response)
         }
         
         mutex_unlock(_mutex.get());
+}
+
+bool RomiSerialClient::read(uint8_t *data, size_t length)
+{
+        bool retval;
+        mutex_lock(_mutex.get());
+        retval = _in->read(data, length);
+        mutex_unlock(_mutex.get());
+        return retval;
+}
+
+bool RomiSerialClient::write(uint8_t *data, size_t length)
+{
+        bool retval;
+        mutex_lock(_mutex.get());
+        retval = _out->write(data, length);
+        mutex_unlock(_mutex.get());
+        return retval;
 }
 
 const char *RomiSerialClient::get_error_message(int code)

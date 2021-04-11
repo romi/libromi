@@ -52,7 +52,6 @@ set(SRCS_ROMISERIAL
   ../RomiSerial/RomiSerialErrors.h
   ../RomiSerial/IInputStream.h
   ../RomiSerial/IOutputStream.h
-  ../RomiSerial/DummySerial.cpp
   ../RomiSerial/IRomiSerial.h
   ../RomiSerial/RomiSerial.cpp
   ../RomiSerial/RomiSerial.h
@@ -84,7 +83,6 @@ set(SRCS_ROMISERIALCLIENT
   ../RomiSerial/RomiSerialErrors.h
   ../RomiSerial/IInputStream.h
   ../RomiSerial/IOutputStream.h
-  ../RomiSerial/DummySerial.cpp
   ../RomiSerial/IRomiSerialClient.h
   ../RomiSerial/RomiSerialClient.cpp
   ../RomiSerial/RomiSerialClient.h
