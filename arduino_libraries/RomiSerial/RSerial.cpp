@@ -128,7 +128,7 @@ bool RSerial::write(char c)
         return write((uint8_t *) &c, 1);
 }
 
-bool RSerial::write(uint8_t *data, size_t length)
+bool RSerial::write(const uint8_t *data, size_t length)
 {
         bool success = false;
         if (can_write()) {

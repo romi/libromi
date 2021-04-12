@@ -79,7 +79,7 @@ public:
         void send(const char *command, JsonCpp& response) override;
         
         bool read(uint8_t *data, size_t length) override;
-        bool write(uint8_t *data, size_t length) override;
+        bool write(const uint8_t *data, size_t length) override;
         
         void set_debug(bool value) override {
                 _debug = value;

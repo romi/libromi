@@ -61,7 +61,7 @@ public:
                 return stream_.write(c) == 1;
         }
 
-        bool write(uint8_t *data, size_t length) {
+        bool write(const uint8_t *data, size_t length) {
                 return stream_.write(data, len);
         }
         

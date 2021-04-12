@@ -385,7 +385,7 @@ bool RomiSerialClient::read(uint8_t *data, size_t length)
         return retval;
 }
 
-bool RomiSerialClient::write(uint8_t *data, size_t length)
+bool RomiSerialClient::write(const uint8_t *data, size_t length)
 {
         bool retval;
         mutex_lock(_mutex.get());

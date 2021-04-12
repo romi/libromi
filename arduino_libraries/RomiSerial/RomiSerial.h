@@ -89,7 +89,7 @@ public:
         void log(const char *message) override;
 
         bool read(uint8_t *data, size_t length) override;
-        bool write(uint8_t *data, size_t length) override;
+        bool write(const uint8_t *data, size_t length) override;
         
 protected:
 

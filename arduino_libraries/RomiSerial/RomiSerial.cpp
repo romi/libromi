@@ -250,7 +250,7 @@ bool RomiSerial::read(uint8_t *data, size_t length)
         return in_.read(data, length);
 }
 
-bool RomiSerial::write(uint8_t *data, size_t length)
+bool RomiSerial::write(const uint8_t *data, size_t length)
 {
         return out_.write(data, length);
 }

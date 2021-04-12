@@ -57,7 +57,7 @@ public:
         bool read(uint8_t *data, size_t length) override;
         
         bool write(char c) override;
-        bool write(uint8_t *data, size_t length) override;
+        bool write(const uint8_t *data, size_t length) override;
         size_t print(const char *s) override;
 };
 
