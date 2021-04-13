@@ -89,12 +89,16 @@ bool RSerial::read(char& c)
 
 bool RSerial::read(uint8_t *data, size_t length)
 {
-        bool retval = false;
-        ssize_t rc = ::read(_fd, data, length);
-        if (rc == (ssize_t) length) {
-                retval = true;
-                //printf("%c 0x%02x\n", c, (int) c);
-        } 
+        bool retval = true;
+        size_t received = 0;
+        while (received < length) {
+                ssize_t rc = ::read(_fd, data + received, length - received);
+                if (rc <= 0) {
+                        retval = false;
+                        break;
+                }
+                received += (size_t) rc;
+        }
         return retval;
 }
 
@@ -180,9 +184,12 @@ void RSerial::configure_termios()
         case 230400: speed_constant = B230400; break;
         case 460800: speed_constant = B460800; break;
         default:
-                r_err("open_serial: only the following speeds are valid: "
-                      "9600, 19200, 38400, 57600, 115200, 230400, 460800");
-                throw std::runtime_error("Invalid baudrate");
+                r_warn("open_serial: Unknown baudrate. Standard values are "
+                      "9600, 19200, 38400, 57600, 115200, 230400, 460800. "
+                      "I will try anyway.");
+                speed_constant = (speed_t) _baudrate;
+                break;
+                //throw std::runtime_error("Invalid baudrate");
         }
 
         get_termios(&tty);
