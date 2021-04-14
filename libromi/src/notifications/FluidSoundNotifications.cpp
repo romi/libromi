@@ -22,7 +22,7 @@
 
  */
 
-#if defined(__aarch64__) || defined(__arm__)
+#if defined(__aarch64__) || defined(__ARM_ARCH_7__)
 typedef unsigned int fluid_int;
 #else
 typedef int fluid_int;
