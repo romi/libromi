@@ -121,33 +121,33 @@ endif()
 
 ###########################################################
 
-if (NOT DEFINED rcom_SOURCE_DIR)
-    set(RCOM_DIR "${CMAKE_SOURCE_DIR}/rcom")
-    find_path(RCOM_DIRECTORY
+if (NOT DEFINED librcom_SOURCE_DIR)
+    set(LIBRCOM_DIR "${CMAKE_SOURCE_DIR}/librcom")
+    find_path(LIBRCOM_DIRECTORY
             NAMES "CMakeLists.txt"
-            PATHS ${RCOM_DIR})
+            PATHS ${LIBRCOM_DIR})
     #    Save the current Build test settings so we can restore them after including rcom. We don't want to build rcom tests.
     SET(SAVED_TEST_OPTION BUILD_TESTS)
     SET(BUILD_TESTS OFF)
 
-    if (NOT RCOM_DIRECTORY)
-        MESSAGE("LIBROMI - ${RCOM_DIR} does not exist. Downloading dependency.")
+    if (NOT LIBRCOM_DIRECTORY)
+        MESSAGE("LIBROMI - ${LIBRCOM_DIR} does not exist. Downloading dependency.")
         MESSAGE("LIBROMI - WARNING")
         MESSAGE("LIBROMI - The dependency is cloned to support libromi development only.")
-        MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
+        MESSAGE("LIBROMI - To work on both librcom and libr please see: https://github.com/libromi/romi-rover-build-and-test")
 
         download_project(
                 PROJ              librcom
-                GIT_REPOSITORY    https://github.com/romi/rcom.git
+                GIT_REPOSITORY    https://github.com/romi/librcom.git
                 GIT_TAG           libromirover
                 TIMEOUT           180
-                SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/rcom
-                BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/rcom
+                SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/librcom
+                BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/librcom
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE})
-        add_subdirectory(${RCOM_DIR})
+        add_subdirectory(${LIBRCOM_DIR})
     else()
-        MESSAGE("LIBROMI - ${RCOM_DIRECTORY} exists. Not downloading dependency.")
-        add_subdirectory(rcom)
+        MESSAGE("LIBROMI - ${LIBRCOM_DIRECTORY} exists. Not downloading dependency.")
+        add_subdirectory(librcom)
     endif()
     # Restore build tests option.
     SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
