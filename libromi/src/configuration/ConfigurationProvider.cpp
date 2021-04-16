@@ -43,7 +43,7 @@ namespace romi {
 
     std::string get_script_file_in_config(JsonCpp &config) {
             try {
-                    return (const char *) config["user-interface"]["script-engine"]["script-file"];
+                    return (const char *) config["user-interface"]["script-engine"][RoverOptions::script];
 
             } catch (JSONError &je) {
                     r_err("Failed to read script file in config: %s",
