@@ -25,7 +25,7 @@
 #ifndef __ROMI_ROVER_OPTIONS_H
 #define __ROMI_ROVER_OPTIONS_H
 
-#include "GetOpt.h"
+#include "configuration/GetOpt.h"
 
 namespace romi {
 
@@ -48,8 +48,7 @@ namespace romi {
                 ~RoverOptions() override = default;
                 
                 void exit_if_help_requested();
-                
-                //const char *get_config_file(Options& options);
+                std::string get_config_file();
 
         protected:
         };

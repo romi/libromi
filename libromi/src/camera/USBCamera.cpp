@@ -29,7 +29,7 @@ namespace romi {
         
         using SynchonizedCodeBlock = std::lock_guard<std::mutex>;
 
-        USBCamera::USBCamera(const char *device, size_t width, size_t height)
+        USBCamera::USBCamera(const std::string& device, size_t width, size_t height)
                 : _camera(nullptr), _device(device), _mutex(),
                   _thread(nullptr), _done(false), _image()
         {
@@ -115,4 +115,8 @@ namespace romi {
                 image = _image;
                 return true;
         }
+
+    void USBCamera::close() {
+
+    }
 }

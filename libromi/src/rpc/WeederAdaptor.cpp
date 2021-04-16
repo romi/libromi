@@ -28,7 +28,7 @@
 
 namespace romi {
         
-        void WeederAdaptor::execute(const char *method, __attribute__((unused))JsonCpp& params,
+        void WeederAdaptor::execute(const std::string& method, __attribute__((unused))JsonCpp& params,
                                     __attribute__((unused))JsonCpp& result, rcom::RPCError &error)
         {
                 r_debug("WeederAdaptor::execute");
@@ -37,40 +37,40 @@ namespace romi {
                 
                 try {
 
-                        if (rstreq(method, MethodsWeeder::hoe)) {
+                        if (method == MethodsWeeder::hoe) {
                                 execute_hoe(error);
                         
-                        } else if (rstreq(method, MethodsWeeder::stop)) {
+                        } else if (method == MethodsWeeder::stop) {
                                 execute_hoe(error);
                         
-                        } else if (rstreq(method, MethodsActivity::activity_pause)) {
+                        } else if (method == MethodsActivity::activity_pause) {
                                 execute_pause(error);
                                 
-                        } else if (rstreq(method, MethodsActivity::activity_continue)) {
+                        } else if (method == MethodsActivity::activity_continue) {
                                 execute_continue(error);
                                 
-                        } else if (rstreq(method, MethodsActivity::activity_reset)) {
+                        } else if (method == MethodsActivity::activity_reset) {
                                 execute_reset(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::power_up)) {
+                        } else if (method == MethodsPowerDevice::power_up) {
                                 execute_power_up(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::power_down)) {
+                        } else if (method == MethodsPowerDevice::power_down) {
                                 execute_power_down(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::stand_by)) {
+                        } else if (method == MethodsPowerDevice::stand_by) {
                                 execute_stand_by(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::wake_up)) {
+                        } else if (method == MethodsPowerDevice::wake_up) {
                                 execute_wake_up(error);
                                 
                         } else {
-                                error.code = rcom::RPCError::MethodNotFound;
+                                error.code = rcom::RPCError::kMethodNotFound;
                                 error.message = "Unknown method";
                         }
                         
                 } catch (std::exception &e) {
-                        error.code = rcom::RPCError::InternalError;
+                        error.code = rcom::RPCError::kInternalError;
                         error.message = e.what();
                 }
         }

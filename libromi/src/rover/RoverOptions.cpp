@@ -28,8 +28,7 @@
 using namespace std;
 
 namespace romi {
-        
- //       static Option _options[] = {
+
     static std::vector<Option> options = {
                 { "help", false, nullptr,
                   "Print help message" },
@@ -81,15 +80,14 @@ namespace romi {
                 }
         }
 
-        // const char *RoverOptions::get_config_file()
-        // {
-        //         const char *file = get_value(RoverOptions::config);
-        //         if (file == 0) {
-        //                 throw std::runtime_error("No configuration file was given "
-        //                                          "(can't run without one...).");
-        //         }
-        //         return file;
-        // }
+    std::string RoverOptions::get_config_file()
+    {
+            std::string file = get_value(romi::RoverOptions::config);
+            if (file.empty()) {
+                    throw std::runtime_error("No configuration file was given (can't run without one...).");
+            }
+            return file;
+    }
 
 }
 

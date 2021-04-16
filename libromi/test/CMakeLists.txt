@@ -123,7 +123,7 @@ set(SRCS_NAVIGATION
   )
 
 add_executable(libromi_unit_tests_navigation ${SRCS_NAVIGATION})
-target_link_libraries(libromi_unit_tests_navigation romi romi rpp rcompp gtest gmock)
+target_link_libraries(libromi_unit_tests_navigation romi romi rpp rcompp-lite gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_navigation
@@ -138,7 +138,7 @@ set(SRCS_CRYSTALDISPLAY
   )
 
 add_executable(libromi_unit_tests_crystaldisplay ${SRCS_CRYSTALDISPLAY})
-target_link_libraries(libromi_unit_tests_crystaldisplay rcompp romi gtest gmock)
+target_link_libraries(libromi_unit_tests_crystaldisplay rcompp-lite romi gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_crystaldisplay
@@ -169,7 +169,7 @@ set(SRCS_SCRIPTLIST
   )
 
 add_executable(libromi_unit_tests_scriptlist ${SRCS_SCRIPTLIST})
-target_link_libraries(libromi_unit_tests_scriptlist rcompp romi gtest gmock)
+target_link_libraries(libromi_unit_tests_scriptlist rcompp-lite romi gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_scriptlist
@@ -184,7 +184,7 @@ set(SRCS_STATEMACHINE
   )
 
 add_executable(libromi_unit_tests_statemachine ${SRCS_STATEMACHINE})
-target_link_libraries(libromi_unit_tests_statemachine rcompp romi gtest gmock)
+target_link_libraries(libromi_unit_tests_statemachine rcompp-lite romi gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_statemachine
@@ -215,7 +215,7 @@ set(SRCS_SCRIPTMENU
   )
 
 add_executable(libromi_unit_tests_scriptmenu ${SRCS_SCRIPTMENU})
-target_link_libraries(libromi_unit_tests_scriptmenu rcompp romi gtest gmock)
+target_link_libraries(libromi_unit_tests_scriptmenu rcompp-lite romi gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_scriptmenu
@@ -261,7 +261,7 @@ set(SRCS_BRUSHMOTORDRIVER
   )
 
 add_executable(libromi_unit_tests_brushmotordriver ${SRCS_BRUSHMOTORDRIVER})
-target_link_libraries(libromi_unit_tests_brushmotordriver romi romiserial rpp rcompp gtest gmock)
+target_link_libraries(libromi_unit_tests_brushmotordriver romi romiserial rpp rcompp-lite gtest gmock)
 
 add_test(
     NAME libromi_unit_tests_brushmotordriver

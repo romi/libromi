@@ -25,14 +25,14 @@
 
 namespace romi {
 
-        bool RemoteStub::execute(const char *method,
+        bool RemoteStub::execute(const std::string& method,
                                 JsonCpp& params,
                                 JsonCpp& result)
         {
                 rcom::RPCError error;
                 
                 try {
-                        _client.execute(method, params, result, error);
+                        _client->execute(method, params, result, error);
 
                         if (error.code != 0) {
                                 r_err("RemoteStub::execute: %s",
@@ -49,19 +49,19 @@ namespace romi {
                 return (error.code == 0);
         }
 
-        bool RemoteStub::execute_with_result(const char *method, JsonCpp& result)
+        bool RemoteStub::execute_with_result(const std::string& method, JsonCpp& result)
         {
                 JsonCpp params;
                 return execute(method, params, result);
         }
 
-        bool RemoteStub::execute_with_params(const char *method, JsonCpp& params)
+        bool RemoteStub::execute_with_params(const std::string& method, JsonCpp& params)
         {
                 JsonCpp result;
                 return execute(method, params, result);
         }
 
-        bool RemoteStub::execute_simple_request(const char *method)
+        bool RemoteStub::execute_simple_request(const std::string& method)
         {
                 JsonCpp params;
                 JsonCpp result;

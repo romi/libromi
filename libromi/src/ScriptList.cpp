@@ -28,7 +28,7 @@
 
 namespace romi {
                 
-        ScriptList::ScriptList(const char *path)
+        ScriptList::ScriptList(const std::string& path)
         {
                 try {
                         
@@ -64,9 +64,9 @@ namespace romi {
                 }
         }
         
-        void ScriptList::load_scripts(const char *path)
+        void ScriptList::load_scripts(const std::string& path)
         {
-                JsonCpp scripts = JsonCpp::load(path);
+                JsonCpp scripts = JsonCpp::load(path.c_str());
                 convert_scripts(scripts);
         }
         

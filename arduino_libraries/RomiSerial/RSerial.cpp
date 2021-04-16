@@ -34,7 +34,7 @@
 #include <r.h>
 #include "RSerial.h"
 
-RSerial::RSerial(const char *device, int baudrate, bool reset)
+RSerial::RSerial(const std::string& device, int baudrate, bool reset)
         : _device(device),
           _fd(-1),
           _timeout(0.1f),

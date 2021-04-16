@@ -47,7 +47,7 @@ protected:
         bool poll_write();
 
 public:
-        RSerial(const char *device, int baudrate, bool reset);        
+        RSerial(const std::string& device, int baudrate, bool reset);
         virtual ~RSerial();
 
         void set_timeout(float seconds) override;

@@ -26,7 +26,7 @@
 
 namespace romi {
 
-        FileCamera::FileCamera(const char *filename)
+        FileCamera::FileCamera(const std::string& filename)
                 : _filename(filename), _image()
         {
                 if (_filename.length() == 0)

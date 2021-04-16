@@ -29,7 +29,7 @@
 
 namespace romi {
         
-        LinuxJoystick::LinuxJoystick(rpp::ILinux &linux, const char *device)
+        LinuxJoystick::LinuxJoystick(rpp::ILinux &linux, const std::string& device)
                 : _linux(linux), _fd(-1), _debug(false), _event(), _buttons(), _axes() {
                 
                 try_open_device(device);
@@ -60,18 +60,18 @@ namespace romi {
                 _buttons.resize(num_buttons, false);
         }
 
-        void LinuxJoystick::try_open_device(const char *name) {
+        void LinuxJoystick::try_open_device(const std::string& name) {
                 close_device();
                 open_device(name);
                 if (_fd < 0) {
-                        r_err("Failed to open joystick device: '%s'", name);
+                        r_err("Failed to open joystick device: '%s'", name.c_str());
                         throw std::runtime_error("Failed to open joystick device");
                 }
         }
         
-        void LinuxJoystick::open_device(const char *name) {
-                r_info("LinuxJoystick: opening device '%s'", name);
-                _fd = _linux.open(name, O_RDONLY);
+        void LinuxJoystick::open_device(const std::string& name) {
+                r_info("LinuxJoystick: opening device '%s'", name.c_str());
+                _fd = _linux.open(name.c_str(), O_RDONLY);
         }
 
         void LinuxJoystick::close_device() {

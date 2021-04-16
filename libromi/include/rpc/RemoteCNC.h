@@ -24,6 +24,7 @@
 #ifndef __ROMI_REMOTE_CNC_H
 #define __ROMI_REMOTE_CNC_H
 
+#include <memory>
 #include "rpc/RemoteStub.h"
 #include "api/ICNC.h"
 
@@ -35,15 +36,15 @@ namespace romi {
                 static constexpr const char *ClassName = "remote-cnc";
                 
         public:
-                explicit RemoteCNC(rcom::IRPCHandler& rpc_handler)
+                explicit RemoteCNC(std::shared_ptr<rcom::IRPCHandler>& rpc_handler)
                         : RemoteStub(rpc_handler) {}
                 ~RemoteCNC() override = default;
 
                 bool get_range(CNCRange &range) override;
                 bool moveto(double x, double y, double z,
-                            double relative_speed = 0.1) override;
+                            double relative_speed) override;
                 bool spindle(double speed) override;
-                bool travel(Path &path, double relative_speed = 0.1) override;
+                bool travel(Path &path, double relative_speed) override;
                 bool homing() override;
 
                 bool pause_activity() override;

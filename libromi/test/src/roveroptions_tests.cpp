@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "GetOpt.h"
+#include "configuration/GetOpt.h"
 
 using namespace std;
 using namespace testing;
@@ -34,7 +34,7 @@ TEST_F(roveroptions_tests, test_parse)
         options.parse(4, (char**) argv);
 
         ASSERT_EQ(options.is_help_requested(), true);
-        ASSERT_STREQ(options.get_value("config"), "config.json");
+        ASSERT_EQ(options.get_value("config"), "config.json");
 }
 
 TEST_F(roveroptions_tests, test_print_usage)

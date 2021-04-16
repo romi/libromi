@@ -53,10 +53,10 @@ namespace romi {
 
 
         public:
-                CNCAdaptor(ICNC &cnc) : _cnc(cnc) {}
+                explicit CNCAdaptor(ICNC &cnc) : _cnc(cnc) {}
                 ~CNCAdaptor() override = default;
                 
-                void execute(const char *method, JsonCpp& params,
+                void execute(const std::string& method, JsonCpp& params,
                              JsonCpp& result, rcom::RPCError &error) override;
         };
 }

@@ -25,21 +25,22 @@
 #define __ROMI_REMOTE_STUB_H
 
 #include <IRPCHandler.h>
+#include <utility>
 
 namespace romi {
         
         class RemoteStub
         {
-        protected:                
-                rcom::IRPCHandler& _client;
+        protected:
+                std::shared_ptr<rcom::IRPCHandler> _client;
 
-                bool execute(const char *method, JsonCpp& params, JsonCpp& result);
-                bool execute_with_params(const char *method, JsonCpp& params);
-                bool execute_with_result(const char *method, JsonCpp& result);
-                bool execute_simple_request(const char *method);
+                bool execute(const std::string& method, JsonCpp& params, JsonCpp& result);
+                bool execute_with_params(const std::string& method, JsonCpp& params);
+                bool execute_with_result(const std::string& method, JsonCpp& result);
+                bool execute_simple_request(const std::string& method);
 
         public:
-                RemoteStub(rcom::IRPCHandler& rpc_handler) : _client(rpc_handler) {}
+                explicit RemoteStub(std::shared_ptr<rcom::IRPCHandler>  rpc_handler) : _client(std::move(rpc_handler)) {}
                 virtual ~RemoteStub() = default;
         };
 }

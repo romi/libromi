@@ -35,14 +35,14 @@ typedef int fluid_int;
 
 namespace romi {
 
-        FluidSoundNotifications::FluidSoundNotifications(const char *soundfont,
+        FluidSoundNotifications::FluidSoundNotifications(const std::string& soundfont,
                                                          JsonCpp& sounds)
                 : _settings(nullptr), _synth(nullptr), _adriver(nullptr), _sfont_id(0), _sounds()
         {
                 try {
                         init_settings();
                         start_synth();
-                        load_sound_font(soundfont);
+                        load_sound_font(soundfont.c_str());
                         try_add_sounds(sounds);
                  
                 } catch (std::runtime_error& e) {

@@ -52,7 +52,7 @@ namespace romi {
                 
                 ~WeederAdaptor() override = default;
 
-                void execute(const char *method, JsonCpp& params,
+                void execute(const std::string& method, JsonCpp& params,
                              JsonCpp& result, rcom::RPCError &error) override;
         };
 }

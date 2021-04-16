@@ -26,7 +26,7 @@
 
 namespace romi {
         
-        RemoteWeeder::RemoteWeeder(rcom::IRPCHandler &client) : RemoteStub(client)
+        RemoteWeeder::RemoteWeeder(std::shared_ptr<rcom::IRPCHandler> &client) : RemoteStub(client)
         {
         }
         

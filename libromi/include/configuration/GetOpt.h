@@ -56,16 +56,16 @@ namespace romi {
                 void append_zero_option();
                 void generate_descriptions();
                 void set_option(size_t index, const char *value);
-                const char *get_default_value(const char *name);
+                std::string get_default_value(const std::string& name);
 
         public:
 
-                GetOpt(std::vector<Option> &options);
-                virtual ~GetOpt() override = default;
+                explicit GetOpt(std::vector<Option> &options);
+                ~GetOpt() override = default;
 
                 void parse(int argc, char **argv) override;
                 bool get_flag(const char *name) override;
-                const char *get_value(const char *name) override;
+                std::string get_value(const std::string& name) override;
                 bool is_help_requested() override;
                 void print_usage() override;
         };

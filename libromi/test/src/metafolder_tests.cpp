@@ -143,7 +143,7 @@ TEST_F(metafolder_tests, try_create_throws_on_fail_create)
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
-        fs::path rootPath("/failed_session");
+        fs::path rootPath("/\\");
 
         auto mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
         auto roverIdentity = std::make_unique<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);

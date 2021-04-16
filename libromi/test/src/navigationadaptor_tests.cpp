@@ -25,20 +25,6 @@ protected:
 	}
 };
 
-TEST_F(rpcnavigation_tests, test_execute_invalid_command_returns_error)
-{
-        NavigationAdaptor adaptor(navigation);
-
-        JsonCpp params;
-        JsonCpp result;
-        rcom::RPCError error;
-        
-        adaptor.execute(nullptr, params, result, error);
-
-        ASSERT_NE(error.code, 0);
-        ASSERT_NE(error.message.length(), 0);
-}
-
 TEST_F(rpcnavigation_tests, test_execute_unknown_command_returns_error)
 {
         NavigationAdaptor adaptor(navigation);

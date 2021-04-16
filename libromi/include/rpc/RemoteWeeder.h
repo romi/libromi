@@ -35,7 +35,7 @@ namespace romi {
         public:
                 static constexpr const char *ClassName = "remote-weeder";
                 
-                explicit RemoteWeeder(rcom::IRPCHandler& client);
+                explicit RemoteWeeder(std::shared_ptr<rcom::IRPCHandler>& client);
                 ~RemoteWeeder() override = default;
 
                 bool hoe() override;

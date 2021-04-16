@@ -72,7 +72,7 @@ namespace romi {
         class ScriptList final : public std::vector<Script>
         {
         protected:
-                void load_scripts(const char *path);
+                void load_scripts(const std::string& path);
                 void convert_scripts(JsonCpp& scripts);
                 void convert_script(JsonCpp& script);
                 void convert_script_actions(Script& script, JsonCpp& json_script);
@@ -86,7 +86,7 @@ namespace romi {
                 
         public:
                 
-                explicit ScriptList(const char *path);
+                explicit ScriptList(const std::string& path);
                 explicit ScriptList(JsonCpp& json);
                 ~ScriptList() = default; // We are final so no virtual destructor.
         };

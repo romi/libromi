@@ -68,7 +68,7 @@ namespace romi {
                 void play(const char *name);
 
         public:
-                FluidSoundNotifications(const char *soundfont, JsonCpp& sounds);
+                FluidSoundNotifications(const std::string& soundfont, JsonCpp& sounds);
                 FluidSoundNotifications(const FluidSoundNotifications&) = delete;
                 FluidSoundNotifications& operator=(const FluidSoundNotifications&) = delete;
                 ~FluidSoundNotifications() override;

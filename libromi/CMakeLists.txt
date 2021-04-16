@@ -11,7 +11,7 @@ MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 set(SOURCES
         include/ActivityHelper.h
         include/BrushMotorDriver.h
-        include/CameraServer.h
+#        include/CameraServer.h
         include/CrystalDisplay.h
         include/DebugWeedingSession.h
         include/EventTimer.h
@@ -20,7 +20,7 @@ set(SOURCES
         include/IEventTimer.h
         include/FileCamera.h
         include/FluidSoundNotifications.h
-        include/GetOpt.h
+        include/configuration/GetOpt.h
         include/IFileCabinet.h
         include/IFolder.h
         include/Image.h
@@ -56,6 +56,8 @@ set(SOURCES
         include/api/IPowerDevice.h
         include/api/StateMachine.h
         include/api/IWeeder.h
+
+        include/configuration/ConfigurationProvider.h
 
         include/fake/FakeCNC.h
         include/fake/FakeDisplay.h
@@ -110,6 +112,7 @@ set(SOURCES
 
         src/api/CNCRange.cpp
         src/api/Path.cpp
+        src/configuration/ConfigurationProvider.cpp
 
         src/fake/FakeScriptEngine.cpp
         
@@ -119,7 +122,7 @@ set(SOURCES
         src/EventTimer.cpp
         src/Navigation.cpp
         src/SpeedController.cpp
-        src/GetOpt.cpp
+        src/configuration/GetOpt.cpp
         src/Image.cpp
         src/ImageIO.cpp
         src/ScriptList.cpp
@@ -127,7 +130,7 @@ set(SOURCES
         src/SpeedConverter.cpp
         src/v3.cpp
         src/WheelOdometry.cpp
-        src/camera/CameraServer.cpp
+#        src/camera/CameraServer.cpp
         src/camera/FileCamera.cpp
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.h
@@ -226,7 +229,7 @@ target_link_libraries(romi
         romiserial
         r
         rpp
-        rcompp
+        rcompp-lite
         fluidsynth
         jpeg
         png

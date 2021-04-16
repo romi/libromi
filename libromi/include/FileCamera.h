@@ -45,7 +45,7 @@ namespace romi {
                 
         public:
                 
-                explicit FileCamera(const char *filename);
+                explicit FileCamera(const std::string& filename);
                 ~FileCamera() override = default;
         
                 bool grab(Image &image) override;

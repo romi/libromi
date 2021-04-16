@@ -27,7 +27,7 @@
 
 namespace romi {
 
-        void CNCAdaptor::execute(const char *method, JsonCpp& params,
+        void CNCAdaptor::execute(const std::string& method, JsonCpp& params,
                                  JsonCpp& result, rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute");
@@ -36,53 +36,52 @@ namespace romi {
                 
                 try {
 
-                        if (method == nullptr) {
-                                error.code = rcom::RPCError::MethodNotFound;
+                        if (method.empty()) {
+                                error.code = rcom::RPCError::kMethodNotFound;
                                 error.message = "No method specified";
                                 
-                        } else if (rstreq(method, MethodsCNC::homing)) {
+                        } else if (method == MethodsCNC::homing) {
                                 execute_homing(error);
                                  
-                        } else if (rstreq(method, MethodsCNC::moveto)) {
+                        } else if (method == MethodsCNC::moveto) {
                                 execute_moveto(params, result, error);
                                 
-                        } else if (rstreq(method, MethodsCNC::spindle)) {
+                        } else if (method == MethodsCNC::spindle) {
                                 execute_spindle(params, result, error);
                                 
-                        } else if (rstreq(method, MethodsCNC::travel)) {
+                        } else if (method == MethodsCNC::travel) {
                                 execute_travel(params, result, error);
                                 
-                        } else if (rstreq(method, MethodsCNC::get_range)) {
+                        } else if (method == MethodsCNC::get_range) {
                                 execute_get_range(params, result, error);
                                 
-                        } else if (rstreq(method, MethodsActivity::activity_pause)) {
+                        } else if (method == MethodsActivity::activity_pause) {
                                 execute_pause(error);
                                 
-                        } else if (rstreq(method, MethodsActivity::activity_continue)) {
+                        } else if (method == MethodsActivity::activity_continue) {
                                 execute_continue(error);
                                 
-                        } else if (rstreq(method, MethodsActivity::activity_reset)) {
+                        } else if (method == MethodsActivity::activity_reset) {
                                 execute_reset(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::power_up)) {
+                        } else if (method == MethodsPowerDevice::power_up) {
                                 execute_power_up(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::power_down)) {
+                        } else if (method == MethodsPowerDevice::power_down) {
                                 execute_power_down(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::stand_by)) {
+                        } else if (method == MethodsPowerDevice::stand_by) {
                                 execute_stand_by(error);
                                 
-                        } else if (rstreq(method, MethodsPowerDevice::wake_up)) {
+                        } else if (method == MethodsPowerDevice::wake_up) {
                                 execute_wake_up(error);
-                                
                         } else {
-                                error.code = rcom::RPCError::MethodNotFound;
+                                error.code = rcom::RPCError::kMethodNotFound;
                                 error.message = "Unknown method";
                         }
 
                 } catch (std::exception &e) {
-                        error.code = rcom::RPCError::InternalError;
+                        error.code = rcom::RPCError::kInternalError;
                         error.message = e.what();
                 }
         }
@@ -117,7 +116,7 @@ namespace romi {
 
                 if (!params.has("x") && !params.has("y") && !params.has("z")) {
                         r_err("CNCAdaptor::execute_moveto failed: missing parameters");
-                        error.code = rcom::RPCError::InvalidParams;
+                        error.code = rcom::RPCError::kInvalidParams;
                         error.message = "missing x, y, or z parameters";
                         
                 } else {
@@ -150,7 +149,7 @@ namespace romi {
 
                 } catch (JSONError &je) {
                         r_err("CNCAdaptor::execute_spindle failed: %s", je.what());
-                        error.code = rcom::RPCError::InvalidParams;
+                        error.code = rcom::RPCError::kInvalidParams;
                         error.message = je.what();
                 }
         }
@@ -178,7 +177,7 @@ namespace romi {
 
                 } catch (JSONError &je) {
                         r_err("CNCAdaptor::execute_spindle failed: %s", je.what());
-                        error.code = rcom::RPCError::InvalidParams;
+                        error.code = rcom::RPCError::kInvalidParams;
                         error.message = je.what();
                 }
         }

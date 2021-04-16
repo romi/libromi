@@ -22,7 +22,7 @@
 
  */
 #include <r.h>
-#include "GetOpt.h"
+#include "configuration/GetOpt.h"
 
 using namespace std;
 
@@ -99,23 +99,23 @@ namespace romi {
                 return _flags.find(name) != _flags.end();
         }
 
-        const char *GetOpt::get_value(const char *name)
+        std::string GetOpt::get_value(const std::string& name)
         {
-                const char *retval;
-                map<string, string>::iterator index = _values.find(name);
+                std::string retval;
+                auto index = _values.find(name);
                 if (index != _values.end())
-                        retval = index->second.c_str();
+                        retval = index->second;
                 else
                         retval = get_default_value(name);
                 return retval;
         }
 
-        const char *GetOpt::get_default_value(const char *name)
+        std::string GetOpt::get_default_value(const std::string& name)
         {
-                const char *retval = nullptr;
-                for (size_t i = 0; i < _options.size(); i++) {
-                        if (rstreq(_options[i].name, name)) {
-                                retval = _options[i].default_value;
+                std::string retval;
+                for (auto & _option : _options) {
+                        if (_option.name == name) {
+                                retval = _option.default_value;
                                 break;
                         }
                 }

@@ -11,26 +11,27 @@ using namespace romi;
 class remotenavigation_tests : public ::testing::Test
 {
 protected:
-        MockRPCHandler rpc_handler;
+        std::shared_ptr<MockRPCHandler> rpc_handler;
         rcom::RPCError return_error;
         std::string sent_method;
         JsonCpp sent_params;
         
-	remotenavigation_tests() : rpc_handler(), return_error(), sent_method(), sent_params(){
+	remotenavigation_tests() : rpc_handler(std::make_shared<MockRPCHandler>()), return_error(), sent_method(), sent_params(){
 	}
 
 	~remotenavigation_tests() override = default;
 
 	void SetUp() override {
+//	        rpc_handler = std::make_shared<MockRPCHandler>();
 	}
 
 	void TearDown() override {
 	}
 
 public:
-        void set_error(const char *method, JsonCpp& params,
+        void set_error(const std::string& method, JsonCpp& params,
                        __attribute((unused))JsonCpp& result, rcom::RPCError& error) {
-                r_debug("method=%s", method);
+                r_debug("method=%s", method.c_str());
                 sent_method = method;
                 sent_params = params;
                 error.code = return_error.code;
@@ -40,7 +41,7 @@ public:
 
 TEST_F(remotenavigation_tests, stop_returns_true_when_request_succeeds)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));
         return_error.code = 0;
         return_error.message = "";
@@ -54,7 +55,7 @@ TEST_F(remotenavigation_tests, stop_returns_true_when_request_succeeds)
 
 TEST_F(remotenavigation_tests, stop_returns_false_when_request_fails)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));        
         return_error.code = 1;
         return_error.message = "MESSAGE";
@@ -68,7 +69,7 @@ TEST_F(remotenavigation_tests, stop_returns_false_when_request_fails)
 
 TEST_F(remotenavigation_tests, moveat_sends_correct_args_and_returns_true)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));        
         return_error.code = 0;
         return_error.message = "";
@@ -84,7 +85,7 @@ TEST_F(remotenavigation_tests, moveat_sends_correct_args_and_returns_true)
 
 TEST_F(remotenavigation_tests, moveat_returns_false_when_request_fails)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));        
         return_error.code = 1;
         return_error.message = "MESSAGE";
@@ -98,7 +99,7 @@ TEST_F(remotenavigation_tests, moveat_returns_false_when_request_fails)
 
 TEST_F(remotenavigation_tests, move_sends_correct_args_and_returns_true)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));        
         return_error.code = 0;
         return_error.message = "";
@@ -114,7 +115,7 @@ TEST_F(remotenavigation_tests, move_sends_correct_args_and_returns_true)
 
 TEST_F(remotenavigation_tests, move_returns_false_when_request_fails)
 {
-        EXPECT_CALL(rpc_handler, execute(_,_,_,_))
+        EXPECT_CALL(*rpc_handler, execute(_,_,_,_))
                 .WillOnce(Invoke(this, &remotenavigation_tests::set_error));        
         return_error.code = 1;
         return_error.message = "MESSAGE";

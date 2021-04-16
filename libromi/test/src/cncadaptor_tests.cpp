@@ -27,18 +27,6 @@ protected:
 	void TearDown() override {}
 };
 
-TEST_F(cncadaptor_tests, retuns_error_on_null_method)
-{
-        JsonCpp params;
-        JsonCpp result;
-        RPCError error;
-
-        CNCAdaptor adaptor(cnc);
-        adaptor.execute(nullptr, params, result, error);
-
-        ASSERT_EQ(error.code, RPCError::MethodNotFound);
-        ASSERT_NE(error.message.length(), 0);
-}
 
 TEST_F(cncadaptor_tests, retuns_error_on_unknown_method)
 {
@@ -49,7 +37,7 @@ TEST_F(cncadaptor_tests, retuns_error_on_unknown_method)
         CNCAdaptor adaptor(cnc);
         adaptor.execute("foo", params, result, error);
 
-        ASSERT_EQ(error.code, RPCError::MethodNotFound);
+        ASSERT_EQ(error.code, RPCError::kMethodNotFound);
         ASSERT_NE(error.message.length(), 0);
 }
 
@@ -254,7 +242,7 @@ TEST_F(cncadaptor_tests, spindle_sets_error_on_missing_param)
         CNCAdaptor adaptor(cnc);
         adaptor.execute(MethodsCNC::spindle, params, result, error);
 
-        ASSERT_EQ(error.code, RPCError::InvalidParams);
+        ASSERT_EQ(error.code, RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
 }
 
@@ -299,7 +287,7 @@ TEST_F(cncadaptor_tests, moveto_sets_error_on_missing_params)
         CNCAdaptor adaptor(cnc);
         adaptor.execute(MethodsCNC::moveto, params, result, error);
 
-        ASSERT_EQ(error.code, RPCError::InvalidParams);
+        ASSERT_EQ(error.code, RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
 }
 
@@ -344,7 +332,7 @@ TEST_F(cncadaptor_tests, travel_sets_error_on_missing_params_1)
         CNCAdaptor adaptor(cnc);
         adaptor.execute(MethodsCNC::travel, params, result, error);
 
-        ASSERT_EQ(error.code, RPCError::InvalidParams);
+        ASSERT_EQ(error.code, RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
 }
 
@@ -357,6 +345,6 @@ TEST_F(cncadaptor_tests, travel_sets_error_on_missing_params_2)
         CNCAdaptor adaptor(cnc);
         adaptor.execute(MethodsCNC::travel, params, result, error);
 
-        ASSERT_EQ(error.code, RPCError::InvalidParams);
+        ASSERT_EQ(error.code, RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
 }

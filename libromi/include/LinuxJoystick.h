@@ -45,8 +45,8 @@ namespace romi {
                 void try_initialize();
                 void initialize();
 
-                void try_open_device(const char *name);
-                void open_device(const char *name);
+                void try_open_device(const std::string& name);
+                void open_device(const std::string& name);
                 void close_device();
                 
                 void handle_input_event();
@@ -63,8 +63,8 @@ namespace romi {
                 
         public:
                 
-                LinuxJoystick(rpp::ILinux &linux, const char *device);
-                virtual ~LinuxJoystick();
+                LinuxJoystick(rpp::ILinux &linux, const std::string& device);
+                ~LinuxJoystick() override;
                 
                 JoystickEvent& get_next_event() override;
                 

@@ -130,7 +130,7 @@ TEST_F(weedersession, fail_construct_when_fails_to_create_directory)
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
-        std::string expected("/");
+        std::string expected("/\\");
         EXPECT_CALL(mock_linux, secure_getenv)
                         .WillOnce(Return((char*)expected.c_str()));
 
