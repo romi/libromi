@@ -223,12 +223,12 @@ namespace romi {
 
         bool StepperController::enable()
         {
-                return send_command_without_interruption("e[1]");
+                return send_command_without_interruption("E[1]");
         }
         
         bool StepperController::disable()
         {
-                return send_command_without_interruption("e[0]");
+                return send_command_without_interruption("E[0]");
         }
         
         bool StepperController::configure_homing(AxisIndex axis1, AxisIndex axis2,
