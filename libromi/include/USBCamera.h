@@ -26,8 +26,9 @@
 #define __ROMI_USB_CAMERA_H
 
 #include <string>
-#include <r.h>
+#include <stdexcept>
 #include <mutex>
+#include <r.h>
 #include <JsonCpp.h>
 
 #include "api/ICamera.h"
@@ -66,6 +67,10 @@ namespace romi {
                 ~USBCamera() override;
                 
                 bool grab(Image &image) override;
+
+                rpp::MemBuffer& grab_jpeg() override {
+                        throw std::runtime_error("USBCamera::grab_jpeg: Not implemented");
+                }
         };
 }
 

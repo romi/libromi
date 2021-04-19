@@ -40,7 +40,8 @@ namespace romi {
                 bool execute_simple_request(const std::string& method);
 
         public:
-                explicit RemoteStub(std::shared_ptr<rcom::IRPCHandler>  rpc_handler) : _client(std::move(rpc_handler)) {}
+                explicit RemoteStub(std::shared_ptr<rcom::IRPCHandler> rpc_handler)
+                        : _client(std::move(rpc_handler)) {}
                 virtual ~RemoteStub() = default;
         };
 }

@@ -10,22 +10,22 @@ MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 
 if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
     set(PICAMERA_SOURCES
-      include/arm/CameraComponent.h
-      include/arm/Component.h
-      include/arm/Connection.h
-      include/arm/EncoderComponent.h
-      include/arm/MMAL.h
-      include/arm/PiCamera.h
-      include/arm/PiCameraSettings.h
-      include/arm/Semaphore.h
-      src/arm/CameraComponent.cpp
-      src/arm/Component.cpp
-      src/arm/Connection.cpp
-      src/arm/EncoderComponent.cpp
-      src/arm/MMAL.cpp
-      src/arm/PiCamera.cpp
-      src/arm/PiCameraSettings.cpp
-      src/arm/Semaphore.cpp)
+      include/picamera/CameraComponent.h
+      include/picamera/Component.h
+      include/picamera/Connection.h
+      include/picamera/EncoderComponent.h
+      include/picamera/MMAL.h
+      include/picamera/PiCamera.h
+      include/picamera/PiCameraSettings.h
+      include/picamera/Semaphore.h
+      src/picamera/CameraComponent.cpp
+      src/picamera/Component.cpp
+      src/picamera/Connection.cpp
+      src/picamera/EncoderComponent.cpp
+      src/picamera/MMAL.cpp
+      src/picamera/PiCamera.cpp
+      src/picamera/PiCameraSettings.cpp
+      src/picamera/Semaphore.cpp)
     set(PICAMERA_LIBRARIES mmal_core mmal_util mmal vcos)
     set(PICAMERA_LIBRARY_PATH /opt/vc/lib)
     set(PICAMERA_INCLUDE /opt/vc/include)
@@ -36,7 +36,6 @@ endif()
 set(SOURCES
         include/ActivityHelper.h
         include/BrushMotorDriver.h
-#        include/CameraServer.h
         include/CrystalDisplay.h
         include/DebugWeedingSession.h
         include/EventTimer.h
@@ -113,13 +112,16 @@ set(SOURCES
         include/rover/RoverScriptEngine.h
         include/rover/RoverStateMachine.h
 
+        include/rpc/CameraAdaptor.h
         include/rpc/CNCAdaptor.h
         include/rpc/MethodsActivity.h
+        include/rpc/MethodsCamera.h
         include/rpc/MethodsCNC.h
         include/rpc/MethodsNavigation.h
         include/rpc/MethodsRover.h
         include/rpc/MethodsWeeder.h
         include/rpc/NavigationAdaptor.h
+        include/rpc/RemoteCamera.h
         include/rpc/RemoteCNC.h
         include/rpc/RemoteNavigation.h
         include/rpc/RemoteStub.h
@@ -155,7 +157,6 @@ set(SOURCES
         src/SpeedConverter.cpp
         src/v3.cpp
         src/WheelOdometry.cpp
-#        src/camera/CameraServer.cpp
         src/camera/FileCamera.cpp
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.h
@@ -178,8 +179,10 @@ set(SOURCES
         src/rover/RoverScriptEngine.cpp
         src/rover/RoverStateMachine.cpp
 
+        src/rpc/CameraAdaptor.cpp
         src/rpc/CNCAdaptor.cpp
         src/rpc/NavigationAdaptor.cpp
+        src/rpc/RemoteCamera.cpp
         src/rpc/RemoteCNC.cpp
         src/rpc/RemoteNavigation.cpp
         src/rpc/RemoteStub.cpp

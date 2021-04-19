@@ -21,40 +21,38 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#ifndef __ROMI_REMOTE_CAMERA_H
+#define __ROMI_REMOTE_CAMERA_H
 
-#ifndef __ROMI_FILE_CAMERA_H
-#define __ROMI_FILE_CAMERA_H
-
-#include <string>
-#include <stdexcept>
-#include <r.h>
-#include "ImageIO.h"
+#include <memory>
+#include "rpc/RemoteStub.h"
 #include "api/ICamera.h"
 
 namespace romi {
 
-        class FileCamera : public ICamera
+        class RemoteCamera : public ICamera, public RemoteStub
         {
         public:
-                static constexpr const char *ClassName = "file-camera";
-                
-        protected:
-                std::string _filename;
-                Image _image;
+                static constexpr const char *ClassName = "remote-camera";
 
-                bool open();
+        protected:
+                uint8_t decoding_table_[256];
+                rpp::MemBuffer output_;
                 
+                void build_decoding_table();
+                bool try_decode_base64(const char *data, size_t input_length);
+                bool decode_base64(const char *data, size_t length);
+                bool decode(JsonCpp& result);
+                bool assert_values(const char *data, size_t len);
+                uint8_t get_value(const char *data, size_t i);
+
         public:
-                
-                explicit FileCamera(const std::string& filename);
-                ~FileCamera() override = default;
-        
+                RemoteCamera(std::shared_ptr<rcom::IRPCHandler>& handler);
+                ~RemoteCamera() override = default;
+
                 bool grab(Image &image) override;
-                
-                rpp::MemBuffer& grab_jpeg() override {
-                        throw std::runtime_error("USBCamera::grab_jpeg: Not implemented");
-                }
+                rpp::MemBuffer& grab_jpeg() override;
         };
 }
 
-#endif // __ROMI_FILE_CAMERA_H
+#endif // __ROMI_REMOTE_CAMERA_H

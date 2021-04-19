@@ -21,33 +21,32 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#ifndef __ROMI_CAMERA_HANDLER_H
+#define __ROMI_CAMERA_HANDLER_H
 
-#ifndef __ROMI_CAMERA_SERVER_H
-#define __ROMI_CAMERA_SERVER_H
-
-#include <rcom.h>
+#include <IRPCHandler.h>
 #include "api/ICamera.h"
 
 namespace romi {
 
-        class CameraServer {
+        class CameraAdaptor : public rcom::IRPCHandler
+        {
         protected:
-                ICamera &_camera;
-                service_t *_service;
-                Image _image;
+                ICamera& camera_;
 
-                static void _send_image(void *data,
-                                        request_t *request,
-                                        response_t *response);
-                
-                void send_image(response_t *response);
+                void grab_jpeg(JsonCpp& result, rcom::RPCError& error);
+                void encode(rpp::MemBuffer& jpeg, JsonCpp& result);
+                char *encode_base64(const uint8_t *s, size_t ilen);
                 
         public:
-                CameraServer(ICamera &camera, const char *name, const char *topic);
-                CameraServer(const CameraServer&) = delete;
-                CameraServer& operator=(const CameraServer&) = delete;
-                virtual ~CameraServer();
+                CameraAdaptor(ICamera& camera);
+                ~CameraAdaptor() override = default;
+        
+                void execute(const std::string& method,
+                             JsonCpp& params,
+                             JsonCpp& result,
+                             rcom::RPCError& status);
         };
 }
 
-#endif // __ROMI_CAMERA_SERVER_H
+#endif // __ROMI_CAMERA_HANDLER_H

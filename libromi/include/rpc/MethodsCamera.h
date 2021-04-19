@@ -21,22 +21,18 @@
   <http://www.gnu.org/licenses/>.
 
  */
-
-#ifndef __ROMI_ICAMERA_H
-#define __ROMI_ICAMERA_H
-
-#include "Image.h"
-#include "JsonCpp.h"
-#include "MemBuffer.h"
+#ifndef __ROMI_METHODS_CAMERA_H
+#define __ROMI_METHODS_CAMERA_H
 
 namespace romi {
-
-        class ICamera {
+        
+        class MethodsCamera
+        {
         public:
-                virtual ~ICamera() = default;
-                virtual bool grab(Image &image) = 0;
-                virtual rpp::MemBuffer& grab_jpeg() = 0;
+                
+                static constexpr const char *grab_jpeg = "camera-grab-jpeg";
+
         };
 }
 
-#endif // __ROMI_CAMERA_H
+#endif // __ROMI_METHODS_CAMERA_H
