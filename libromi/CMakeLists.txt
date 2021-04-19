@@ -250,7 +250,7 @@ target_include_directories(romi
         ${PICAMERA_INCLUDE}
         )
 
-target_link_directories(romi PRIVATE ${PICAMERA_LIBRARY_PATH})
+#target_link_directories(romi PRIVATE ${PICAMERA_LIBRARY_PATH})
 
 target_link_libraries(romi
         romiserial
