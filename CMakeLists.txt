@@ -1,32 +1,35 @@
 cmake_minimum_required(VERSION 3.10)
-project(libromi_arduino)
+project(romi-libromi)
 
-set(romi_VERSION_MAJOR 0)
-set(romi_VERSION_MINOR 1)
+MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
+MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
+
+set(romi-libromi_VERSION_MAJOR 0)
+set(romi-libromi_VERSION_MINOR 1)
+
+############################################################
 
 set(CMAKE_MODULES_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 set(CMAKE_THIRDPARTY_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
-############################################################
-
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-###########################################################
+############################################################
 # Everything debug for now this needs to be addressed.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_BUILD_TYPE Debug)
-
 set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS}")
 set(CMAKE_C_FLAGS "${COMMON_COMPILATION_FLAGS}")
 
 set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+############################################################
 
 # Options.
-#Build tests by default. We want run tests whether we are developing or building a release. I mean... why wouldn't you? :)
+# Build tests by default. We want to run tests whether we are developing or building a release. I mean... why wouldn't you? :)
 option(BUILD_TESTS "Build all tests." ON)
 option(BUILD_COVERAGE "Build coverage." ON)
 
@@ -86,7 +89,6 @@ if (BUILD_COVERAGE AND BUILD_TESTS)
 endif()
 
 ######################################
-
 if (NOT DEFINED libr_SOURCE_DIR)
     set(LIBR_DIR "${CMAKE_SOURCE_DIR}/libr")
     find_path(LIBR_DIRECTORY
@@ -112,46 +114,46 @@ if (NOT DEFINED libr_SOURCE_DIR)
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE})
         add_subdirectory(${LIBR_DIR})
     else()
-        MESSAGE("RCOM - ${LIBR_DIRECTORY} exists. Not downloading dependency.")
+        MESSAGE("LIBROMI - ${LIBR_DIRECTORY} exists. Not downloading dependency.")
         add_subdirectory(libr)
     endif()
     # Restore build tests option.
     SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
 endif()
 
-###########################################################
+######################################
 
-#if (NOT DEFINED librcom_SOURCE_DIR)
-#    set(LIBRCOM_DIR "${CMAKE_SOURCE_DIR}/librcom")
-#    find_path(LIBRCOM_DIRECTORY
-#            NAMES "CMakeLists.txt"
-#            PATHS ${LIBRCOM_DIR})
-#    #    Save the current Build test settings so we can restore them after including rcom. We don't want to build rcom tests.
-#    SET(SAVED_TEST_OPTION BUILD_TESTS)
-#    SET(BUILD_TESTS OFF)
-#
-#    if (NOT LIBRCOM_DIRECTORY)
-#        MESSAGE("LIBROMI - ${LIBRCOM_DIR} does not exist. Downloading dependency.")
-#        MESSAGE("LIBROMI - WARNING")
-#        MESSAGE("LIBROMI - The dependency is cloned to support libromi development only.")
-#        MESSAGE("LIBROMI - To work on both librcom and libr please see: https://github.com/libromi/romi-rover-build-and-test")
-#
-#        download_project(
-#                PROJ              librcom
-#                GIT_REPOSITORY    https://github.com/romi/librcom.git
-#                GIT_TAG           libromirover
-#                TIMEOUT           180
-#                SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/librcom
-#                BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/librcom
-#                ${UPDATE_DISCONNECTED_IF_AVAILABLE})
-#        add_subdirectory(${LIBRCOM_DIR})
-#    else()
-#        MESSAGE("LIBROMI - ${LIBRCOM_DIRECTORY} exists. Not downloading dependency.")
-#        add_subdirectory(librcom)
-#    endif()
-#    # Restore build tests option.
-#    SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
-#endif()
+if (NOT DEFINED librcom_SOURCE_DIR)
+    set(LIBRCOM_DIR "${CMAKE_SOURCE_DIR}/librcom")
+    find_path(LIBRCOM_DIRECTORY
+            NAMES "CMakeLists.txt"
+            PATHS ${LIBRCOM_DIR})
+    #    Save the current Build test settings so we can restore them after including librcom. We don't want to build libr tests.
+    SET(SAVED_TEST_OPTION BUILD_TESTS)
+    SET(BUILD_TESTS OFF)
+
+    if (NOT LIBRCOM_DIRECTORY)
+        MESSAGE("LIBROMI - ${LIBRCOM_DIR} does not exist. Downloading dependency.")
+        MESSAGE("LIBROMI - WARNING")
+        MESSAGE("LIBROMI - The dependency is cloned to support libromi development only.")
+        MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
+
+        download_project(
+                PROJ              librcom
+                GIT_REPOSITORY    https://github.com/romi/librcom.git
+                GIT_TAG           libromirover
+                TIMEOUT           180
+                SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/librcom
+                BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/librcom
+                ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+        add_subdirectory(${LIBRCOM_DIR})
+    else()
+        MESSAGE("LIBROMI - ${LIBRCOM_DIRECTORY} exists. Not downloading dependency.")
+        add_subdirectory(librcom)
+    endif()
+    # Restore build tests option.
+    SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
+endif()
 
 ###########################################################
 
