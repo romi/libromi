@@ -17,7 +17,6 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "
       include/arm/MMAL.h
       include/arm/PiCamera.h
       include/arm/PiCameraSettings.h
-      include/arm/PiCameraTest.h
       include/arm/Semaphore.h
       src/arm/CameraComponent.cpp
       src/arm/Component.cpp
@@ -26,8 +25,10 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "
       src/arm/MMAL.cpp
       src/arm/PiCamera.cpp
       src/arm/PiCameraSettings.cpp
-      src/arm/PiCameraTest.cpp
       src/arm/Semaphore.cpp)
+    set(PICAMERA_LIBRARIES mmal_core mmal_util mmal vcos)
+    set(PICAMERA_LIBRARY_PATH /opt/vc/lib)
+    set(PICAMERA_INCLUDE /opt/vc/include)
 #else()
 #    set(PICAMERA_SOURCES)
 endif()
@@ -243,11 +244,13 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
 
-
 target_include_directories(romi
         PUBLIC
-            "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        ${PICAMERA_INCLUDE}
         )
+
+target_link_directories(romi PRIVATE ${PICAMERA_LIBRARY_PATH})
 
 target_link_libraries(romi
         romiserial
@@ -257,7 +260,7 @@ target_link_libraries(romi
         fluidsynth
         jpeg
         png
-        )
+        ${PICAMERA_LIBRARIES})
 
 if(BUILD_TESTS)
     add_subdirectory(test)
