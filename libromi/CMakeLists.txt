@@ -8,6 +8,30 @@ MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
 MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 ############################################################
 
+if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
+    set(PICAMERA_SOURCES
+      include/arm/CameraComponent.h
+      include/arm/Component.h
+      include/arm/Connection.h
+      include/arm/EncoderComponent.h
+      include/arm/MMAL.h
+      include/arm/PiCamera.h
+      include/arm/PiCameraSettings.h
+      include/arm/PiCameraTest.h
+      include/arm/Semaphore.h
+      src/arm/CameraComponent.cpp
+      src/arm/Component.cpp
+      src/arm/Connection.cpp
+      src/arm/EncoderComponent.cpp
+      src/arm/MMAL.cpp
+      src/arm/PiCamera.cpp
+      src/arm/PiCameraSettings.cpp
+      src/arm/PiCameraTest.cpp
+      src/arm/Semaphore.cpp)
+#else()
+#    set(PICAMERA_SOURCES)
+endif()
+        
 set(SOURCES
         include/ActivityHelper.h
         include/BrushMotorDriver.h
@@ -217,7 +241,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp P
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES})
+add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
 
 
 target_include_directories(romi
