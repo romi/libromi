@@ -21,7 +21,6 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#include <RPCError.h>
 #include "rpc/RemoteNavigation.h"
 #include "rpc/MethodsRover.h"
 

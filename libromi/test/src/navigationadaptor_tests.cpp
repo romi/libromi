@@ -31,7 +31,7 @@ TEST_F(rpcnavigation_tests, test_execute_unknown_command_returns_error)
 
         JsonCpp params;
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute("dummy", params, result, error);
 
@@ -45,7 +45,7 @@ TEST_F(rpcnavigation_tests, test_move_command_returns_ok)
 
         JsonCpp params = JsonCpp::parse("{'distance':1,'speed':0.1}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, move(1.0, 0.1))
                 .WillOnce(Return(true));
@@ -61,7 +61,7 @@ TEST_F(rpcnavigation_tests, test_move_command_returns_error_on_missing_parameter
 
         JsonCpp params;
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::move, params, result, error);
 
@@ -75,7 +75,7 @@ TEST_F(rpcnavigation_tests, test_move_command_returns_error_on_missing_parameter
 
         JsonCpp params = JsonCpp::parse("{'distance':0}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::move, params, result, error);
 
@@ -89,7 +89,7 @@ TEST_F(rpcnavigation_tests, test_move_command_returns_error_on_invalid_parameter
 
         JsonCpp params = JsonCpp::parse("{'distance':'foo'}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::move, params, result, error);
 
@@ -103,7 +103,7 @@ TEST_F(rpcnavigation_tests, test_move_command_returns_error_on_invalid_parameter
 
         JsonCpp params = JsonCpp::parse("{'distance':10,'speed':'foo'}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::move, params, result, error);
 
@@ -117,7 +117,7 @@ TEST_F(rpcnavigation_tests, test_move_returns_error_when_move_fails)
 
         JsonCpp params = JsonCpp::parse("{'distance':1,'speed':0.1}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, move(1.0, 0.1))
                 .WillOnce(Return(false));
@@ -138,7 +138,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_ok)
 
         JsonCpp params = JsonCpp::parse("{'speed':[0.1,0.2]}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, moveat(0.1, 0.2))
                 .WillOnce(Return(true));
@@ -154,7 +154,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_on_missing_parameters_1)
 
         JsonCpp params = JsonCpp::parse("{'command':'moveat'}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::moveat, params, result, error);
 
@@ -168,7 +168,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_on_invalid_parameters_1)
 
         JsonCpp params = JsonCpp::parse("{'speed':'foo'}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::moveat, params, result, error);
 
@@ -182,7 +182,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_on_invalid_parameters_2)
 
         JsonCpp params = JsonCpp::parse("{'speed':['foo','bar']}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::moveat, params, result, error);
 
@@ -196,7 +196,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_on_invalid_parameters_3)
 
         JsonCpp params = JsonCpp::parse("{'speed':[0.1,'bar']}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::moveat, params, result, error);
 
@@ -210,7 +210,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_on_invalid_parameters_4)
 
         JsonCpp params = JsonCpp::parse("{'speed':['foo',0.2]}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         adaptor.execute(MethodsNavigation::moveat, params, result, error);
 
@@ -224,7 +224,7 @@ TEST_F(rpcnavigation_tests, test_moveat_returns_error_when_moveat_fails)
 
         JsonCpp params = JsonCpp::parse("{'speed':[0.1,0.2]}");
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, moveat(0.1, 0.2))
                 .WillOnce(Return(false));
@@ -243,7 +243,7 @@ TEST_F(rpcnavigation_tests, test_stop_returns_ok)
 
         JsonCpp params;
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, stop())
                 .WillOnce(Return(true));
@@ -259,7 +259,7 @@ TEST_F(rpcnavigation_tests, test_stop_returns_error_when_stop_fails)
 
         JsonCpp params;
         JsonCpp result;
-        rcom::RPCError error;
+        RPCError error;
 
         EXPECT_CALL(navigation, stop())
                 .WillOnce(Return(false));

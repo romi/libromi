@@ -29,7 +29,7 @@
 
 namespace romi {
         
-        RemoteCamera::RemoteCamera(std::shared_ptr<rcom::IRPCHandler>& client)
+        RemoteCamera::RemoteCamera(std::unique_ptr<IRPCClient>& client)
                 : RemoteStub(client), output_()
         {
         }

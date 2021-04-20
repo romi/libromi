@@ -26,25 +26,25 @@
 #define __ROMI_WEEDER_ADAPTOR_H
 
 #include <string>
-#include <IRPCHandler.h>
+#include "rpc/IRPCHandler.h"
 #include "api/IWeeder.h"
 
 namespace romi {
 
-        class WeederAdaptor : public rcom::IRPCHandler
+        class WeederAdaptor : public IRPCHandler
         {
         protected:
                 IWeeder& _weeder;
 
-                void execute_hoe(rcom::RPCError &error);
-                void execute_stop(rcom::RPCError &error);
-                void execute_pause(rcom::RPCError &error);
-                void execute_continue(rcom::RPCError &error);
-                void execute_reset(rcom::RPCError &error);
-                void execute_power_up(rcom::RPCError &error);
-                void execute_power_down(rcom::RPCError &error);
-                void execute_stand_by(rcom::RPCError &error);
-                void execute_wake_up(rcom::RPCError &error);
+                void execute_hoe(RPCError &error);
+                void execute_stop(RPCError &error);
+                void execute_pause(RPCError &error);
+                void execute_continue(RPCError &error);
+                void execute_reset(RPCError &error);
+                void execute_power_up(RPCError &error);
+                void execute_power_down(RPCError &error);
+                void execute_stand_by(RPCError &error);
+                void execute_wake_up(RPCError &error);
 
         public:
                 explicit WeederAdaptor(IWeeder& weeder) : _weeder(weeder) {
@@ -53,7 +53,7 @@ namespace romi {
                 ~WeederAdaptor() override = default;
 
                 void execute(const std::string& method, JsonCpp& params,
-                             JsonCpp& result, rcom::RPCError &error) override;
+                             JsonCpp& result, RPCError &error) override;
         };
 }
 

@@ -270,6 +270,21 @@ add_test(
 
 ##
   
+set(SRCS_RCOMMESSAGEHANDLER 
+        src/tests_main.cpp
+        src/rcommessagehandler_tests.cpp
+  )
+
+add_executable(libromi_unit_tests_rcommessagehandler ${SRCS_RCOMMESSAGEHANDLER})
+target_link_libraries(libromi_unit_tests_rcommessagehandler romi romiserial rpp rcompp-lite rcom-mocks gtest gmock)
+
+add_test(
+    NAME libromi_unit_tests_rcommessagehandler
+    COMMAND libromi_unit_tests_rcommessagehandler
+)
+
+##
+  
 if(BUILD_COVERAGE)
     SETUP_TARGET_FOR_COVERAGE_LCOV(
             NAME romi_rover_libromi_coverage
@@ -291,6 +306,7 @@ if(BUILD_COVERAGE)
                             libromi_unit_tests_steppersettings
                             libromi_unit_tests_oquam
                             libromi_unit_tests_brushmotordriver
+                            libromi_unit_tests_rcommessagehandler
     )
 endif()
 
