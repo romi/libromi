@@ -47,7 +47,7 @@ namespace romi {
                 } catch (JSONError &je) {
                         r_err("SpeedController::SpeedController: failed to "
                               "parse the configuration");
-                        throw je;
+                        throw;
                 }
                 
                 if (!_accurate.is_valid()) 
