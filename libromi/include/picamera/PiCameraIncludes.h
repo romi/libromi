@@ -1,6 +1,9 @@
 #ifndef _ROMI_PI_CAMERA_INCLUDES_H_
 #define _ROMI_PI_CAMERA_INCLUDES_H_
 
+
+#pragma GCC system_header
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Weffc++"
