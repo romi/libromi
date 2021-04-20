@@ -30,6 +30,9 @@ namespace romi {
             wheel_circumference(M_PI * rover_config.wheel_diameter),
             wheel_base(rover_config.wheel_base), encoder_steps(rover_config.encoder_steps)
         {
+                displacement[0] = 0;
+                displacement[1] = 0;       
+                
                 encoder[0] = left_encoder;
                 encoder[1] = right_encoder;
                 for (int i = 0; i < 2; i++) {
