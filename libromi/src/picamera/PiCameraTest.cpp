@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <r.h>
 #include <MemBuffer.h>
-#include "PiCamera.h"
+#include "picamera/PiCamera.h"
 
 using namespace romi;
 using namespace std;

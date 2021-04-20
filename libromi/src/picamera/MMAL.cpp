@@ -23,11 +23,11 @@
  */
 #include <stdexcept>
 #include <r.h>
-#include "MMAL.h"
+#include "picamera/MMAL.h"
 
 namespace romi::arm {
 
-        void Mmal::assert_status(const char *caller_name, MMAL_STATUS_T status)
+        void MMAL::assert_status(const char *caller_name, MMAL_STATUS_T status)
         {
                 if (status != MMAL_SUCCESS) {
                         r_err("%s failed", caller_name);

@@ -22,7 +22,7 @@
 
  */
 #include <stdexcept>
-// #include <r.h>
+#include <r.h>
 #include "picamera/PiCamera.h"
 
 namespace romi::arm {

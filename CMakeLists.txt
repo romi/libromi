@@ -158,5 +158,11 @@ endif()
 ###########################################################
 
 include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
+
+if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
+    set(PICAMERA_LIBRARY_PATH /opt/vc/lib)
+    link_directories(${PICAMERA_LIBRARY_PATH})
+endif()
+
 add_subdirectory(arduino_libraries)
 add_subdirectory(libromi)

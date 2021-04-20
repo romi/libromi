@@ -23,7 +23,7 @@
  */
 #include <stdexcept>
 #include <r.h>
-#include "Semaphore.h"
+#include "picamera/Semaphore.h"
 
 namespace romi::arm {
 

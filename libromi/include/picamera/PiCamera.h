@@ -27,6 +27,9 @@
 #include "api/ICamera.h"
 #include "picamera/PiCameraIncludes.h"
 #include "picamera/PiCameraSettings.h"
+#include "picamera/CameraComponent.h"
+#include "picamera/EncoderComponent.h"
+#include "picamera/Connection.h"
 
 namespace romi {
         

@@ -23,7 +23,7 @@
  */
 #include <stdexcept>
 #include <r.h>
-#include "PiCamera.h"
+#include "picamera/PiCamera.h"
 
 namespace romi {
         
