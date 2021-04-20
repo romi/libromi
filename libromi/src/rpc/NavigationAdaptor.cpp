@@ -28,47 +28,46 @@
 namespace romi {
         
         void NavigationAdaptor::execute(const std::string& method, JsonCpp &params,
-                                        JsonCpp &result, rcom::RPCError &error)
+                                        JsonCpp &result, RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute");
-
+                (void) result;
                 error.code = 0;
                 
                 try {
                         
                         if (method == MethodsNavigation::moveat) {
-                                execute_moveat(params, result, error);
+                                execute_moveat(params, error);
                                 
                         } else if (method == MethodsNavigation::move) {
-                                execute_move(params, result, error);
+                                execute_move(params, error);
                                 
                         } else if (method == MethodsNavigation::stop) {
-                                execute_stop(params, result, error);
+                                execute_stop(error);
                                 
                         } else if (method == MethodsActivity::activity_pause) {
-                                execute_pause(params, result, error);
+                                execute_pause(error);
                                 
                         } else if (method == MethodsActivity::activity_continue) {
-                                execute_continue(params, result, error);
+                                execute_continue(error);
                                 
                         } else if (method == MethodsActivity::activity_reset) {
-                                execute_reset(params, result, error);
+                                execute_reset(error);
                                 
                         } else {
-                                error.code = rcom::RPCError::kMethodNotFound;
+                                error.code = RPCError::kMethodNotFound;
                                 error.message = "Unknown command";
                         }
                         
                 } catch (std::exception &e) {
                         r_err("NavigationAdaptor::execute: caught exception: %s",
                               e.what());
-                        error.code = rcom::RPCError::kInternalError;
+                        error.code = RPCError::kInternalError;
                         error.message = e.what();
                 }
         }
 
-        void NavigationAdaptor::execute_moveat(JsonCpp &params, __attribute__((unused)) JsonCpp &result,
-                                               rcom::RPCError &error)
+        void NavigationAdaptor::execute_moveat(JsonCpp &params, RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_moveat");
                 try {
@@ -83,13 +82,12 @@ namespace romi {
                 } catch (JSONError &je) {
                         r_debug("NavigationAdaptor::execute_moveat: %s",
                                 je.what());
-                        error.code = rcom::RPCError::kParseError;
+                        error.code = RPCError::kParseError;
                         error.message = "Invalid json";
                 }
         }
 
-        void NavigationAdaptor::execute_move(JsonCpp &params, __attribute__((unused)) JsonCpp &result,
-                                             rcom::RPCError &error)
+        void NavigationAdaptor::execute_move(JsonCpp &params, RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_move");
                 
@@ -104,13 +102,12 @@ namespace romi {
                         
                 } catch (JSONError &je) {
                         r_debug("NavigationAdaptor::execute_move: %s", je.what());
-                        error.code = rcom::RPCError::kParseError;
+                        error.code = RPCError::kParseError;
                         error.message = "Invalid json";
                 }
         }
 
-        void NavigationAdaptor::execute_stop(__attribute__((unused)) JsonCpp &params, __attribute__((unused)) JsonCpp &result,
-                                             rcom::RPCError &error)
+        void NavigationAdaptor::execute_stop(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_stop");
                 
@@ -120,8 +117,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_pause(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
-                                     rcom::RPCError &error)
+        void NavigationAdaptor::execute_pause(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_pause");
                 if (!_navigation.pause_activity()) {
@@ -130,8 +126,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_continue(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
-                                         rcom::RPCError &error)
+        void NavigationAdaptor::execute_continue(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_continue");
                 if (!_navigation.continue_activity()) {
@@ -140,8 +135,7 @@ namespace romi {
                 }
         }
 
-        void NavigationAdaptor::execute_reset(__attribute__((unused))JsonCpp& params, __attribute__((unused))JsonCpp& result,
-                                      rcom::RPCError &error)
+        void NavigationAdaptor::execute_reset(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_reset");
                 if (!_navigation.reset_activity()) {

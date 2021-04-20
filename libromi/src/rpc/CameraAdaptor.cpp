@@ -32,7 +32,7 @@ namespace romi {
         }
 
         void CameraAdaptor::execute(const std::string& method, JsonCpp& params,
-                                    JsonCpp& result, rcom::RPCError& error)
+                                    JsonCpp& result, RPCError& error)
         {
                 (void) params;
 
@@ -42,17 +42,17 @@ namespace romi {
                         if (method == MethodsCamera::grab_jpeg) {
                                 grab_jpeg(result, error);
                         } else {
-                                error.code = rcom::RPCError::kMethodNotFound;
+                                error.code = RPCError::kMethodNotFound;
                                 error.message = "Unknown method";
                         }
                         
                 } catch (std::exception& e) {
-                        error.code = rcom::RPCError::kInternalError;
+                        error.code = RPCError::kInternalError;
                         error.message = e.what();
                 }
         }
                         
-        void CameraAdaptor::grab_jpeg(JsonCpp& result, rcom::RPCError& error)
+        void CameraAdaptor::grab_jpeg(JsonCpp& result, RPCError& error)
         {
                 rpp::MemBuffer& jpeg = camera_.grab_jpeg();
 
@@ -60,7 +60,7 @@ namespace romi {
                         encode(jpeg, result);
                         
                 } else {
-                        error.code = rcom::RPCError::kInternalError;
+                        error.code = RPCError::kInternalError;
                         error.message = "Failed to grab the image";                        
                 }
         }

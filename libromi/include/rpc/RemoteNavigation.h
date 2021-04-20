@@ -24,7 +24,6 @@
 #ifndef __ROMI_REMOTE_NAVIGATION_H
 #define __ROMI_REMOTE_NAVIGATION_H
 
-#include <IRPCClient.h>
 #include "api/INavigation.h"
 #include "rpc/RemoteStub.h"
 
@@ -37,7 +36,8 @@ namespace romi {
                 
         public:
                 
-                explicit RemoteNavigation(const std::shared_ptr<rcom::IRPCHandler> &client) : RemoteStub(client) {}
+                explicit RemoteNavigation(std::unique_ptr<IRPCClient>& client)
+                        : RemoteStub(client) {}
                 ~RemoteNavigation() override = default;
 
                 bool moveat(double left, double right) override;

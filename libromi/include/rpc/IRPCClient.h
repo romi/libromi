@@ -21,32 +21,18 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_REMOTE_STUB_H
-#define __ROMI_REMOTE_STUB_H
+#ifndef __ROMI_I_RPC_CLIENT_H
+#define __ROMI_I_RPC_CLIENT_H
 
-#include <memory>
-#include <utility>
-#include "rpc/IRPCClient.h"
+#include "rpc/IRPCHandler.h"
 
 namespace romi {
         
-        class RemoteStub
+        class IRPCClient : public IRPCHandler
         {
-        protected:
-                std::unique_ptr<IRPCClient> client_;
-
-                bool execute(const std::string& method, JsonCpp& params, JsonCpp& result);
-                bool execute_with_params(const std::string& method, JsonCpp& params);
-                bool execute_with_result(const std::string& method, JsonCpp& result);
-                bool execute_simple_request(const std::string& method);
-
         public:
-                explicit RemoteStub(std::unique_ptr<IRPCClient>& client)
-                        : client_() {
-                        client_ = std::move(client);
-                }
-                virtual ~RemoteStub() = default;
+                virtual ~IRPCClient() override = default;
         };
 }
 
-#endif // __ROMI_REMOTE_STUB_H
+#endif // __ROMI_I_RPC_CLIENT_H

@@ -24,32 +24,32 @@
 #ifndef __ROMI_CNC_ADAPTER_H
 #define __ROMI_CNC_ADAPTER_H
 
-#include <IRPCHandler.h>
+#include "rpc/IRPCHandler.h"
 #include "api/ICNC.h"
 
 namespace romi {
         
-        class CNCAdaptor : public rcom::IRPCHandler
+        class CNCAdaptor : public IRPCHandler
         {
         protected:
                 ICNC &_cnc;
                 
                 void execute_get_range(JsonCpp& params, JsonCpp& result,
-                                       rcom::RPCError &error);
+                                       RPCError &error);
                 void execute_moveto(JsonCpp& params, JsonCpp& result,
-                                    rcom::RPCError &error);
+                                    RPCError &error);
                 void execute_spindle(JsonCpp& params, JsonCpp& result,
-                                     rcom::RPCError &error);
+                                     RPCError &error);
                 void execute_travel(JsonCpp& params, JsonCpp& result,
-                                    rcom::RPCError &error);
-                void execute_homing(rcom::RPCError &error);
-                void execute_pause(rcom::RPCError &error);
-                void execute_continue(rcom::RPCError &error);
-                void execute_reset(rcom::RPCError &error);
-                void execute_power_up(rcom::RPCError &error);
-                void execute_power_down(rcom::RPCError &error);
-                void execute_stand_by(rcom::RPCError &error);
-                void execute_wake_up(rcom::RPCError &error);
+                                    RPCError &error);
+                void execute_homing(RPCError &error);
+                void execute_pause(RPCError &error);
+                void execute_continue(RPCError &error);
+                void execute_reset(RPCError &error);
+                void execute_power_up(RPCError &error);
+                void execute_power_down(RPCError &error);
+                void execute_stand_by(RPCError &error);
+                void execute_wake_up(RPCError &error);
 
 
         public:
@@ -57,7 +57,7 @@ namespace romi {
                 ~CNCAdaptor() override = default;
                 
                 void execute(const std::string& method, JsonCpp& params,
-                             JsonCpp& result, rcom::RPCError &error) override;
+                             JsonCpp& result, RPCError &error) override;
         };
 }
 

@@ -114,6 +114,9 @@ set(SOURCES
 
         include/rpc/CameraAdaptor.h
         include/rpc/CNCAdaptor.h
+        include/rpc/IRPCClient.h
+        include/rpc/IRPCHandler.h
+        include/rpc/IRPCServer.h
         include/rpc/MethodsActivity.h
         include/rpc/MethodsCamera.h
         include/rpc/MethodsCNC.h
@@ -121,6 +124,9 @@ set(SOURCES
         include/rpc/MethodsRover.h
         include/rpc/MethodsWeeder.h
         include/rpc/NavigationAdaptor.h
+        include/rpc/RcomClient.h
+        include/rpc/RcomMessageHandler.h
+        include/rpc/RcomServer.h
         include/rpc/RemoteCamera.h
         include/rpc/RemoteCNC.h
         include/rpc/RemoteNavigation.h
@@ -182,6 +188,9 @@ set(SOURCES
         src/rpc/CameraAdaptor.cpp
         src/rpc/CNCAdaptor.cpp
         src/rpc/NavigationAdaptor.cpp
+        src/rpc/RcomClient.cpp
+        src/rpc/RcomMessageHandler.cpp
+        src/rpc/RcomServer.cpp
         src/rpc/RemoteCamera.cpp
         src/rpc/RemoteCNC.cpp
         src/rpc/RemoteNavigation.cpp

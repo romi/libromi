@@ -26,7 +26,6 @@
 #define __ROMI_DEFAULT_WEEDER_H
 
 #include <string>
-#include <IRPCHandler.h>
 
 #include "api/ICamera.h"
 #include "api/ICNC.h"

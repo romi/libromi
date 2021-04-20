@@ -8,7 +8,6 @@
 using namespace std;
 using namespace testing;
 using namespace romi;
-using namespace rcom;
 
 class cncadaptor_tests : public ::testing::Test
 {

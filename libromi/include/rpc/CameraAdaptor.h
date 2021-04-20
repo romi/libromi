@@ -24,17 +24,17 @@
 #ifndef __ROMI_CAMERA_HANDLER_H
 #define __ROMI_CAMERA_HANDLER_H
 
-#include <IRPCHandler.h>
+#include "rpc/IRPCHandler.h"
 #include "api/ICamera.h"
 
 namespace romi {
 
-        class CameraAdaptor : public rcom::IRPCHandler
+        class CameraAdaptor : public IRPCHandler
         {
         protected:
                 ICamera& camera_;
 
-                void grab_jpeg(JsonCpp& result, rcom::RPCError& error);
+                void grab_jpeg(JsonCpp& result, RPCError& error);
                 void encode(rpp::MemBuffer& jpeg, JsonCpp& result);
                 char *encode_base64(const uint8_t *s, size_t ilen);
                 
@@ -45,7 +45,7 @@ namespace romi {
                 void execute(const std::string& method,
                              JsonCpp& params,
                              JsonCpp& result,
-                             rcom::RPCError& status);
+                             RPCError& status);
         };
 }
 

@@ -47,7 +47,7 @@ namespace romi {
                 uint8_t get_value(const char *data, size_t i);
 
         public:
-                RemoteCamera(std::shared_ptr<rcom::IRPCHandler>& handler);
+                RemoteCamera(std::unique_ptr<IRPCClient>& client);
                 ~RemoteCamera() override = default;
 
                 bool grab(Image &image) override;
