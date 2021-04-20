@@ -21,34 +21,35 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_NAVIGATION_ADAPTOR_H
-#define __ROMI_NAVIGATION_ADAPTOR_H
 
+#ifndef __ROMI_RCOM_SERVER_H
+#define __ROMI_RCOM_SERVER_H
+
+#include <memory>
+#include <IMessageHub.h>
+#include "rpc/IRPCServer.h"
 #include "rpc/IRPCHandler.h"
-#include "api/INavigation.h"
+#include "rpc/RcomMessageHandler.h"
 
 namespace romi {
         
-        class NavigationAdaptor : public IRPCHandler
+        class RcomServer : public IRPCServer
         {
         protected:
-                INavigation &_navigation;
-                
-                void execute_moveat(JsonCpp& params, RPCError &error);
-                void execute_move(JsonCpp& params, RPCError &error);
-                void execute_stop(RPCError &error);
-                void execute_pause(RPCError &error);
-                void execute_continue(RPCError &error);
-                void execute_reset(RPCError &error);
-                
-        public:
-                explicit NavigationAdaptor(INavigation &navigation)
-                        : _navigation(navigation) {}
-                ~NavigationAdaptor() override = default;
+                std::unique_ptr<rcom::IMessageHub> hub_;
+                std::unique_ptr<RcomMessageHandler> listener_;
 
-                void execute(const std::string& method, JsonCpp& params, JsonCpp& result,
-                             RPCError &error) override;
+        public:
+                
+                static std::unique_ptr<IRPCServer> create(const std::string& topic,
+                                                          IRPCHandler &handler);
+                
+                RcomServer(std::unique_ptr<rcom::IMessageHub>& hub,
+                           std::unique_ptr<RcomMessageHandler>& listener);
+                virtual ~RcomServer() = default;
+
+                void handle_events();
         };
 }
 
-#endif // __ROMI_NAVIGATION_ADAPTOR_H
+#endif // __ROMI_RCOM_SERVER_H

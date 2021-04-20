@@ -21,34 +21,35 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_NAVIGATION_ADAPTOR_H
-#define __ROMI_NAVIGATION_ADAPTOR_H
 
+#ifndef __ROMI_RCOM_MESSAGE_HANDLER_H
+#define __ROMI_RCOM_MESSAGE_HANDLER_H
+
+#include <memory>
+#include <IMessageListener.h>
 #include "rpc/IRPCHandler.h"
-#include "api/INavigation.h"
 
 namespace romi {
         
-        class NavigationAdaptor : public IRPCHandler
+        class RcomMessageHandler : public rcom::IMessageListener
         {
         protected:
-                INavigation &_navigation;
-                
-                void execute_moveat(JsonCpp& params, RPCError &error);
-                void execute_move(JsonCpp& params, RPCError &error);
-                void execute_stop(RPCError &error);
-                void execute_pause(RPCError &error);
-                void execute_continue(RPCError &error);
-                void execute_reset(RPCError &error);
+                IRPCHandler& handler_;
+
+                JsonCpp parse_request(rpp::MemBuffer& message, RPCError& error);
+                const char *get_method(JsonCpp& request, RPCError& error);
+
+                json_object_t construct_response(RPCError& error, JsonCpp& result);
+                json_object_t construct_response(RPCError& error);
+                json_object_t construct_response(int code, const char *message);
                 
         public:
-                explicit NavigationAdaptor(INavigation &navigation)
-                        : _navigation(navigation) {}
-                ~NavigationAdaptor() override = default;
+                RcomMessageHandler(IRPCHandler& handler);
+                virtual ~RcomMessageHandler() = default;
 
-                void execute(const std::string& method, JsonCpp& params, JsonCpp& result,
-                             RPCError &error) override;
+                void onmessage(rcom::IWebSocket& websocket,
+                               rpp::MemBuffer& message) override;
         };
 }
 
-#endif // __ROMI_NAVIGATION_ADAPTOR_H
+#endif // __ROMI_RCOM_MESSAGE_HANDLER_H

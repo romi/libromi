@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "rpc/IRPCHandler.h"
+#include "rpc/IRPCClient.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockRPCHandler : public romi::IRPCHandler
+class MockRPCClient : public romi::IRPCClient
 {
 public:
         MOCK_METHOD(void, execute, (const std::string& method, JsonCpp& params, JsonCpp& result, romi::RPCError& error), (override));

@@ -26,13 +26,13 @@
 namespace romi {
 
         bool RemoteStub::execute(const std::string& method,
-                                JsonCpp& params,
-                                JsonCpp& result)
+                                 JsonCpp& params,
+                                 JsonCpp& result)
         {
-                rcom::RPCError error;
+                RPCError error;
                 
                 try {
-                        _client->execute(method, params, result, error);
+                        client_->execute(method, params, result, error);
 
                         if (error.code != 0) {
                                 r_err("RemoteStub::execute: %s",
