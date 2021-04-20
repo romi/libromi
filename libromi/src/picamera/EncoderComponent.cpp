@@ -22,8 +22,8 @@
 
  */
 #include <stdexcept>
-#include <r.h>
-#include "EncoderComponent.h"
+// #include <r.h>
+#include "picamera/EncoderComponent.h"
 
 namespace romi::arm {
 

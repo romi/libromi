@@ -24,9 +24,9 @@
 #ifndef _LIBROMI_PICAMERA_H_
 #define _LIBROMI_PICAMERA_H_
 
-#include <api/ICamera.h>
-#include "PiCameraIncludes.h"
-#include "PiCameraSettings.h"
+#include "api/ICamera.h"
+#include "picamera/PiCameraIncludes.h"
+#include "picamera/PiCameraSettings.h"
 
 namespace romi {
         

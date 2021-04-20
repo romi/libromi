@@ -23,7 +23,7 @@
  */
 #include <stdexcept>
 #include <r.h>
-#include "Connection.h"
+#include "picamera/Connection.h"
 
 namespace romi::arm {
 
