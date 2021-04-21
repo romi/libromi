@@ -25,7 +25,8 @@
 #define __ROMI_I_RPC_HANDLER_H
 
 #include <string>
-#include "JsonCpp.h"
+#include <JsonCpp.h>
+#include <MemBuffer.h>
 #include "rpc/RPCError.h"
 
 namespace romi {
@@ -35,8 +36,15 @@ namespace romi {
         public:
                 virtual ~IRPCHandler() = default;
                 
-                virtual void execute(const std::string& method, JsonCpp &params,
-                                     JsonCpp &result, RPCError &status) = 0;
+                virtual void execute(const std::string& method,
+                                     JsonCpp &params,
+                                     JsonCpp &result,
+                                     RPCError &status) = 0;
+                
+                virtual void execute(const std::string& method,
+                                     JsonCpp &params,
+                                     rpp::MemBuffer& result,
+                                     RPCError &status) = 0;
         };
 }
 

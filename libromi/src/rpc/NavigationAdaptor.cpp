@@ -26,6 +26,23 @@
 #include "rpc/MethodsRover.h"
 
 namespace romi {
+
+        NavigationAdaptor::NavigationAdaptor(INavigation &navigation)
+                : navigation_(navigation)
+        {
+        }
+
+        void NavigationAdaptor::execute(const std::string& method,
+                                        JsonCpp &params,
+                                        rpp::MemBuffer& result,
+                                        RPCError &error)
+        {
+                (void) method;
+                (void) params;
+                (void) result;
+                error.code = RPCError::kMethodNotFound;
+                error.message = "Unknown method";
+        }
         
         void NavigationAdaptor::execute(const std::string& method, JsonCpp &params,
                                         JsonCpp &result, RPCError &error)
@@ -74,7 +91,7 @@ namespace romi {
                         double left = params.array("speed").num(0);
                         double right = params.array("speed").num(1);
                 
-                        if (!_navigation.moveat(left, right)) {
+                        if (!navigation_.moveat(left, right)) {
                                 error.code = 1;
                                 error.message = "moveat failed";
                         }
@@ -95,7 +112,7 @@ namespace romi {
                         double distance = params.num("distance");
                         double speed = params.num("speed");
                 
-                        if (!_navigation.move(distance, speed)) {
+                        if (!navigation_.move(distance, speed)) {
                                 error.code = 1;
                                 error.message = "move failed";
                         }
@@ -111,7 +128,7 @@ namespace romi {
         {
                 r_debug("NavigationAdaptor::execute_stop");
                 
-                if (!_navigation.stop()) {
+                if (!navigation_.stop()) {
                         error.code = 1;
                         error.message = "stop failed"; // Good luck with that!
                 }
@@ -120,7 +137,7 @@ namespace romi {
         void NavigationAdaptor::execute_pause(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_pause");
-                if (!_navigation.pause_activity()) {
+                if (!navigation_.pause_activity()) {
                         error.code = 1;
                         error.message = "stop failed";
                 }
@@ -129,7 +146,7 @@ namespace romi {
         void NavigationAdaptor::execute_continue(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_continue");
-                if (!_navigation.continue_activity()) {
+                if (!navigation_.continue_activity()) {
                         error.code = 1;
                         error.message = "continue failed";
                 }
@@ -138,7 +155,7 @@ namespace romi {
         void NavigationAdaptor::execute_reset(RPCError &error)
         {
                 r_debug("NavigationAdaptor::execute_reset");
-                if (!_navigation.reset_activity()) {
+                if (!navigation_.reset_activity()) {
                         error.code = 1;
                         error.message = "reset failed";
                 }

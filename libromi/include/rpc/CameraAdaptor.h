@@ -34,7 +34,7 @@ namespace romi {
         protected:
                 ICamera& camera_;
 
-                void grab_jpeg(JsonCpp& result, RPCError& error);
+                void grab_jpeg_json(JsonCpp& result, RPCError& error);
                 void encode(rpp::MemBuffer& jpeg, JsonCpp& result);
                 char *encode_base64(const uint8_t *s, size_t ilen);
                 
@@ -46,6 +46,10 @@ namespace romi {
                              JsonCpp& params,
                              JsonCpp& result,
                              RPCError& status);
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             rpp::MemBuffer& result,
+                             RPCError &status) override;
         };
 }
 

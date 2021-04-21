@@ -27,20 +27,27 @@
 
 namespace romi {
 
-        CameraAdaptor::CameraAdaptor(ICamera& camera) : camera_(camera)
+        CameraAdaptor::CameraAdaptor(ICamera& camera)
+                : camera_(camera)
         {
         }
 
-        void CameraAdaptor::execute(const std::string& method, JsonCpp& params,
-                                    JsonCpp& result, RPCError& error)
+        void CameraAdaptor::execute(const std::string& method,
+                                    JsonCpp &params,
+                                    rpp::MemBuffer& result,
+                                    RPCError &error)
         {
                 (void) params;
 
                 error.code = 0;
-                                
+                result.clear();
+                
                 try {
-                        if (method == MethodsCamera::grab_jpeg) {
-                                grab_jpeg(result, error);
+                        if (method == MethodsCamera::grab_jpeg_binary) {
+                                
+                                rpp::MemBuffer& jpeg = camera_.grab_jpeg();
+                                result.append(jpeg); // TODO: can we avoid a copy?
+                                
                         } else {
                                 error.code = RPCError::kMethodNotFound;
                                 error.message = "Unknown method";
@@ -51,8 +58,32 @@ namespace romi {
                         error.message = e.what();
                 }
         }
+        
+        
+        void CameraAdaptor::execute(const std::string& method, JsonCpp& params,
+                                    JsonCpp& result, RPCError& error)
+        {
+                (void) params;
+
+                error.code = 0;
+                                
+                try {
+                        if (method == MethodsCamera::grab_jpeg_json) {
+                                grab_jpeg_json(result, error);
+                        } else {
+                                error.code = RPCError::kMethodNotFound;
+                                error.message = "Unknown method";
+                        }
                         
-        void CameraAdaptor::grab_jpeg(JsonCpp& result, RPCError& error)
+                } catch (std::exception& e) {
+                        error.code = RPCError::kInternalError;
+                        error.message = e.what();
+                }
+        }
+        
+                static constexpr const char *grab_jpeg_json = "camera-grab-jpeg";
+                        
+        void CameraAdaptor::grab_jpeg_json(JsonCpp& result, RPCError& error)
         {
                 rpp::MemBuffer& jpeg = camera_.grab_jpeg();
 

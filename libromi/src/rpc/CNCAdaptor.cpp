@@ -27,6 +27,23 @@
 
 namespace romi {
 
+        CNCAdaptor::CNCAdaptor(ICNC &cnc)
+                : cnc_(cnc)
+        {
+        }
+
+        void CNCAdaptor::execute(const std::string& method,
+                                 JsonCpp &params,
+                                 rpp::MemBuffer& result,
+                                 RPCError &error)
+        {
+                (void) method;
+                (void) params;
+                (void) result;
+                error.code = RPCError::kMethodNotFound;
+                error.message = "Unknown method";
+        }
+
         void CNCAdaptor::execute(const std::string& method, JsonCpp& params,
                                  JsonCpp& result, RPCError &error)
         {
@@ -91,7 +108,7 @@ namespace romi {
         {
                 r_debug("CNCAdaptor::execute_get_range");
                 CNCRange range;
-                if (_cnc.get_range(range)) {
+                if (cnc_.get_range(range)) {
                         result = JsonCpp::construct("[[%f,%f],[%f,%f],[%f,%f]]",
                                                     range.min.x(), range.max.x(),
                                                     range.min.y(), range.max.y(),
@@ -128,7 +145,7 @@ namespace romi {
                         
                         r_debug("CNCAdaptor::execute_moveto: %f, %f, %f", x, y, z);
                                 
-                        if (!_cnc.moveto(x, y, z, v)) {
+                        if (!cnc_.moveto(x, y, z, v)) {
                                 error.code = 1;
                                 error.message = "moveto failed";
                         }
@@ -142,7 +159,7 @@ namespace romi {
                 
                 try {
                         double speed = params.num("speed");
-                        if (!_cnc.spindle(speed)) {
+                        if (!cnc_.spindle(speed)) {
                                 error.code = 1;
                                 error.message = "spindle failed";
                         }
@@ -170,7 +187,7 @@ namespace romi {
                                 path.push_back(pt);
                         }
 
-                        if (!_cnc.travel(path, speed)) {
+                        if (!cnc_.travel(path, speed)) {
                                 error.code = 1;
                                 error.message = "travel failed";
                         }
@@ -186,7 +203,7 @@ namespace romi {
         {
                 r_debug("CNCAdaptor::execute_homing");
                 
-                if (!_cnc.homing()) {
+                if (!cnc_.homing()) {
                         error.code = 1;
                         error.message = "homing failed";
                 }
@@ -195,7 +212,7 @@ namespace romi {
         void CNCAdaptor::execute_pause(RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_pause");
-                if (!_cnc.pause_activity()) {
+                if (!cnc_.pause_activity()) {
                         error.code = 1;
                         error.message = "stop failed";
                 }
@@ -204,7 +221,7 @@ namespace romi {
         void CNCAdaptor::execute_continue(RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_continue");
-                if (!_cnc.continue_activity()) {
+                if (!cnc_.continue_activity()) {
                         error.code = 1;
                         error.message = "continue failed";
                 }
@@ -213,7 +230,7 @@ namespace romi {
         void CNCAdaptor::execute_reset(RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_reset");
-                if (!_cnc.reset_activity()) {
+                if (!cnc_.reset_activity()) {
                         error.code = 1;
                         error.message = "reset failed";
                 }
@@ -222,7 +239,7 @@ namespace romi {
         void CNCAdaptor::execute_power_up(RPCError &error)
         {
                 r_debug("CNCAdaptor::power_up");
-                if (!_cnc.power_up()) {
+                if (!cnc_.power_up()) {
                         error.code = 1;
                         error.message = "power up failed";
                 }
@@ -231,7 +248,7 @@ namespace romi {
         void CNCAdaptor::execute_power_down(RPCError &error)
         {
                 r_debug("CNCAdaptor::power_down");
-                if (!_cnc.power_down()) {
+                if (!cnc_.power_down()) {
                         error.code = 1;
                         error.message = "power down failed";
                 }
@@ -240,7 +257,7 @@ namespace romi {
         void CNCAdaptor::execute_stand_by(RPCError &error)
         {
                 r_debug("CNCAdaptor::stand_by");
-                if (!_cnc.stand_by()) {
+                if (!cnc_.stand_by()) {
                         error.code = 1;
                         error.message = "stand_by failed";
                 }
@@ -249,7 +266,7 @@ namespace romi {
         void CNCAdaptor::execute_wake_up(RPCError &error)
         {
                 r_debug("CNCAdaptor::wake_up");
-                if (!_cnc.wake_up()) {
+                if (!cnc_.wake_up()) {
                         error.code = 1;
                         error.message = "wake_up failed";
                 }

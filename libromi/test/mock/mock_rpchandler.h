@@ -7,5 +7,6 @@ class MockRPCHandler : public romi::IRPCHandler
 {
 public:
         MOCK_METHOD(void, execute, (const std::string& method, JsonCpp& params, JsonCpp& result, romi::RPCError& error), (override));
+        MOCK_METHOD(void, execute, (const std::string& method, JsonCpp& params, rpp::MemBuffer& result, romi::RPCError& error), (override));
 };
 #pragma GCC diagnostic pop

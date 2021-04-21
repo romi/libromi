@@ -35,7 +35,7 @@ namespace romi {
         {
         protected:
                 IWeeder& _weeder;
-
+                
                 void execute_hoe(RPCError &error);
                 void execute_stop(RPCError &error);
                 void execute_pause(RPCError &error);
@@ -47,13 +47,17 @@ namespace romi {
                 void execute_wake_up(RPCError &error);
 
         public:
-                explicit WeederAdaptor(IWeeder& weeder) : _weeder(weeder) {
-                }
-                
+                explicit WeederAdaptor(IWeeder& weeder);
                 ~WeederAdaptor() override = default;
 
-                void execute(const std::string& method, JsonCpp& params,
-                             JsonCpp& result, RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp& params,
+                             JsonCpp& result,
+                             RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             rpp::MemBuffer& result,
+                             RPCError &status) override;
         };
 }
 
