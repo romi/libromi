@@ -41,13 +41,22 @@ namespace romi {
         }
         
         void RcomMessageHandler::onmessage(rcom::IWebSocket& websocket,
-                                           rpp::MemBuffer& message)
+                                           rpp::MemBuffer& message,
+                                           rcom::MessageType type)
+        {
+                if (type == rcom::kTextMessage)
+                        handle_json_request(websocket, message);
+                else
+                        handle_binary_request(websocket, message);
+        }
+        
+        void RcomMessageHandler::handle_binary_request(rcom::IWebSocket& websocket,
+                                                       rpp::MemBuffer& message)
         {
                 (void) message;
-                JsonCpp result;
+                rpp::MemBuffer result;
                 RPCError error;
                 json_object_t response = json_null();
-                
                         
                 JsonCpp request = parse_request(message, error);
                 if (error.code == 0) {
@@ -57,7 +66,47 @@ namespace romi {
                                 JsonCpp params;
                                 if (request.has("params"))
                                         params = request.get("params");
+
+                                handler_.execute(method, params, result, error);
+                                
+                        } else {
+                                response = construct_response(error);
+                        }
+                } else {
+                        response = construct_response(error);
+                }
+ 
+                if (error.code == 0) {
+                        websocket.send(result, rcom::kBinaryMessage);
                         
+                } else {
+                        // FIXME! improve JsonCpp and/or MemBuffer
+                        rpp::MemBuffer serialised;
+                        json_serialise(response, k_json_compact, to_membuffer,
+                                       reinterpret_cast<void*>(&serialised));
+                        websocket.send(serialised, rcom::kTextMessage);
+                }
+                
+                json_unref(response);
+        }
+        
+        void RcomMessageHandler::handle_json_request(rcom::IWebSocket& websocket,
+                                                     rpp::MemBuffer& message)
+        {
+                (void) message;
+                JsonCpp result;
+                RPCError error;
+                json_object_t response = json_null();
+                
+                JsonCpp request = parse_request(message, error);
+                if (error.code == 0) {
+                        
+                        const char *method = get_method(request, error);
+                        if (method != nullptr) {
+                                JsonCpp params;
+                                if (request.has("params"))
+                                        params = request.get("params");
+
                                 handler_.execute(method, params, result, error);
                                 response = construct_response(error, result);
                                 
@@ -69,7 +118,6 @@ namespace romi {
                 }
  
                 // FIXME! improve JsonCpp and/or MemBuffer
-                // Yet another data copy (YADC) 
                 rpp::MemBuffer serialised;
                 json_serialise(response, k_json_compact, to_membuffer,
                                reinterpret_cast<void*>(&serialised));
@@ -77,7 +125,7 @@ namespace romi {
 
                 json_unref(response);
         }
-
+        
         JsonCpp RcomMessageHandler::parse_request(rpp::MemBuffer& message,
                                                   RPCError& error)
         {

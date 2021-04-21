@@ -36,6 +36,11 @@ namespace romi {
         protected:
                 IRPCHandler& handler_;
 
+                void handle_binary_request(rcom::IWebSocket& websocket,
+                                           rpp::MemBuffer& message);
+                void handle_json_request(rcom::IWebSocket& websocket,
+                                         rpp::MemBuffer& message);
+
                 JsonCpp parse_request(rpp::MemBuffer& message, RPCError& error);
                 const char *get_method(JsonCpp& request, RPCError& error);
 
@@ -48,7 +53,8 @@ namespace romi {
                 virtual ~RcomMessageHandler() = default;
 
                 void onmessage(rcom::IWebSocket& websocket,
-                               rpp::MemBuffer& message) override;
+                               rpp::MemBuffer& message,
+                               rcom::MessageType type) override;
         };
 }
 
