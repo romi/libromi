@@ -102,7 +102,7 @@ TEST_F(rcommessagehandler_tests, request_with_invalid_json_returns_appropriate_e
                                 Return(true)));
         
         // Act
-        message_handler.onmessage(websocket_, message);
+        message_handler.onmessage(websocket_, message, rcom::kTextMessage);
 
         // Assert
         ASSERT_EQ(error_code(), RPCError::kParseError);
@@ -120,7 +120,7 @@ TEST_F(rcommessagehandler_tests, request_with_missing_method_returns_appropriate
                                 Return(true)));
         
         // Act
-        message_handler.onmessage(websocket_, message);
+        message_handler.onmessage(websocket_, message, rcom::kTextMessage);
 
         // Assert
         ASSERT_EQ(error_code(), RPCError::kInvalidRequest);
@@ -142,7 +142,7 @@ TEST_F(rcommessagehandler_tests, request_with_unknown_method_returns_appropriate
                                 Return(true)));
         
         // Act
-        message_handler.onmessage(websocket_, message);
+        message_handler.onmessage(websocket_, message, rcom::kTextMessage);
 
         // Assert
         ASSERT_EQ(error_code(), RPCError::kMethodNotFound);
@@ -164,7 +164,7 @@ TEST_F(rcommessagehandler_tests, response_contains_expected_result)
                                 Return(true)));
         
         // Act
-        message_handler.onmessage(websocket_, message);
+        message_handler.onmessage(websocket_, message, rcom::kTextMessage);
 
         // Assert
         JsonCpp received_result = get_result();

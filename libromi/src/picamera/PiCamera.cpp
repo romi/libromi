@@ -49,7 +49,7 @@ namespace romi {
         rpp::MemBuffer& PiCamera::grab_jpeg()
         {
                 encoder_.prepare_capture();
-                camera_.set_shutter_speed(); // ?
+                camera_.set_shutter_speed();
                 camera_.trigger_capture();
                 encoder_.finish_capture();
                 return encoder_.get_buffer();

@@ -67,7 +67,7 @@ namespace romi {
                                     JsonCpp &result, RPCError &error)
         { 
                 make_request(method, params);
-                if (send_request(error)
+                if (send_request(rcom::kTextMessage, error)
                     && receive_response(buffer_, error)) {
                         parse_response(result, error);
                 }
@@ -88,10 +88,10 @@ namespace romi {
                                reinterpret_cast<void*>(&buffer_));
         }
 
-        bool RcomClient::send_request(RPCError &error)
+        bool RcomClient::send_request(rcom::MessageType type, RPCError &error)
         {
                 bool success = false;
-                if (link_->send(buffer_)) {
+                if (link_->send(buffer_, type)) {
                         success = true;
                 } else {
                         error.code = RPCError::kSendError;
@@ -168,7 +168,7 @@ namespace romi {
                                      RPCError &error)
         { 
                 make_request(method, params);
-                if (send_request(error)) {
+                if (send_request(rcom::kBinaryMessage, error)) {
                         receive_response(result, error);
                 }
         }

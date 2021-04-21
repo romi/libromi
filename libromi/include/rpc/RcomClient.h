@@ -41,7 +41,7 @@ namespace romi {
                 void try_execute(const std::string& method, JsonCpp &params,
                                  rpp::MemBuffer& result, RPCError &error);
                 void make_request(const std::string& method, JsonCpp &params);
-                bool send_request(RPCError &error);
+                bool send_request(rcom::MessageType type, RPCError &error);
                 bool receive_response(rpp::MemBuffer& buffer, RPCError &error);
                 void parse_response(JsonCpp &result, RPCError &error);
                 void set_error(RPCError &error);
