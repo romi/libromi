@@ -32,7 +32,7 @@ namespace romi {
         class NavigationAdaptor : public IRPCHandler
         {
         protected:
-                INavigation &_navigation;
+                INavigation &navigation_;
                 
                 void execute_moveat(JsonCpp& params, RPCError &error);
                 void execute_move(JsonCpp& params, RPCError &error);
@@ -42,12 +42,17 @@ namespace romi {
                 void execute_reset(RPCError &error);
                 
         public:
-                explicit NavigationAdaptor(INavigation &navigation)
-                        : _navigation(navigation) {}
+                explicit NavigationAdaptor(INavigation &navigation);
                 ~NavigationAdaptor() override = default;
 
-                void execute(const std::string& method, JsonCpp& params, JsonCpp& result,
+                void execute(const std::string& method,
+                             JsonCpp& params,
+                             JsonCpp& result,
                              RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             rpp::MemBuffer& result,
+                             RPCError &status) override;
         };
 }
 

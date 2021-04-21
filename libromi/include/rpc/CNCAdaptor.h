@@ -32,7 +32,7 @@ namespace romi {
         class CNCAdaptor : public IRPCHandler
         {
         protected:
-                ICNC &_cnc;
+                ICNC &cnc_;
                 
                 void execute_get_range(JsonCpp& params, JsonCpp& result,
                                        RPCError &error);
@@ -53,11 +53,17 @@ namespace romi {
 
 
         public:
-                explicit CNCAdaptor(ICNC &cnc) : _cnc(cnc) {}
+                explicit CNCAdaptor(ICNC &cnc);
                 ~CNCAdaptor() override = default;
                 
-                void execute(const std::string& method, JsonCpp& params,
-                             JsonCpp& result, RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp& params,
+                             JsonCpp& result,
+                             RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             rpp::MemBuffer& result,
+                             RPCError &status) override;
         };
 }
 

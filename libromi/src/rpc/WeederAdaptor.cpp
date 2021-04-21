@@ -28,6 +28,23 @@
 
 namespace romi {
         
+        WeederAdaptor::WeederAdaptor(IWeeder& weeder)
+                : _weeder(weeder)
+        {
+        }
+
+        void WeederAdaptor::execute(const std::string& method,
+                                    JsonCpp &params,
+                                    rpp::MemBuffer& result,
+                                    RPCError &error)
+        {
+                (void) method;
+                (void) params;
+                (void) result;
+                error.code = RPCError::kMethodNotFound;
+                error.message = "Unknown method";
+        }
+        
         void WeederAdaptor::execute(const std::string& method,
                                     JsonCpp& params,
                                     JsonCpp& result,

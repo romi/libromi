@@ -67,8 +67,9 @@ namespace romi {
                                     JsonCpp &result, RPCError &error)
         { 
                 make_request(method, params);
-                if (send_request(error)) {
-                        receive_response(result, error);
+                if (send_request(error)
+                    && receive_response(buffer_, error)) {
+                        parse_response(result, error);
                 }
         }
 
@@ -99,14 +100,15 @@ namespace romi {
                 return success;
         }
 
-        void RcomClient::receive_response(JsonCpp &result, RPCError &error)
+        bool RcomClient::receive_response(rpp::MemBuffer& buffer, RPCError &error)
         {
-                if (link_->recv(buffer_, 0.1)) {
-                        parse_response(result, error);
-                        
+                bool success = false;
+                if (link_->recv(buffer, 0.1)) {
+                        success = true;
                 } else {
                         set_error(error);
                 }
+                return success;
         }
 
         void RcomClient::parse_response(JsonCpp &result, RPCError &error)
@@ -140,6 +142,34 @@ namespace romi {
                 default:
                         error.code = 0;
                         break;
+                }
+        }
+
+        void RcomClient::execute(const std::string& method,
+                                 JsonCpp &params,
+                                 rpp::MemBuffer& result,
+                                 RPCError &error)
+        {
+                r_debug("RcomClient::execute");
+
+                try {
+
+                        try_execute(method, params, result, error);
+                        
+                } catch (std::exception& e) {
+                        error.code = RPCError::kInternalError;
+                        error.message = e.what();                        
+                }
+        }
+        
+        void RcomClient::try_execute(const std::string& method,
+                                     JsonCpp &params,
+                                     rpp::MemBuffer& result,
+                                     RPCError &error)
+        { 
+                make_request(method, params);
+                if (send_request(error)) {
+                        receive_response(result, error);
                 }
         }
 }

@@ -134,7 +134,7 @@ TEST_F(rcommessagehandler_tests, request_with_unknown_method_returns_appropriate
         message.printf("{\"method\": \"toto\"}");
         arrange_error(RPCError::kMethodNotFound, "MESSAGE");
 
-        EXPECT_CALL(handler_, execute(_,_,_,_))
+        EXPECT_CALL(handler_, execute(_,_,An<JsonCpp&>(),_))
                 .WillOnce(Invoke(this, &rcommessagehandler_tests::set_error));
         
         EXPECT_CALL(websocket_, send(_,_))
@@ -156,7 +156,7 @@ TEST_F(rcommessagehandler_tests, response_contains_expected_result)
         message.printf("{\"method\": \"toto\"}");
         result_ = JsonCpp::parse("{\"key\": \"test value\"}");
 
-        EXPECT_CALL(handler_, execute(_,_,_,_))
+        EXPECT_CALL(handler_, execute(_,_,An<JsonCpp&>(),_))
                 .WillOnce(Invoke(this, &rcommessagehandler_tests::set_result));
         
         EXPECT_CALL(websocket_, send(_,_))

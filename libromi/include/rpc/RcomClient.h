@@ -38,9 +38,11 @@ namespace romi {
 
                 void try_execute(const std::string& method, JsonCpp &params,
                                  JsonCpp &result, RPCError &error);
+                void try_execute(const std::string& method, JsonCpp &params,
+                                 rpp::MemBuffer& result, RPCError &error);
                 void make_request(const std::string& method, JsonCpp &params);
                 bool send_request(RPCError &error);
-                void receive_response(JsonCpp &result, RPCError &error);
+                bool receive_response(rpp::MemBuffer& buffer, RPCError &error);
                 void parse_response(JsonCpp &result, RPCError &error);
                 void set_error(RPCError &error);
                         
@@ -54,8 +56,15 @@ namespace romi {
 
                 /** execute() does not throw exceptions. All errors
                  * are returned through the RPCError structure. */
-                void execute(const std::string& method, JsonCpp &params,
-                             JsonCpp &result, RPCError &error) override;
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             JsonCpp &result,
+                             RPCError &error) override;
+                
+                void execute(const std::string& method,
+                             JsonCpp &params,
+                             rpp::MemBuffer& result,
+                             RPCError &status) override;
         };
 }
 
