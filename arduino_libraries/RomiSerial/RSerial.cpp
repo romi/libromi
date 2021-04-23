@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <r.h>
 #include "RSerial.h"
+#include <ClockAccessor.h>
 
 RSerial::RSerial(const std::string& device, int baudrate, bool reset)
         : _device(device),
@@ -167,7 +168,7 @@ void RSerial::open_device()
         }
         // FIXME: the connection resets the Arduino and it can take
         // some time before the serial on the board is up and running. 
-        clock_sleep(3.0); 
+        rpp::ClockAccessor::GetInstance()->sleep(3.0);
 }
 
 void RSerial::configure_termios()

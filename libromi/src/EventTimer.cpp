@@ -34,7 +34,7 @@ namespace romi {
         bool EventTimer::has_timed_out()
         {
                 return (_event_time != 0.0
-                        && clock_time() >= _event_time);
+                        && _clock->time() >= _event_time);
         }
 
         int EventTimer::get_next_event()
@@ -49,7 +49,7 @@ namespace romi {
         
         void EventTimer::set_timeout(double timeout)
         {
-                _event_time = clock_time() + timeout;
+                _event_time = _clock->time() + timeout;
         }
 }
 

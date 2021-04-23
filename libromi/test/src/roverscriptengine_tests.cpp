@@ -12,10 +12,11 @@
 #include "rover/Rover.h"
 #include "rover/RoverScriptEngine.h"
 #include "ScriptList.h"
+#include <ClockAccessor.h>
 
 using namespace std;
 using namespace testing;
-using namespace romi;
+
 
 class roverscriptengine_tests : public ::testing::Test
 {
@@ -29,6 +30,7 @@ protected:
         MockNotifications notifications;
         MockWeeder weeder;
         JsonCpp json;
+
         
 	roverscriptengine_tests() : input_device(), display(), speed_controller(), navigation(), event_timer(),
 	                                menu(), notifications(), weeder(), json(){
@@ -49,24 +51,24 @@ protected:
 
 TEST_F(roverscriptengine_tests, test_constructor)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 }
 
 TEST_F(roverscriptengine_tests, get_next_event_returns_none)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
         ASSERT_EQ(0, script_engine.get_next_event());
 }
 
 TEST_F(roverscriptengine_tests, calls_move)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
-        Rover rover(input_device, display,
+        romi::Rover rover(input_device, display,
                     speed_controller,
                     navigation,
                     event_timer,
@@ -79,17 +81,17 @@ TEST_F(roverscriptengine_tests, calls_move)
                 .WillOnce(Return(true));
         
         script_engine.execute_script(rover, 0);
-        clock_sleep(0.050); // OK?
+        rpp::ClockAccessor::GetInstance()->sleep(0.050); // OK?
         
         ASSERT_EQ(1, script_engine.get_next_event());
 }
 
 TEST_F(roverscriptengine_tests, calls_hoe)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
-        Rover rover(input_device, display,
+        romi::Rover rover(input_device, display,
                     speed_controller,
                     navigation,
                     event_timer,
@@ -102,17 +104,17 @@ TEST_F(roverscriptengine_tests, calls_hoe)
                 .WillOnce(Return(true));
         
         script_engine.execute_script(rover, 1);
-        clock_sleep(0.050); // OK?
+        rpp::ClockAccessor::GetInstance()->sleep(0.050); // OK?
         
         ASSERT_EQ(1, script_engine.get_next_event());
 }
 
 TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_1)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
-        Rover rover(input_device, display,
+        romi::Rover rover(input_device, display,
                     speed_controller,
                     navigation,
                     event_timer,
@@ -125,17 +127,17 @@ TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_1)
                 .WillOnce(Return(false));
         
         script_engine.execute_script(rover, 0);
-        clock_sleep(0.050); // OK?
+        rpp::ClockAccessor::GetInstance()->sleep(0.050); // OK?
         
         ASSERT_EQ(2, script_engine.get_next_event());
 }
 
 TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_2)
 {
-        ScriptList scripts(json);
-        RoverScriptEngine script_engine(scripts, 1, 2);
+        romi::ScriptList scripts(json);
+        romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
-        Rover rover(input_device, display,
+        romi::Rover rover(input_device, display,
                     speed_controller,
                     navigation,
                     event_timer,
@@ -148,7 +150,7 @@ TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_2)
                 .WillOnce(Return(false));
         
         script_engine.execute_script(rover, 1);
-        clock_sleep(0.050); // OK?
+        rpp::ClockAccessor::GetInstance()->sleep(0.050); // OK?
         
         ASSERT_EQ(2, script_engine.get_next_event());
 }

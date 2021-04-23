@@ -30,6 +30,7 @@
 #include <RomiSerialClient.h>
 #include <RomiSerialErrors.h>
 #include <r.h>
+#include <ClockAccessor.h>
 
 using namespace std;
 
@@ -138,7 +139,7 @@ JsonCpp RomiSerialClient::try_sending_request(std::string &request)
                         } 
                         
                 }
-                clock_sleep(0.010);
+                rpp::ClockAccessor::GetInstance()->sleep(0.010);
         }
 
         return response;
@@ -284,8 +285,9 @@ JsonCpp RomiSerialClient::read_response()
         JsonCpp result;
         double start_time;
         bool has_response = false;
-        
-        start_time = clock_time();
+
+        auto clock = rpp::ClockAccessor::GetInstance();
+        start_time = clock->time();
         
         while (!has_response) {
                 
@@ -350,7 +352,7 @@ JsonCpp RomiSerialClient::read_response()
                 // This timeout results from reading the complete
                 // message. Return an error if the reading requires
                 // more than the ROMISERIALCLIENT_TIMEOUT seconds.
-                double now = clock_time();
+                double now = clock->time();
                 if (now - start_time > ROMISERIALCLIENT_TIMEOUT) {
                         result = make_error(romiserial_connection_timeout);
                         has_response = true;

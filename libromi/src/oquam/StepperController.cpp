@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include <JsonCpp.h> 
 #include <RomiSerialErrors.h>
-
+#include <ClockAccessor.h>
 #include "oquam/StepperController.h" 
 
 namespace romi {
@@ -33,6 +33,7 @@ namespace romi {
         {
                 int r = -1;
                 JsonCpp response;
+                auto clock = rpp::ClockAccessor::GetInstance();
 
                 /* The number of loops is a bit random but it avoids
                  * an infinite loop. The loop will take at the most 10
@@ -59,7 +60,7 @@ namespace romi {
                                         // Error code 1 indicates that the
                                         // command buffer in the firmware is
                                         // full. Wait a bit and try again.
-                                        clock_sleep(0.2);
+                                        clock->sleep(0.2);
                                                 
                                 } else {
                                         r_err("StepperController::execute: "
@@ -158,8 +159,9 @@ namespace romi {
 
         bool StepperController::synchronize(double timeout)
         {
+                auto clock = rpp::ClockAccessor::GetInstance();
                 bool success = false;
-                double start_time = clock_time();
+                double start_time = clock->time();
                 
                 while (true) {
 
@@ -171,10 +173,10 @@ namespace romi {
                         } else if (idle == -1) {
                                 break;
                         } else {
-                                clock_sleep(0.2);
+                                clock->sleep(0.2);
                         }
 
-                        double now = clock_time();
+                        double now = clock->time();
                         if (timeout >= 0.0 && (now - start_time) >= timeout)
                                 break;
                 }
