@@ -24,6 +24,7 @@
 
 #include "camera_v4l.h"
 #include "USBCamera.h"
+#include <chrono>
 
 namespace romi {
         
@@ -31,7 +32,7 @@ namespace romi {
 
         USBCamera::USBCamera(const std::string& device, size_t width, size_t height)
                 : _camera(nullptr), _device(device), _mutex(),
-                  _thread(nullptr), _done(false), _image()
+                _done(false), _image(), _thread()
         {
                 if (_device.length() == 0)
                         throw std::runtime_error("USBCamera: Invalid device");
@@ -48,11 +49,9 @@ namespace romi {
 
         USBCamera::~USBCamera()
         {
-                if (_thread) {
-                        _done = true;
-                        thread_join(_thread);
-                        delete_thread(_thread);
-                }
+                _done = true;
+                if (_thread.joinable()) _thread.join();
+
                 if (_camera)
                         delete_camera(_camera);
         }
@@ -77,20 +76,15 @@ namespace romi {
 
         void USBCamera::start_capture_thread()
         {
-                _thread = new_thread(USBCamera::_run, this);
+                _thread = std::thread(&USBCamera::run, this);
         }
-        
-        void USBCamera::_run(void* data)
-        {
-                USBCamera *camera = (USBCamera*) data;
-                camera->run();
-        }
+
 
         void USBCamera::run()
         {
                 while (!_done) {
                         grab_from_camera();
-                        clock_sleep(0.020);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(20));
                 }
         }
 

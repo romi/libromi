@@ -28,11 +28,12 @@
 #include <string>
 #include <stdexcept>
 #include <mutex>
-#include <r.h>
+#include <thread>
 #include <JsonCpp.h>
 
 #include "api/ICamera.h"
 #include "Image.h"
+#include <atomic>
 
 typedef struct _camera_t camera_t;
 
@@ -47,16 +48,14 @@ namespace romi {
                 camera_t* _camera;
                 std::string _device;
                 std::mutex _mutex;
-                thread_t *_thread;
-                bool _done;
+                std::atomic<bool> _done;
                 Image _image;
-                
+                std::thread _thread;
                 bool open(size_t width, size_t height);
                 void close();
                 void grab_from_camera();
                 void start_capture_thread();
                 void run();
-                static void _run(void* data);
 
 
         public:

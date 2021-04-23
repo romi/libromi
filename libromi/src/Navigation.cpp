@@ -22,7 +22,8 @@
 
  */
 
-#include <r.h>
+#include <log.h>
+#include <ClockAccessor.h>
 #include "Navigation.h"
 
 namespace romi {
@@ -43,7 +44,8 @@ namespace romi {
         {
                 bool success = false;
                 double left, right, timestamp;
-                double start_time = clock_time();
+                auto clock = rpp::ClockAccessor::GetInstance();
+                double start_time = clock->time();
 
                 _stop = false;
                 
@@ -63,12 +65,12 @@ namespace romi {
 
                         if (distance_travelled >= distance) {
                                 _driver.moveat(0, 0);
-                                clock_sleep(0.100); // FIXME
+                                clock->sleep(0.100); // FIXME
                                 success = true;
                                 _stop = true;
                         }
 
-                        double now = clock_time();
+                        double now = clock->time();
                         if (now - start_time >= timestamp) {
                                 r_err("Navigation::wait_travel: time out (%f s)", timeout);
                                 _driver.moveat(0, 0);
@@ -76,7 +78,7 @@ namespace romi {
                                 _stop = true;
                         }
 
-                        clock_sleep(0.010);
+                        clock->sleep(0.010);
                 }
 
                 return success;

@@ -24,6 +24,7 @@
 #ifndef _ROMI_DEFAULT_EVENT_TIMER_H
 #define _ROMI_DEFAULT_EVENT_TIMER_H
 
+#include <ClockAccessor.h>
 #include "IEventTimer.h"
 
 namespace romi {
@@ -33,11 +34,12 @@ namespace romi {
         protected:
                 int _event;
                 double _event_time;
+                std::shared_ptr<rpp::IClock> _clock;
 
                 bool has_timed_out();
 
         public:
-                explicit EventTimer(int event) : _event(event), _event_time(0) {}
+                explicit EventTimer(int event) : _event(event), _event_time(0), _clock(rpp::ClockAccessor::GetInstance()){}
                 ~EventTimer() override = default;
 
                 int get_next_event() override;
