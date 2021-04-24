@@ -29,7 +29,7 @@
 #include <vector>
 #include <map>
 #include <getopt.h>
-#include "Options.h"
+#include "configuration/IOptions.h"
 
 namespace romi {
 
@@ -42,7 +42,7 @@ namespace romi {
                 const char *description;
         };
         
-        class GetOpt : public Options
+        class GetOpt : public IOptions
         {
         protected:
                 std::vector<Option> _options;

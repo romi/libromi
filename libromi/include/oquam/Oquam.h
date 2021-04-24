@@ -32,7 +32,7 @@
 #include "api/ICNC.h"
 #include "v3.h"
 #include "IFileCabinet.h"
-#include "oquam/CNCController.h"
+#include "oquam/ICNCController.h"
 #include "oquam/SmoothPath.h" 
 
 namespace romi {
@@ -42,7 +42,7 @@ namespace romi {
         class Oquam : public ICNC
         {
         public:
-                CNCController& _controller;
+                ICNCController& _controller;
 
                 ISession& session_;
                 std::mutex _mutex;
@@ -61,7 +61,7 @@ namespace romi {
                 
         public:
                 
-                Oquam(CNCController& controller, CNCRange& range,
+                Oquam(ICNCController& controller, CNCRange& range,
                       const double *vmax, const double *amax,
                       const double *scale_meters_to_steps, 
                       double path_max_deviation,

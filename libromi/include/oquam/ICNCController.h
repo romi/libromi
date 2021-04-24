@@ -28,14 +28,14 @@
 
 namespace romi {
 
-        class CNCController : public IActivity
+        class ICNCController : public IActivity
         {
         public:
                 enum { RUNNING, HOMING, ERROR };
 
                 enum AxisIndex { NoAxis = -1, AxisX = 0, AxisY = 1, AxisZ = 2 };
                         
-                ~CNCController() override = default;
+                ~ICNCController() override = default;
 
                 virtual bool configure_homing(AxisIndex axis1, AxisIndex axis2,
                                               AxisIndex axis3) = 0;

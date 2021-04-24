@@ -25,7 +25,7 @@
 #define __ROMI_BRUSH_MOTORDRIVER_H
 
 #include <stdexcept>
-#include "IMotorDriver.h"
+#include "api/IMotorDriver.h"
 #include "RomiSerialClient.h"
 
 namespace romi {

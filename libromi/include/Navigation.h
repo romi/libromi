@@ -27,8 +27,8 @@
 #include <mutex>
 
 #include "api/INavigation.h"
+#include "api/IMotorDriver.h"
 #include "NavigationSettings.h"
-#include "IMotorDriver.h"
 #include "WheelOdometry.h" 
 
 namespace romi {
@@ -55,7 +55,8 @@ namespace romi {
         public:
                 
                 Navigation(IMotorDriver &driver, NavigationSettings &settings)
-                        : _driver(driver), _settings(settings), _mutex(), _status(MOVEAT_CAPABLE), _stop(0) {
+                        : _driver(driver), _settings(settings), _mutex(),
+                        _status(MOVEAT_CAPABLE), _stop(0) {
                 }
                 
                 ~Navigation() override = default;

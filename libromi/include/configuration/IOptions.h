@@ -22,15 +22,15 @@
 
  */
 
-#ifndef __ROMI_OPTIONS_H
-#define __ROMI_OPTIONS_H
+#ifndef __ROMI_I_OPTIONS_H
+#define __ROMI_I_OPTIONS_H
 
 namespace romi {
         
-        class Options
+        class IOptions
         {
         public:
-                virtual ~Options() = default;
+                virtual ~IOptions() = default;
                 
                 virtual void parse(int argc, char **argv) = 0;
                 virtual bool get_flag(const char *name) = 0;
@@ -40,5 +40,5 @@ namespace romi {
         };
 }
 
-#endif // __ROMI_OPTIONS_H
+#endif // __ROMI_I_OPTIONS_H
 
