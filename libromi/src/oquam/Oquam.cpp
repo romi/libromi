@@ -32,7 +32,7 @@
 
 namespace romi {
         
-        Oquam::Oquam(CNCController& controller,
+        Oquam::Oquam(ICNCController& controller,
                      CNCRange& range,
                      const double *vmax,
                      const double *amax,
@@ -53,12 +53,9 @@ namespace romi {
 
                 vcopy(_scale_meters_to_steps, scale_meters_to_steps);
 
-                // if (!_controller.configure_homing(AxisZ, AxisX, AxisY)) 
-                //         throw std::runtime_error("Oquam: configure_homing failed");
-                // }
-                if (!_controller.configure_homing(CNCController::AxisX,
-                                                  CNCController::AxisY,
-                                                  CNCController::NoAxis)) {
+                if (!_controller.configure_homing(ICNCController::AxisX,
+                                                  ICNCController::AxisY,
+                                                  ICNCController::NoAxis)) {
                         throw std::runtime_error("Oquam: configure_homing failed");
                 }
         }

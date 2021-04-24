@@ -24,11 +24,11 @@
 #ifndef _OQUAM_FAKE_CNC_CONTROLLER_HPP_
 #define _OQUAM_FAKE_CNC_CONTROLLER_HPP_
 
-#include "oquam/CNCController.h"
+#include "oquam/ICNCController.h"
 
 namespace romi {
 
-        class FakeCNCController : public CNCController
+        class FakeCNCController : public ICNCController
         {
         public:
                 static constexpr const char *ClassName = "fake-cnc-controller";
@@ -43,8 +43,11 @@ namespace romi {
                         
                 virtual ~FakeCNCController() override = default;
 
-                bool configure_homing(__attribute__((unused))AxisIndex axis1, __attribute__((unused))AxisIndex axis2,
-                                      __attribute__((unused))AxisIndex axis3) override {
+                bool configure_homing(AxisIndex axis1, AxisIndex axis2,
+                                      AxisIndex axis3) override {
+                        (void) axis1;
+                        (void) axis2;
+                        (void) axis3;
                         return true;
                 }
 

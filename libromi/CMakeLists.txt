@@ -52,9 +52,7 @@ set(SOURCES
         include/JoystickEventMapper.h
         include/LinuxJoystick.h
         include/Menu.h
-        include/IMotorDriver.h
         include/NavigationSettings.h
-        include/Options.h
         include/IScriptEngine.h
         include/ScriptList.h
         include/ScriptMenu.h
@@ -73,6 +71,7 @@ set(SOURCES
         include/api/IEventSource.h
         include/api/IInputDevice.h
         include/api/Joystick.h
+        include/api/IMotorDriver.h
         include/api/INavigation.h
         include/api/INotifications.h
         include/api/Path.h
@@ -81,6 +80,7 @@ set(SOURCES
         include/api/IWeeder.h
 
         include/configuration/ConfigurationProvider.h
+        include/configuration/IOptions.h
 
         include/fake/FakeCNC.h
         include/fake/FakeDisplay.h
@@ -92,7 +92,7 @@ set(SOURCES
         include/fake/FakeWeeder.h
 
         include/oquam/ATDC.h
-        include/oquam/CNCController.h
+        include/oquam/ICNCController.h
         include/oquam/FakeCNCController.h
         include/oquam/is_valid.h
         include/oquam/Oquam.h

@@ -28,13 +28,13 @@
 #include <RomiSerialClient.h> 
 #include <RSerial.h>
 
-#include "oquam/CNCController.h" 
+#include "oquam/ICNCController.h" 
 #include "ActivityHelper.h" 
 
 
 namespace romi {
                 
-        class StepperController : public CNCController
+        class StepperController : public ICNCController
         {
         protected:
 
