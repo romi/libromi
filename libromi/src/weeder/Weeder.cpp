@@ -22,7 +22,6 @@
 
  */
 
-#include "DebugWeedingSession.h"
 #include "weeder/Weeder.h"
 
 const double diameter_tool_default = 0.05;

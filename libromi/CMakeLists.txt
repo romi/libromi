@@ -37,7 +37,6 @@ set(SOURCES
         include/ActivityHelper.h
         include/BrushMotorDriver.h
         include/CrystalDisplay.h
-        include/DebugWeedingSession.h
         include/EventTimer.h
         include/Navigation.h
         include/SpeedController.h
@@ -151,7 +150,6 @@ set(SOURCES
         
         src/ActivityHelper.cpp
         src/BrushMotorDriver.cpp
-        src/DebugWeedingSession.cpp
         src/EventTimer.cpp
         src/Navigation.cpp
         src/SpeedController.cpp

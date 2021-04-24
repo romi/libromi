@@ -21,7 +21,7 @@
   <http://www.gnu.org/licenses/>.
 
 */
-
+#include <r.h>
 #include "BrushMotorDriver.h"
 
 namespace romi {

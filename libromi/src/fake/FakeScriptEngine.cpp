@@ -22,7 +22,7 @@
 
  */
 #include <thread>
-#include <r.h>
+#include <ClockAccessor.h>
 #include "fake/FakeScriptEngine.h"
 
 namespace romi {
@@ -41,7 +41,7 @@ namespace romi {
         void FakeScriptEngine::run_script()
         {
                 r_debug("FakeScriptEngine::run_script");
-                clock_sleep(10.0);
+                rpp::ClockAccessor::GetInstance()->sleep(10.0);
                 _send_finished_event = true;                
                 r_debug("FakeScriptEngine::run_script: finished");
         }
