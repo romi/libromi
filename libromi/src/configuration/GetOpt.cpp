@@ -114,7 +114,8 @@ namespace romi {
         {
                 std::string retval;
                 for (auto & _option : _options) {
-                        if (_option.name == name) {
+                        if (_option.name == name
+                            && _option.default_value != nullptr) {
                                 retval = _option.default_value;
                                 break;
                         }

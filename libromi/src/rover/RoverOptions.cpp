@@ -38,15 +38,12 @@ namespace romi {
                 { RoverOptions::config, true, "config.json",
                   "Path of the config file" },
 
-                { RoverOptions::script, true, "script.json",
+                { RoverOptions::script, true, nullptr,
                   "The path of the file containing the scripts and menus" },
                 
                 { RoverOptions::session_directory, true, ".",
                   "The session directory where the output "
                   "files are stored (logs, images...)"},
-                
-                { RoverOptions::camera_image, true, nullptr,
-                  "The path of the image file for the file camera."},
                 
                 { RoverOptions::soundfont, true, nullptr,
                   "The path of the soundfont for the sound notification "},
@@ -57,8 +54,14 @@ namespace romi {
                 { RoverOptions::display_device, true, nullptr,
                   "The path of the system device for the display "},
                 
+                { RoverOptions::camera_classname, true, nullptr,
+                  "The classname of the camera to instanciate."},
+                
                 { RoverOptions::camera_device, true, nullptr,
                   "The device path for the USB camera."},
+                
+                { RoverOptions::camera_image, true, nullptr,
+                  "The path of the image file for the file camera."},
                 
                 { RoverOptions::cnc_device, true, nullptr,
                   "The stepper controller's serial device "},
