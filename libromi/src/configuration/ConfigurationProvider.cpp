@@ -100,4 +100,24 @@ namespace romi {
                     device = get_camera_device_in_config(config);
             return device;
     }
+
+    std::string get_camera_classname_in_config(JsonCpp& config)
+    {
+            try {
+                    return (const char *) config["weeder"]["camera-classname"];
+
+            } catch (JSONError& je) {
+                    r_err("get_camera_classname_in_config: Failed to get value "
+                          "of weeder.camera-classname");
+                    throw std::runtime_error("Missing classname for camera in config");
+            }
+    }
+
+    std::string get_camera_classname(romi::IOptions& options, JsonCpp& config)
+    {
+            std::string device = options.get_value(romi::RoverOptions::camera_classname);
+            if (device.empty())
+                    device = get_camera_classname_in_config(config);
+            return device;
+    }
 }

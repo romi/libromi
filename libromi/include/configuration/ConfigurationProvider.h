@@ -16,6 +16,8 @@ namespace romi
     std::string get_camera_image(romi::IOptions& options, JsonCpp& config);
     std::string get_camera_device_in_config(JsonCpp& config);
     std::string get_camera_device(romi::IOptions& options, JsonCpp& config);
+    std::string get_camera_classname_in_config(JsonCpp& config);
+    std::string get_camera_classname(romi::IOptions& options, JsonCpp& config);
 
 }
 

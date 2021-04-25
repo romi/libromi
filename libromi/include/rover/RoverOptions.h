@@ -35,10 +35,11 @@ namespace romi {
                 static constexpr const char* config = "config";
                 static constexpr const char* script = "script";
                 static constexpr const char* soundfont = "soundfont";
-                static constexpr const char* camera_image = "camera-image";
                 static constexpr const char* session_directory = "session-directory";
                 static constexpr const char* joystick_device = "joystick-device";
+                static constexpr const char* camera_classname = "camera-classname";
                 static constexpr const char* camera_device = "camera-device";
+                static constexpr const char* camera_image = "camera-image";
                 static constexpr const char* display_device = "display-device";
                 static constexpr const char* cnc_device = "cnc-device";
                 static constexpr const char* navigation_device = "navigation-device";
