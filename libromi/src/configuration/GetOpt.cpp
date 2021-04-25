@@ -75,7 +75,7 @@ namespace romi {
                                 break;
                 
                         if (c == '?')
-                                r_warn("Unrecognized option");
+                                r_warn("Unrecognized option (try --help)");
                         else
                                 set_option(static_cast<size_t>(option_index), optarg);
                 }
