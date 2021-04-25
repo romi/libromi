@@ -27,7 +27,7 @@
 
 namespace romi {
         
-        BldcGimbal::BldcGimbal(IRomiSerialClient &serial)
+        BldcGimbal::BldcGimbal(IRomiSerialClient& serial)
                 : serial_(serial)
         {
         }
@@ -37,9 +37,9 @@ namespace romi {
                 return (int) (clamp(angle) * 10.0);
         }
 
-        int BldcGimbal::arg_to_angle(double arg)
+        double BldcGimbal::arg_to_angle(double arg)
         {
-                return (double) arg / 10.0;
+                return arg / 10.0;
         }
         
         double BldcGimbal::clamp(double angle)
@@ -47,7 +47,7 @@ namespace romi {
                 angle = std::fmod(angle, 360.0);
                 if (angle < 0.0)
                         angle += 360.0;
-                return angle
+                return angle;
         }
 
         bool BldcGimbal::moveto(double angle)

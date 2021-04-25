@@ -35,6 +35,7 @@ endif()
         
 set(SOURCES
         include/ActivityHelper.h
+        include/BldcGimbal.h
         include/BrushMotorDriver.h
         include/CrystalDisplay.h
         include/EventTimer.h
@@ -63,21 +64,22 @@ set(SOURCES
         include/v3.h
         include/WheelOdometry.h
 
+        include/api/CNCRange.h
         include/api/IActivity.h
         include/api/ICamera.h
         include/api/ICNC.h
-        include/api/CNCRange.h
         include/api/IDisplay.h
         include/api/IEventSource.h
+        include/api/IGimbal.h
         include/api/IInputDevice.h
-        include/api/Joystick.h
         include/api/IMotorDriver.h
         include/api/INavigation.h
         include/api/INotifications.h
-        include/api/Path.h
         include/api/IPowerDevice.h
-        include/api/StateMachine.h
         include/api/IWeeder.h
+        include/api/Joystick.h
+        include/api/Path.h
+        include/api/StateMachine.h
 
         include/configuration/ConfigurationProvider.h
         include/configuration/IOptions.h
@@ -114,12 +116,14 @@ set(SOURCES
 
         include/rpc/CameraAdaptor.h
         include/rpc/CNCAdaptor.h
+        include/rpc/GimbalAdaptor.h
         include/rpc/IRPCClient.h
         include/rpc/IRPCHandler.h
         include/rpc/IRPCServer.h
         include/rpc/MethodsActivity.h
         include/rpc/MethodsCamera.h
         include/rpc/MethodsCNC.h
+        include/rpc/MethodsGimbal.h
         include/rpc/MethodsNavigation.h
         include/rpc/MethodsRover.h
         include/rpc/MethodsWeeder.h
@@ -129,6 +133,7 @@ set(SOURCES
         include/rpc/RcomServer.h
         include/rpc/RemoteCamera.h
         include/rpc/RemoteCNC.h
+        include/rpc/RemoteGimbal.h
         include/rpc/RemoteNavigation.h
         include/rpc/RemoteStub.h
         include/rpc/RemoteWeeder.h
@@ -151,6 +156,7 @@ set(SOURCES
         src/fake/FakeScriptEngine.cpp
         
         src/ActivityHelper.cpp
+        src/BldcGimbal.cpp
         src/BrushMotorDriver.cpp
         src/EventTimer.cpp
         src/Navigation.cpp
@@ -188,12 +194,14 @@ set(SOURCES
 
         src/rpc/CameraAdaptor.cpp
         src/rpc/CNCAdaptor.cpp
+        src/rpc/GimbalAdaptor.cpp
         src/rpc/NavigationAdaptor.cpp
         src/rpc/RcomClient.cpp
         src/rpc/RcomMessageHandler.cpp
         src/rpc/RcomServer.cpp
         src/rpc/RemoteCamera.cpp
         src/rpc/RemoteCNC.cpp
+        src/rpc/RemoteGimbal.cpp
         src/rpc/RemoteNavigation.cpp
         src/rpc/RemoteStub.cpp
         src/rpc/RemoteWeeder.cpp

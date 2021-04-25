@@ -99,10 +99,10 @@ namespace romi {
                 }
         }
 
-        void GimbalAdaptor::execute_moveto(RPCError &error)
+        void GimbalAdaptor::execute_moveto(JsonCpp& params, RPCError &error)
         {
                 r_debug("GimbalAdaptor::execute_moveto");
-                double angle = result.num(MethodsGimbal::angle_param);
+                double angle = params.num(MethodsGimbal::angle_param);
                 if (!gimbal_.moveto(angle)) {
                         error.code = 1;
                         error.message = "Moveto failed";
@@ -112,8 +112,8 @@ namespace romi {
         void GimbalAdaptor::execute_get_position(JsonCpp& result, RPCError &error)
         {
                 r_debug("GimbalAdaptor::get_position");
-                double value;
-                if (gimbal_.get_position(value)) {
+                double angle;
+                if (gimbal_.get_position(angle)) {
                         json_object_setnum(result.ptr(), MethodsGimbal::angle_result,
                                            angle); // FIXME: remove old json api
                 } else {

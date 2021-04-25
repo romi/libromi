@@ -24,19 +24,22 @@
 #ifndef __ROMI_BLDC_GIMBAL_H
 #define __ROMI_BLDC_GIMBAL_H
 
+#include "api/IGimbal.h"
+#include "IRomiSerialClient.h"
+
 namespace romi {
         
         class BldcGimbal : public IGimbal
         {
         protected:
-                RomiSerialClient &_romi_serial;
+                IRomiSerialClient& serial_;
 
                 double clamp(double angle_in_degrees);
                 int angle_to_arg(double angle);
-                int arg_to_angle(double arg);
+                double arg_to_angle(double arg);
                 
         public:
-                BldcGimbal();
+                BldcGimbal(IRomiSerialClient& serial);
                 virtual ~BldcGimbal() = default;
                                 
                 // IGimbal

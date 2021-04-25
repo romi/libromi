@@ -29,13 +29,13 @@
 
 namespace romi {
         
-        class RemoteWeeder : public IGimbal, public RemoteStub
+        class RemoteGimbal : public IGimbal, public RemoteStub
         {
         public:
                 static constexpr const char *ClassName = "remote-gimbal";
                 
-                explicit RemoteWeeder(std::unique_ptr<IRPCClient>& client);
-                ~RemoteWeeder() override = default;
+                explicit RemoteGimbal(std::unique_ptr<IRPCClient>& client);
+                ~RemoteGimbal() override = default;
 
                 bool moveto(double angle_in_degrees) override;
                 bool get_position(double& angle) override;

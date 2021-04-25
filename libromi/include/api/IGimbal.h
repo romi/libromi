@@ -24,6 +24,9 @@
 #ifndef __ROMI_I_GIMBAL_H
 #define __ROMI_I_GIMBAL_H
 
+#include "api/IActivity.h"
+#include "api/IPowerDevice.h"
+
 namespace romi {
         
         class IGimbal : public IActivity, public IPowerDevice
