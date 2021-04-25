@@ -49,7 +49,8 @@ namespace romi {
                 static constexpr const char *ClassName = "stepper-controller";
         
                 StepperController(RomiSerialClient &romi_serial)
-                        : _romi_serial(romi_serial), _mutex(), _continue_condition(), _activity_helper() {}
+                        : _romi_serial(romi_serial), _mutex(),
+                        _continue_condition(), _activity_helper() {}
                 
                 virtual ~StepperController() override = default;
 

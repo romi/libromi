@@ -48,7 +48,7 @@ namespace romi {
                   _path_max_deviation(path_max_deviation),
                   _path_slice_duration(path_slice_duration),
                   _path_max_slice_duration(32.0),
-                  _script_count(0)
+                  _store_script(false)
         {
 
                 vcopy(_scale_meters_to_steps, scale_meters_to_steps);
@@ -96,6 +96,7 @@ namespace romi {
         bool Oquam::moveto(double x, double y, double z, double relative_speed)
         {
                 SynchronizedCodeBlock synchronize(_mutex);
+                _store_script = false;
                 return moveto_synchronized(x, y, z, relative_speed);
         }
 
@@ -154,6 +155,7 @@ namespace romi {
         bool Oquam::travel(Path &path, double relative_speed)
         {
                 SynchronizedCodeBlock synchronize(_mutex);
+                _store_script = true;
                 return travel_synchronized(path, relative_speed);
         }
         
@@ -223,15 +225,20 @@ namespace romi {
 
         void Oquam::store_script(SmoothPath& script) 
         {
-                store_script_svg(script);
-                store_script_json(script);
+                if (_store_script) {
+                        store_script_svg(script);
+                        store_script_json(script);
+                        _store_script = false;
+                }
         }
 
         void Oquam::store_script_svg(SmoothPath &script)
         {
                 membuf_t *svg = plot_to_mem(script, _range, _vmax.values(), _amax.values());
                 if (svg != nullptr) {
-                        session_.store_svg("path.svg", std::string(membuf_data(svg), membuf_len(svg)));
+                        session_.store_svg("path.svg",
+                                           std::string(membuf_data(svg),
+                                                       membuf_len(svg)));
                         delete_membuf(svg);
                 } else {
                         r_warn("Oquam::store_script: plot failed");
@@ -242,7 +249,9 @@ namespace romi {
         {
                 membuf_t *text = new_membuf();
                 print(script, text);
-                session_.store_txt("script.txt", std::string(membuf_data(text), membuf_len(text)));
+                session_.store_txt("path.json",
+                                   std::string(membuf_data(text),
+                                               membuf_len(text)));
                 delete_membuf(text);
         }
 

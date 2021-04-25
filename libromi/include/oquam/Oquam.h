@@ -57,7 +57,7 @@ namespace romi {
                 double _scale_meters_to_steps[3]{};
                 double _path_slice_duration;
                 double _path_max_slice_duration;
-                int _script_count;
+                bool _store_script;
                 
         public:
                 
