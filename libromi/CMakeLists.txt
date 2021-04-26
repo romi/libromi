@@ -211,7 +211,6 @@ set(SOURCES
         src/weeder/som/Superpixels.cpp
         src/weeder/som/fixed.c
         src/weeder/quincunx/point.h
-        src/weeder/quincunx/point.c
         )
 
 # These files have no conversion warning set at the top of each file.

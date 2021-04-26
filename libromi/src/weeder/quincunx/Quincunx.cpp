@@ -23,6 +23,7 @@
  */
 
 #include <math.h>
+#include <algorithm>
 #include "weeder/ISession.h"
 #include "Quincunx.h"
 
@@ -37,16 +38,16 @@ namespace romi {
         static void store_svg(ISession &session,
                               int w, int h,
                               const char *image,
-                              list_t *path,
-                              list_t *positions,
+                              const std::vector<point_t>& path,
+                              const std::vector<point_t>& positions,
                               double radius_zones,
                               double scale);
         
-        static list_t *boustrophedon(float x0, float x1, 
+        static std::vector<point_t> boustrophedon(float x0, float x1,
                                      float y0, float y1,
                                      float dx, 
                                      float radius,
-                                     list_t *positions);
+                                     std::vector<point_t>& positions);
 
         Quincunx::Quincunx(JsonCpp& params) : _distance_plants(0.0), _distance_rows(0.0), _radius_zones(0.0), _threshold(0.0)
         {
@@ -206,7 +207,7 @@ namespace romi {
         }
 
         static float estimate_pattern_position(Image& map, float d_plants,
-                                               float d_rows, point_t *pos)
+                                               float d_rows, point_t& pos)
         {
                 int x_max = 0;
                 int y_max = 0;
@@ -240,31 +241,33 @@ namespace romi {
                         }
                 }
 
-                pos->x = (float) x_max;
-                pos->y = (float) y_max;
+                pos.x = (float) x_max;
+                pos.y = (float) y_max;
                 return p_max;
         }
 
-        static list_t *adjust_positions(Image& map,
+        static std::vector<point_t> adjust_positions(Image& map,
                                         float distance_plants_px,
                                         float distance_rows_px,
                                         point_t *ptn_pos,
                                         float delta)
         {
-                list_t *positions = nullptr;
+                std::vector<point_t> positions;
 
                 const int num_pos = 10;
-                point_t pos[num_pos];
+//                point_t pos[num_pos];
+                std::vector<point_t> pos;
                 float p[num_pos];
 
-                int i = 0;
+//                int i = 0;
                 for (int row = 0; row < 3; row++) {
                         int num_plants = ((row % 2) == 0)? 3 : 4;
                         float dy = ((row % 2) == 0)? 0.0f : -distance_plants_px/2.0f;
                         for (int plant = 0; plant < num_plants; plant++) {
                                 float x = ptn_pos->x + row * distance_rows_px;
                                 float y = ptn_pos->y + dy + plant * distance_plants_px;
-                                point_set(&pos[i++], x, y, 0);
+//                                point_set(&pos[i++], x, y, 0);
+                                pos.emplace_back(x,y,0);
                         }
                 }
 
@@ -300,19 +303,20 @@ namespace romi {
 
                 for (int n = 0; n < num_pos; n++) {
                         if (p[n] > 0.003f) {
-                                point_t *pt = new_point(pos[n].x, pos[n].y, 0);
-                                positions = list_append(positions, pt);
+//                                point_t *pt = new_point(pos[n].x, pos[n].y, 0);
+//                                positions = list_append(positions, pt);
+                                positions.emplace_back(pos[n].x, pos[n].y, 0);
                         }
                 }
                 
                 return positions;
         }
         
-        static list_t *
+        static std::vector<point_t>
         compute_positions(Image &mask, double distance_plants, double distance_rows, double meters_to_pixels,
                           float *confidence)
         {
-                list_t *positions = nullptr;
+                std::vector<point_t> positions;
                 float dpx_plants = (float) (distance_plants * meters_to_pixels);
                 float dpx_rows = (float) (distance_rows * meters_to_pixels);
                 point_t ptn_pos;
@@ -326,7 +330,7 @@ namespace romi {
                 compute_convolution(mask, w, &average_prob, p_map);
 
                 // find best match for quincunx pattern                
-                p_max = estimate_pattern_position(p_map, dpx_plants, dpx_rows, &ptn_pos);
+                p_max = estimate_pattern_position(p_map, dpx_plants, dpx_rows, ptn_pos);
                 
                 // 
                 *confidence = (p_max / 10.0f) / average_prob;
@@ -349,8 +353,8 @@ namespace romi {
                                   Path &waypoints)
         {
                 int success = false;
-                list_t *path = nullptr;
-                list_t *positions = nullptr;
+                std::vector<point_t> path;
+                std::vector<point_t> positions;
                 float confidence = 0.0;
                 float radius_zones_px;
                 float diameter_tool_px;
@@ -365,35 +369,40 @@ namespace romi {
                                               _distance_rows,
                                               meters_to_pixels, &confidence);
 
-                if (positions != nullptr) {
+                if (!positions.empty()) {
                 
                         path = boustrophedon(border_px, mask.width() - border_px,
                                              border_px, mask.height() - border_px, 
                                              diameter_tool_px, radius_zones_px,
                                              positions);
-                        if (path != nullptr) {
+                        if (!path.empty()) {
 
                                 store_svg(session, mask.width(), mask.height(), 
                                           "scaled.jpg", path, positions,
                                           radius_zones_px, 1.0f);
-                                
-                                for (list_t *l = path; l != nullptr; l = list_next(l)) {
-                                        point_t *p = list_get(l, point_t);
-                                        waypoints.push_back(v3(p->x, p->y, 0));
-                                        delete_point(p);
+
+                                for (auto& point : path)
+                                {
+                                        waypoints.push_back(v3(point.x, point.y, 0));
                                 }
-                                delete_list(path);
+//
+//                                for (list_t *l = path; l != nullptr; l = list_next(l)) {
+//                                        point_t *p = list_get(l, point_t);
+//                                        waypoints.push_back(v3(p->x, p->y, 0));
+//                                        delete_point(p);
+//                                }
+//                                delete_list(path);
                                 
                                 success = true;
                         } else {
                                 r_warn("Quincunx: Failed to compute the path");
                         }
-
-                        for (list_t *l = positions; l != nullptr; l = list_next(l)) {
-                                point_t *p = list_get(l, point_t);
-                                delete_point(p);
-                        }
-                        delete_list(positions);
+//
+//                        for (list_t *l = positions; l != nullptr; l = list_next(l)) {
+//                                point_t *p = list_get(l, point_t);
+//                                delete_point(p);
+//                        }
+//                        delete_list(positions);
 
                 } else {
                         r_warn("Quincunx: Failed to compute the positions");
@@ -425,20 +434,20 @@ namespace romi {
         */
         
         static int intersects_y(float x, float y0, float y1,
-                                point_t *p, float r,
+                                point_t& p, float r,
                                 float *ys0p, float *ys1p)
         {
                 // A small delta to ignore rounding errors. This corresponds
                 // to 3 mm - IN OUR CASE. Adapt for any other situation.
                 float delta = 0.003; 
-                float dx = p->x - x;
+                float dx = p.x - x;
                 float d2 = dx * dx;
                 float r2 = r * r;
                 if (d2 + delta * delta > r2)
                         return INTERSECTS_NOT;
                 if (fabs(d2 - r2) < delta * delta) {
-                        float ys = p->y;
-                        if (p->y <= y0 || p->y >= y1)
+                        float ys = p.y;
+                        if (p.y <= y0 || p.y >= y1)
                                 return INTERSECTS_NOT;
                         else {
                                 *ys0p = ys;
@@ -446,8 +455,8 @@ namespace romi {
                         }
                 }
                 float dy = sqrtf(r2 - d2);
-                float ys0 = p->y - dy;
-                float ys1 = p->y + dy;
+                float ys0 = p.y - dy;
+                float ys1 = p.y + dy;
         
                 *ys0p = ys0;
                 *ys1p = ys1;
@@ -495,20 +504,20 @@ namespace romi {
         */
         
         static int intersects_x(float y, float x0, float x1,
-                                point_t *p, float r,
+                                point_t& p, float r,
                                 float *xs0p, float *xs1p)
         {
                 // A small delta to ignore rounding errors. This corresponds
                 // to 3 mm - IN OUR CASE. Adapt for any other situation.
                 float delta = 0.003; 
-                float dy = p->y - y;
+                float dy = p.y - y;
                 float d2 = dy * dy;
                 float r2 = r * r;
                 if (d2 + delta * delta > r2)
                         return INTERSECTS_NOT;
                 if (fabs(d2 - r2) < delta * delta) {
-                        float xs = p->x;
-                        if (p->x <= x0 || p->x >= x1)
+                        float xs = p.x;
+                        if (p.x <= x0 || p.x >= x1)
                                 return INTERSECTS_NOT;
                         else {
                                 *xs0p = xs;
@@ -516,8 +525,8 @@ namespace romi {
                         }
                 }
                 float dx = sqrtf(r2 - d2);
-                float xs0 = p->x - dx;
-                float xs1 = p->x + dx;
+                float xs0 = p.x - dx;
+                float xs1 = p.x + dx;
         
                 *xs0p = xs0;
                 *xs1p = xs1;
@@ -552,36 +561,37 @@ namespace romi {
                 return INTERSECTS_ERROR; // Shouldn't happen
         }
 
-        static int largest_y_first(point_t *pa, point_t *pb)
+        static int largest_y_first(const point_t& pa, const point_t& pb)
         {
-                return (pa->y > pb->y)? -1 : (pa->y == pb->y)? 0 : 1;
+                return (pa.y > pb.y)? -1 : (pa.y == pb.y)? 0 : 1;
         }
 
-        static int smallest_y_first(point_t *pa, point_t *pb)
+        static int smallest_y_first(const point_t& pa, const point_t& pb)
         {
-                return (pa->y < pb->y)? -1 : (pa->y == pb->y)? 0 : 1;
+                return (pa.y < pb.y)? -1 : (pa.y == pb.y)? 0 : 1;
         }
 
-        static int smallest_x_first(point_t *pa, point_t *pb)
+        static int smallest_x_first(const point_t& pa, const point_t& pb)
         {
-                return (pa->x < pb->x)? -1 : (pa->x == pb->x)? 0 : 1;
+                return (pa.x < pb.x)? -1 : (pa.x == pb.x)? 0 : 1;
         }
 
-        static list_t *path_append(list_t *path, float x, float y, float z)
-        {
-                r_debug("Quincunx: (%.3f, %.3f)", x, y);        
-                return list_append(path, new_point(x, y, z));
-        }
+//        static void path_append(std::vector<point_t>& path, float x, float y, float z)
+//        {
+////                r_debug("Quincunx: (%.3f, %.3f)", x, y);
+////                return list_append(path, new_point(x, y, z));
+//                path.emplace_back(x,y,z);
+//        }
 
         // We're in pixel coordinates: X from left to right, Y from top to
         // bottom.
-        static list_t *boustrophedon(float x0, float x1, 
+        static std::vector<point_t> boustrophedon(float x0, float x1,
                                      float y0, float y1,
                                      float dx, 
                                      float radius,
-                                     list_t *positions)
+                                      std::vector<point_t>& positions)
         {
-                list_t *path = NULL;
+                std::vector<point_t> path;
                 float x, y, z;
                 int count = 0;
         
@@ -603,19 +613,28 @@ namespace romi {
         
                 // Make a copy because we will sort the values and change the
                 // list order.
-                list_t *pos = NULL;
-                for (list_t *l = positions; l != NULL; l = list_next(l)) {
-                        point_t *p = list_get(l, point_t);
-                        pos = list_append(pos, p);
-                }
+                std::vector<point_t> pos = positions;
+
+//                for (list_t *l = positions; l != NULL; l = list_next(l)) {
+//                        point_t *p = list_get(l, point_t);
+//                        pos = list_append(pos, p);
+//                }
         
                 // Check whether the starting corner is free. If not, move the
                 // starting point.
-                pos = list_sort(pos, (compare_func_t) largest_y_first);
-                for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+//                pos = list_sort(pos, (compare_func_t) largest_y_first);
+
+                std::sort( pos.begin( ), pos.end( ), [ ]( const point_t & lhs, const point_t & rhs )
+                {
+                    return largest_y_first(lhs, rhs);
+                });
+
+
+//                for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+                        for (auto& position : pos) {
                         float ys0, ys1;
-                        point_t *p = list_get(l, point_t);
-                        int deviation = intersects_y(x, y0, y1, p, radius, &ys0, &ys1);
+//                        point_t *p = list_get(l, point_t);
+                        int deviation = intersects_y(x, y0, y1, position, radius, &ys0, &ys1);
                         switch (deviation) {
                         case INTERSECTS_ERROR:
                                 r_warn("intersects returned INTERSECTS_ERROR");
@@ -642,7 +661,8 @@ namespace romi {
                 }
 
                 /* r_debug("x=%.3f, y=%.3f", x, y); */
-                path = path_append(path, x, y, z);
+                path.emplace_back(x, y, z);
+//                path = path_append(path, x, y, z);
 
                 /* return path; // DEBUG */
 
@@ -651,12 +671,18 @@ namespace romi {
 
                         //// at y1, going to y0
                         float yt = y0, xt;
-                        pos = list_sort(pos, (compare_func_t) largest_y_first);
-                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+//                        pos = list_sort(pos, (compare_func_t) largest_y_first);
+                        std::sort( pos.begin( ), pos.end( ), [ ]( const point_t & lhs, const point_t & rhs )
+                        {
+                            return largest_y_first(lhs, rhs);
+                        });
+
+//                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+                        for (auto& position : pos) {
                                 float ys0, ys1, dy, alpha0, alpha1, d_alpha;
                                 int segments;
-                                point_t *p = list_get(l, point_t);
-                                int deviation = intersects_y(x, y0, y, p, radius, &ys0, &ys1);
+//                                point_t *p = list_get(l, point_t);
+                                int deviation = intersects_y(x, y0, y, position, radius, &ys0, &ys1);
                                 switch (deviation) {
                                 case INTERSECTS_ERROR:
                                         r_warn("intersects returned -1");
@@ -665,18 +691,18 @@ namespace romi {
                                 case INTERSECTS_BORDER:
                                         break;
                                 case INTERSECTS_IN_TWO_POINTS: 
-                                        dy = ys1 - p->y;
+                                        dy = ys1 - position.y;
                                         alpha0 = asinf(dy / radius);
                                         alpha1 = -alpha0;
-                                        if (p->x > x) {
+                                        if (position.x > x) {
                                                 alpha0 = M_PI - alpha0;
                                                 alpha1 = M_PI - alpha1;
-                                                if (p->x - radius < 0) {
+                                                if (position.x - radius < 0) {
                                                         // go around the other way
                                                         alpha1 -= 2 * M_PI; 
                                                 }
                                         } else {
-                                                if (p->x + radius > x1) {
+                                                if (position.x + radius > x1) {
                                                         // go around the other way
                                                         alpha1 += 2 * M_PI; 
                                                 }
@@ -687,31 +713,34 @@ namespace romi {
                                         d_alpha = (alpha1 - alpha0) / segments;
                                         for (int i = 0; i <= segments; i++) {
                                                 float alpha = alpha0 + i * d_alpha;
-                                                float y_ = p->y + radius * sinf(alpha);
-                                                float x_ = p->x + radius * cosf(alpha);
-                                                path = path_append(path, x_, y_, z);
+                                                float y_ = position.y + radius * sinf(alpha);
+                                                float x_ = position.x + radius * cosf(alpha);
+//                                                path = path_append(path, x_, y_, z);
+                                                path.emplace_back(x_, y_, z);
                                                 y = y_;
                                         }
                                         break;
                                 case INTERSECTS_FIRST_POINT_INSIDE:
-                                        if (x < p->x) {
+                                        if (x < position.x) {
                                                 y = ys1;
                                                 yt = y;
-                                                path = path_append(path, x, y, z);
+//                                                path = path_append(path, x, y, z);
+                                                path.emplace_back(x, y, z);
                                         } else {
                                                 // move to the edge
                                                 y = ys1;
-                                                path = path_append(path, x, y, z);
+//                                                path = path_append(path, x, y, z);
+                                                path.emplace_back(x, y, z);
                                                 // go around
-                                                dy = ys1 - p->y;
+                                                dy = ys1 - position.y;
                                                 alpha0 = asinf(dy / radius);
-                                                alpha1 = asinf((y0 - p->y) / radius);
+                                                alpha1 = asinf((y0 - position.y) / radius);
                                                 if (x + dx > x1) {
-                                                        float alpha2 = acosf((x1 - p->x) / radius);
+                                                        float alpha2 = acosf((x1 - position.x) / radius);
                                                         if (alpha2 > alpha1)
                                                                 alpha1 = alpha2;
-                                                } else if (x + dx < p->x + radius) {
-                                                        float alpha2 = acosf((x + dx - p->x) / radius);
+                                                } else if (x + dx < position.x + radius) {
+                                                        float alpha2 = acosf((x + dx - position.x) / radius);
                                                         if (alpha2 > alpha1)
                                                                 alpha1 = alpha2;
                                                 }
@@ -719,9 +748,10 @@ namespace romi {
                                                 d_alpha = (alpha0 - alpha1) / segments;
                                                 for (int i = 0; i <= segments; i++) {
                                                         float alpha = alpha0 - i * d_alpha;
-                                                        y = p->y + radius * sinf(alpha);
-                                                        x = p->x + radius * cosf(alpha);
-                                                        path = path_append(path, x, y, z);
+                                                        y = position.y + radius * sinf(alpha);
+                                                        x = position.x + radius * cosf(alpha);
+//                                                        path = path_append(path, x, y, z);
+                                                        path.emplace_back(x, y, z);
                                                 }
                                                 yt = y;
                                         
@@ -739,7 +769,8 @@ namespace romi {
                         }
                         if (y > yt) {
                                 y = yt;
-                                path = path_append(path, x, y, z);
+//                                path = path_append(path, x, y, z);
+                                path.emplace_back(x, y, z);
                         }
 
                 
@@ -749,12 +780,18 @@ namespace romi {
                                 break;
 
                         
-                        pos = list_sort(pos, (compare_func_t) smallest_x_first);
-                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+//                        pos = list_sort(pos, (compare_func_t) smallest_x_first);
+                        std::sort( pos.begin( ), pos.end( ), [ ]( const point_t& lhs, const point_t& rhs )
+                        {
+                            return smallest_x_first(lhs, rhs);
+                        });
+
+//                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+                        for (auto& position : pos) {
                                 float xs0, xs1, dxp, dxt, alpha0, alpha1, d_alpha;
                                 int segments;
-                                point_t *p = list_get(l, point_t);
-                                int deviation = intersects_x(y, x, xt, p, radius, &xs0, &xs1);
+//                                point_t *p = list_get(l, point_t);
+                                int deviation = intersects_x(y, x, xt, position, radius, &xs0, &xs1);
                                 switch (deviation) {
                                 case INTERSECTS_ERROR:
                                         r_warn("intersects returned -1");
@@ -773,20 +810,22 @@ namespace romi {
                                 case INTERSECTS_SECOND_POINT_INSIDE:
                                         // move to the edge
                                         x = xs0;
-                                        path = path_append(path, x, y, z);
+//                                        path = path_append(path, x, y, z);
+                                        path.emplace_back(x, y, z);
                                         // go around
-                                        dxp = x - p->x;
+                                        dxp = x - position.x;
                                         alpha0 = acosf(dxp / radius);
-                                        if (y < p->y) alpha0 = 2.0 * M_PI - alpha0; 
-                                        dxt = xt - p->x;
+                                        if (y < position.y) alpha0 = 2.0 * M_PI - alpha0;
+                                        dxt = xt - position.x;
                                         alpha1 = acosf(dxt / radius);
                                         segments = 1 + (int)(6.0 * (alpha0 - alpha1) / M_PI);
                                         d_alpha = (alpha0 - alpha1) / segments;
                                         for (int i = 1; i <= segments; i++) {
                                                 float alpha = alpha0 - i * d_alpha;
-                                                y = p->y + radius * sinf(alpha);
-                                                x = p->x + radius * cosf(alpha);;
-                                                path = path_append(path, x, y, z);
+                                                y = position.y + radius * sinf(alpha);
+                                                x = position.x + radius * cosf(alpha);;
+//                                                path = path_append(path, x, y, z);
+                                                path.emplace_back(x, y, z);
                                         }
                                         break;
                                 case INTERSECTS_BOTH_POINTS_INSIDE:
@@ -798,18 +837,25 @@ namespace romi {
                         }
                         if (x < xt) {
                                 x = xt;
-                                path = path_append(path, x, y, z);
+//                                path = path_append(path, x, y, z);
+                                path.emplace_back(x, y, z);
                         }
 
 
                         //// at y0, moving to y1
                         yt = y1;
-                        pos = list_sort(pos, (compare_func_t) smallest_y_first);
-                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+//                        pos = list_sort(pos, (compare_func_t) smallest_y_first);
+                        std::sort( pos.begin( ), pos.end( ), [ ]( const point_t & lhs, const point_t & rhs )
+                        {
+                            return smallest_y_first(lhs, rhs);
+                        });
+
+//                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+                        for (auto& position : pos) {
                                 float ys0, ys1, dy, alpha0, alpha1, d_alpha;
                                 int segments;
-                                point_t *p = list_get(l, point_t);
-                                int deviation = intersects_y(x, y, y1, p, radius, &ys0, &ys1);
+//                                point_t *p = list_get(l, point_t);
+                                int deviation = intersects_y(x, y, y1, position, radius, &ys0, &ys1);
                                 switch (deviation) {
                                 case INTERSECTS_ERROR:
                                         r_warn("intersects returned -1");
@@ -818,16 +864,16 @@ namespace romi {
                                 case INTERSECTS_BORDER:
                                         break;
                                 case INTERSECTS_IN_TWO_POINTS:
-                                        dy = ys1 - p->y;
+                                        dy = ys1 - position.y;
                                         alpha1 = asinf(dy / radius);
                                         alpha0 = -alpha1;
-                                        if (p->x < x) {
-                                                if (p->x + radius > x1)
+                                        if (position.x < x) {
+                                                if (position.x + radius > x1)
                                                         alpha1 -= 2 * M_PI; 
                                         } else {
                                                 alpha0 = M_PI - alpha0;
                                                 alpha1 = M_PI - alpha1;
-                                                if (p->x - radius < 0)
+                                                if (position.x - radius < 0)
                                                         alpha1 += 2 * M_PI; 
                                         }
                                         if (alpha1 > alpha0)
@@ -836,9 +882,10 @@ namespace romi {
                                         d_alpha = (alpha1 - alpha0) / segments;
                                         for (int i = 0; i <= segments; i++) {
                                                 float alpha = alpha0 + i * d_alpha;
-                                                float y_ = p->y + radius * sinf(alpha);
-                                                float x_ = p->x + radius * cosf(alpha);
-                                                path = path_append(path, x_, y_, z);
+                                                float y_ = position.y + radius * sinf(alpha);
+                                                float x_ = position.x + radius * cosf(alpha);
+//                                                path = path_append(path, x_, y_, z);
+                                                path.emplace_back(x_, y_, z);
                                                 y = y_;
                                         }
                                 
@@ -848,21 +895,22 @@ namespace romi {
                                         break;
                                 case INTERSECTS_SECOND_POINT_INSIDE:
                                         r_warn("INTERSECTS_SECOND_POINT_INSIDE");
-                                        if (x < p->x) {
+                                        if (x < position.x) {
                                                 y = ys0;
                                                 yt = y;
-                                                path = path_append(path, x, y, z);
+//                                                path = path_append(path, x, y, z);
+                                                path.emplace_back(x, y, z);
                                         } else {
                                                 r_warn("x >= p->x");
-                                                dy = ys0 - p->y;
+                                                dy = ys0 - position.y;
                                                 alpha0 = asinf(dy / radius);
-                                                alpha1 = asinf((y1 - p->y) / radius);
+                                                alpha1 = asinf((y1 - position.y) / radius);
                                                 if (x + dx > x1) {
-                                                        float alpha2 = -acosf((x1 - p->x) / radius);
+                                                        float alpha2 = -acosf((x1 - position.x) / radius);
                                                         if (alpha2 < alpha1)
                                                                 alpha1 = alpha2;
-                                                } else if (x + dx < p->x + radius) {
-                                                        float alpha2 = -acosf((x + dx - p->x) / radius);
+                                                } else if (x + dx < position.x + radius) {
+                                                        float alpha2 = -acosf((x + dx - position.x) / radius);
                                                         if (alpha2 < alpha1)
                                                                 alpha1 = alpha2;
                                                 }
@@ -872,9 +920,10 @@ namespace romi {
                                                 d_alpha = (alpha1 - alpha0) / segments;
                                                 for (int i = 0; i <= segments; i++) {
                                                         float alpha = alpha0 + i * d_alpha;
-                                                        y = p->y + radius * sinf(alpha);
-                                                        x = p->x + radius * cosf(alpha);
-                                                        path = path_append(path, x, y, z);
+                                                        y = position.y + radius * sinf(alpha);
+                                                        x = position.x + radius * cosf(alpha);
+//                                                        path = path_append(path, x, y, z);
+                                                        path.emplace_back(x, y, z);
                                                 }
                                                 yt = y;
                                         
@@ -889,7 +938,8 @@ namespace romi {
                         }
                         if (y < yt) {
                                 y = yt;
-                                path = path_append(path, x, y, z);
+//                                path = path_append(path, x, y, z);
+                                path.emplace_back(x, y, z);
                         }
                 
                         //// at y1, moving right
@@ -897,12 +947,18 @@ namespace romi {
                         if (xt > x1)
                                 break;
                         
-                        pos = list_sort(pos, (compare_func_t) smallest_x_first);
-                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+//                        pos = list_sort(pos, (compare_func_t) smallest_x_first);
+                        std::sort( pos.begin( ), pos.end( ), [ ]( const point_t & lhs, const point_t & rhs )
+                        {
+                            return smallest_x_first(lhs, rhs);
+                        });
+
+//                        for (list_t *l = pos; l != nullptr; l = list_next(l)) {
+                        for (auto& position : pos) {
                                 float xs0, xs1, dxp, dxt, alpha0, alpha1, d_alpha;
                                 int segments;
-                                point_t *p = list_get(l, point_t);
-                                int deviation = intersects_x(y, x, xt, p, radius, &xs0, &xs1);
+//                                point_t *p = list_get(l, point_t);
+                                int deviation = intersects_x(y, x, xt, position, radius, &xs0, &xs1);
                                 switch (deviation) {
                                 case INTERSECTS_ERROR:
                                         r_warn("intersects returned -1");
@@ -925,21 +981,23 @@ namespace romi {
                                         
                                         // move to the edge
                                         x = xs0;
-                                        path = path_append(path, x, y, z);
+//                                        path = path_append(path, x, y, z);
+                                        path.emplace_back(x, y, z);
                                         // go around
-                                        dxp = x - p->x;
+                                        dxp = x - position.x;
                                         alpha0 = acosf(dxp / radius);
-                                        if (y < p->y) alpha0 = 2.0 * M_PI - alpha0; 
-                                        dxt = xt - p->x;
+                                        if (y < position.y) alpha0 = 2.0 * M_PI - alpha0;
+                                        dxt = xt - position.x;
                                         alpha1 = acosf(dxt / radius);
                                         alpha1 = 2.0 * M_PI - alpha1; 
                                         segments = 1 + (int)(6.0 * (alpha1 - alpha0) / M_PI);
                                         d_alpha = (alpha1 - alpha0) / segments;
                                         for (int i = 1; i <= segments; i++) {
                                                 float alpha = alpha0 + i * d_alpha;
-                                                y = p->y + radius * sinf(alpha);
-                                                x = p->x + radius * cosf(alpha);;
-                                                path = path_append(path, x, y, z);
+                                                y = position.y + radius * sinf(alpha);
+                                                x = position.x + radius * cosf(alpha);;
+//                                                path = path_append(path, x, y, z);
+                                                path.emplace_back(x, y, z);
                                         }
 
                                         
@@ -953,13 +1011,14 @@ namespace romi {
                         }
                         if (x < xt) {
                                 x = xt;
-                                path = path_append(path, x, y, z);
+//                                path = path_append(path, x, y, z);
+                                path.emplace_back(x, y, z);
                         }
                 
                         count++;
                 }
 
-                delete_list(pos);
+//                delete_list(pos);
 
                 return path;
         }
@@ -967,26 +1026,31 @@ namespace romi {
         
         ////////////////////////////////////////////////////////////////////
 
-        static void store_path(membuf_t *buffer, list_t *points, __attribute((unused))int h, double scale)
+        static void store_path(membuf_t *buffer, const std::vector<point_t>& points, __attribute((unused))int h, double scale)
         {
                 membuf_printf(buffer, "    <path d=\"");
                 float x, y;
         
-                point_t *p = list_get(points, point_t);
-                x = p->x * scale;
-                /* y = h - p->y * scale; */
-                y = p->y * scale;
-                membuf_printf(buffer, "M %f,%f L", x, y);
-                points = list_next(points);
+//                point_t *p = list_get(points, point_t);
+                auto p  = points[0];
 
-                while (points) {
-                        p = list_get(points, point_t);
-                        x = p->x * scale;
-                        y = p->y * scale;
+                x = p.x * scale;
+                /* y = h - p->y * scale; */
+                y = p.y * scale;
+                membuf_printf(buffer, "M %f,%f L", x, y);
+
+//                points = list_next(points);
+                int index = 1;
+                while (index < points.size()) {
+//                        p = list_get(points, point_t);
+                        p = points[index++];
+                        x = p.x * scale;
+                        y = p.y * scale;
                         //y = h - p->y * scale;
                         membuf_printf(buffer, " %f,%f", x, y);
-                        points = list_next(points);
+//                        points = list_next(points);
                 }
+
                 membuf_printf(buffer, "\" id=\"path\" style=\"fill:none;stroke:#0000ce;"
                               "stroke-width:2;stroke-linecap:butt;"
                               "stroke-linejoin:miter;stroke-miterlimit:4;"
@@ -994,16 +1058,18 @@ namespace romi {
         }
 
         static void store_zones(membuf_t *buffer,
-                                list_t *positions,
+                                const std::vector<point_t>& positions,
                                 double radius_zones,
                                 __attribute((unused))double h, double scale)
         {
                 double r = radius_zones * scale;
-                for (list_t *l = positions; l != NULL; l = list_next(l)) {
-                        point_t *p = list_get(l, point_t);
-                        double x = p->x * scale;
+
+                for (auto& position : positions) {
+//                for (list_t *l = positions; l != NULL; l = list_next(l)) {
+//                        point_t *p = list_get(l, point_t);
+                        double x = position.x * scale;
                         //double y = h - p->y * scale;
-                        double y = p->y * scale;
+                        double y = position.y * scale;
                         membuf_printf(buffer,
                                       "  <circle "
                                       "style=\"fill:#ff80ff;fill-opacity:0.25;stroke-width:0\" "
@@ -1015,8 +1081,8 @@ namespace romi {
         static void store_svg(ISession &session,
                               int w, int h,
                               const char *image,
-                              list_t *path,
-                              list_t *positions,
+                              const std::vector<point_t>& path,
+                              const std::vector<point_t>& positions,
                               double radius_zones,
                               double scale)
         {
