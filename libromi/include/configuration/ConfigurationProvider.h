@@ -7,15 +7,17 @@
 namespace romi
 {
     std::string get_brush_motor_device_in_config(JsonCpp& config);
-    std::string get_brush_motor_device(romi::Options& options, JsonCpp& config);
+    std::string get_brush_motor_device(romi::IOptions& options, JsonCpp& config);
     std::string get_sound_font_in_config(JsonCpp& config);
-    std::string get_sound_font_file(romi::Options& options, JsonCpp& config);
+    std::string get_sound_font_file(romi::IOptions& options, JsonCpp& config);
     std::string get_script_file_in_config(JsonCpp& config);
-    std::string get_script_file(romi::Options& options, JsonCpp& config);
-    std::string get_session_directory(romi::Options& options, JsonCpp& config);
-    std::string get_camera_image(romi::Options& options, JsonCpp& config);
+    std::string get_script_file(romi::IOptions& options, JsonCpp& config);
+    std::string get_session_directory(romi::IOptions& options, JsonCpp& config);
+    std::string get_camera_image(romi::IOptions& options, JsonCpp& config);
     std::string get_camera_device_in_config(JsonCpp& config);
-    std::string get_camera_device(romi::Options& options, JsonCpp& config);
+    std::string get_camera_device(romi::IOptions& options, JsonCpp& config);
+    std::string get_camera_classname_in_config(JsonCpp& config);
+    std::string get_camera_classname(romi::IOptions& options, JsonCpp& config);
 
 }
 
