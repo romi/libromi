@@ -29,7 +29,7 @@
 #include <CRC8.h>
 #include <RomiSerialClient.h>
 #include <RomiSerialErrors.h>
-#include <r.h>
+#include <log.h>
 #include <ClockAccessor.h>
 
 using namespace std;
@@ -45,7 +45,7 @@ using namespace std;
 RomiSerialClient::RomiSerialClient(std::shared_ptr<IInputStream> in,
                                    std::shared_ptr<IOutputStream> out)
         :   _in(in), _out(out),
-            _mutex(std::unique_ptr<mutex_t, _mutex_deleter>(new_mutex(), _mutex_deleter())),
+            _mutex(),
             _id(255), _debug(false), _parser()
 {
         in->set_timeout(0.1f);
@@ -365,8 +365,8 @@ JsonCpp RomiSerialClient::read_response()
 void RomiSerialClient::send(const char *command, JsonCpp& response)
 {
         std::string request;
-        
-        mutex_lock(_mutex.get());
+
+        SynchronizedCodeBlock sync(_mutex);
         
         int err = make_request(command, request);
         if (err == 0) {
@@ -374,25 +374,22 @@ void RomiSerialClient::send(const char *command, JsonCpp& response)
         } else {
                 response = make_error(err);
         }
-        
-        mutex_unlock(_mutex.get());
+
 }
 
 bool RomiSerialClient::read(uint8_t *data, size_t length)
 {
         bool retval;
-        mutex_lock(_mutex.get());
+        SynchronizedCodeBlock sync(_mutex);
         retval = _in->read(data, length);
-        mutex_unlock(_mutex.get());
         return retval;
 }
 
 bool RomiSerialClient::write(const uint8_t *data, size_t length)
 {
         bool retval;
-        mutex_lock(_mutex.get());
+        SynchronizedCodeBlock sync(_mutex);
         retval = _out->write(data, length);
-        mutex_unlock(_mutex.get());
         return retval;
 }
 

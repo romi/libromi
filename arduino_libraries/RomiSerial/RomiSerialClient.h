@@ -32,23 +32,17 @@
 #include <IInputStream.h>
 #include <IOutputStream.h>
 #include <EnvelopeParser.h>
-#include <r.h>
 
 // A 2.0 second timeout to read the response messages.
 #define ROMISERIALCLIENT_TIMEOUT 2.0
 
-struct _mutex_deleter { // deleter
-    void operator() (mutex_t* p) {
-        delete_mutex(p);
-    }
-};
-
+using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
 class RomiSerialClient : public IRomiSerialClient
 {
 protected:
         std::shared_ptr<IInputStream> _in;
         std::shared_ptr<IOutputStream> _out;
-        std::unique_ptr<mutex_t, _mutex_deleter> _mutex;
+        std::mutex _mutex;
         uint8_t _id; 
         bool _debug;
         EnvelopeParser _parser;
