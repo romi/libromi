@@ -21,38 +21,41 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __I_ROMI_SERIAL_CLIENT_H
-#define __I_ROMI_SERIAL_CLIENT_H
+#ifndef __ROMISERIAL_IROMISERIALCLIENT_H
+#define __ROMISERIAL_IROMISERIALCLIENT_H
 
 #include "JsonCpp.h"
 
-class IRomiSerialClient
-{
-public:
-        virtual ~IRomiSerialClient() = default;
+namespace romiserial {
 
-        /**
-         *  Sends a request to the firmware and retrieves its
-         *  response.
-         *
-         *  command: the string representation of the request.
-         *
-         *  Returns: An Json array. The first element of the array is
-         *  a number that indicates whether the request was
-         *  successfully handled or not. A value of zero means
-         *  success. If the first value is zero then the remaining
-         *  values of the array are the values returned by the
-         *  firmware to the client. If the firmware does not return
-         *  any values, the length of the array will be one. If the
-         *  first value is not zero then the second element of the
-         *  array is a string with a human-readable error message.
-         */
-        virtual void send(const char *request, JsonCpp& response) = 0;
+        class IRomiSerialClient
+        {
+        public:
+                virtual ~IRomiSerialClient() = default;
 
-        virtual bool read(uint8_t *data, size_t length) = 0;
-        virtual bool write(const uint8_t *data, size_t length) = 0;
+                /**
+                 *  Sends a request to the firmware and retrieves its
+                 *  response.
+                 *
+                 *  command: the string representation of the request.
+                 *
+                 *  Returns: An Json array. The first element of the array is
+                 *  a number that indicates whether the request was
+                 *  successfully handled or not. A value of zero means
+                 *  success. If the first value is zero then the remaining
+                 *  values of the array are the values returned by the
+                 *  firmware to the client. If the firmware does not return
+                 *  any values, the length of the array will be one. If the
+                 *  first value is not zero then the second element of the
+                 *  array is a string with a human-readable error message.
+                 */
+                virtual void send(const char *request, JsonCpp& response) = 0;
 
-        virtual void set_debug(bool value) = 0;
-};
+                /* virtual bool read(uint8_t *data, size_t length) = 0; */
+                /* virtual bool write(const uint8_t *data, size_t length) = 0; */
 
-#endif
+                virtual void set_debug(bool value) = 0;
+        };
+}
+
+#endif // __ROMISERIAL_IROMISERIALCLIENT_H

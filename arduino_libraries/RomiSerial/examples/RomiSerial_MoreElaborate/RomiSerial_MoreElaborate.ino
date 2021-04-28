@@ -21,6 +21,7 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#include <ArduinoSerial.h>
 #include <RomiSerial.h>
 
 void handler_without_arguments_returning_string(RomiSerial *romiSerial,
@@ -69,6 +70,11 @@ void handler_returning_an_error(RomiSerial *romiSerial,
         romiSerial->send_error(100, "Just messing with you");
 }
 
+void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+        romiSerial->send("[0,\"RomiSerial_MoreElaborate\"]");
+}
+
 const static MessageHandler handlers[] = {
         { 'a', 0, false, handler_without_arguments_returning_string },
         { 'b', 2, false, handler_with_two_arguments },
@@ -76,14 +82,17 @@ const static MessageHandler handlers[] = {
         { 'd', 2, false, handler_with_two_arguments_returning_value },
         { 'e', 0, true, handler_with_string_argument_returning_value },
         { 'f', 0, false, handler_returning_an_error },
+        { '?', 0, false, send_info },
 };
 
 ArduinoSerial serial(Serial);
-RomiSerial romiSerial(serial, serial, handlers, 6);
+RomiSerial romiSerial(serial, serial, handlers, 7);
 
 void setup()
 {
-        romiSerial.log("Ready");
+        Serial.begin(115200);
+        while (!Serial)
+                ;
 }
 
 void loop()

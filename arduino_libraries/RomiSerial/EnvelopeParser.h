@@ -21,75 +21,76 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ENVELOPE_PARSER_H
-#define __ENVELOPE_PARSER_H
+#ifndef __ROMISERIAL_ENVELOPE_PARSER_H
+#define __ROMISERIAL_ENVELOPE_PARSER_H
 
 #include "CRC8.h"
 
+namespace romiserial {
+
 #define MAX_MESSAGE_LENGTH 58
 
-enum envelope_parser_state_t {
-    expect_start_envelope = 0,
-    expect_payload_or_start_metadata,
-    expect_id_char_1,
-    expect_id_char_2,
-    expect_crc_char_1,
-    expect_crc_char_2,
-    expect_dummy_metadata_char_2,
-    expect_dummy_metadata_char_3,
-    expect_dummy_metadata_char_4,
-    expect_end_metadata,
-    expect_end_envelope
-};
+        enum envelope_parser_state_t {
+                expect_start_envelope = 0,
+                expect_payload_or_start_metadata,
+                expect_id_char_1,
+                expect_id_char_2,
+                expect_crc_char_1,
+                expect_crc_char_2,
+                expect_dummy_metadata_char_2,
+                expect_dummy_metadata_char_3,
+                expect_dummy_metadata_char_4,
+                expect_end_metadata,
+                expect_end_envelope
+        };
 
-class EnvelopeParser
-{
-protected:
-        envelope_parser_state_t _state;
-        int8_t _error;
-        CRC8 _crc;
-        uint8_t _id;
-        bool _has_id;
-        uint8_t _crc_metadata;
-        char _message[MAX_MESSAGE_LENGTH+1];
-        uint8_t _message_length;
-                
-        void set_error(char character, int8_t what);
-        void append_char(char c);
-
-public:
-        
-        EnvelopeParser() : _state(expect_start_envelope), _error(0), _crc(), _id(0), _has_id(0), _crc_metadata(0), _message_length(0)
+        class EnvelopeParser
         {
-                reset();
-        }
+        protected:
+                envelope_parser_state_t _state;
+                int8_t _error;
+                CRC8 _crc;
+                uint8_t _id;
+                bool _has_id;
+                uint8_t _crc_metadata;
+                char _message[MAX_MESSAGE_LENGTH+1];
+                uint8_t _message_length;
+                
+                void set_error(char character, int8_t what);
+                void append_char(char c);
 
-        uint8_t id() {
-                return _id;
-        }
+        public:
+        
+                EnvelopeParser();
+                ~EnvelopeParser() = default;
 
-        bool has_id() {
-                return _has_id;
-        }
-        
-        uint8_t crc() {
-                return _crc.get();
-        }
-        
-        int8_t error() {
-                return _error;
-        }
-        
-        const char *message() {
-                return _message;
-        }
-        
-        uint8_t length() {
-                return _message_length;
-        }
-        
-        void reset();
-        bool process(char c);
-};
+                uint8_t id() {
+                        return _id;
+                }
 
-#endif
+                bool has_id() {
+                        return _has_id;
+                }
+        
+                uint8_t crc() {
+                        return _crc.get();
+                }
+        
+                int8_t error() {
+                        return _error;
+                }
+        
+                const char *message() {
+                        return _message;
+                }
+        
+                uint8_t length() {
+                        return _message_length;
+                }
+        
+                void reset();
+                bool process(char c);
+        };
+}
+
+#endif // __ROMISERIAL_ENVELOPE_PARSER_H

@@ -27,8 +27,14 @@
 #include "CrystalDisplay.h"
 
 namespace romi {
-
-    constexpr size_t screen_width = 32;
+        
+        constexpr size_t screen_width = 32;
+        
+        CrystalDisplay::CrystalDisplay(std::unique_ptr<romiserial::IRomiSerialClient>& romi_serial)
+                : _serial()
+        {
+                _serial = std::move(romi_serial);
+        }
 
         bool CrystalDisplay::show(size_t line, const std::string& display_string)
         {
@@ -39,7 +45,7 @@ namespace romi {
                         
                         rprintf(buffer, 64, "S[%d,\"%s\"]", line, display_string.c_str());
                         
-                        _serial.send(buffer, response);
+                        _serial->send(buffer, response);
 
                         return response.num(0) == 0;
                         
@@ -59,7 +65,7 @@ namespace romi {
                         
                         rprintf(buffer, 64, "C[%d]", line);
                         
-                        _serial.send(buffer, response);
+                        _serial->send(buffer, response);
 
                         return response.num(0) == 0;
                         

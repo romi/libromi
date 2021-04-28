@@ -22,21 +22,36 @@
 
  */
 
-#ifndef __ROMISERIAL_IINPUTSTREAM_H
-#define __ROMISERIAL_IINPUTSTREAM_H
-
-#include <stddef.h>
+#include <string.h>
+#include "Printer.h"
 
 namespace romiserial {
 
-        class IInputStream
+        Printer::Printer(IOutputStream& out)
+                : out_(out)
         {
-        public:
-                virtual ~IInputStream() = default;
-                virtual bool available() = 0;
-                virtual bool read(char& c) = 0;
-                virtual void set_timeout(double seconds) = 0;
-        };
-}
+        }
 
-#endif // __ROMISERIAL_INPUTSTREAM_H
+        size_t Printer::write(const char *s, size_t length)
+        {
+                size_t n;
+                for (n = 0; n < length; n++) {
+                        if (!out_.write(s[n]))
+                                break;
+                }
+                return n;
+        }
+
+        size_t Printer::print(const char *s)
+        {
+                size_t length = strlen(s);
+                return write(s, length);
+        }
+
+        size_t Printer::println(const char *s)
+        {
+                size_t n = print(s);
+                n += write("\n", 1);
+                return n;
+        }
+}

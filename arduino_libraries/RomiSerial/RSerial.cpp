@@ -35,220 +35,197 @@
 #include "RSerial.h"
 #include <ClockAccessor.h>
 
-RSerial::RSerial(const std::string& device, int baudrate, bool reset)
-        : _device(device),
-          _fd(-1),
-          _timeout(0.1f),
-          _baudrate(baudrate),
-          _reset(reset),
-          _timeout_ms((int) (_timeout * 1000.0f))
-{
-        open_device();
-        configure_termios();
-}
+namespace romiserial {
 
-RSerial::~RSerial()
-{
-        if (_fd >= 0) {
-                close(_fd);
-                _fd = -1;
+        RSerial::RSerial(const std::string& device, uint32_t baudrate, bool reset)
+                : _device(device),
+                  _fd(-1),
+                  _timeout(0.1f),
+                  _baudrate(baudrate),
+                  _reset(reset),
+                  _timeout_ms((int) (_timeout * 1000.0f))
+        {
+                open_device();
+                configure_termios();
         }
-}
 
-void RSerial::set_timeout(float seconds)
-{
-        _timeout = seconds;
-        _timeout_ms = (int) (_timeout * 1000.0f);
-}
-
-bool RSerial::available()
-{
-        //printf("RSerial::available %d\n", _timeout_ms);
-        bool retval = false;
-        struct pollfd fds[1];
-        fds[0].fd = _fd;
-        fds[0].events = POLLIN;
-
-        int pollrc = poll(fds, 1, _timeout_ms);
-        if (pollrc < 0) {
-                r_err("serial_read_timeout poll error %d on %s", errno, _device.c_str());
-                
-        } else if ((pollrc > 0) && (fds[0].revents & POLLIN)) {
-                retval = true;
-        } else{
-                //r_warn("serial_read_timeout poll timed out on %s", _device.c_str());
-                //retval = 0;
-        }
-        
-        return retval;
-}
-
-bool RSerial::read(char& c)
-{
-        return read((uint8_t *) &c, 1);
-}
-
-bool RSerial::read(uint8_t *data, size_t length)
-{
-        bool retval = true;
-        size_t received = 0;
-        while (received < length) {
-                ssize_t rc = ::read(_fd, data + received, length - received);
-                if (rc <= 0) {
-                        retval = false;
-                        break;
+        RSerial::~RSerial()
+        {
+                if (_fd >= 0) {
+                        close(_fd);
+                        _fd = -1;
                 }
-                received += (size_t) rc;
         }
-        return retval;
-}
 
-bool RSerial::poll_write()
-{
-        bool retval = false;
-        struct pollfd fds = { _fd, POLLOUT, 0 };
+        void RSerial::set_timeout(double seconds)
+        {
+                _timeout = seconds;
+                _timeout_ms = (int) (_timeout * 1000.0);
+        }
 
-        int pollrc = poll(&fds, 1, _timeout_ms);
-        if (pollrc < 0) {
-                r_err("serial_read_timeout poll error %d on %s", errno, _device.c_str());
+        bool RSerial::available()
+        {
+                //printf("RSerial::available %d\n", _timeout_ms);
+                bool retval = false;
+                struct pollfd fds[1];
+                fds[0].fd = _fd;
+                fds[0].events = POLLIN;
+
+                int pollrc = poll(fds, 1, _timeout_ms);
+                if (pollrc < 0) {
+                        r_err("serial_read_timeout poll error %d on %s", errno, _device.c_str());
                 
-        } else if ((pollrc > 0) && (fds.revents & POLLOUT)) {
-                retval = true;
-        } else{
-                r_warn("serial_read_timeout poll timed out on %s", _device.c_str());
+                } else if ((pollrc > 0) && (fds[0].revents & POLLIN)) {
+                        retval = true;
+                } else{
+                        //r_warn("serial_read_timeout poll timed out on %s", _device.c_str());
+                        //retval = 0;
+                }
+        
+                return retval;
         }
-        return retval;
-}
 
-bool RSerial::can_write()
-{
-        if (_timeout_ms == 0)
-                return true;
-        else 
-                return poll_write();
-}
+        bool RSerial::read(char& c)
+        {
+                bool retval = true;
+                ssize_t rc = ::read(_fd, &c, 1);
+                if (rc != 1) {
+                        retval = false;
+                }
+                return retval;
+        }
 
-bool RSerial::write(char c)
-{
-        return write((uint8_t *) &c, 1);
-}
+        bool RSerial::poll_write()
+        {
+                bool retval = false;
+                struct pollfd fds = { _fd, POLLOUT, 0 };
 
-bool RSerial::write(const uint8_t *data, size_t length)
-{
-        bool success = false;
-        if (can_write()) {
-                ssize_t m = ::write(_fd, data, length);
-                if (m < 0)
+                int pollrc = poll(&fds, 1, _timeout_ms);
+                if (pollrc < 0) {
+                        r_err("serial_read_timeout poll error %d on %s", errno, _device.c_str());
+                
+                } else if ((pollrc > 0) && (fds.revents & POLLOUT)) {
+                        retval = true;
+                } else{
+                        r_warn("serial_read_timeout poll timed out on %s", _device.c_str());
+                }
+                return retval;
+        }
+
+        bool RSerial::can_write()
+        {
+                if (_timeout_ms == 0)
+                        return true;
+                else 
+                        return poll_write();
+        }
+
+        bool RSerial::write(char c)
+        {
+                bool success = false;
+                // if (can_write()) {
+                ssize_t m = ::write(_fd, &c, 1);
+                if (m != 1)
                         r_err("RSerial::write");
-                else if ((size_t) m == length)
+                else
                         success = true;
+                // }
+                return success;
         }
-        return success;
-}
 
-size_t RSerial::print(const char *s)
-{
-        size_t n = 0;
-        while (*s) {
-                if (write(*s++) != 1)
+        void RSerial::open_device()
+        {
+                _fd = open_wrapper(_device.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
+                if (_fd < 0) {
+                        r_err("open_serial: error %d opening %s: %s",
+                              errno, _device.c_str(), strerror(errno));
+                        _fd = -1;
+                        throw std::runtime_error("Failed to open the serial device");
+                }
+                // FIXME: the connection resets the Arduino and it can take
+                // some time before the serial on the board is up and running. 
+                rpp::ClockAccessor::GetInstance()->sleep(3.0);
+        }
+
+        void RSerial::configure_termios()
+        {
+                struct termios tty;
+                speed_t speed_constant;
+
+                switch (_baudrate) {
+                case 9600: speed_constant = B9600; break;
+                case 19200: speed_constant = B19200; break;
+                case 38400: speed_constant = B38400; break;
+                case 57600: speed_constant = B57600; break;
+                case 115200: speed_constant = B115200; break;
+                case 230400: speed_constant = B230400; break;
+                case 460800: speed_constant = B460800; break;
+                default:
+                        r_warn("open_serial: Unknown baudrate. Standard values are "
+                               "9600, 19200, 38400, 57600, 115200, 230400, 460800. "
+                               "I will try anyway.");
+                        speed_constant = (speed_t) _baudrate;
                         break;
-                n++;
+                        //throw std::runtime_error("Invalid baudrate");
+                }
+
+                get_termios(&tty);
+        
+                tty.c_cflag |= CLOCAL | CREAD;
+                tty.c_cflag &= (tcflag_t) ~CSIZE;
+                tty.c_cflag |= CS8;                 /* 8-bit characters */
+                tty.c_cflag &= (tcflag_t) ~PARENB;  /* no parity bit */
+                tty.c_cflag &= (tcflag_t) ~CSTOPB;  /* only need 1 stop bit */
+                tty.c_cflag &= (tcflag_t) ~CRTSCTS; /* no hardware flowcontrol */
+                tty.c_cflag &= (tcflag_t) ~HUPCL;
+                if (_reset)
+                        tty.c_cflag |= HUPCL;
+
+        
+                tty.c_lflag &= (tcflag_t) ~ICANON;   /* No canonical input (line editing) */
+                tty.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHONL); /* No echo */
+                tty.c_lflag &= (tcflag_t) ~ISIG;     /* Don't send signals */
+                tty.c_lflag &= (tcflag_t) ~IEXTEN;   /* No input processing */
+
+        
+                tty.c_iflag &= (tcflag_t) ~IGNCR;    /* Preserve carriage return */
+                tty.c_iflag &= (tcflag_t) ~INPCK;    /* Disable input parity checking. */
+                tty.c_iflag &= (tcflag_t) ~INLCR;    /* Don't translate NL to CR */
+                tty.c_iflag &= (tcflag_t) ~ICRNL;    /* Don't translate CR to NL */
+                tty.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY); /* no SW flowcontrol */
+
+        
+                tty.c_oflag = 0; /* no remapping; no delays; no post-processing */
+
+                /* Use for non-canonical input.
+                 * See http://unixwiz.net/techtips/termios-vmin-vtime.html
+                 */
+                tty.c_cc[VMIN]  = 1; /* Wait for one character */
+                tty.c_cc[VTIME] = 0; /* No timing: calls are blocking */
+        
+                cfsetspeed(&tty, speed_constant);
+
+                set_termios(&tty);
         }
-        return n;
-}
 
-void RSerial::open_device()
-{
-        _fd = open_wrapper(_device.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
-        if (_fd < 0) {
-                r_err("open_serial: error %d opening %s: %s",
-                      errno, _device.c_str(), strerror(errno));
-                _fd = -1;
-                throw std::runtime_error("Failed to open the serial device");
-        }
-        // FIXME: the connection resets the Arduino and it can take
-        // some time before the serial on the board is up and running. 
-        rpp::ClockAccessor::GetInstance()->sleep(3.0);
-}
+        void RSerial::set_termios(struct termios *tty)
+        {
+                // Flush port, then apply attributes
+                tcflush(_fd, TCIOFLUSH);
 
-void RSerial::configure_termios()
-{
-        struct termios tty;
-        speed_t speed_constant;
-
-        switch (_baudrate) {
-        case 9600: speed_constant = B9600; break;
-        case 19200: speed_constant = B19200; break;
-        case 38400: speed_constant = B38400; break;
-        case 57600: speed_constant = B57600; break;
-        case 115200: speed_constant = B115200; break;
-        case 230400: speed_constant = B230400; break;
-        case 460800: speed_constant = B460800; break;
-        default:
-                r_warn("open_serial: Unknown baudrate. Standard values are "
-                      "9600, 19200, 38400, 57600, 115200, 230400, 460800. "
-                      "I will try anyway.");
-                speed_constant = (speed_t) _baudrate;
-                break;
-                //throw std::runtime_error("Invalid baudrate");
+                if (tcsetattr(_fd, TCSANOW, tty) != 0) {
+                        r_err("Could not set terminal attributes for %s", _device.c_str());
+                        throw std::runtime_error("tcsetattr failed");
+                }
         }
 
-        get_termios(&tty);
-        
-        tty.c_cflag |= CLOCAL | CREAD;
-        tty.c_cflag &= (tcflag_t) ~CSIZE;
-        tty.c_cflag |= CS8;                 /* 8-bit characters */
-        tty.c_cflag &= (tcflag_t) ~PARENB;  /* no parity bit */
-        tty.c_cflag &= (tcflag_t) ~CSTOPB;  /* only need 1 stop bit */
-        tty.c_cflag &= (tcflag_t) ~CRTSCTS; /* no hardware flowcontrol */
-        tty.c_cflag &= (tcflag_t) ~HUPCL;
-        if (_reset)
-                tty.c_cflag |= HUPCL;
-
-        
-        tty.c_lflag &= (tcflag_t) ~ICANON;   /* No canonical input (line editing) */
-        tty.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHONL); /* No echo */
-        tty.c_lflag &= (tcflag_t) ~ISIG;     /* Don't send signals */
-        tty.c_lflag &= (tcflag_t) ~IEXTEN;   /* No input processing */
-
-        
-        tty.c_iflag &= (tcflag_t) ~IGNCR;    /* Preserve carriage return */
-        tty.c_iflag &= (tcflag_t) ~INPCK;    /* Disable input parity checking. */
-        tty.c_iflag &= (tcflag_t) ~INLCR;    /* Don't translate NL to CR */
-        tty.c_iflag &= (tcflag_t) ~ICRNL;    /* Don't translate CR to NL */
-        tty.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY); /* no SW flowcontrol */
-
-        
-        tty.c_oflag = 0; /* no remapping; no delays; no post-processing */
-
-        /* Use for non-canonical input.
-         * See http://unixwiz.net/techtips/termios-vmin-vtime.html
-         */
-        tty.c_cc[VMIN]  = 1; /* Wait for one character */
-        tty.c_cc[VTIME] = 0; /* No timing: calls are blocking */
-        
-        cfsetspeed(&tty, speed_constant);
-
-        set_termios(&tty);
-}
-
-void RSerial::set_termios(struct termios *tty)
-{
-        // Flush port, then apply attributes
-        tcflush(_fd, TCIOFLUSH);
-
-        if (tcsetattr(_fd, TCSANOW, tty) != 0) {
-                r_err("Could not set terminal attributes for %s", _device.c_str());
-                throw std::runtime_error("tcsetattr failed");
-        }
-}
-
-void RSerial::get_termios(struct termios *tty)
-{
-        memset(tty, 0, sizeof(struct termios));
-        if (tcgetattr(_fd, tty) != 0) {
-                r_err("Could not get terminal attributes for %s", _device.c_str());
-                throw std::runtime_error("tcgetattr failed");
+        void RSerial::get_termios(struct termios *tty)
+        {
+                memset(tty, 0, sizeof(struct termios));
+                if (tcgetattr(_fd, tty) != 0) {
+                        r_err("Could not get terminal attributes for %s", _device.c_str());
+                        throw std::runtime_error("tcgetattr failed");
+                }
         }
 }
 

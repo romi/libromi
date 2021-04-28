@@ -4,13 +4,13 @@
 #include <vector>
 #include <RomiSerial.h>
 #include <RomiSerialErrors.h>
+#include <Util.h>
 #include "../mock/mock_inputstream.h"
 #include "../mock/mock_outputstream.h"
 
 using namespace std;
 using namespace testing;
-
-
+using namespace romiserial;
 
 void handler_without_args(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
 {
@@ -106,13 +106,6 @@ protected:
                         .WillRepeatedly(Invoke(this, &romiserial_tests::append_output));
         }
 
-    // TBD: This code is duplicated in 3 places.
-    // test_romiserial.cpp, RomiSerial.h, RomiSeralClient.cpp
-        char hex(uint8_t value) {
-                value &= 0x0f;
-                return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
-        }
-
         void expectErrorMessage(char opcode, uint8_t id, int error, const char *message = nullptr) {
                 initAppendOutput();                
                 CRC8 crc;
@@ -126,11 +119,11 @@ protected:
                         expected_message += "\"";
                 }
                 expected_message += "]:";
-                expected_message += hex((uint8_t)(id >> 4));
-                expected_message += hex(id);
+                expected_message += to_hex((uint8_t)(id >> 4));
+                expected_message += to_hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex((uint8_t) (code >> 4));
-                expected_message += hex(code);
+                expected_message += to_hex((uint8_t) (code >> 4));
+                expected_message += to_hex(code);
                 expected_message += "\r";
                 expected_message += "\n";
         }
@@ -141,11 +134,11 @@ protected:
                 expected_message += "#";
                 expected_message += opcode;
                 expected_message += "[0]:";
-                expected_message += hex((uint8_t) (id >> 4));
-                expected_message += hex(id);
+                expected_message += to_hex((uint8_t) (id >> 4));
+                expected_message += to_hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex((uint8_t) (code >> 4));
-                expected_message += hex(code);
+                expected_message += to_hex((uint8_t) (code >> 4));
+                expected_message += to_hex(code);
                 expected_message += "\r";
                 expected_message += "\n";
         }
@@ -157,11 +150,11 @@ protected:
                 expected_message += opcode;
                 expected_message += s;
                 expected_message += ":";
-                expected_message += hex((uint8_t) (id >> 4));
-                expected_message += hex(id);
+                expected_message += to_hex((uint8_t) (id >> 4));
+                expected_message += to_hex(id);
                 uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
-                expected_message += hex((uint8_t)(code >> 4));
-                expected_message += hex(code);
+                expected_message += to_hex((uint8_t)(code >> 4));
+                expected_message += to_hex(code);
                 expected_message += "\r";
                 expected_message += "\n";
         }
@@ -198,7 +191,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_with_crc_mismatch)
 {
         // Arrange
         initInputs("#a:1200\r\n");
-        expectErrorMessage('_', 0x12, romiserial_envelope_crc_mismatch);
+        expectErrorMessage('_', 0x12, kEnvelopeCrcMismatch);
 
         // Act
         serial.handle_input();
@@ -211,7 +204,7 @@ TEST_F(romiserial_tests, romiserial_test_bad_number_of_arguments)
 {
         // Arrange
         initInputs("#a[1]:xxxx\r\n");
-        expectErrorMessage('a', 0, romiserial_bad_number_of_arguments);
+        expectErrorMessage('a', 0, kBadNumberOfArguments);
 
         // Act
         serial.handle_input();
@@ -224,7 +217,7 @@ TEST_F(romiserial_tests, romiserial_test_string_when_none_required)
 {
         // Arrange
         initInputs("#a[\"Start worrying, details follow\"]:xxxx\r\n");
-        expectErrorMessage('a', 0, romiserial_bad_string);
+        expectErrorMessage('a', 0, kBadString);
 
         // Act
         serial.handle_input();
@@ -237,7 +230,7 @@ TEST_F(romiserial_tests, romiserial_test_string_too_long)
 {
         // Arrange
         initInputs("#a[\"Start worrying. Details to follow.\"]:xxxx\r\n");
-        expectErrorMessage('a', 0, romiserial_string_too_long);
+        expectErrorMessage('a', 0, kStringTooLong);
 
         // Act
         serial.handle_input();
@@ -250,7 +243,7 @@ TEST_F(romiserial_tests, romiserial_test_unknown_opcode)
 {
         // Arrange
         initInputs("#z:xxxx\r\n");
-        expectErrorMessage('z', 0, romiserial_unknown_opcode);
+        expectErrorMessage('z', 0, kUnknownOpcode);
 
         // Act
         serial.handle_input();
@@ -263,7 +256,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_fails_to_send_message)
 {
         // Arrange
         initInputs("#b:xxxx\r\n");
-        expectErrorMessage('b', 0, romiserial_bad_handler);
+        expectErrorMessage('b', 0, kBadHandler);
 
         // Act
         serial.handle_input();
@@ -276,7 +269,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_with_bad_number_of_arguments_1)
 {
         // Arrange
         initInputs("#c:xxxx\r\n");
-        expectErrorMessage('c', 0, romiserial_bad_number_of_arguments);
+        expectErrorMessage('c', 0, kBadNumberOfArguments);
 
         // Act
         serial.handle_input();
@@ -289,7 +282,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_with_bad_number_of_arguments_2)
 {
         // Arrange
         initInputs("#c[1]:xxxx\r\n");
-        expectErrorMessage('c', 0, romiserial_bad_number_of_arguments);
+        expectErrorMessage('c', 0, kBadNumberOfArguments);
 
         // Act
         serial.handle_input();
@@ -302,7 +295,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_with_bad_number_of_arguments_3)
 {
         // Arrange
         initInputs("#c[1,2,3]:xxxx\r\n");
-        expectErrorMessage('c', 0, romiserial_bad_number_of_arguments);
+        expectErrorMessage('c', 0, kBadNumberOfArguments);
 
         // Act
         serial.handle_input();
@@ -341,7 +334,7 @@ TEST_F(romiserial_tests, romiserial_test_handler_with_string_and_extra_argument)
 {
         // Arrange
         initInputs("#d[\"Do it correctly or don't do it\",1]:xxxx\r\n");
-        expectErrorMessage('d', 0, romiserial_bad_number_of_arguments);
+        expectErrorMessage('d', 0, kBadNumberOfArguments);
 
         // Act
         serial.handle_input();

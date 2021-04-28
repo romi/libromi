@@ -21,8 +21,8 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_SERIAL_CLIENT_H
-#define __ROMI_SERIAL_CLIENT_H
+#ifndef __ROMISERIAL_ROMISERIALCLIENT_H
+#define __ROMISERIAL_ROMISERIALCLIENT_H
 
 #if !defined(ARDUINO)
 
@@ -32,55 +32,71 @@
 #include <IInputStream.h>
 #include <IOutputStream.h>
 #include <EnvelopeParser.h>
+#include <RomiSerialErrors.h>
 
-// A 2.0 second timeout to read the response messages.
-#define ROMISERIALCLIENT_TIMEOUT 2.0
+namespace romiserial {
 
-using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
-class RomiSerialClient : public IRomiSerialClient
-{
-protected:
-        std::shared_ptr<IInputStream> _in;
-        std::shared_ptr<IOutputStream> _out;
-        std::mutex _mutex;
-        uint8_t _id; 
-        bool _debug;
-        EnvelopeParser _parser;
+        enum {
+                kStatusCode = 0,
+                kErrorMessage = 1
+        };
 
-        int make_request(const std::string &command, std::string &request);
-        JsonCpp try_sending_request(std::string &request);
-        bool send_request(std::string &request);
-        JsonCpp make_error(int code);
-        bool handle_one_char();
-        bool parse_char(int c);
-        JsonCpp parse_response();
-        JsonCpp read_response();
-        bool can_write();
-        bool filter_log_message();
-        JsonCpp check_error_response(JsonCpp& data);
+        // A 2.0 second timeout to read the response messages.
+        static const double kRomiSerialClientTimeout = 2.0;
+        static const uint32_t kDefaultBaudRate = 115200;
 
-public:
+        using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
+        class RomiSerialClient : public IRomiSerialClient
+        {
+        protected:
+                std::shared_ptr<IInputStream> _in;
+                std::shared_ptr<IOutputStream> _out;
+                std::mutex _mutex;
+                uint8_t _id; 
+                bool _debug;
+                EnvelopeParser _parser;
+                JsonCpp default_response_;
+                double timeout_;
+                
+                int make_request(const std::string &command, std::string &request);
+                JsonCpp try_sending_request(std::string &request);
+                bool send_request(std::string &request);
+                JsonCpp make_error(int code);
+                bool handle_one_char();
+                bool parse_char(int c);
+                JsonCpp parse_response();
+                JsonCpp read_response();
+                bool can_write();
+                bool filter_log_message();
+                JsonCpp check_error_response(JsonCpp& data);
+                JsonCpp make_default_response();
+                std::string substitute_metachars(const std::string& command);
+
+        public:
         
-        explicit RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out);
-        RomiSerialClient(const RomiSerialClient&) = delete;
-        RomiSerialClient& operator=(const RomiSerialClient&) = delete;
-        ~RomiSerialClient() override;
+                static std::unique_ptr<IRomiSerialClient> create(const std::string& device);
+        
+                explicit RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out);
+                RomiSerialClient(const RomiSerialClient&) = delete;
+                RomiSerialClient& operator=(const RomiSerialClient&) = delete;
+                ~RomiSerialClient() override;
 
-        uint8_t id() {
-                return _id;
-        }
+                uint8_t id() {
+                        return _id;
+                }
         
-        void send(const char *command, JsonCpp& response) override;
+                void send(const char *command, JsonCpp& response) override;
         
-        bool read(uint8_t *data, size_t length) override;
-        bool write(const uint8_t *data, size_t length) override;
+                /* bool read(uint8_t *data, size_t length) override; */
+                /* bool write(const uint8_t *data, size_t length) override; */
         
-        void set_debug(bool value) override {
-                _debug = value;
-        }
+                void set_debug(bool value) override {
+                        _debug = value;
+                }
         
-        static const char *get_error_message(int code);        
-};
+                static const char *get_error_message(int code);        
+        };
+}
 
-#endif
-#endif
+#endif 
+#endif // __ROMISERIAL_ROMISERIALCLIENT_H

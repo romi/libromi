@@ -38,8 +38,7 @@ namespace romi {
         {
         protected:
 
-
-                RomiSerialClient &_romi_serial;
+                std::unique_ptr<romiserial::IRomiSerialClient> _romi_serial;
                 std::mutex _mutex;
                 std::condition_variable _continue_condition;
                 ActivityHelper _activity_helper;
@@ -48,9 +47,7 @@ namespace romi {
                 
                 static constexpr const char *ClassName = "stepper-controller";
         
-                StepperController(RomiSerialClient &romi_serial)
-                        : _romi_serial(romi_serial), _mutex(),
-                        _continue_condition(), _activity_helper() {}
+                StepperController(std::unique_ptr<romiserial::IRomiSerialClient>& romi_serial);
                 
                 virtual ~StepperController() override = default;
 

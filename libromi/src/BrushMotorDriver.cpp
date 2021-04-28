@@ -32,6 +32,7 @@ namespace romi {
                                            double max_revolutions_per_sec)
                 : _serial(serial), _settings()
         {
+                _serial.set_debug(true);
                 
                 if (!configure_controller(config, encoder_steps, max_revolutions_per_sec)
                     || !enable_controller()) {

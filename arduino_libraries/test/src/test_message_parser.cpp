@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace romiserial;
 
 class message_parser_tests : public ::testing::Test
 {
@@ -24,7 +25,7 @@ protected:
 TEST_F(message_parser_tests, parser_succeeds_on_opcode_without_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x";
@@ -39,7 +40,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_opcode_without_value)
 TEST_F(message_parser_tests, parser_succeeds_on_opcode_with_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[1]";
@@ -55,7 +56,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_opcode_with_value)
 TEST_F(message_parser_tests, parser_fails_on_opcode_without_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x0";
@@ -63,13 +64,13 @@ TEST_F(message_parser_tests, parser_fails_on_opcode_without_value)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_delimiter_space)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x ";
@@ -77,13 +78,13 @@ TEST_F(message_parser_tests, parser_fails_on_delimiter_space)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_atomic_opcode_with_lf)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x\n";
@@ -91,13 +92,13 @@ TEST_F(message_parser_tests, parser_fails_on_atomic_opcode_with_lf)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_scalar_opcode_with_lf)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[1]\n";
@@ -105,13 +106,13 @@ TEST_F(message_parser_tests, parser_fails_on_scalar_opcode_with_lf)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_delimiter_lf_cr)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x\n";
@@ -119,13 +120,13 @@ TEST_F(message_parser_tests, parser_fails_on_delimiter_lf_cr)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_delimiter_space_cr)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "x ";
@@ -133,13 +134,13 @@ TEST_F(message_parser_tests, parser_fails_on_delimiter_space_cr)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_empty_vector)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[]";
@@ -147,13 +148,13 @@ TEST_F(message_parser_tests, parser_fails_on_empty_vector)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_succeeds_on_vector_size_1)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[1]";
@@ -169,7 +170,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_vector_size_1)
 TEST_F(message_parser_tests, parser_succeeds_on_vector_size_5)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[0,1,2,3,4]";
@@ -186,7 +187,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_vector_size_5)
 TEST_F(message_parser_tests, parser_succeeds_on_vector_1_negative)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[-1]";
@@ -202,7 +203,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_vector_1_negative)
 TEST_F(message_parser_tests, parser_succeeds_on_vector_2_negative)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[-1,-1]";
@@ -219,7 +220,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_vector_2_negative)
 TEST_F(message_parser_tests, parser_fails_on_vector_with_spaces)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[ -1 ]";
@@ -227,13 +228,13 @@ TEST_F(message_parser_tests, parser_fails_on_vector_with_spaces)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_unexpected_char);
+        ASSERT_EQ(parser.error(), kUnexpectedChar);
 }
 
 TEST_F(message_parser_tests, parser_succeeds_on_12_args)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = ("a[0,1,2,3,4,5,6,7,8,9,0,1]");
@@ -250,7 +251,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_12_args)
 TEST_F(message_parser_tests, parser_fails_on_13_args)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = ("a[0,1,2,3,4,5,6,7,8,9,0,1,2]");
@@ -258,13 +259,13 @@ TEST_F(message_parser_tests, parser_fails_on_13_args)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_vector_too_long);
+        ASSERT_EQ(parser.error(), kVectorTooLong);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_large_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[100000]";
@@ -272,13 +273,13 @@ TEST_F(message_parser_tests, parser_fails_on_large_value)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_value_out_of_range);
+        ASSERT_EQ(parser.error(), kValueOutOfRange);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_large_negative_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[-100000]";
@@ -286,13 +287,13 @@ TEST_F(message_parser_tests, parser_fails_on_large_negative_value)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_value_out_of_range);
+        ASSERT_EQ(parser.error(), kValueOutOfRange);
 }
 
 TEST_F(message_parser_tests, parser_succeeds_on_array_with_single_string)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"toto\"]";
@@ -309,7 +310,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_array_with_single_string)
 TEST_F(message_parser_tests, parser_succeeds_on_array_with_string_and_value)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"toto\",1]";
@@ -327,7 +328,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_array_with_string_and_value)
 TEST_F(message_parser_tests, parser_succeeds_on_array_with_value_and_string)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[1,\"toto\"]";
@@ -345,7 +346,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_array_with_value_and_string)
 TEST_F(message_parser_tests, parser_succeeds_on_array_with_string_and_three_values)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"toto\",1,2,3]";
@@ -365,7 +366,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_array_with_string_and_three_valu
 TEST_F(message_parser_tests, parser_succeeds_on_array_with_three_values_and_string)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[1,2,3,\"toto\"]";
@@ -385,7 +386,7 @@ TEST_F(message_parser_tests, parser_succeeds_on_array_with_three_values_and_stri
 TEST_F(message_parser_tests, parser_fails_on_string_without_closing_quote)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"toto";
@@ -393,20 +394,20 @@ TEST_F(message_parser_tests, parser_fails_on_string_without_closing_quote)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_invalid_string);
+        ASSERT_EQ(parser.error(), kInvalidString);
 }
 
 TEST_F(message_parser_tests, parser_fails_on_long_string)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"0123456789012345678901234567890123456789\"]";
         bool message = parser.parse(s, strlen(s)+1); 
         
         //Assert
-        ASSERT_EQ(parser.error(), romiserial_string_too_long);
+        ASSERT_EQ(parser.error(), kStringTooLong);
         ASSERT_EQ(message, false);
         ASSERT_EQ(parser.has_string(), 0);
 }
@@ -414,7 +415,7 @@ TEST_F(message_parser_tests, parser_fails_on_long_string)
 TEST_F(message_parser_tests, parser_fails_on_array_with_two_string)
 {
         // Arrange
-        MessageParser parser;
+        romiserial::MessageParser parser;
 
         // Act
         const char *s = "a[\"hello\",\"world\"]";
@@ -422,5 +423,5 @@ TEST_F(message_parser_tests, parser_fails_on_array_with_two_string)
         
         //Assert
         ASSERT_EQ(message, false);
-        ASSERT_EQ(parser.error(), romiserial_too_many_strings);
+        ASSERT_EQ(parser.error(), kTooManyStrings);
 }

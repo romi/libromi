@@ -1,7 +1,7 @@
 /*
   romi-rover
 
-  Copyright (C) 2019 Sony Computer Science Laboratories
+  Copyright (C) 2019-2020 Sony Computer Science Laboratories
   Author(s) Peter Hanappe
 
   romi-rover is collection of applications for the Romi Rover.
@@ -21,24 +21,20 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMISERIAL_IROMISERIAL_H
-#define __ROMISERIAL_IROMISERIAL_H
+
+#include <ctype.h>
+#include "Util.h"
 
 namespace romiserial {
 
-        class IRomiSerial
+        char to_hex(uint8_t value)
         {
-        public:
-                virtual ~IRomiSerial() = default;
+                value &= 0x0f;
+                return (value < 10)? (char)('0' + value) : (char)('a' + (value - 10));
+        }
 
-                virtual void handle_input() = 0;
-                virtual void send_ok() = 0;
-                virtual void send_error(int code, const char *message) = 0;
-                virtual void send(const char *message) = 0;
-                /* virtual bool read(uint8_t *data, size_t length) = 0; */
-                /* virtual bool write(const uint8_t *data, size_t length) = 0; */
-                virtual void log(const char *message) = 0;
-        };
+        bool is_valid_opcode(char c)
+        {
+                return isalnum(c) || (c == '?');
+        }
 }
-
-#endif // __ROMISERIAL_IROMISERIAL_H
