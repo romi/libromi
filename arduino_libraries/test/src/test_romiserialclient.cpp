@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace romiserial;
 
 class romiserialclient_tests : public ::testing::Test
 {
@@ -20,7 +21,12 @@ protected:
         string output_message;
         string expected_message;
         
-	romiserialclient_tests() : in(std::make_shared<MockInputStream>()), out(std::make_shared<MockOutputStream>()), output_message(), expected_message()  {}
+	romiserialclient_tests()
+                : in(std::make_shared<MockInputStream>()),
+                  out(std::make_shared<MockOutputStream>()),
+                  output_message(),
+                  expected_message() {
+        }
 
 	~romiserialclient_tests() override = default;
 
@@ -55,14 +61,14 @@ protected:
                 initSerialRead(s);
         }
 
-        size_t append_output(const char *s) { 
+        bool append_output(char s) { 
                 output_message += s; 
-                return strlen(s); 
+                return true; 
         }
 
         void setExpectedOutput(const char *s) {
                 expected_message = s;
-                EXPECT_CALL(*out, print(_))
+                EXPECT_CALL(*out, write(_))
                         .WillOnce(Invoke(this, &romiserialclient_tests::append_output));
         }
         
@@ -182,7 +188,7 @@ TEST_F(romiserialclient_tests, message_too_long)
         //Assert
         EXPECT_EQ(true, response.isarray());
         EXPECT_EQ(2, response.length());
-        EXPECT_EQ(romiserialclient_too_long, response.num(0));
+        EXPECT_EQ(kStringTooLong, response.num(0));
 }
 
 TEST_F(romiserialclient_tests, error_number_has_string_representation)
@@ -196,7 +202,7 @@ TEST_F(romiserialclient_tests, error_number_has_string_representation)
         EXPECT_STREQ("Application error", RomiSerialClient::get_error_message(1));
         EXPECT_STREQ("Unknown error code", RomiSerialClient::get_error_message(-99399));
         
-        for (int i = -1; i > romiserial_last_error; i--) {
+        for (int i = -1; i > kLastError; i--) {
                 EXPECT_EQ(0, rstreq("Unknown error code",
                                     RomiSerialClient::get_error_message(i)));
         }

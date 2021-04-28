@@ -21,6 +21,10 @@ set(SOURCES
   RomiSerial/RomiSerial.cpp
   RomiSerial/RSerial.h
   RomiSerial/RSerial.cpp
+  RomiSerial/Printer.h
+  RomiSerial/Printer.cpp
+  RomiSerial/Util.h
+  RomiSerial/Util.cpp
 )
 
 add_library(romiserial SHARED ${SOURCES})

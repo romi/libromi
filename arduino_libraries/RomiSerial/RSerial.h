@@ -26,39 +26,41 @@
 #include "IInputStream.h"
 #include "IOutputStream.h"
 
-#ifndef __R_SERIAL_H
-#define __R_SERIAL_H
+#ifndef __ROMISERIAL_RSERIAL_H
+#define __ROMISERIAL_RSERIAL_H
 
-class RSerial : public IInputStream, public IOutputStream
-{
-protected:
-        std::string _device;
-        int _fd;
-        float _timeout;
-        int _baudrate;
-        bool _reset;
-        int _timeout_ms;
+namespace romiserial {
         
-        void open_device();
-        void configure_termios();
-        void set_termios(struct termios *tty);
-        void get_termios(struct termios *tty);
-        bool can_write();
-        bool poll_write();
+        static const bool kDontReset = false;
+        static const bool kReset = true;
 
-public:
-        RSerial(const std::string& device, int baudrate, bool reset);
-        virtual ~RSerial();
-
-        void set_timeout(float seconds) override;
+        class RSerial : public IInputStream, public IOutputStream
+        {
+        protected:
+                std::string _device;
+                int _fd;
+                double _timeout;
+                uint32_t _baudrate;
+                bool _reset;
+                int _timeout_ms;
         
-        bool available() override;        
-        bool read(char& c) override;
-        bool read(uint8_t *data, size_t length) override;
-        
-        bool write(char c) override;
-        bool write(const uint8_t *data, size_t length) override;
-        size_t print(const char *s) override;
-};
+                void open_device();
+                void configure_termios();
+                void set_termios(struct termios *tty);
+                void get_termios(struct termios *tty);
+                bool can_write();
+                bool poll_write();
 
-#endif // __R_SERIAL_H
+        public:
+                RSerial(const std::string& device, uint32_t baudrate, bool reset);
+                virtual ~RSerial();
+
+                void set_timeout(double seconds) override;
+        
+                bool available() override;        
+                bool read(char& c) override;
+                bool write(char c) override;
+        };
+}
+
+#endif // __ROMISERIAL_RSERIAL_H

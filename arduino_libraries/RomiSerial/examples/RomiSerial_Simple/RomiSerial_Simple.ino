@@ -21,6 +21,7 @@
   <http://www.gnu.org/licenses/>.
 
  */
+#include <ArduinoSerial.h>
 #include <RomiSerial.h>
 
 void my_handler(RomiSerial *romiSerial,
@@ -41,6 +42,9 @@ RomiSerial romiSerial(serial, serial, handlers, 1);
 
 void setup()
 {
+        Serial.begin(115200);
+        while (!Serial)
+                ;
 }
 
 void loop()

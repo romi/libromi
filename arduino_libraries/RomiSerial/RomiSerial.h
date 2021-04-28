@@ -21,8 +21,8 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_SERIAL_H
-#define __ROMI_SERIAL_H
+#ifndef __ROMISERIAL_ROMISERIAL_H
+#define __ROMISERIAL_ROMISERIAL_H
 
 #include "IRomiSerial.h"
 #include "IInputStream.h"
@@ -31,73 +31,73 @@
 #include "MessageParser.h"
 #include "CRC8.h"
 
-class RomiSerial;
+namespace romiserial {
 
-typedef void (*MessageCallback)(RomiSerial *romi_serial,
-                                int16_t *args,
-                                const char *string_arg);
+        class RomiSerial;
 
-struct MessageHandler 
-{
-        char opcode;
-        uint8_t number_arguments;
-        bool requires_string;
-        MessageCallback callback;
-};
+        typedef void (*MessageCallback)(RomiSerial *romi_serial,
+                                        int16_t *args,
+                                        const char *string_arg);
 
-class RomiSerial : public IRomiSerial
-{
-protected:
-        IInputStream& in_;
-        IOutputStream& out_;
-        const MessageHandler *handlers_;
-        uint8_t num_handlers_;
-        EnvelopeParser envelope_parser_;
-        MessageParser message_parser_;
-        bool sent_response_;
-        CRC8 crc_;
-        uint8_t last_id_;
+        struct MessageHandler 
+        {
+                char opcode;
+                uint8_t number_arguments;
+                bool requires_string;
+                MessageCallback callback;
+        };
+
+        class RomiSerial : public IRomiSerial
+        {
+        protected:
+                IInputStream& in_;
+                IOutputStream& out_;
+                const MessageHandler *handlers_;
+                uint8_t num_handlers_;
+                EnvelopeParser envelope_parser_;
+                MessageParser message_parser_;
+                bool sent_response_;
+                CRC8 crc_;
+                uint8_t last_id_;
         
-        void process_message();
-        void handle_char(char c);
-        void parse_and_handle_message();
-        void handle_message();
-        int get_handler();
-        bool assert_valid_arguments(int index);
-        bool assert_valid_argument_count(int index);
-        bool assert_valid_string_argument(int index);
+                void process_message();
+                void handle_char(char c);
+                void parse_and_handle_message();
+                void handle_message();
+                int get_handler();
+                bool assert_valid_arguments(int index);
+                bool assert_valid_argument_count(int index);
+                bool assert_valid_string_argument(int index);
 
-        void start_message();
-        void append_char(const char c);
-        void append_message(const char *s);
-        void finalize_message();
-        void send_message(const char*message);
+                void start_message();
+                void append_char(char c);
+                void append_message(const char *s);
+                void finalize_message();
+                void send_message(const char*message);
 
-public:
+        public:
 
-        RomiSerial(IInputStream& in, IOutputStream& out,
-                   const MessageHandler *handlers, uint8_t num_handlers);
-        RomiSerial(const RomiSerial&) = delete;
-        RomiSerial& operator=(const RomiSerial&) = delete;
+                RomiSerial(IInputStream& in, IOutputStream& out,
+                           const MessageHandler *handlers, uint8_t num_handlers);
+                RomiSerial(const RomiSerial&) = delete;
+                RomiSerial& operator=(const RomiSerial&) = delete;
 
-        ~RomiSerial() override = default;
+                ~RomiSerial() override = default;
 
-        void handle_input() override;
-        void send_ok() override;
-        void send_error(int code, const char *message) override;
-        void send(const char *message) override;
-        void log(const char *message) override;
-
-        bool read(uint8_t *data, size_t length) override;
-        bool write(const uint8_t *data, size_t length) override;
+                void handle_input() override;
+                void send_ok() override;
+                void send_error(int code, const char *message) override;
+                void send(const char *message) override;
+                void log(const char *message) override;
         
-protected:
+        protected:
 
-        char convert_4bits_to_hex(uint8_t value);
-        void append_hex(uint8_t value);
-        void append_id();
-        void append_crc();
+                void append_hex(uint8_t value);
+                void append_start_metadata();
+                void append_id();
+                void append_crc();
 
-};
+        };
+}
 
 #endif

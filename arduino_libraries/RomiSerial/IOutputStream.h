@@ -27,13 +27,14 @@
 
 #include <stddef.h>
 
-class IOutputStream
-{
-public:
-        virtual ~IOutputStream() = default;
-        virtual bool write(char c) = 0;
-        virtual bool write(const uint8_t *data, size_t length) = 0;
-        virtual size_t print(const char *s) = 0;
-};
+namespace romiserial {
+
+        class IOutputStream
+        {
+        public:
+                virtual ~IOutputStream() = default;
+                virtual bool write(char c) = 0;
+        };
+}
 
 #endif // __IOUTPUTSTREAM_H
