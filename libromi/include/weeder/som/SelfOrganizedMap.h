@@ -336,7 +336,7 @@ namespace romi {
                         }
                 }
                 
-                bool compute_path(ISession &session, bool print = false);
+                bool compute_path(ISession &session, bool print);
         };
 
 

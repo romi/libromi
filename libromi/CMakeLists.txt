@@ -141,6 +141,7 @@ set(SOURCES
         include/weeder/IPipeline.h
         include/weeder/PipelineFactory.h
         include/weeder/Pipeline.h
+        include/weeder/constraintsolver/GConstraintSolver.h
 
         src/api/CNCRange.cpp
         src/api/Path.cpp
@@ -210,6 +211,7 @@ set(SOURCES
         src/weeder/som/SOM.cpp
         src/weeder/som/Superpixels.cpp
         src/weeder/som/fixed.c
+        src/weeder/constraintsolver/GConstraintSolver.cpp
         src/weeder/quincunx/point.h
         )
 
@@ -269,6 +271,7 @@ target_link_libraries(romi
         fluidsynth
         jpeg
         png
+        ortools
         ${PICAMERA_LIBRARIES})
 
 if(BUILD_TESTS)

@@ -22,6 +22,7 @@
 
  */
 
+#include <weeder/constraintsolver/GConstraintSolver.h>
 #include "weeder/PipelineFactory.h"
 #include "weeder/Pipeline.h"
 #include "weeder/ImageCropper.h"
@@ -48,19 +49,21 @@ namespace romi {
         
         void PipelineFactory::build_planner(JsonCpp weeder)
         {
-                const char *name = (const char *)weeder["path"];
-                JsonCpp properties = weeder[name];                
+                std::string name = (const char *)weeder["path"];
+                JsonCpp properties = weeder[name.c_str()];
                 build_planner(name, properties);
         }
         
-        void PipelineFactory::build_planner(const char *name, JsonCpp& properties)
+        void PipelineFactory::build_planner(const std::string& name, JsonCpp& properties)
         {
-                if (rstreq(name, "quincunx")) {
+                if (name == "quincunx") {
                         _planner = std::make_unique<Quincunx>(properties);
-                } else if (rstreq(name, "som")) {
+                } else if (name ==  "som") {
                         _planner = std::make_unique<SOM>(properties);
+                } else if (name ==  "ortools") {
+                    _planner = std::make_unique<GConstraintSolver>(properties);
                 } else {
-                        r_err("Failed to find the path planner class: %s", name);
+                        r_err("Failed to find the path planner class: %s", name.c_str());
                         throw std::runtime_error("Invalid path planner class");
                 }
         }

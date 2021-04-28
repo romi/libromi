@@ -51,7 +51,7 @@ namespace romi {
                 void build_cropper(CNCRange &range, JsonCpp weeder);
                 void build_segmentation(JsonCpp weeder);
                 void build_planner(JsonCpp weeder);
-                void build_planner(const char *name, JsonCpp& properties);
+                void build_planner(const std::string& name, JsonCpp& properties);
                 
         public:
                 PipelineFactory() : _cropper(), _segmentation(), _planner(), _pipeline() {}
