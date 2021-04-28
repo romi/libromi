@@ -10,7 +10,7 @@ set(romi-libromi_VERSION_MINOR 1)
 ############################################################
 
 set(CMAKE_MODULES_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
-set(CMAKE_THIRDPARTY_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
+set(CMAKE_DOWNLOAD_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -20,7 +20,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS}")
 set(CMAKE_C_FLAGS "${COMMON_COMPILATION_FLAGS}")
@@ -32,6 +32,51 @@ set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 # Build tests by default. We want to run tests whether we are developing or building a release. I mean... why wouldn't you? :)
 option(BUILD_TESTS "Build all tests." ON)
 option(BUILD_COVERAGE "Build coverage." ON)
+option(BUILD_GOOGLE_OR_TOOLS "Build with BUILD_GOOGLE_OR_TOOLS" ON)
+
+if(BUILD_GOOGLE_OR_TOOLS)
+
+    MESSAGE("point1")
+    set(BUILD_DEPS ON)
+    if (NOT DEFINED ortools_SOURCE_DIR)
+        MESSAGE("point2")
+        if (CMAKE_VERSION VERSION_LESS 3.2)
+            set(UPDATE_DISCONNECTED_IF_AVAILABLE "")
+        else()
+            set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
+        endif()
+
+        if(UNIX)
+            option(BUILD_SHARED_LIBS "Build shared libraries(.so)." ON)
+        else()
+            # only support for static build on Windows.
+            set(BUILD_SHARED_LIBS OFF)
+        endif()
+
+        if(BUILD_SHARED_LIBS)
+            set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+        endif()
+
+        MESSAGE("point1")
+        include(${CMAKE_MODULES_DIRECTORY}/DownloadProject.cmake)
+        download_project(   PROJ                ortools
+                GIT_REPOSITORY      https://github.com/google/or-tools.git
+                GIT_TAG             stable
+                PREFIX              ${CMAKE_DOWNLOAD_DIRECTORY}/ortools
+                ${UPDATE_DISCONNECTED_IF_AVAILABLE}
+                )
+
+        set(BUILD_DEPS ON)
+        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+        set(BUILD_SHARED_LIBS OFF)
+        set(BUILD_TESTING OFF)
+        set(BUILD_SAMPLES OFF)
+        set(BUILD_EXAMPLES OFF)
+
+        add_subdirectory(${ortools_SOURCE_DIR} ${ortools_BINARY_DIR})
+    endif()
+endif()
+
 
 if(BUILD_TESTS)
 
@@ -50,7 +95,7 @@ if(BUILD_TESTS)
                 PROJ                googletest
                 GIT_REPOSITORY      https://github.com/google/googletest.git
                 GIT_TAG             v1.10.x
-                PREFIX              ${CMAKE_THIRDPARTY_DIRECTORY}/googletest
+                PREFIX              ${CMAKE_DOWNLOAD_DIRECTORY}/googletest
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE}
                 )
 
@@ -71,7 +116,7 @@ if (BUILD_COVERAGE AND BUILD_TESTS)
         # we then manually add the bin path so that we can call it later.
         download_project(   PROJ              lcov
                 URL               https://github.com/linux-test-project/lcov/releases/download/v1.15/lcov-1.15.tar.gz
-                PREFIX            ${CMAKE_THIRDPARTY_DIRECTORY}/lcov
+                PREFIX            ${CMAKE_DOWNLOAD_DIRECTORY}/lcov
                 TIMEOUT           180
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE}
                 )
