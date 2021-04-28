@@ -26,14 +26,14 @@
 
 namespace romi {
         
-        BrushMotorDriver::BrushMotorDriver(IRomiSerialClient &serial,
+        BrushMotorDriver::BrushMotorDriver(std::unique_ptr<romiserial::IRomiSerialClient>& serial,
                                            JsonCpp &config,
                                            int encoder_steps,
                                            double max_revolutions_per_sec)
-                : _serial(serial), _settings()
+                : serial_(), settings_()
         {
-                _serial.set_debug(true);
-                
+                //_serial.set_debug(true);
+                serial_ = std::move(serial);
                 if (!configure_controller(config, encoder_steps, max_revolutions_per_sec)
                     || !enable_controller()) {
                         throw std::runtime_error("BrushMotorDriver: "
@@ -45,36 +45,36 @@ namespace romi {
                                                     double max_revolutions_per_sec)
         {
                         
-                _settings.parse(config);
+                settings_.parse(config);
 
                 char command[100];
                 rprintf(command, 100, "C[%d,%d,%d,%d,%d,%d,%d,%d,%d]",
                         steps,
                         (int) (100.0 * max_revolutions_per_sec),
-                        _settings.max_signal,
-                        _settings.use_pid? 1 : 0,
-                        (int) (1000.0 * _settings.kp),
-                        (int) (1000.0 * _settings.ki),
-                        (int) (1000.0 * _settings.kd),
-                        _settings.dir_left,
-                        _settings.dir_right);
+                        settings_.max_signal,
+                        settings_.use_pid? 1 : 0,
+                        (int) (1000.0 * settings_.kp),
+                        (int) (1000.0 * settings_.ki),
+                        (int) (1000.0 * settings_.kd),
+                        settings_.dir_left,
+                        settings_.dir_right);
                         
                 JsonCpp response;
-                _serial.send(command, response);
+                serial_->send(command, response);
                 return (response.num(0) == 0);
         }
 
         bool BrushMotorDriver::enable_controller()
         {
                 JsonCpp response;
-                _serial.send("E[1]", response);
+                serial_->send("E[1]", response);
                 return (response.num(0) == 0);
         }
 
         bool BrushMotorDriver::stop()
         {
                 JsonCpp response;
-                _serial.send("X", response);
+                serial_->send("X", response);
                 bool success = (response.num(0) == 0);
                 if (!success) {
                         r_err("BrushMotorDriver::stop: %s",
@@ -99,7 +99,7 @@ namespace romi {
                         rprintf(command, 64, "V[%d,%d]", ileft, iright);
                                 
                         JsonCpp response;
-                        _serial.send(command, response);
+                        serial_->send(command, response);
                         success = (response.num(0) == 0);
                         
                         if (!success) {
@@ -119,7 +119,7 @@ namespace romi {
                                                   double &timestamp)
         {
                 JsonCpp response;
-                _serial.send("e", response);
+                serial_->send("e", response);
                 bool success = (response.num(0) == 0);
                 if (success) {
                         left = response.num(1);

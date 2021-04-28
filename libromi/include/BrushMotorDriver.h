@@ -25,6 +25,7 @@
 #define __ROMI_BRUSH_MOTORDRIVER_H
 
 #include <stdexcept>
+#include <memory>
 #include "api/IMotorDriver.h"
 #include "RomiSerialClient.h"
 
@@ -52,8 +53,8 @@ namespace romi {
         class BrushMotorDriver : public IMotorDriver
         {
         protected:
-                IRomiSerialClient &_serial;
-                BrushMotorDriverSettings _settings;
+                std::unique_ptr<romiserial::IRomiSerialClient> serial_;
+                BrushMotorDriverSettings settings_;
                 
                 bool configure_controller(JsonCpp &config, int steps,
                                           double max_revolutions_per_sec);
@@ -62,7 +63,7 @@ namespace romi {
 
         public:
 
-                BrushMotorDriver(IRomiSerialClient &serial,
+                BrushMotorDriver(std::unique_ptr<romiserial::IRomiSerialClient>& serial,
                                  JsonCpp &config,
                                  int encoder_steps,
                                  double max_revolutions_per_sec);

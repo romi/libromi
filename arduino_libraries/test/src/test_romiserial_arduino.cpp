@@ -14,7 +14,7 @@ protected:
 
 	romiserial_arduino_tests()
                 : serial(std::make_shared<RSerial>("/dev/ttyACM0", 115200, 1)),
-                  romiserial(serial, serial) {
+                  romiserial(serial, serial, 255) {
                 //romiserial.set_debug(true);
 	}
         

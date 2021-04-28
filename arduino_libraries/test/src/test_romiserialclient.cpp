@@ -69,7 +69,7 @@ protected:
         void setExpectedOutput(const char *s) {
                 expected_message = s;
                 EXPECT_CALL(*out, write(_))
-                        .WillOnce(Invoke(this, &romiserialclient_tests::append_output));
+                        .WillRepeatedly(Invoke(this, &romiserialclient_tests::append_output));
         }
         
 };
@@ -78,7 +78,7 @@ TEST_F(romiserialclient_tests, message_without_args)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[0]:00e7\r\n");
 
@@ -97,7 +97,7 @@ TEST_F(romiserialclient_tests, message_with_args)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a[1,2,3]:00dd\r\n");
         initInput("#a[0]:00e7\r\n");
 
@@ -116,7 +116,7 @@ TEST_F(romiserialclient_tests, error_reponse)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[1,\"Went to bed early\"]:00f2\r\n");
 
@@ -137,7 +137,7 @@ TEST_F(romiserialclient_tests, error_reponse_without_message)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[1]:0085\r\n");
 
@@ -157,7 +157,7 @@ TEST_F(romiserialclient_tests, log_message)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#!LOG MESSAGE:008e\r\n#a[0]:00e7\r\n");
 
@@ -176,7 +176,7 @@ TEST_F(romiserialclient_tests, message_too_long)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
 
         // Act
         JsonCpp response;
@@ -188,7 +188,7 @@ TEST_F(romiserialclient_tests, message_too_long)
         //Assert
         EXPECT_EQ(true, response.isarray());
         EXPECT_EQ(2, response.length());
-        EXPECT_EQ(kStringTooLong, response.num(0));
+        EXPECT_EQ(kClientTooLong, response.num(0));
 }
 
 TEST_F(romiserialclient_tests, error_number_has_string_representation)
