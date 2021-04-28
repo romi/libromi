@@ -75,8 +75,9 @@ namespace romiserial {
         public:
         
                 static std::unique_ptr<IRomiSerialClient> create(const std::string& device);
-        
-                explicit RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out);
+                static uint8_t any_id();
+                
+                explicit RomiSerialClient(std::shared_ptr<IInputStream> in, std::shared_ptr<IOutputStream> out, uint8_t start_id);
                 RomiSerialClient(const RomiSerialClient&) = delete;
                 RomiSerialClient& operator=(const RomiSerialClient&) = delete;
                 ~RomiSerialClient() override;

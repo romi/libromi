@@ -47,23 +47,28 @@ namespace romiserial {
                 std::shared_ptr<RSerial> serial
                         = std::make_shared<RSerial>(device, kDefaultBaudRate, kDontReset);
                 std::unique_ptr<IRomiSerialClient> romi_serial
-                        = std::make_unique<RomiSerialClient>(serial, serial);
+                        = std::make_unique<RomiSerialClient>(serial, serial, any_id());
                 return romi_serial;
         }
 
+        uint8_t RomiSerialClient::any_id()
+        {
+                srand((unsigned int) time(nullptr));
+                return (uint8_t) (rand() % 255);
+        }
+
         RomiSerialClient::RomiSerialClient(std::shared_ptr<IInputStream> in,
-                                           std::shared_ptr<IOutputStream> out)
+                                           std::shared_ptr<IOutputStream> out,
+                                           uint8_t start_id)
                 :   _in(in),
                     _out(out),
                     _mutex(),
-                    _id(0),
+                    _id(start_id),
                     _debug(false),
                     _parser(),
                     default_response_(),
                     timeout_(kRomiSerialClientTimeout)
         {
-                srand((unsigned int) time(nullptr));
-                _id = (uint8_t) (rand() % 255);
                 in->set_timeout(0.1f);
                 default_response_ = make_default_response();
         }
