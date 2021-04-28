@@ -21,63 +21,67 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __CRC8_H
-#define __CRC8_H
+#ifndef __ROMISERIAL_CRC8_H
+#define __ROMISERIAL_CRC8_H
 
 #include <stdint.h>
 #include <string.h>
 
-class CRC8
-{
-protected:
-        uint8_t crc_;
-        static uint8_t table_[256];
-        static bool table_initialized_;
-        
-public:
-        
-        CRC8();
-        virtual ~CRC8() = default;
-        
-        void init_table(uint8_t poly = 0x07);
-        void do_init_table(uint8_t poly);
-        
-        void start(uint8_t start_value = 0) {
-                crc_ = start_value;
-        }
 
-        void update(const char c) {
-            update(uint8_t(c));
-        }
+namespace romiserial {
 
-        void update(uint8_t c) {
-                crc_ = table_[crc_ ^ c];
-        }
+        class CRC8
+        {
+        protected:
+                uint8_t crc_;
+                static uint8_t table_[256];
+                static bool table_initialized_;
         
-        void update(const char *s, size_t len) {
-                while (len--) {
-                        update((uint8_t) *s++);
+        public:
+        
+                CRC8();
+                virtual ~CRC8() = default;
+        
+                void init_table(uint8_t poly = 0x07);
+                void do_init_table(uint8_t poly);
+        
+                void start(uint8_t start_value = 0) {
+                        crc_ = start_value;
                 }
-        }
-        
-        void update(const char *s) {
-                update(s, strlen(s));
-        }
-        
-        uint8_t finalize() {
-                return crc_;
-        }
-        
-        uint8_t get() {
-                return crc_;
-        }
-        
-        uint8_t compute(const char *s, size_t len) {
-                start();
-                for (size_t i = 0; i < len; i++)
-                        update((uint8_t)s[i]);
-                return finalize();
-        }
-};
 
-#endif
+                void update(const char c) {
+                        update(uint8_t(c));
+                }
+
+                void update(uint8_t c) {
+                        crc_ = table_[crc_ ^ c];
+                }
+        
+                void update(const char *s, size_t len) {
+                        while (len--) {
+                                update((uint8_t) *s++);
+                        }
+                }
+        
+                void update(const char *s) {
+                        update(s, strlen(s));
+                }
+        
+                uint8_t finalize() {
+                        return crc_;
+                }
+        
+                uint8_t get() {
+                        return crc_;
+                }
+        
+                uint8_t compute(const char *s, size_t len) {
+                        start();
+                        for (size_t i = 0; i < len; i++)
+                                update((uint8_t)s[i]);
+                        return finalize();
+                }
+        };
+}
+
+#endif // __ROMISERIAL_CRC8_H

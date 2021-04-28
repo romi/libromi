@@ -29,6 +29,15 @@
 
 namespace romi {
 
+        StepperController::StepperController(std::unique_ptr<romiserial::IRomiSerialClient>& romi_serial)
+                : _romi_serial(),
+                  _mutex(),
+                  _continue_condition(),
+                  _activity_helper()
+        {
+                _romi_serial = std::move(romi_serial);
+        }
+
         int StepperController::send_command(const char *command)
         {
                 int r = -1;
@@ -45,7 +54,7 @@ namespace romi {
                         
                         _activity_helper.check_pause_or_cancel_execution();
                         
-                        _romi_serial.send(command, response);
+                        _romi_serial->send(command, response);
 
                         if (response.isarray()
                             && response.get(0).isnumber()) {
@@ -98,7 +107,7 @@ namespace romi {
                 int state = '?';
                 
                 JsonCpp s;
-                _romi_serial.send("I", s);
+                _romi_serial->send("I", s);
 
                 int r = (int) s.num(0);
                 if (r == 0) {
@@ -136,7 +145,7 @@ namespace romi {
                 bool success = false;
                 
                 JsonCpp s;
-                _romi_serial.send("P", s);
+                _romi_serial->send("P", s);
 
                 int r = (int) s.num(0);
                 if (r == 0) {
@@ -195,7 +204,7 @@ namespace romi {
                 bool success = false;
                 JsonCpp response;
                 for (int i = 0; i < 10; i++) {
-                        _romi_serial.send(command, response);
+                        _romi_serial->send(command, response);
                         if (response_ok(response)) {
                                 success = true;
                                 break;

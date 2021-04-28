@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace romiserial;
 
 class envelope_parser_tests : public ::testing::Test
 {
@@ -144,7 +145,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_opcode_without_metadata)
         send_command(parser, s, r, e);
         
         //Assert
-        assert_failure(r, e, romiserial_envelope_missing_metadata);
+        assert_failure(r, e, kEnvelopeMissingMetadata);
 }
 
 TEST_F(envelope_parser_tests, parser_returns_correct_id)
@@ -178,7 +179,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_bad_crc)
         send_command(parser, s, r, e);
         
         //Assert
-        assert_failure(r, e, romiserial_envelope_crc_mismatch);
+        assert_failure(r, e, kEnvelopeCrcMismatch);
 }
 
 TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_1)
@@ -193,7 +194,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_1)
         send_command(parser, s, r, e);
         
         //Assert
-        assert_failure(r, e, romiserial_envelope_invalid_id);
+        assert_failure(r, e, kEnvelopeInvalidId);
 }
 
 TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_2)
@@ -208,7 +209,7 @@ TEST_F(envelope_parser_tests, parser_fails_on_incomplete_metadata_2)
         send_command(parser, s, r, e);
         
         //Assert
-        assert_failure(r, e, romiserial_envelope_invalid_crc);
+        assert_failure(r, e, kEnvelopeInvalidCrc);
 }
 
 TEST_F(envelope_parser_tests, parser_fails_on_too_long_message)
@@ -223,5 +224,5 @@ TEST_F(envelope_parser_tests, parser_fails_on_too_long_message)
         send_command(parser, s, r, e);
         
         //Assert
-        assert_failure(r, e, romiserial_envelope_too_long);
+        assert_failure(r, e, kEnvelopeTooLong);
 }

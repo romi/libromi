@@ -25,6 +25,7 @@
 #ifndef __ROMI_CRYSTAL_DISPLAY_H
 #define __ROMI_CRYSTAL_DISPLAY_H
 
+#include <memory>
 #include <IRomiSerialClient.h>
 #include "api/IDisplay.h"
 
@@ -37,15 +38,10 @@ namespace romi {
                 static constexpr size_t lines = 2;
 
         protected:
-                IRomiSerialClient &_serial;
-                std::string observed_output;
-
+                std::unique_ptr<romiserial::IRomiSerialClient> _serial;
                         
         public:
-                explicit CrystalDisplay(IRomiSerialClient &serial)
-                        : _serial(serial), observed_output() {
-                }
-                
+                explicit CrystalDisplay(std::unique_ptr<romiserial::IRomiSerialClient>& romi_serial);
                 ~CrystalDisplay() override = default;
 
                 bool show(size_t line, const std::string& display_string) override;

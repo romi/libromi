@@ -22,24 +22,16 @@
 
  */
 
-#ifndef __LOG_H
-#define __LOG_H
+#ifndef __ROMISERIAL_LOG_H
+#define __ROMISERIAL_LOG_H
 
+// FIXME
 #if defined(ARDUINO)
 #include <Arduino.h>
 #define log_print(__x)   { \
                 Serial.print("#!"); \
                 Serial.print(__x); ; \
                 Serial.print(":xxxx\r\n"); }
-
-#else
-#include <r.h>
-static inline void romiserial_log(char x) { r_debug("#!%c:xxxx", x); }
-static inline void romiserial_log(int x) { r_debug("#!%d:xxxx", x); }
-static inline void romiserial_log(const char *s) { r_debug("#!%s:xxxx", s); }
-
-#define log_print(__x)   romiserial_log(__x)
 #endif
 
-
-#endif // __LOG_H
+#endif // __ROMISERIAL_LOG_H

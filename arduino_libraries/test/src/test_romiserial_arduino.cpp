@@ -4,6 +4,8 @@
 #include <RomiSerialClient.h>
 #include <RomiSerialErrors.h>
 
+using namespace romiserial;
+
 class romiserial_arduino_tests : public ::testing::Test
 {
 protected:
@@ -12,7 +14,7 @@ protected:
 
 	romiserial_arduino_tests()
                 : serial(std::make_shared<RSerial>("/dev/ttyACM0", 115200, 1)),
-                  romiserial(serial, serial) {
+                  romiserial(serial, serial, 255) {
                 //romiserial.set_debug(true);
 	}
         
@@ -40,7 +42,7 @@ TEST_F(romiserial_arduino_tests, test_failure_bad_number_of_arguments)
         romiserial.send("b", response);
         int code = (int) response.num(0);
         
-        ASSERT_EQ(romiserial_bad_number_of_arguments, code);
+        ASSERT_EQ(kBadNumberOfArguments, code);
 }
 
 TEST_F(romiserial_arduino_tests, test_success_two_arguments)

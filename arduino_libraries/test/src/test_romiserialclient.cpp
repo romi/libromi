@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace romiserial;
 
 class romiserialclient_tests : public ::testing::Test
 {
@@ -20,7 +21,12 @@ protected:
         string output_message;
         string expected_message;
         
-	romiserialclient_tests() : in(std::make_shared<MockInputStream>()), out(std::make_shared<MockOutputStream>()), output_message(), expected_message()  {}
+	romiserialclient_tests()
+                : in(std::make_shared<MockInputStream>()),
+                  out(std::make_shared<MockOutputStream>()),
+                  output_message(),
+                  expected_message() {
+        }
 
 	~romiserialclient_tests() override = default;
 
@@ -55,15 +61,15 @@ protected:
                 initSerialRead(s);
         }
 
-        size_t append_output(const char *s) { 
+        bool append_output(char s) { 
                 output_message += s; 
-                return strlen(s); 
+                return true; 
         }
 
         void setExpectedOutput(const char *s) {
                 expected_message = s;
-                EXPECT_CALL(*out, print(_))
-                        .WillOnce(Invoke(this, &romiserialclient_tests::append_output));
+                EXPECT_CALL(*out, write(_))
+                        .WillRepeatedly(Invoke(this, &romiserialclient_tests::append_output));
         }
         
 };
@@ -72,7 +78,7 @@ TEST_F(romiserialclient_tests, message_without_args)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[0]:00e7\r\n");
 
@@ -91,7 +97,7 @@ TEST_F(romiserialclient_tests, message_with_args)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a[1,2,3]:00dd\r\n");
         initInput("#a[0]:00e7\r\n");
 
@@ -110,7 +116,7 @@ TEST_F(romiserialclient_tests, error_reponse)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[1,\"Went to bed early\"]:00f2\r\n");
 
@@ -131,7 +137,7 @@ TEST_F(romiserialclient_tests, error_reponse_without_message)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#a[1]:0085\r\n");
 
@@ -151,7 +157,7 @@ TEST_F(romiserialclient_tests, log_message)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
         setExpectedOutput("#a:008e\r\n");
         initInput("#!LOG MESSAGE:008e\r\n#a[0]:00e7\r\n");
 
@@ -170,7 +176,7 @@ TEST_F(romiserialclient_tests, message_too_long)
 {
         // Arrange
         EXPECT_CALL(*in, set_timeout(_));
-        RomiSerialClient client(in, out);
+        RomiSerialClient client(in, out, 255);
 
         // Act
         JsonCpp response;
@@ -182,7 +188,7 @@ TEST_F(romiserialclient_tests, message_too_long)
         //Assert
         EXPECT_EQ(true, response.isarray());
         EXPECT_EQ(2, response.length());
-        EXPECT_EQ(romiserialclient_too_long, response.num(0));
+        EXPECT_EQ(kClientTooLong, response.num(0));
 }
 
 TEST_F(romiserialclient_tests, error_number_has_string_representation)
@@ -196,7 +202,7 @@ TEST_F(romiserialclient_tests, error_number_has_string_representation)
         EXPECT_STREQ("Application error", RomiSerialClient::get_error_message(1));
         EXPECT_STREQ("Unknown error code", RomiSerialClient::get_error_message(-99399));
         
-        for (int i = -1; i > romiserial_last_error; i--) {
+        for (int i = -1; i > kLastError; i--) {
                 EXPECT_EQ(0, rstreq("Unknown error code",
                                     RomiSerialClient::get_error_message(i)));
         }

@@ -26,48 +26,38 @@
 #include "IInputStream.h"
 #include "IOutputStream.h"
 
-#ifndef __ARDUINO_SERIAL_H
-#define __ARDUINO_SERIAL_H
+#ifndef __ROMISERIAL_ARDUINOSERIAL_H
+#define __ROMISERIAL_ARDUINOSERIAL_H
 
-class ArduinoSerial : public IInputStream, public IOutputStream
-{
-protected:
-        Stream& stream_;
+namespace romiserial {
+
+        class ArduinoSerial : public IInputStream, public IOutputStream
+        {
+        protected:
+                Stream& stream_;
         
-public:
+        public:
         ArduinoSerial(Stream& stream) : stream_(stream) {}
         
-        virtual ~ArduinoSerial() = default;
+                virtual ~ArduinoSerial() = default;
 
-        void set_timeout(float seconds) override {
-                stream_.setTimeout((int) (seconds * 1000.0f));                
-        }
+                void set_timeout(double seconds) override {
+                        stream_.setTimeout((int) (seconds * 1000.0f));                
+                }
         
-        bool available() override {
-                return stream_.available() > 0;
-        }
+                bool available() override {
+                        return stream_.available() > 0;
+                }
         
-        bool read(char& c) override {
-                size_t n = stream_.readBytes(&c, 1);
-                return (n == 1)? true : false;
-        }
-        
-        bool read(uint8_t *data, size_t length) override {
-                size_t n = stream_.readBytes(data, length);
-                return (n == length)? true : false;
-        }
+                bool read(char& c) override {
+                        size_t n = stream_.readBytes(&c, 1);
+                        return (n == 1)? true : false;
+                }
 
-        bool write(char c) {
-                return stream_.write(c) == 1;
-        }
+                bool write(char c) {
+                        return stream_.write(c) == 1;
+                }
+        };
+}
 
-        bool write(const uint8_t *data, size_t length) {
-                return stream_.write(data, len);
-        }
-        
-        size_t print(const char *s) override {
-                return stream_.print(s);
-        }
-};
-
-#endif // __ARDUINO_SERIAL_H
+#endif // __ROMISERIAL_ARDUINOSERIAL_H
