@@ -59,7 +59,10 @@ namespace romi {
                 bool configure_controller(JsonCpp &config, int steps,
                                           double max_revolutions_per_sec);
                         
+                bool disable_controller();
                 bool enable_controller();
+                bool check_response(const char *command,
+                                    JsonCpp& response);
 
         public:
 

@@ -28,12 +28,25 @@ protected:
         const double amax[3] =  {0.2, 0.2, 0.2};
         const double scale[3] = {40000, 40000, 100000};
         const double slice_interval = 0.020;
+        const romi::AxisIndex homing[3] = {romi::kAxisX, romi::kAxisY, romi::kNoAxis};
+        
         CNCRange range;
+        OquamSettings settings;
         MockCNCController controller;
         
-	oquam_tests() : range(xmin, xmax), controller(), linux(), romiDeviceData(), softwareVersion(), gps(), locationPrivider(),
-                    session_directory("./session-directory"), observation_id("observation_id"),
-                    mockClock_(std::make_shared<rpp::MockClock>()){
+	oquam_tests()
+                : range(xmin, xmax),
+                  settings(range, vmax, amax, scale, 0.005,
+                           slice_interval, homing),
+                  controller(),
+                  linux(),
+                  romiDeviceData(),
+                  softwareVersion(),
+                  gps(),
+                  locationPrivider(),
+                  session_directory("./session-directory"),
+                  observation_id("observation_id"),
+                  mockClock_(std::make_shared<rpp::MockClock>()) {
                 locationPrivider  = std::make_unique<GpsLocationProvider>(gps);
         }
 
@@ -105,7 +118,7 @@ TEST_F(oquam_tests, constructor_calls_configure_homing)
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
 
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 }
 
 TEST_F(oquam_tests, constructor_throws_exception_when_configure_homing_fails)
@@ -117,7 +130,7 @@ TEST_F(oquam_tests, constructor_throws_exception_when_configure_homing_fails)
         try {
                 romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
                 session.start(observation_id);
-                Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+                Oquam oquam(controller, settings, session);
                 FAIL() << "Excpected a runtime error";
                 
         } catch (std::runtime_error& e) {
@@ -134,7 +147,7 @@ TEST_F(oquam_tests, pause_activity_calls_controller_1)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.pause_activity();
         ASSERT_EQ(success, true);
 }
@@ -148,7 +161,7 @@ TEST_F(oquam_tests, pause_activity_calls_controller_2)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.pause_activity();
         ASSERT_EQ(success, false);
 }
@@ -162,7 +175,7 @@ TEST_F(oquam_tests, continue_activity_calls_controller_1)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.continue_activity();
         ASSERT_EQ(success, true);
 }
@@ -176,7 +189,7 @@ TEST_F(oquam_tests, continue_activity_calls_controller_2)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.continue_activity();
         ASSERT_EQ(success, false);
 }
@@ -190,7 +203,7 @@ TEST_F(oquam_tests, reset_calls_controller_1)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.reset_activity();
         ASSERT_EQ(success, true);
 }
@@ -204,7 +217,7 @@ TEST_F(oquam_tests, reset_calls_controller_2)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.reset_activity();
         ASSERT_EQ(success, false);
 }
@@ -217,7 +230,7 @@ TEST_F(oquam_tests, constructor_copies_range)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         CNCRange range;
         oquam.get_range(range);
@@ -235,7 +248,7 @@ TEST_F(oquam_tests, moveto_returns_error_when_speed_is_invalid)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         
         ASSERT_EQ(oquam.moveto(0.1, 0.0, 0.0, 1.1), false);
         ASSERT_EQ(oquam.moveto(0.1, 0.0, 0.0, -0.1), false);
@@ -247,7 +260,7 @@ TEST_F(oquam_tests, moveto_returns_error_when_position_is_invalid)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         ASSERT_EQ(oquam.moveto(range.min.x()-0.1, 0.0, 0.0, 0.1), false);
         ASSERT_EQ(oquam.moveto(range.max.x()+0.1, 0.0, 0.0, 0.1), false);
         ASSERT_EQ(oquam.moveto(0.0, range.min.y()-0.1, 0.0, 0.1), false);
@@ -267,7 +280,7 @@ TEST_F(oquam_tests, returns_false_when_get_position_fails)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.moveto(0.1, 0.0, 0.0, 0.3);
         ASSERT_EQ(success, false);        
 }
@@ -285,7 +298,7 @@ TEST_F(oquam_tests, returns_false_when_moveto_fails)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.moveto(0.1, 0.0, 0.0, 0.3);
         ASSERT_EQ(success, false);        
 }
@@ -305,7 +318,7 @@ TEST_F(oquam_tests, returns_false_when_synchronize_fails)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.moveto(0.1, 0.0, 0.0, 0.3);
         ASSERT_EQ(success, false);        
 }
@@ -327,7 +340,7 @@ TEST_F(oquam_tests, test_oquam_moveto)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         bool success = oquam.moveto(0.1, 0.0, 0.0, 0.3);
         ASSERT_EQ(success, true);
         ASSERT_EQ(position[0], 4000);        
@@ -352,7 +365,7 @@ TEST_F(oquam_tests, test_oquam_moveto_2)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start(observation_id);
-        Oquam oquam(controller, range, vmax, amax, scale, 0.01, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         bool success = oquam.moveto(0.1, 0.0, 0.0, 0.3);
         ASSERT_EQ(success, true);
@@ -369,7 +382,7 @@ TEST_F(oquam_tests, test_oquam_travel_empty_path)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_empty");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         bool success = oquam.travel(path, 0.3);
@@ -382,7 +395,7 @@ TEST_F(oquam_tests, test_oquam_travel_square)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_square");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         v3 p0(0.1, 0.0, 0.0);
@@ -404,7 +417,7 @@ TEST_F(oquam_tests, test_oquam_travel_square_fast)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_fast");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.03, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         v3 p0(0.1, 0.0, 0.0);
@@ -426,7 +439,7 @@ TEST_F(oquam_tests, test_oquam_travel_snake)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_snake");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         int N = 10;
@@ -450,7 +463,7 @@ TEST_F(oquam_tests, test_oquam_travel_snake_2)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_snake_2");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         int N = 11;
         Path path;
@@ -480,7 +493,7 @@ TEST_F(oquam_tests, test_oquam_travel_round_trip)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_round_trip");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -497,7 +510,7 @@ TEST_F(oquam_tests, test_oquam_travel_collinear)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_round_collinear");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -515,7 +528,7 @@ TEST_F(oquam_tests, test_oquam_travel_large_displacement)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_large_displacement");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -534,7 +547,7 @@ TEST_F(oquam_tests, test_oquam_travel_small_displacement)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_small_displacement");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         path.push_back(v3(0.0, 0.0, 0.0));
@@ -553,7 +566,7 @@ TEST_F(oquam_tests, test_oquam_travel_tiny_displacement)
 
         romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
         session.start("travel_tiny_displacement");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
         //oquam.set_file_cabinet(&debug_session);
 
         Path path;
@@ -571,9 +584,10 @@ TEST_F(oquam_tests, test_oquam_travel_zigzag)
 {
         DefaultSetUp();
 
-        romi::Session session(linux, session_directory, romiDeviceData, softwareVersion, std::move(locationPrivider));
+        romi::Session session(linux, session_directory, romiDeviceData,
+                              softwareVersion, std::move(locationPrivider));
         session.start("travel_zigzag");
-        Oquam oquam(controller, range, vmax, amax, scale, 0.005, slice_interval, session);
+        Oquam oquam(controller, settings, session);
 
         Path path;
         v3 p(0.0, 0.0, 0.0);

@@ -28,12 +28,12 @@
 
 namespace romi {
 
+        enum AxisIndex { kNoAxis = -1, kAxisX = 0, kAxisY = 1, kAxisZ = 2 };
+
         class ICNCController : public IActivity
         {
         public:
                 enum { RUNNING, HOMING, ERROR };
-
-                enum AxisIndex { NoAxis = -1, AxisX = 0, AxisY = 1, AxisZ = 2 };
                         
                 ~ICNCController() override = default;
 

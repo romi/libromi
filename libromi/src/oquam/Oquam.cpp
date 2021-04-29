@@ -33,42 +33,30 @@
 namespace romi {
         
         Oquam::Oquam(ICNCController& controller,
-                     CNCRange& range,
-                     const double *vmax,
-                     const double *amax,
-                     const double *scale_meters_to_steps, 
-                     double path_max_deviation,
-                     double path_slice_duration, ISession& session)
-                : _controller(controller),
+                     OquamSettings& settings,
+                     ISession& session)
+                : controller_(controller),
+                  settings_(settings),
                   session_(session),
-                  _mutex(),
-                  _range(range),
-                  _vmax(vmax),
-                  _amax(amax),
-                  _path_max_deviation(path_max_deviation),
-                  _path_slice_duration(path_slice_duration),
-                  _path_max_slice_duration(32.0),
-                  _store_script(false)
+                  mutex_(),
+                  store_script_(false)
         {
-
-                vcopy(_scale_meters_to_steps, scale_meters_to_steps);
-
-                if (!_controller.configure_homing(ICNCController::AxisX,
-                                                  ICNCController::AxisY,
-                                                  ICNCController::NoAxis)) {
+                if (!controller_.configure_homing(settings_.homing_[0],
+                                                  settings_.homing_[1],
+                                                  settings_.homing_[2])) {
                         throw std::runtime_error("Oquam: configure_homing failed");
                 }
         }
                 
         bool Oquam::get_range(CNCRange &range)
         {
-                range = _range;
+                range = settings_.range_;
                 return true;
         }
 
         bool Oquam::get_position(int32_t *position) 
         {
-                return _controller.get_position(position);
+                return controller_.get_position(position);
         }
         
         bool Oquam::get_position(v3& position) 
@@ -76,9 +64,9 @@ namespace romi {
                 int32_t p[3];
                 bool success = get_position(p);
                 if (success) {
-                        position.set(p[0] / _scale_meters_to_steps[0],
-                                     p[1] / _scale_meters_to_steps[1],
-                                     p[2] / _scale_meters_to_steps[2]);
+                        position.set(p[0] / settings_.scale_meters_to_steps_[0],
+                                     p[1] / settings_.scale_meters_to_steps_[1],
+                                     p[2] / settings_.scale_meters_to_steps_[2]);
                 }
                 return success;
         }
@@ -95,8 +83,8 @@ namespace romi {
         
         bool Oquam::moveto(double x, double y, double z, double relative_speed)
         {
-                SynchronizedCodeBlock synchronize(_mutex);
-                _store_script = false;
+                SynchronizedCodeBlock synchronize(mutex_);
+                store_script_ = false;
                 return moveto_synchronized(x, y, z, relative_speed);
         }
 
@@ -148,14 +136,14 @@ namespace romi {
 
         bool Oquam::homing()
         {
-                SynchronizedCodeBlock synchronize(_mutex);
-                return _controller.homing();
+                SynchronizedCodeBlock synchronize(mutex_);
+                return controller_.homing();
         }
                 
         bool Oquam::travel(Path &path, double relative_speed)
         {
-                SynchronizedCodeBlock synchronize(_mutex);
-                _store_script = true;
+                SynchronizedCodeBlock synchronize(mutex_);
+                store_script_ = true;
                 return travel_synchronized(path, relative_speed);
         }
         
@@ -182,7 +170,7 @@ namespace romi {
         
         void Oquam::assert_in_range(v3 p) 
         {
-                if (!_range.is_inside(p)) {
+                if (!settings_.range_.is_inside(p)) {
                         r_warn("Oquam: Point[%d]: out of bounds: "
                                "(%0.4f, %0.4f, %0.4f)", p.x(), p.y(), p.z());
                         throw std::runtime_error("Point out of bounds");
@@ -197,9 +185,9 @@ namespace romi {
                 SmoothPath script(start_position);
                 
                 v3 vmax;
-                vmax = _vmax * relative_speed;
+                vmax = settings_.vmax_ * relative_speed;
                 
-                double speed_ms = norm(_vmax * relative_speed);
+                double speed_ms = norm(settings_.vmax_ * relative_speed);
                 
                 convert_path_to_script(path, speed_ms, script);
                 convert_script(script, vmax);
@@ -219,22 +207,27 @@ namespace romi {
 
         void Oquam::convert_script(SmoothPath& script, v3& vmax) 
         {
-                script.convert(vmax.values(), _amax.values(), _path_max_deviation,
-                               _path_slice_duration, _path_max_slice_duration); 
+                script.convert(vmax.values(),
+                               settings_.amax_.values(),
+                               settings_.path_max_deviation_,
+                               settings_.path_slice_duration_,
+                               settings_.path_max_slice_duration_); 
         }
 
         void Oquam::store_script(SmoothPath& script) 
         {
-                if (_store_script) {
+                if (store_script_) {
                         store_script_svg(script);
                         store_script_json(script);
-                        _store_script = false;
+                        store_script_ = false;
                 }
         }
 
         void Oquam::store_script_svg(SmoothPath &script)
         {
-                membuf_t *svg = plot_to_mem(script, _range, _vmax.values(), _amax.values());
+                membuf_t *svg = plot_to_mem(script, settings_.range_,
+                                            settings_.vmax_.values(),
+                                            settings_.amax_.values());
                 if (svg != nullptr) {
                         session_.store_svg("path.svg",
                                            std::string(membuf_data(svg),
@@ -257,8 +250,9 @@ namespace romi {
 
         void Oquam::check_script(SmoothPath& script, v3& vmax) 
         {
-                if (!is_valid(script, _path_max_slice_duration, _range,
-                              vmax.values(), _amax.values())) {
+                if (!is_valid(script, settings_.path_max_slice_duration_,
+                              settings_.range_, vmax.values(),
+                              settings_.amax_.values())) {
                         r_err("Oquam::convert_script: generated script is invalid");
                         throw std::runtime_error("is_valid(script) failed");
                 }
@@ -303,7 +297,7 @@ namespace romi {
         
         void Oquam::assert_move(int16_t *params)
         {
-                if (!_controller.move(params[0], params[1], params[2], params[3])) {
+                if (!controller_.move(params[0], params[1], params[2], params[3])) {
                         r_err("Oquam: move failed");
                         throw std::runtime_error("Oquam: move failed");
                 }
@@ -311,7 +305,7 @@ namespace romi {
 
         void Oquam::convert_position_to_steps(double *position, int32_t *steps) 
         {
-                double *scale = _scale_meters_to_steps;
+                double *scale = settings_.scale_meters_to_steps_;
                 steps[0] = (int32_t) (position[0] * scale[0]);
                 steps[1] = (int32_t) (position[1] * scale[1]);
                 steps[2] = (int32_t) (position[2] * scale[2]);
@@ -326,7 +320,7 @@ namespace romi {
 
         void Oquam::assert_synchronize(double timeout)
         {
-                if (!_controller.synchronize(timeout)) {
+                if (!controller_.synchronize(timeout)) {
                         r_err("Oquam: synchronize failed");
                         throw std::runtime_error("Oquam: synchronize failed");
                 }
@@ -334,29 +328,29 @@ namespace romi {
 
         bool Oquam::pause_activity()
         {
-                return _controller.pause_activity();
+                return controller_.pause_activity();
         }
         
         bool Oquam::continue_activity()
         {
-                return _controller.continue_activity();
+                return controller_.continue_activity();
         }
         
         bool Oquam::reset_activity()
         {
-                return _controller.reset_activity();
+                return controller_.reset_activity();
         }
 
         bool Oquam::enable_driver()
         {
-                SynchronizedCodeBlock synchronize(_mutex);
-                return _controller.enable();
+                SynchronizedCodeBlock synchronize(mutex_);
+                return controller_.enable();
         }
 
         bool Oquam::disable_driver()
         {
-                SynchronizedCodeBlock synchronize(_mutex);
-                return _controller.disable();
+                SynchronizedCodeBlock synchronize(mutex_);
+                return controller_.disable();
         }
 
         bool Oquam::power_up()
