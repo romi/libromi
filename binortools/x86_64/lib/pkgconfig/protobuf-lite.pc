@@ -1,0 +1,11 @@
+prefix=/home/douglas/binortools
+exec_prefix=/home/douglas/binortools
+libdir=/home/douglas/binortools/lib
+includedir=/home/douglas/binortools/include
+
+Name: Protocol Buffers
+Description: Google's Data Interchange Format
+Version: 3.15.3.0
+Libs: -L${libdir} -lprotobuf-lite -lpthread
+Cflags: -I${includedir}
+Conflicts: protobuf

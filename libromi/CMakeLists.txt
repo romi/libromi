@@ -251,17 +251,14 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp P
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-sign-conversion)
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-float-conversion)
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
-
-add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
+add_library(romi STATIC ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
 
 target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        ${ORTOOLS_INCLUDE_DIR}
         ${PICAMERA_INCLUDE}
         )
-
-#target_link_directories(romi PRIVATE ${PICAMERA_LIBRARY_PATH})
 
 target_link_libraries(romi
         romiserial
@@ -271,7 +268,7 @@ target_link_libraries(romi
         fluidsynth
         jpeg
         png
-        ortools
+        ${ORTOOLS_STATIC_LIBS}
         ${PICAMERA_LIBRARIES})
 
 if(BUILD_TESTS)

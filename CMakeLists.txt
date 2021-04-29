@@ -32,50 +32,50 @@ set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 # Build tests by default. We want to run tests whether we are developing or building a release. I mean... why wouldn't you? :)
 option(BUILD_TESTS "Build all tests." ON)
 option(BUILD_COVERAGE "Build coverage." ON)
-option(BUILD_GOOGLE_OR_TOOLS "Build with BUILD_GOOGLE_OR_TOOLS" ON)
-
-if(BUILD_GOOGLE_OR_TOOLS)
-
-    MESSAGE("point1")
-    set(BUILD_DEPS ON)
-    if (NOT DEFINED ortools_SOURCE_DIR)
-        MESSAGE("point2")
-        if (CMAKE_VERSION VERSION_LESS 3.2)
-            set(UPDATE_DISCONNECTED_IF_AVAILABLE "")
-        else()
-            set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
-        endif()
-
-        if(UNIX)
-            option(BUILD_SHARED_LIBS "Build shared libraries(.so)." ON)
-        else()
-            # only support for static build on Windows.
-            set(BUILD_SHARED_LIBS OFF)
-        endif()
-
-        if(BUILD_SHARED_LIBS)
-            set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-        endif()
-
-        MESSAGE("point1")
-        include(${CMAKE_MODULES_DIRECTORY}/DownloadProject.cmake)
-        download_project(   PROJ                ortools
-                GIT_REPOSITORY      https://github.com/google/or-tools.git
-                GIT_TAG             stable
-                PREFIX              ${CMAKE_DOWNLOAD_DIRECTORY}/ortools
-                ${UPDATE_DISCONNECTED_IF_AVAILABLE}
-                )
-
-        set(BUILD_DEPS ON)
-        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-        set(BUILD_SHARED_LIBS OFF)
-        set(BUILD_TESTING OFF)
-        set(BUILD_SAMPLES OFF)
-        set(BUILD_EXAMPLES OFF)
-
-        add_subdirectory(${ortools_SOURCE_DIR} ${ortools_BINARY_DIR})
-    endif()
-endif()
+#option(BUILD_GOOGLE_OR_TOOLS "Build with BUILD_GOOGLE_OR_TOOLS" ON)
+#
+#if(BUILD_GOOGLE_OR_TOOLS)
+#
+#    MESSAGE("point1")
+#    set(BUILD_DEPS ON)
+#    if (NOT DEFINED ortools_SOURCE_DIR)
+#        MESSAGE("point2")
+#        if (CMAKE_VERSION VERSION_LESS 3.2)
+#            set(UPDATE_DISCONNECTED_IF_AVAILABLE "")
+#        else()
+#            set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
+#        endif()
+#
+#        if(UNIX)
+#            option(BUILD_SHARED_LIBS "Build shared libraries(.so)." ON)
+#        else()
+#            # only support for static build on Windows.
+#            set(BUILD_SHARED_LIBS OFF)
+#        endif()
+#
+#        if(BUILD_SHARED_LIBS)
+#            set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#        endif()
+#
+#        MESSAGE("point1")
+#        include(${CMAKE_MODULES_DIRECTORY}/DownloadProject.cmake)
+#        download_project(   PROJ                ortools
+#                GIT_REPOSITORY      https://github.com/google/or-tools.git
+#                GIT_TAG             stable
+#                PREFIX              ${CMAKE_DOWNLOAD_DIRECTORY}/ortools
+#                ${UPDATE_DISCONNECTED_IF_AVAILABLE}
+#                )
+#
+#        set(BUILD_DEPS ON)
+#        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#        set(BUILD_SHARED_LIBS OFF)
+#        set(BUILD_TESTING OFF)
+#        set(BUILD_SAMPLES OFF)
+#        set(BUILD_EXAMPLES OFF)
+#
+#        add_subdirectory(${ortools_SOURCE_DIR} ${ortools_BINARY_DIR})
+#    endif()
+#endif()
 
 
 if(BUILD_TESTS)
@@ -209,5 +209,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "
     link_directories(${PICAMERA_LIBRARY_PATH})
 endif()
 
+add_subdirectory(binortools)
 add_subdirectory(arduino_libraries)
+#MESSAGE("ORTOOLS_STATIC_LIBS = ${ORTOOLS_STATIC_LIBS} OR_INCLUDE = ${ORTOOLS_INCLUDE_DIR}" )
 add_subdirectory(libromi)
