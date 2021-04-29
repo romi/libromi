@@ -66,8 +66,8 @@ namespace romi {
         {
             std::ofstream file;
             file.open("centres.txt");
-            for (size_t i = 0; i < centers.size(); i++)
-                file << centers[i].first << "\t" << centers[i].second << std::endl;
+            for (auto & center : centers)
+                file << center.first << "\t" << center.second << std::endl;
             file.close();
         }
         compute_path(locations, path, mask);
@@ -104,13 +104,13 @@ namespace romi {
         std::stringstream output_route;
         while (routing.IsEnd(print_index) == false) {
             auto location_index = (size_t) manager.IndexToNode(print_index).value();
-            output_route << locations[location_index][0] << " ," << locations[location_index][1] << "\r\n";
             double x = locations[location_index][0] / (double) mask.width();
             double y = locations[location_index][1] / (double) mask.height();
             path.push_back(v3(x, y, 0));
+            output_route << "{" << x << ", " << y << "},\r\n";
             print_index = solution.Value(routing.NextVar(print_index));
         }
-        std::cout << "Route: " << output_route.str();
+        std::cout << "Route: \r\n" << output_route.str();
     }
 
     void GConstraintSolver::compute_path(std::vector<std::vector<int>>& locations, Path &path, const Image& mask) {

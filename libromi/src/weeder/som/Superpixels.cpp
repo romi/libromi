@@ -72,14 +72,13 @@ namespace romi {
         Centers Superpixels::calculate_centers(Image &mask, int max_centers)
         {
                 size_t len = mask.width() * mask.height();
-                uint32_t *ubuff = new uint32_t[len];
-                convert_32bit_rgb(mask, ubuff);
+                std::vector<u_int32_t> ubuff(len, 0);
+                convert_32bit_rgb(mask, ubuff.data());
 
                 std::vector<int> segmentation_labels;
                 size_t segmentation_size = mask.height() * mask.width();
                 segmentation_labels.resize(segmentation_size);
 
-                int* labels = &segmentation_labels[0];
                 int numlabels(0);
 
                 // This is the number regions * 10 (initial)
@@ -95,10 +94,10 @@ namespace romi {
                 std::vector<double> kseedsy(0);
 
                 SLIC slic;
-                slic.DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(ubuff,
+                slic.DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(ubuff.data(),
                                                                           static_cast<int>(mask.width()),
                                                                           static_cast<int>(mask.height()),
-                                                                          labels, numlabels,
+                                                                          segmentation_labels, numlabels,
                                                                           max_centers,
                                                                           compactness,
                                                                           kseedsl, kseedsa,
@@ -114,7 +113,6 @@ namespace romi {
                 // Use Centres from algo
                 Centers centres = calculate_centres(kseedsl, kseedsa, kseedsb, kseedsx, kseedsy);
 
-                delete[] ubuff;
                 return centres;
         }
 

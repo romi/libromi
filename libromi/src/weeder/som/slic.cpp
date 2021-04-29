@@ -509,7 +509,7 @@ void SLIC::PerformSuperpixelSLIC(
 	vector<double>&				kseedsb,
 	vector<double>&				kseedsx,
 	vector<double>&				kseedsy,
-        int*&					klabels,
+    vector<int>&			    klabels,
         const int&				STEP,
         __attribute((unused)) const vector<double>&                   edgemag,
 	const double&				M)
@@ -1112,7 +1112,7 @@ void SLIC::DoSuperpixelSegmentation_ForGivenSuperpixelSize(
     const unsigned int*         ubuff,
 	const int					width,
 	const int					height,
-	int*&						klabels,
+    vector<int>&				klabels,
 	int&						numlabels,
     const int&					superpixelsize,
     const double&               compactness,
@@ -1125,22 +1125,11 @@ void SLIC::DoSuperpixelSegmentation_ForGivenSuperpixelSize(
     //------------------------------------------------
     const int STEP = sqrt(double(superpixelsize))+0.5;
     //------------------------------------------------
-    //DRB
-//	vector<double> kseedsl(0);
-//	vector<double> kseedsa(0);
-//	vector<double> kseedsb(0);
-//	vector<double> kseedsx(0);
-//	vector<double> kseedsy(0);
-
-	//--------------------------------------------------
 	m_width  = width;
 	m_height = height;
 	int sz = m_width*m_height;
-	//klabels.resize( sz, -1 );
+	klabels.resize( sz, -1 );
 	//--------------------------------------------------
-	klabels = new int[sz];
-	for( int s = 0; s < sz; s++ ) klabels[s] = -1;
-    //--------------------------------------------------
     // DRB
     if(1)//LAB, the default option
     {
@@ -1166,7 +1155,7 @@ void SLIC::DoSuperpixelSegmentation_ForGivenSuperpixelSize(
 	numlabels = kseedsl.size();
 
 	int* nlabels = new int[sz];
-	EnforceLabelConnectivity(klabels, m_width, m_height, nlabels, numlabels, double(sz)/double(STEP*STEP));
+	EnforceLabelConnectivity(klabels.data(), m_width, m_height, nlabels, numlabels, double(sz)/double(STEP*STEP));
 	{for(int i = 0; i < sz; i++ ) klabels[i] = nlabels[i];}
 	if(nlabels) delete [] nlabels;
 }
@@ -1195,7 +1184,7 @@ void SLIC::DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(
     const unsigned int*                             ubuff,
 	const int					width,
 	const int					height,
-	int*&						klabels,
+    std::vector<int>&			klabels,
 	int&						numlabels,
 	const int&					K,//required number of superpixels
     const double&               compactness,

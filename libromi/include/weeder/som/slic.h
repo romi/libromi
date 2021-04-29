@@ -34,7 +34,7 @@ public:
             const unsigned int*         ubuff,
             const int					width,
             const int					height,
-            int*&						klabels,
+            std::vector<int>&			klabels,
             int&						numlabels,
             const int&					superpixelsize,
             const double&               compactness,
@@ -47,10 +47,10 @@ public:
 	// Superpixel segmentation for a given number of superpixels
 	//============================================================================
         void DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(
-        const unsigned int*                             ubuff,
+        const unsigned int*         ubuff,
 		const int					width,
 		const int					height,
-		int*&						klabels,
+        std::vector<int>&			klabels,
 		int&						numlabels,
         const int&					K,//required number of superpixels
         const double&               compactness,
@@ -111,7 +111,7 @@ private:
 		std::vector<double>&				kseedsb,
 		std::vector<double>&				kseedsx,
 		std::vector<double>&				kseedsy,
-		int*&						klabels,
+        std::vector<int>&						klabels,
 		const int&					STEP,
                 const std::vector<double>&		edgemag,
 		const double&				m = 10.0);

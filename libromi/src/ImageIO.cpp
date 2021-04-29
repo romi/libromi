@@ -388,7 +388,8 @@ namespace romi {
                         if (png == nullptr) {
                                 throw std::runtime_error("ImageIO::load_png: png_create_read_struct failed");
                         }
-
+                        // TBD: This isn't happy in release mode.
+                        // Replace png code with
                         if (setjmp(png_jmpbuf(png))) {
                                 r_err("ImageIO::load_png: setjmp returned error");
                                 return false;
