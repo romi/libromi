@@ -28,12 +28,11 @@
 #include <mutex>
 
 #include "weeder/ISession.h"
-
 #include "api/ICNC.h"
 #include "v3.h"
-#include "IFileCabinet.h"
 #include "oquam/ICNCController.h"
 #include "oquam/SmoothPath.h" 
+#include "oquam/OquamSettings.h" 
 
 namespace romi {
 
@@ -42,30 +41,28 @@ namespace romi {
         class Oquam : public ICNC
         {
         public:
-                ICNCController& _controller;
-
+                ICNCController& controller_;
+                OquamSettings settings_;
                 ISession& session_;
-                std::mutex _mutex;
+                std::mutex mutex_;
                 
-                CNCRange _range;
-                v3 _vmax; // in m/s
-                v3 _amax; // in m/s²
+                // CNCRange _range;
+                // v3 _vmax; // in m/s
+                // v3 _amax; // in m/s²
 
-                // The maximum deviation allowed when computed a
-                // continuous path, in m.
-                double _path_max_deviation;
-                double _scale_meters_to_steps[3]{};
-                double _path_slice_duration;
-                double _path_max_slice_duration;
-                bool _store_script;
+                // // The maximum deviation allowed when computed a
+                // // continuous path, in m.
+                // double _path_max_deviation;
+                // double _scale_meters_to_steps[3]{};
+                // double _path_slice_duration;
+                // double _path_max_slice_duration;
+                bool store_script_;
                 
         public:
                 
-                Oquam(ICNCController& controller, CNCRange& range,
-                      const double *vmax, const double *amax,
-                      const double *scale_meters_to_steps, 
-                      double path_max_deviation,
-                      double path_slice_duration, ISession& session);
+                Oquam(ICNCController& controller,
+                      OquamSettings& settings,
+                      ISession& session);
 
                 Oquam(const Oquam&) = delete;
                 Oquam& operator=(const Oquam&) = delete;
