@@ -1,0 +1,13 @@
+prefix=/home/pi/binortools_shared
+exec_prefix=/home/pi/binortools_shared
+libdir=lib
+sharedlibdir=lib
+includedir=include
+
+Name: zlib
+Description: zlib compression library
+Version: 8.2.8710
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
