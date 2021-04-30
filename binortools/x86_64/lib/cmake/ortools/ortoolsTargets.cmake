@@ -51,11 +51,11 @@ if(_IMPORT_PREFIX STREQUAL "/")
 endif()
 
 # Create imported target ortools::ortools
-add_library(ortools::ortools STATIC IMPORTED)
+add_library(ortools::ortools SHARED IMPORTED)
 
 set_target_properties(ortools::ortools PROPERTIES
   COMPATIBLE_INTERFACE_STRING "ortools_MAJOR_VERSION"
-  INTERFACE_COMPILE_DEFINITIONS "USE_BOP;USE_GLOP;USE_SCIP;USE_CBC;USE_CLP"
+  INTERFACE_COMPILE_DEFINITIONS "OR_TOOLS_AS_DYNAMIC_LIB;USE_BOP;USE_GLOP;USE_SCIP;USE_CBC;USE_CLP"
   INTERFACE_COMPILE_FEATURES "cxx_std_17"
   INTERFACE_COMPILE_OPTIONS "-fwrapv"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;${_IMPORT_PREFIX}/include"
@@ -65,7 +65,7 @@ set_target_properties(ortools::ortools PROPERTIES
 )
 
 # Create imported target ortools::flatzinc
-add_library(ortools::flatzinc STATIC IMPORTED)
+add_library(ortools::flatzinc SHARED IMPORTED)
 
 set_target_properties(ortools::flatzinc PROPERTIES
   COMPATIBLE_INTERFACE_STRING "flatzinc_MAJOR_VERSION"

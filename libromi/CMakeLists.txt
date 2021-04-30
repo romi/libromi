@@ -251,7 +251,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp P
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-sign-conversion)
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-float-conversion)
 
-add_library(romi STATIC ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
+add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
 
 target_include_directories(romi
         PUBLIC
@@ -268,9 +268,16 @@ target_link_libraries(romi
         fluidsynth
         jpeg
         png
-        ${ORTOOLS_STATIC_LIBS}
+#        ${ORTOOLS_STATIC_LIB}
+        ${ORTOOLS_SHARED_LIB}
         ${PICAMERA_LIBRARIES})
 
 if(BUILD_TESTS)
     add_subdirectory(test)
 endif()
+
+add_custom_command(TARGET romi POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${ORTOOLS_SHARED_LIB_DIR}/*.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        DEPENDS romi
+        COMMENT "Copying binary ortools libs to ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} for distribution."
+        )
