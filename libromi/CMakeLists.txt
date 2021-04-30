@@ -96,6 +96,7 @@ set(SOURCES
         include/oquam/FakeCNCController.h
         include/oquam/is_valid.h
         include/oquam/Oquam.h
+        include/oquam/OquamSettings.h
         include/oquam/plotter.h
         include/oquam/print.h
         include/oquam/SmoothPath.h
@@ -170,6 +171,7 @@ set(SOURCES
         src/oquam/ATDC.cpp
         src/oquam/is_valid.cpp
         src/oquam/Oquam.cpp
+        src/oquam/OquamSettings.cpp
         src/oquam/plotter.cpp
         src/oquam/print.cpp
         src/oquam/SmoothPath.cpp

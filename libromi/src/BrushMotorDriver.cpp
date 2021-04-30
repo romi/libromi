@@ -34,7 +34,8 @@ namespace romi {
         {
                 //_serial.set_debug(true);
                 serial_ = std::move(serial);
-                if (!configure_controller(config, encoder_steps, max_revolutions_per_sec)
+                if (!disable_controller()
+                    || !configure_controller(config, encoder_steps, max_revolutions_per_sec)
                     || !enable_controller()) {
                         throw std::runtime_error("BrushMotorDriver: "
                                                  "Initialization failed");
@@ -61,26 +62,42 @@ namespace romi {
                         
                 JsonCpp response;
                 serial_->send(command, response);
-                return (response.num(0) == 0);
+                return check_response(command, response);
+        }
+        
+        bool BrushMotorDriver::check_response(const char *command,
+                                              JsonCpp& response)
+        {
+                bool success = (response.num(romiserial::kStatusCode) == 0);
+                if (!success) {
+                        r_warn("BrushMotorDriver: command %s returned error: %s",
+                               command, response.str(romiserial::kErrorMessage));
+                }
+                return success;
         }
 
         bool BrushMotorDriver::enable_controller()
         {
                 JsonCpp response;
-                serial_->send("E[1]", response);
-                return (response.num(0) == 0);
+                const char *command = "E[1]";
+                serial_->send(command, response);
+                return check_response(command, response);
+        }
+
+        bool BrushMotorDriver::disable_controller()
+        {
+                JsonCpp response;
+                const char *command = "E[0]";
+                serial_->send(command, response);
+                return check_response(command, response);
         }
 
         bool BrushMotorDriver::stop()
         {
                 JsonCpp response;
-                serial_->send("X", response);
-                bool success = (response.num(0) == 0);
-                if (!success) {
-                        r_err("BrushMotorDriver::stop: %s",
-                              response.str(1));
-                }
-                return success;
+                const char *command = "X";
+                serial_->send(command, response);
+                return check_response(command, response);
         }
 
         bool BrushMotorDriver::moveat(double left, double right)
@@ -100,12 +117,8 @@ namespace romi {
                                 
                         JsonCpp response;
                         serial_->send(command, response);
-                        success = (response.num(0) == 0);
+                        success = check_response(command, response);
                         
-                        if (!success) {
-                                r_err("BrushMotorDriver::moveat: %s",
-                                      response.str(1));
-                        }
                 } else {
                         r_warn("BrushMotorDriver::moveat: invalid speeds: %f, %f",
                                left, right);
@@ -119,15 +132,13 @@ namespace romi {
                                                   double &timestamp)
         {
                 JsonCpp response;
-                serial_->send("e", response);
-                bool success = (response.num(0) == 0);
+                const char *command = "e";
+                serial_->send(command, response);
+                bool success = check_response(command, response);
                 if (success) {
                         left = response.num(1);
                         right = response.num(2);
                         timestamp = response.num(3) / 1000.0;
-                } else {
-                        r_err("BrushMotorDriver::get_encoder_values: %s",
-                              response.str(1));
                 }
                 return success;
         }
