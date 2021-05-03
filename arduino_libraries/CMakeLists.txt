@@ -23,6 +23,8 @@ set(SOURCES
   RomiSerial/RSerial.cpp
   RomiSerial/Printer.h
   RomiSerial/Printer.cpp
+  RomiSerial/Reader.h
+  RomiSerial/Reader.cpp
   RomiSerial/Util.h
   RomiSerial/Util.cpp
 )
