@@ -45,7 +45,6 @@ namespace romi {
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
                                                     double max_revolutions_per_sec)
         {
-                        
                 settings_.parse(config);
 
                 char command[100];
@@ -70,8 +69,11 @@ namespace romi {
         {
                 bool success = (response.num(romiserial::kStatusCode) == 0);
                 if (!success) {
+                        const char *message = "No message";
+                        if (response.length() > 1)
+                                message = response.str(romiserial::kErrorMessage);
                         r_warn("BrushMotorDriver: command %s returned error: %s",
-                               command, response.str(romiserial::kErrorMessage));
+                               command, message);
                 }
                 return success;
         }
