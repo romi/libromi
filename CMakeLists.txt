@@ -107,7 +107,7 @@ if (NOT DEFINED libr_SOURCE_DIR)
         download_project(
                 PROJ              libr
                 GIT_REPOSITORY    https://github.com/romi/libr.git
-                GIT_TAG           libromirover
+                GIT_TAG           ci_dev
                 TIMEOUT           180
                 SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/libr
                 BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/libr
@@ -141,7 +141,7 @@ if (NOT DEFINED librcom_SOURCE_DIR)
         download_project(
                 PROJ              librcom
                 GIT_REPOSITORY    https://github.com/romi/librcom.git
-                GIT_TAG           libromirover
+                GIT_TAG           ci_dev
                 TIMEOUT           180
                 SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/librcom
                 BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/librcom
