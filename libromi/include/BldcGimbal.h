@@ -32,14 +32,14 @@ namespace romi {
         class BldcGimbal : public IGimbal
         {
         protected:
-                rcom::IRomiSerialClient& serial_;
+                romiserial::IRomiSerialClient& serial_;
 
                 double clamp(double angle_in_degrees);
                 int angle_to_arg(double angle);
                 double arg_to_angle(double arg);
                 
         public:
-                BldcGimbal(rcom::IRomiSerialClient& serial);
+                BldcGimbal(romiserial::IRomiSerialClient& serial);
                 virtual ~BldcGimbal() = default;
                                 
                 // IGimbal

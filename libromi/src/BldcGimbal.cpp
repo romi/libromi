@@ -27,7 +27,7 @@
 
 namespace romi {
         
-        BldcGimbal::BldcGimbal(rcom::IRomiSerialClient& serial)
+        BldcGimbal::BldcGimbal(romiserial::IRomiSerialClient& serial)
                 : serial_(serial)
         {
         }
