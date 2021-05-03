@@ -1,5 +1,5 @@
-prefix=/home/douglas/binortools
-exec_prefix=/home/douglas/binortools
+prefix=/home/romi/binortools_shared_8.4
+exec_prefix=/home/romi/binortools_shared_8.4
 libdir=lib
 sharedlibdir=lib
 includedir=include

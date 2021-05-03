@@ -9,15 +9,15 @@
 #  ifndef ORTOOLS_EXPORT
 #    ifdef ortools_EXPORTS
         /* We are building this library */
-#      define ORTOOLS_EXPORT 
+#      define ORTOOLS_EXPORT __attribute__((visibility("default")))
 #    else
         /* We are using this library */
-#      define ORTOOLS_EXPORT 
+#      define ORTOOLS_EXPORT __attribute__((visibility("default")))
 #    endif
 #  endif
 
 #  ifndef ORTOOLS_NO_EXPORT
-#    define ORTOOLS_NO_EXPORT 
+#    define ORTOOLS_NO_EXPORT __attribute__((visibility("hidden")))
 #  endif
 #endif
 

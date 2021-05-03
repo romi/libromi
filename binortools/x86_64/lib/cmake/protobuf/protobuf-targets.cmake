@@ -4,7 +4,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.5)
    message(FATAL_ERROR "CMake >= 2.6.0 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.6)
+cmake_policy(VERSION 2.6...3.18)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -55,7 +55,7 @@ add_library(protobuf::libprotobuf-lite STATIC IMPORTED)
 
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "-pthread"
+  INTERFACE_LINK_LIBRARIES "-lpthread"
 )
 
 # Create imported target protobuf::libprotobuf
@@ -63,7 +63,7 @@ add_library(protobuf::libprotobuf STATIC IMPORTED)
 
 set_target_properties(protobuf::libprotobuf PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "-pthread;ZLIB::ZLIB"
+  INTERFACE_LINK_LIBRARIES "-lpthread;ZLIB::ZLIB"
 )
 
 # Create imported target protobuf::libprotoc
@@ -110,7 +110,7 @@ but not all the files it references.
 endforeach()
 unset(_IMPORT_CHECK_TARGETS)
 
-# Make sure the targets which have been exported in some other 
+# Make sure the targets which have been exported in some other
 # export set exist.
 unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
 foreach(_target "ZLIB::ZLIB" )

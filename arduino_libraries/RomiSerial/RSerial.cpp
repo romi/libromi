@@ -31,7 +31,8 @@
 #include <errno.h>
 #include <sys/poll.h>
 #include <stdexcept>
-#include <r.h>
+#include <log.h>
+#include <termios.h>
 #include "RSerial.h"
 #include <ClockAccessor.h>
 
@@ -135,7 +136,7 @@ namespace romiserial {
 
         void RSerial::open_device()
         {
-                _fd = open_wrapper(_device.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
+                _fd = open(_device.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
                 if (_fd < 0) {
                         r_err("open_serial: error %d opening %s: %s",
                               errno, _device.c_str(), strerror(errno));

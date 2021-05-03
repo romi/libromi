@@ -4,7 +4,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.5)
    message(FATAL_ERROR "CMake >= 2.6.0 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.6)
+cmake_policy(VERSION 2.6...3.18)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -119,7 +119,7 @@ but not all the files it references.
 endforeach()
 unset(_IMPORT_CHECK_TARGETS)
 
-# Make sure the targets which have been exported in some other 
+# Make sure the targets which have been exported in some other
 # export set exist.
 unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
 foreach(_target "ZLIB::ZLIB" "absl::base" "absl::flags" "absl::flags_commandlineflag" "absl::flags_parse" "absl::flags_usage" "absl::cord" "absl::random_random" "absl::raw_hash_set" "absl::hash" "absl::leak_check" "absl::memory" "absl::meta" "absl::stacktrace" "absl::status" "absl::statusor" "absl::str_format" "absl::strings" "absl::synchronization" "absl::any" "protobuf::libprotobuf" "Coin::CbcSolver" "Coin::OsiCbc" "Coin::ClpSolver" "Coin::OsiClp" )
