@@ -147,14 +147,6 @@ set(SOURCES
         include/ui/ScriptMenu.h
         include/ui/UIEventMapper.h
 
-        include/weeder/Weeder.h
-        include/weeder/IImageSegmentation.h
-        include/weeder/IPathPlanner.h
-        include/weeder/IPipeline.h
-        include/weeder/PipelineFactory.h
-        include/weeder/Pipeline.h
-        include/weeder/constraintsolver/GConstraintSolver.h
-
         src/api/CNCRange.cpp
         src/api/Path.cpp
         src/api/ActivityHelper.cpp
@@ -223,24 +215,8 @@ set(SOURCES
         src/ui/ScriptList.cpp
         src/ui/ScriptMenu.cpp
 
-        src/weeder/Weeder.cpp
-        src/weeder/Pipeline.cpp
-        src/weeder/PipelineFactory.cpp
-        src/weeder/svm/SVMSegmentation.h
-        src/weeder/svm/SVMSegmentation.cpp
-        src/weeder/som/SOM.cpp
-        src/weeder/som/Superpixels.cpp
-        src/weeder/som/fixed.c
-        src/weeder/constraintsolver/GConstraintSolver.cpp
-        src/weeder/quincunx/point.h
         src/v3.cpp
         )
-
-# These files have no conversion warning set at the top of each file.
-set(NO_CONV_SOURCES
-        src/weeder/som/slic.cpp
-        src/weeder/quincunx/Quincunx.h
-        src/weeder/quincunx/Quincunx.cpp)
 
 set(DATA_PROVIDER_SOURCES
         include/data_provider/JsonFieldNames.h
@@ -272,7 +248,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp P
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-sign-conversion)
 #set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-float-conversion)
 
-add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${NO_CONV_SOURCES} ${PICAMERA_SOURCES})
+add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${PICAMERA_SOURCES})
 
 target_include_directories(romi
         PUBLIC
@@ -289,7 +265,6 @@ target_link_libraries(romi
         fluidsynth
         jpeg
         png
-#        ${ORTOOLS_STATIC_LIB}
         ${ORTOOLS_SHARED_LIB}
         ${PICAMERA_LIBRARIES})
 
