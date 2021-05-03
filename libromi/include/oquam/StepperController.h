@@ -29,7 +29,7 @@
 #include <RSerial.h>
 
 #include "oquam/ICNCController.h" 
-#include "ActivityHelper.h" 
+#include "api/ActivityHelper.h"
 
 
 namespace romi {

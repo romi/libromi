@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "ScriptList.h"
+#include "ui/ScriptList.h"
 
 using namespace std;
 using namespace testing;

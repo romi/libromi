@@ -1,7 +1,7 @@
 #include <linux/joystick.h>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "LinuxJoystick.h"
+#include "ui/LinuxJoystick.h"
 
 #include "mock_linux.h"
 

@@ -25,7 +25,7 @@
 #include <weeder/constraintsolver/GConstraintSolver.h>
 #include "weeder/PipelineFactory.h"
 #include "weeder/Pipeline.h"
-#include "weeder/ImageCropper.h"
+#include "cv/ImageCropper.h"
 
 #include "svm/SVMSegmentation.h"
 #include "weeder/som/SOM.h"

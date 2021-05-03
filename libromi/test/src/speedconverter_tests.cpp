@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "SpeedConverter.h"
+#include "rover/SpeedConverter.h"
 #include "JsonCpp.h"
 
 using namespace std;

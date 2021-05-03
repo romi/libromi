@@ -31,11 +31,10 @@
 #include "api/IWeeder.h"
 #include "api/INavigation.h"
 #include "api/StateMachine.h"
-
+#include "api/IEventTimer.h"
+#include "ui/Menu.h"
+#include "ui/IScriptEngine.h"
 #include "ISpeedController.h"
-#include "IEventTimer.h"
-#include "Menu.h"
-#include "IScriptEngine.h"
 
 namespace romi {
         

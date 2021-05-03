@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "mock_navigation.h"
-#include "SpeedController.h"
-#include "SpeedConverter.h"
+#include "rover/SpeedController.h"
+#include "rover/SpeedConverter.h"
 
 using namespace std;
 using namespace testing;

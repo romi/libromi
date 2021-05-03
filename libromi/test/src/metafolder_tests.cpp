@@ -10,7 +10,7 @@
 #include "data_provider/JsonFieldNames.h"
 #include "data_provider/RoverIdentityProvider.h"
 #include "data_provider/GpsLocationProvider.h"
-#include "weeder/MetaFolder.h"
+#include "session/MetaFolder.h"
 
 #include "mock_romidevicedata.h"
 #include "mock_softwareversion.h"

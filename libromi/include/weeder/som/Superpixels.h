@@ -26,7 +26,7 @@
 #define __ROMI_SUPERPIXELS_H
 
 #include <vector>
-#include "Image.h"
+#include "cv/Image.h"
 
 namespace romi {
 

@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"
-#include "IScriptEngine.h"
+#include "ui/IScriptEngine.h"
 #include "rover/Rover.h"
 
 class MockScriptEngine : public romi::IScriptEngine<romi::Rover>

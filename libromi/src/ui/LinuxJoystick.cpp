@@ -25,7 +25,7 @@
 #include <string>
 #include <linux/joystick.h>
 #include <r.h>
-#include "LinuxJoystick.h"
+#include "ui/LinuxJoystick.h"
 
 namespace romi {
         

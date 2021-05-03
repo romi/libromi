@@ -28,8 +28,8 @@
 #include <vector>
 #include "r.h"
 #include "api/Path.h"
-#include "weeder/ISession.h"
-#include "Image.h"
+#include "session/ISession.h"
+#include "cv/Image.h"
 
 namespace romi {
 

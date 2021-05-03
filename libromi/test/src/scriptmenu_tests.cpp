@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "ScriptList.h"
-#include "ScriptMenu.h"
+#include "ui/ScriptList.h"
+#include "ui/ScriptMenu.h"
 
 using namespace std;
 using namespace testing;

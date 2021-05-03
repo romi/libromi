@@ -28,7 +28,7 @@
 #include <memory>
 #include <JsonCpp.h>
 #include "IPipeline.h"
-#include "IImageCropper.h"
+#include "cv/IImageCropper.h"
 #include "IImageSegmentation.h"
 #include "IPathPlanner.h"
 #include "IPipeline.h"

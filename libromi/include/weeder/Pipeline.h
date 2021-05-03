@@ -29,7 +29,7 @@
 #include "api/CNCRange.h"
 #include "IPipeline.h"
 #include "IPathPlanner.h"
-#include "IImageCropper.h"
+#include "cv/IImageCropper.h"
 #include "IImageSegmentation.h"
 
 namespace romi {

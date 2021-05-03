@@ -26,8 +26,8 @@
 #define __ROMI_I_PIPELINE_H
 
 #include "api/Path.h"
-#include "Image.h"
-#include "weeder/ISession.h"
+#include "cv/Image.h"
+#include "session/ISession.h"
 
 namespace romi {
         

@@ -23,7 +23,7 @@
  */
 
 #include "camera_v4l.h"
-#include "USBCamera.h"
+#include "camera/USBCamera.h"
 #include <chrono>
 
 namespace romi {

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "WheelOdometry.h"
+#include "rover/WheelOdometry.h"
 
 using namespace std;
 using namespace testing;

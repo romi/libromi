@@ -32,7 +32,7 @@
 #include "api/IWeeder.h"
 #include "IFileCabinet.h"
 #include "weeder/IPipeline.h"
-#include "weeder/ISession.h"
+#include "session/ISession.h"
 
 namespace romi {
 

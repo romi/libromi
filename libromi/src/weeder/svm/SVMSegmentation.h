@@ -25,7 +25,7 @@
 #ifndef __ROMI_SVM_SEGMENTATION_H
 #define __ROMI_SVM_SEGMENTATION_H
 
-#include "weeder/ISession.h"
+#include "session/ISession.h"
 #include "weeder/IImageSegmentation.h"
 
 namespace romi {

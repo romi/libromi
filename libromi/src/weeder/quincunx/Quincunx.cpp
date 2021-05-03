@@ -24,7 +24,7 @@
 
 #include <math.h>
 #include <algorithm>
-#include "weeder/ISession.h"
+#include "session/ISession.h"
 #include "Quincunx.h"
 
 #pragma GCC diagnostic push

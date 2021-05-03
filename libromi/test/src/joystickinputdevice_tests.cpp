@@ -3,7 +3,7 @@
 #include "gmock/gmock.h"
 #include "mock_joystick.h"
 #include "mock_eventmapper.h"
-#include "JoystickInputDevice.h"
+#include "ui/JoystickInputDevice.h"
 #include "rover/EventsAndStates.h"
 
 using namespace std;

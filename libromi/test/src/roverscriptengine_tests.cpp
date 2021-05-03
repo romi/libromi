@@ -11,7 +11,7 @@
 #include "mock_weeder.h"
 #include "rover/Rover.h"
 #include "rover/RoverScriptEngine.h"
-#include "ScriptList.h"
+#include "ui/ScriptList.h"
 #include <ClockAccessor.h>
 
 using namespace std;

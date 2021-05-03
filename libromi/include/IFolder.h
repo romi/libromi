@@ -27,7 +27,7 @@
 
 #include <r.h>
 #include "api/Path.h"
-#include "Image.h"
+#include "cv/Image.h"
 
 namespace romi {
         

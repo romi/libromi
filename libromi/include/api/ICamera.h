@@ -25,7 +25,7 @@
 #ifndef __ROMI_ICAMERA_H
 #define __ROMI_ICAMERA_H
 
-#include "Image.h"
+#include "cv/Image.h"
 #include "JsonCpp.h"
 #include "MemBuffer.h"
 

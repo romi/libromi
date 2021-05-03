@@ -23,7 +23,7 @@
  */
 
 #include <r.h>
-#include "UIEventMapper.h"
+#include "ui/UIEventMapper.h"
 
 namespace romi {
 

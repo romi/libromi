@@ -25,8 +25,8 @@
 #define _ROMI_ROVER_SCRIPT_ENGINE_H
 
 #include <mutex>
-#include "IScriptEngine.h"
-#include "ScriptList.h"
+#include "ui/IScriptEngine.h"
+#include "ui/ScriptList.h"
 #include "rover/Rover.h"
 
 namespace romi {

@@ -25,7 +25,7 @@
 #ifndef __ROMI_SOM_H
 #define __ROMI_SOM_H
 
-#include "weeder/ISession.h"
+#include "session/ISession.h"
 #include "weeder/IPathPlanner.h"
 #include "SelfOrganizedMap.h"
 #include "Superpixels.h"

@@ -24,7 +24,7 @@
 
 #include <string.h>
 #include <r.h>
-#include "CrystalDisplay.h"
+#include "ui/CrystalDisplay.h"
 
 namespace romi {
         

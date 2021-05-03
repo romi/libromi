@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"
-#include "JoystickEventMapper.h"
+#include "ui/JoystickEventMapper.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"

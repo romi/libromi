@@ -39,7 +39,7 @@
 #include <ortools/constraint_solver/routing_index_manager.h>
 #include <ortools/constraint_solver/routing_parameters.h>
 
-#include "weeder/ISession.h"
+#include "session/ISession.h"
 #include "weeder/IPathPlanner.h"
 #include "../som/Superpixels.h"
 

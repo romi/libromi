@@ -22,7 +22,7 @@
 
  */
 
-#include "FileCamera.h"
+#include "camera/FileCamera.h"
 
 namespace romi {
 

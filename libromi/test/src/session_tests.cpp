@@ -4,7 +4,7 @@
 #include "FileUtils.h"
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "weeder/Session.h"
+#include "session/Session.h"
 #include "mock_romidevicedata.h"
 #include "mock_softwareversion.h"
 #include "mock_linux.h"

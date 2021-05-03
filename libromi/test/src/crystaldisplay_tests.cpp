@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "mock_romiserialclient.h"
-#include "CrystalDisplay.h"
+#include "ui/CrystalDisplay.h"
 
 using namespace std;
 using namespace testing;

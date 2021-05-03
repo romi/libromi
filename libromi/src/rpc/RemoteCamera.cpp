@@ -22,8 +22,7 @@
 
  */
 
-#include <stdexcept>
-#include "ImageIO.h"
+#include "cv/ImageIO.h"
 #include "rpc/RemoteCamera.h"
 #include "rpc/MethodsCamera.h"
 

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "JsonCpp.h"
-#include "Navigation.h"
+#include "rover/Navigation.h"
 #include "mock_motordriver.h"
 
 using namespace std;

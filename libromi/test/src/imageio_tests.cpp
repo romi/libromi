@@ -5,7 +5,7 @@
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "ImageIO.h"
+#include "cv/ImageIO.h"
 #include <FileUtils.h>
 
 using namespace std;

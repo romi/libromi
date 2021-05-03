@@ -22,8 +22,8 @@
 
  */
 #include <stdexcept>
-#include <r.h>
-#include "JoystickInputDevice.h"
+#include <log.h>
+#include "ui/JoystickInputDevice.h"
 
 // FIXME: needed for axis_forward_speed, axis_backward_speed, and axis_direction
 #include "rover/EventsAndStates.h"

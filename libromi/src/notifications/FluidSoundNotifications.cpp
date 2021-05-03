@@ -31,7 +31,7 @@ typedef int fluid_int;
 #include <r.h>
 #include <string>
 #include <stdexcept>
-#include "FluidSoundNotifications.h"
+#include "notifications/FluidSoundNotifications.h"
 
 namespace romi {
 

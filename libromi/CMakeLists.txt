@@ -34,36 +34,14 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "
 endif()
         
 set(SOURCES
-        include/ActivityHelper.h
-        include/BldcGimbal.h
-        include/BrushMotorDriver.h
-        include/CrystalDisplay.h
-        include/EventTimer.h
-        include/Navigation.h
-        include/SpeedController.h
-        include/IEventTimer.h
-        include/FileCamera.h
-        include/FluidSoundNotifications.h
-        include/configuration/GetOpt.h
+
         include/IFileCabinet.h
         include/IFolder.h
-        include/Image.h
-        include/ImageIO.h
-        include/JoystickInputDevice.h
-        include/JoystickEventMapper.h
-        include/LinuxJoystick.h
-        include/Menu.h
-        include/NavigationSettings.h
-        include/IScriptEngine.h
-        include/ScriptList.h
-        include/ScriptMenu.h
-        include/ISpeedController.h
-        include/SpeedConverter.h
-        include/UIEventMapper.h
-        include/USBCamera.h
         include/v3.h
-        include/WheelOdometry.h
 
+        include/api/ActivityHelper.h
+        include/api/EventTimer.h
+        include/api/IEventTimer.h
         include/api/CNCRange.h
         include/api/IActivity.h
         include/api/ICamera.h
@@ -81,8 +59,17 @@ set(SOURCES
         include/api/Path.h
         include/api/StateMachine.h
 
+        include/camera/FileCamera.h
+        include/camera/USBCamera.h
+
         include/configuration/ConfigurationProvider.h
         include/configuration/IOptions.h
+        include/configuration/GetOpt.h
+
+        include/cv/ImageCropper.h
+        include/cv/IImageCropper.h
+        include/cv/Image.h
+        include/cv/ImageIO.h
 
         include/fake/FakeCNC.h
         include/fake/FakeDisplay.h
@@ -92,6 +79,11 @@ set(SOURCES
         include/fake/FakeNotifications.h
         include/fake/FakeScriptEngine.h
         include/fake/FakeWeeder.h
+
+        include/hal/BldcGimbal.h
+        include/hal/BrushMotorDriver.h
+
+        include/notifications/FluidSoundNotifications.h
 
         include/oquam/ATDC.h
         include/oquam/ICNCController.h
@@ -113,6 +105,12 @@ set(SOURCES
         include/rover/RoverOptions.h
         include/rover/RoverScriptEngine.h
         include/rover/RoverStateMachine.h
+        include/rover/Navigation.h
+        include/rover/SpeedController.h
+        include/rover/NavigationSettings.h
+        include/rover/ISpeedController.h
+        include/rover/SpeedConverter.h
+        include/rover/WheelOdometry.h
 
         include/rpc/CameraAdaptor.h
         include/rpc/CNCAdaptor.h
@@ -139,10 +137,18 @@ set(SOURCES
         include/rpc/RemoteWeeder.h
         include/rpc/WeederAdaptor.h
 
+        include/ui/CrystalDisplay.h
+        include/ui/JoystickInputDevice.h
+        include/ui/JoystickEventMapper.h
+        include/ui/LinuxJoystick.h
+        include/ui/Menu.h
+        include/ui/IScriptEngine.h
+        include/ui/ScriptList.h
+        include/ui/ScriptMenu.h
+        include/ui/UIEventMapper.h
+
         include/weeder/Weeder.h
-        include/weeder/IImageCropper.h
         include/weeder/IImageSegmentation.h
-        include/weeder/ImageCropper.h
         include/weeder/IPathPlanner.h
         include/weeder/IPipeline.h
         include/weeder/PipelineFactory.h
@@ -151,29 +157,28 @@ set(SOURCES
 
         src/api/CNCRange.cpp
         src/api/Path.cpp
-        src/configuration/ConfigurationProvider.cpp
+        src/api/ActivityHelper.cpp
+        src/api/EventTimer.cpp
 
-        src/fake/FakeScriptEngine.cpp
-        
-        src/ActivityHelper.cpp
-        src/BldcGimbal.cpp
-        src/BrushMotorDriver.cpp
-        src/EventTimer.cpp
-        src/Navigation.cpp
-        src/SpeedController.cpp
+        src/hal/BldcGimbal.cpp
+        src/hal/BrushMotorDriver.cpp
+
+        src/configuration/ConfigurationProvider.cpp
         src/configuration/GetOpt.cpp
-        src/Image.cpp
-        src/ImageIO.cpp
-        src/ScriptList.cpp
-        src/ScriptMenu.cpp
-        src/SpeedConverter.cpp
-        src/v3.cpp
-        src/WheelOdometry.cpp
+
+        src/cv/Image.cpp
+        src/cv/ImageIO.cpp
+        src/cv/ImageCropper.cpp
+
         src/camera/FileCamera.cpp
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.h
         src/camera/camera_v4l.c
+
+        src/fake/FakeScriptEngine.cpp
+
         src/notifications/FluidSoundNotifications.cpp
+
         src/oquam/ATDC.cpp
         src/oquam/is_valid.cpp
         src/oquam/Oquam.cpp
@@ -191,6 +196,10 @@ set(SOURCES
         src/rover/RoverOptions.cpp
         src/rover/RoverScriptEngine.cpp
         src/rover/RoverStateMachine.cpp
+        src/rover/Navigation.cpp
+        src/rover/SpeedController.cpp
+        src/rover/SpeedConverter.cpp
+        src/rover/WheelOdometry.cpp
 
         src/rpc/CameraAdaptor.cpp
         src/rpc/CNCAdaptor.cpp
@@ -211,9 +220,10 @@ set(SOURCES
         src/ui/JoystickInputDevice.cpp
         src/ui/LinuxJoystick.cpp
         src/ui/UIEventMapper.cpp
+        src/ui/ScriptList.cpp
+        src/ui/ScriptMenu.cpp
 
         src/weeder/Weeder.cpp
-        src/weeder/ImageCropper.cpp
         src/weeder/Pipeline.cpp
         src/weeder/PipelineFactory.cpp
         src/weeder/svm/SVMSegmentation.h
@@ -223,6 +233,7 @@ set(SOURCES
         src/weeder/som/fixed.c
         src/weeder/constraintsolver/GConstraintSolver.cpp
         src/weeder/quincunx/point.h
+        src/v3.cpp
         )
 
 # These files have no conversion warning set at the top of each file.
@@ -245,11 +256,11 @@ set(DATA_PROVIDER_SOURCES
         src/data_provider/SoftwareVersion.cpp
         include/data_provider/RomiDeviceData.h
         src/data_provider/RomiDeviceData.cpp
-        src/weeder/Session.cpp
-        include/weeder/Session.h
-        include/weeder/MetaFolder.h
-        include/weeder/IMetaFolder.h
-        src/weeder/MetaFolder.cpp
+        src/session/Session.cpp
+        include/session/Session.h
+        include/session/MetaFolder.h
+        include/session/IMetaFolder.h
+        src/session/MetaFolder.cpp
         src/data_provider/Gps.cpp
         include/data_provider/Gps.h
         include/debug_tools/debug_data_dumper.h
