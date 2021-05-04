@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(romi-libromi)
 
+if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
+    set(PI_BUILD TRUE)
+    MESSAGE("ARM PROCESSOR DETECTED")
+else()
+    MESSAGE("X86 PROCESSOR DETECTED")
+endif()
+
+MESSAGE(${CMAKE_SYSTEM_PROCESSOR})
+
 MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
 MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 
@@ -161,7 +170,7 @@ include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
 
 ###########################################################
 
-if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
+if(${PI_BUILD})
 
     set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
     find_path(PICAMERA_INCLUDE_DIR

@@ -9,7 +9,7 @@ MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 
 ############################################################
 
-if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
+if(${PI_BUILD})
     set(PICAMERA_SOURCES
       include/picamera/CameraComponent.h
       include/picamera/Component.h
