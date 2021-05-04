@@ -6,6 +6,7 @@ set(romi_VERSION_MINOR 1)
 
 MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
 MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
+
 ############################################################
 
 if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
@@ -26,11 +27,8 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "
       src/picamera/PiCamera.cpp
       src/picamera/PiCameraSettings.cpp
       src/picamera/Semaphore.cpp)
-    set(PICAMERA_LIBRARIES mmal_core mmal_util mmal vcos)
-    set(PICAMERA_LIBRARY_PATH /opt/vc/lib)
-    set(PICAMERA_INCLUDE /opt/vc/include)
-#else()
-#    set(PICAMERA_SOURCES)
+else()
+   set(PICAMERA_SOURCES)
 endif()
         
 set(SOURCES
@@ -254,7 +252,7 @@ target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         ${ORTOOLS_INCLUDE_DIR}
-        ${PICAMERA_INCLUDE}
+        ${PICAMERA_INCLUDE_DIR}
         )
 
 target_link_libraries(romi
@@ -266,7 +264,7 @@ target_link_libraries(romi
         jpeg
         png
         ${ORTOOLS_SHARED_LIB}
-        ${PICAMERA_LIBRARIES})
+        ${PICAMERA_SHARED_LIB})
 
 if(BUILD_TESTS)
     add_subdirectory(test)

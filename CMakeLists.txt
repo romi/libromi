@@ -159,13 +159,35 @@ endif()
 
 include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
 
+###########################################################
+
 if((CMAKE_SYSTEM_PROCESSOR MATCHES ".*arm") OR (CMAKE_SYSTEM_PROCESSOR MATCHES ".*aarch64"))
-    set(PICAMERA_LIBRARY_PATH /opt/vc/lib)
-    link_directories(${PICAMERA_LIBRARY_PATH})
+
+    set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
+    find_path(PICAMERA_INCLUDE_DIR
+            NAMES bcm_host.h
+            PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
+    set(PICAMERA_INCLUDE_DIR ${PICAMERA_INCLUDE_DIR} PARENT_SCOPE)
+
+    find_library(PICAMERA_SHARED_LIB
+            NAMES mmal
+            PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
+
+    if(NOT PICAMERA_SHARED_LIB)
+            message(FATAL_ERROR "MMAL library not found")
+    else()
+            set(PICAMERA_SHARED_LIB_DIR "${PICAMERA_LIB_PATH_ROOT}/lib")
+            get_directory_property(hasParent PARENT_DIRECTORY)
+            if(hasParent)
+                set(PICAMERA_SHARED_LIB_DIR ${PICAMERA_SHARED_LIB_DIR} PARENT_SCOPE)
+            endif()
+            message( "${PICAMERA_SHARED_LIB} found in ${PICAMERA_SHARED_LIB_DIR}")
+    endif()
 endif()
 
+###########################################################
+
 add_subdirectory(binortools)
-#set(ORTOOLS_STATIC_LIBS ${ORTOOLS_STATIC_LIBS} PARENT_SCOPE)
 add_subdirectory(arduino_libraries)
 MESSAGE("libromi ORTOOLS_SHARED_LIB = ${ORTOOLS_SHARED_LIB} ORTOOLS_SHARED_LIB_DIR = ${ORTOOLS_SHARED_LIB_DIR} OR_INCLUDE = ${ORTOOLS_INCLUDE_DIR}" )
 add_subdirectory(libromi)
