@@ -22,16 +22,16 @@
 
  */
 
-#if defined(__aarch64__) || defined(__ARM_ARCH_7__) || defined(__arm__)
-typedef unsigned int fluid_int;
-#else
-typedef int fluid_int;
-#endif
-
 #include <r.h>
 #include <string>
 #include <stdexcept>
 #include "notifications/FluidSoundNotifications.h"
+
+#if (FLUIDSYNTH_VERSION_MAJOR == 1)
+typedef unsigned int fluid_int;
+#else
+typedef int fluid_int;
+#endif
 
 namespace romi {
 
