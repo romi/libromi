@@ -23,7 +23,6 @@ jobs:
 
       - name: Create Build Environment & configure CMake
         working-directory: ${{runner.workspace}}/libromi
-        shell: bash
         run: |
           mkdir build_tests
           cd build_tests
@@ -39,9 +38,17 @@ jobs:
         working-directory: ${{runner.workspace}}/libromi
         run: |
           cd build_tests
-          ctest -V
-      
+          ctest -V -R romi
+
+      - name: debug_path_build
+        working-directory: ${{runner.workspace}}/libromi
+        run: |
+          cd build_tests
+          echo "pwd build tests"
+          pwd
+          echo "ls build tests"
+          ls -lart
+
       - name: Upload coverage to Codecov
         working-directory: ${{runner.workspace}}/libromi
         run: bash <(curl -s https://codecov.io/bash)
-      
