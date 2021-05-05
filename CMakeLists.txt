@@ -5,8 +5,13 @@ project(romi-libromi)
 
 set(CMAKE_MODULES_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 set(CMAKE_THIRDPARTY_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
+
+############################################################
+
 include(${CMAKE_MODULES_DIRECTORY}/RomiFunctions.cmake)
-set_romi_build_defaults()
+set(PI_BUILD FALSE)
+set_romi_build_defaults(PI_BUILD)
+message("${PROJECT_NAME} PI_BUILD = ${PI_BUILD}")
 output_compile_flags()
 
 ############################################################
@@ -102,10 +107,10 @@ if (NOT DEFINED libr_SOURCE_DIR)
     SET(BUILD_TESTS OFF)
 
     if (NOT LIBR_DIRECTORY)
-        MESSAGE("LIBROMI - ${LIBR_DIR} does not exist. Downloading dependency.")
-        MESSAGE("LIBROMI - WARNING")
-        MESSAGE("LIBROMI - The dependency is cloned to support rcom development only.")
-        MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
+        MESSAGE("${PROJECT_NAME} - ${LIBR_DIR} does not exist. Downloading dependency.")
+        MESSAGE("${PROJECT_NAME} - WARNING")
+        MESSAGE("${PROJECT_NAME} - The dependency is cloned to support rcom development only.")
+        MESSAGE("${PROJECT_NAME} - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
 
         download_project(
                 PROJ              libr
@@ -117,7 +122,7 @@ if (NOT DEFINED libr_SOURCE_DIR)
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE})
         add_subdirectory(${LIBR_DIR})
     else()
-        MESSAGE("LIBROMI - ${LIBR_DIRECTORY} exists. Not downloading dependency.")
+        MESSAGE("${PROJECT_NAME} - ${LIBR_DIRECTORY} exists. Not downloading dependency.")
         add_subdirectory(libr)
     endif()
     # Restore build tests option.
@@ -136,10 +141,10 @@ if (NOT DEFINED librcom_SOURCE_DIR)
     SET(BUILD_TESTS OFF)
 
     if (NOT LIBRCOM_DIRECTORY)
-        MESSAGE("LIBROMI - ${LIBRCOM_DIR} does not exist. Downloading dependency.")
-        MESSAGE("LIBROMI - WARNING")
-        MESSAGE("LIBROMI - The dependency is cloned to support libromi development only.")
-        MESSAGE("LIBROMI - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
+        MESSAGE("${PROJECT_NAME} - ${LIBRCOM_DIR} does not exist. Downloading dependency.")
+        MESSAGE("${PROJECT_NAME} - WARNING")
+        MESSAGE("${PROJECT_NAME} - The dependency is cloned to support libromi development only.")
+        MESSAGE("${PROJECT_NAME} - To work on both rcom and libr please see: https://github.com/romi/romi-rover-build-and-test")
 
         download_project(
                 PROJ              librcom
@@ -151,7 +156,7 @@ if (NOT DEFINED librcom_SOURCE_DIR)
                 ${UPDATE_DISCONNECTED_IF_AVAILABLE})
         add_subdirectory(${LIBRCOM_DIR})
     else()
-        MESSAGE("LIBROMI - ${LIBRCOM_DIRECTORY} exists. Not downloading dependency.")
+        MESSAGE("${PROJECT_NAME} - ${LIBRCOM_DIRECTORY} exists. Not downloading dependency.")
         add_subdirectory(librcom)
     endif()
     # Restore build tests option.
