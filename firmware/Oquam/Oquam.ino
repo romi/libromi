@@ -416,6 +416,7 @@ void handle_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         if (do_homing()) {
                 reset();
                 stepper_zero();
+                controller_state = STATE_RUNNING;
         } else {
                 controller_state = STATE_ERROR;
         }
