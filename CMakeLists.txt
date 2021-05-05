@@ -170,26 +170,29 @@ include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
 ###########################################################
 
 if(${PI_BUILD})
-
+    get_directory_property(hasParent PARENT_DIRECTORY)
     set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
+
     find_path(PICAMERA_INCLUDE_DIR
             NAMES bcm_host.h
             PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
-    set(PICAMERA_INCLUDE_DIR ${PICAMERA_INCLUDE_DIR} PARENT_SCOPE)
+    if(hasParent)
+        set(PICAMERA_INCLUDE_DIR ${PICAMERA_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 
     find_library(PICAMERA_SHARED_LIB
             NAMES mmal
             PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
 
-    if(NOT PICAMERA_SHARED_LIB)
-            message(FATAL_ERROR "MMAL library not found")
-    else()
+    if(PICAMERA_SHARED_LIB)
+
             set(PICAMERA_SHARED_LIB_DIR "${PICAMERA_LIB_PATH_ROOT}/lib")
-            get_directory_property(hasParent PARENT_DIRECTORY)
             if(hasParent)
                 set(PICAMERA_SHARED_LIB_DIR ${PICAMERA_SHARED_LIB_DIR} PARENT_SCOPE)
             endif()
             message( "${PICAMERA_SHARED_LIB} found in ${PICAMERA_SHARED_LIB_DIR}")
+    else()
+        message(FATAL_ERROR "MMAL library not found")
     endif()
 endif()
 
