@@ -374,7 +374,6 @@ namespace romi {
         {
                 size_t x, y, i, k;
                 FILE *fp = nullptr;
-                png_structp png = nullptr;
                 png_infop info = nullptr;
                 png_bytep *row_pointers = nullptr;
                 bool success = false;
@@ -382,17 +381,12 @@ namespace romi {
                 png_byte bit_depth = 0;
                 size_t width = 0;
                 size_t height = 0;
+                png_structp png = nullptr;
 
                 try {
                         png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
                         if (png == nullptr) {
                                 throw std::runtime_error("ImageIO::load_png: png_create_read_struct failed");
-                        }
-                        // TBD: This isn't happy in release mode.
-                        // Replace png code with
-                        if (setjmp(png_jmpbuf(png))) {
-                                r_err("ImageIO::load_png: setjmp returned error");
-                                return false;
                         }
 
                         info = png_create_info_struct(png);
@@ -405,6 +399,13 @@ namespace romi {
                                 std::string error = std::string("ImageIO::load_png: Failed to open the file ") + filename;
                                 throw std::runtime_error(error);
                         }
+
+                        // TBD: This isn't happy in release mode.
+                        // Replace png code with STB_IMAGE
+//                        if (setjmp(png_jmpbuf(png))) {
+//                            r_err("ImageIO::load_png: setjmp returned error");
+//                            return false;
+//                        }
 
                         png_init_io(png, fp);
                         png_read_info(png, info);

@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(libromi)
 
+############################################################
+
+set_romi_build_defaults()
+output_compile_flags()
+
+############################################################
+
 set(romi_VERSION_MAJOR 0)
 set(romi_VERSION_MINOR 1)
-
-MESSAGE("libromi CXX Flags = ${CMAKE_CXX_FLAGS}")
-MESSAGE("libromi C Flags = ${CMAKE_C_FLAGS}")
 
 ############################################################
 
