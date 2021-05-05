@@ -90,6 +90,7 @@ namespace romi {
         
         bool StepperController::homing()
         {
+                r_info("StepperController: homing");
                 return (send_command("H") == 0 && synchronize(60.0));
         }
 
@@ -185,8 +186,10 @@ namespace romi {
                         }
 
                         double now = clock->time();
-                        if (timeout >= 0.0 && (now - start_time) >= timeout)
+                        if (timeout >= 0.0 && (now - start_time) >= timeout) {
+                                r_warn("StepperController::synchronize: time out");
                                 break;
+                        }
                 }
                 return success;
         }
@@ -214,6 +217,7 @@ namespace romi {
         
         bool StepperController::pause_activity()
         {
+                r_info("StepperController: pausing");
                 bool retval = send_command_without_interruption("p");
                 _activity_helper.pause_activity();
                 return retval;
@@ -221,23 +225,27 @@ namespace romi {
         
         bool StepperController::continue_activity()
         {
+                r_info("StepperController: continuing");
                 _activity_helper.continue_activity();
                 return send_command_without_interruption("c");
         }
         
         bool StepperController::reset_activity()
         {
+                r_info("StepperController: resetting");
                 _activity_helper.reset_activity();
                 return send_command_without_interruption("r");
         }
 
         bool StepperController::enable()
         {
+                r_info("StepperController: enabling");
                 return send_command_without_interruption("E[1]");
         }
         
         bool StepperController::disable()
         {
+                r_info("StepperController: disabling");
                 return send_command_without_interruption("E[0]");
         }
         
@@ -246,6 +254,7 @@ namespace romi {
         {
                 char command[64];
                 rprintf(command, 64, "h[%d,%d,%d]", axis1, axis2, axis3);
+                r_info("StepperController: setting homing to [%d,%d,%d]", axis1, axis2, axis3);
                 return send_command_without_interruption(command);
         }
 }

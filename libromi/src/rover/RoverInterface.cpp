@@ -44,7 +44,7 @@ namespace romi {
                         int event = _rover.input_device.get_next_event();
                         if (event == 0)
                                 break;
-                        _state_machine.handle_event(event);
+                        handle_event(event);
                 }
         }
         
@@ -52,14 +52,14 @@ namespace romi {
         {
                 int event = _rover.event_timer.get_next_event();
                 if (event != 0)
-                        _state_machine.handle_event(event);
+                        handle_event(event);
         }
 
         void RoverInterface::handle_script_events()
         {
                 int event = _rover.script_engine.get_next_event();
-                if (event != 0)
-                        _state_machine.handle_event(event);
+                if (event != 0) 
+                        handle_event(event);
         }
 
         void RoverInterface::handle_event(int event)
