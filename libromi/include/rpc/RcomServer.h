@@ -37,15 +37,13 @@ namespace romi {
         {
         protected:
                 std::unique_ptr<rcom::IMessageHub> hub_;
-                std::unique_ptr<RcomMessageHandler> listener_;
 
         public:
                 
                 static std::unique_ptr<IRPCServer> create(const std::string& topic,
                                                           IRPCHandler &handler);
                 
-                RcomServer(std::unique_ptr<rcom::IMessageHub>& hub,
-                           std::unique_ptr<RcomMessageHandler>& listener);
+                RcomServer(std::unique_ptr<rcom::IMessageHub>& hub);
                 virtual ~RcomServer() = default;
 
                 void handle_events();

@@ -32,6 +32,8 @@ namespace romi {
         {
         public:
                 virtual ~IRPCClient() override = default;
+
+                virtual bool is_connected() = 0;
         };
 }
 

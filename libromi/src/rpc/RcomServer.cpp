@@ -32,17 +32,16 @@ namespace romi {
         std::unique_ptr<IRPCServer> RcomServer::create(const std::string& topic,
                                                        IRPCHandler &handler)
         {
-                auto listener = std::make_unique<RcomMessageHandler>(handler);
+                std::shared_ptr<rcom::IMessageListener> listener
+                        = std::make_shared<RcomMessageHandler>(handler);
                 std::unique_ptr<rcom::IMessageHub> hub
-                        = std::make_unique<rcom::MessageHub>(topic, *listener);
-                return std::make_unique<RcomServer>(hub, listener);
+                        = std::make_unique<rcom::MessageHub>(topic, listener);
+                return std::make_unique<RcomServer>(hub);
         }
         
-        RcomServer::RcomServer(std::unique_ptr<rcom::IMessageHub>& hub,
-                               std::unique_ptr<RcomMessageHandler>& listener)
-                : hub_(), listener_()
+        RcomServer::RcomServer(std::unique_ptr<rcom::IMessageHub>& hub)
+                : hub_()
         {
-                listener_ = std::move(listener);
                 hub_ = std::move(hub);
         }
 

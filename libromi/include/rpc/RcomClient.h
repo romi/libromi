@@ -35,7 +35,8 @@ namespace romi {
         protected:
                 std::unique_ptr<rcom::IMessageLink> link_;
                 rpp::MemBuffer buffer_;
-
+                double timeout_;
+                
                 void try_execute(const std::string& method, JsonCpp &params,
                                  JsonCpp &result, RPCError &error);
                 void try_execute(const std::string& method, JsonCpp &params,
@@ -51,7 +52,8 @@ namespace romi {
                 static std::unique_ptr<IRPCClient> create(const std::string& topic,
                                                           double timeout_seconds);
                 
-                RcomClient(std::unique_ptr<rcom::IMessageLink>& link);
+                RcomClient(std::unique_ptr<rcom::IMessageLink>& link,
+                           double timeout_seconds);
                 ~RcomClient() override = default;
 
                 /** execute() does not throw exceptions. All errors
@@ -65,6 +67,8 @@ namespace romi {
                              JsonCpp &params,
                              rpp::MemBuffer& result,
                              RPCError &status) override;
+                
+                bool is_connected() override;
         };
 }
 

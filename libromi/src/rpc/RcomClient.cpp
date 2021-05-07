@@ -22,7 +22,10 @@
 
  */
 #include <stdexcept>
+#include <Linux.h>
 #include <MessageLink.h>
+#include <ServerSocket.h>
+#include <WebSocketServer.h>
 #include "rpc/RcomClient.h"
 
 namespace romi {
@@ -32,11 +35,14 @@ namespace romi {
         {
                 std::unique_ptr<rcom::IMessageLink> link
                         = std::make_unique<rcom::MessageLink>(topic, timeout_seconds);
-                return std::make_unique<RcomClient>(link);
+                return std::make_unique<RcomClient>(link, timeout_seconds);
         }
-
-        RcomClient::RcomClient(std::unique_ptr<rcom::IMessageLink>& link)
-                : link_(), buffer_()
+        
+        RcomClient::RcomClient(std::unique_ptr<rcom::IMessageLink>& link,
+                               double timeout_seconds)
+                : link_(),
+                  buffer_(),
+                  timeout_(timeout_seconds)
         {
                 link_ = std::move(link);
         }
@@ -66,6 +72,7 @@ namespace romi {
         void RcomClient::try_execute(const std::string& method, JsonCpp &params,
                                     JsonCpp &result, RPCError &error)
         { 
+                r_debug("RcomClient::try_execute");
                 make_request(method, params);
                 if (send_request(rcom::kTextMessage, error)
                     && receive_response(buffer_, error)) {
@@ -75,6 +82,7 @@ namespace romi {
 
         void RcomClient::make_request(const std::string& method, JsonCpp &params)
         {
+                r_debug("RcomClient::make_request");
                 JsonCpp request = JsonCpp::construct("{\"method\": \"%s\"}",
                                                      method.c_str());
                 
@@ -90,6 +98,7 @@ namespace romi {
 
         bool RcomClient::send_request(rcom::MessageType type, RPCError &error)
         {
+                r_debug("RcomClient::send_request");
                 bool success = false;
                 if (link_->send(buffer_, type)) {
                         success = true;
@@ -102,10 +111,16 @@ namespace romi {
 
         bool RcomClient::receive_response(rpp::MemBuffer& buffer, RPCError &error)
         {
+                r_debug("RcomClient::receive_response");
                 bool success = false;
-                if (link_->recv(buffer, 0.1)) {
+                if (link_->recv(buffer, timeout_)) {
                         success = true;
+
+                        r_debug("RcomClient::receive_response: %.*s",
+                                buffer.size(), buffer.data());
                 } else {
+                        r_debug("RcomClient::receive_response: %.*s",
+                                buffer.size(), buffer.data());
                         set_error(error);
                 }
                 return success;
@@ -113,6 +128,7 @@ namespace romi {
 
         void RcomClient::parse_response(JsonCpp &result, RPCError &error)
         {
+                r_debug("RcomClient::parse_response");
                 try {
                         result = JsonCpp::parse(buffer_);
                                 
@@ -124,6 +140,7 @@ namespace romi {
         
         void RcomClient::set_error(RPCError &error)
         {
+                r_debug("RcomClient::set_error");
                 switch (link_->recv_status()) {
                 case rcom::kRecvError:
                         error.code = RPCError::kReceiveError;
@@ -171,5 +188,10 @@ namespace romi {
                 if (send_request(rcom::kBinaryMessage, error)) {
                         receive_response(result, error);
                 }
+        }
+
+        bool RcomClient::is_connected()
+        {
+                return link_->is_connected();
         }
 }
