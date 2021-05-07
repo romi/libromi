@@ -43,6 +43,7 @@ namespace romi {
                 static constexpr const char *script_finished = "script-finished";
                 static constexpr const char *script_failed = "script-failed";
                 static constexpr const char *rover_reset = "rover-reset";
+                static constexpr const char *rover_error = "rover-error";
         };
 }
 

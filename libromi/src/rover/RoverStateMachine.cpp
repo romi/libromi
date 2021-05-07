@@ -32,21 +32,30 @@ namespace romi {
         {
                 r_debug("rover_ready");
                 // TODO: Turn power on
-                rover.weeder.power_up();
+                r_info("RoverStateMachine: Powering up");
+                bool success = true;
+
+                success = rover.weeder.power_up();
                 //rover.navigation.power_up();
-                
-                rover.display.show(0, "Ready");
-                rover.display.clear(1);
-                rover.event_timer.reset(); 
-                return true;
+
+                if (success) {
+                        rover.display.show(0, "Ready");
+                        rover.display.clear(1);
+                        rover.event_timer.reset();
+                } else {
+                        rover.notifications.notify(RoverNotifications::rover_error);
+                }
+                return success;
         }
         
         bool initialize_rover(Rover& rover)
         {
                 r_debug("initialize_rover");
-                rover_ready(rover);
-                rover.notifications.notify(RoverNotifications::startup);
-                return true;
+                bool success = rover_ready(rover);
+                if (success) 
+                        rover.notifications.notify(RoverNotifications::startup);
+                // else: let the top-layer handle the failure
+                return success;
         }
 
         bool signal_system_failure(Rover& rover)
@@ -111,9 +120,11 @@ namespace romi {
         bool leave_navigation_mode(Rover& rover)
         {
                 r_debug("leave_navigation_mode");
-                rover_ready(rover);
-                rover.notifications.notify(RoverNotifications::leave_navigation_mode);
-                return true;
+                bool success = rover_ready(rover);
+                if (success)
+                        rover.notifications.notify(RoverNotifications::leave_navigation_mode);
+                // else: let the top-layer handle the failure
+                return success;
         }
 
         bool start_driving_forward(Rover& rover)
@@ -353,9 +364,11 @@ namespace romi {
         bool leave_menu_mode(Rover& rover)
         {
                 r_debug("leave_menu_mode");
-                rover_ready(rover);
-                rover.notifications.notify(RoverNotifications::leave_menu_mode);
-                return true;
+                bool success = rover_ready(rover);
+                if (success)
+                        rover.notifications.notify(RoverNotifications::leave_menu_mode);
+                // else: let the top-layer handle the failure
+                return success;
         }
 
         void RoverStateMachine::init_state_transitions()

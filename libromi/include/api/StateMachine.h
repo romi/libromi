@@ -83,7 +83,8 @@ namespace romi {
 
                 void do_transition(StateTransition<T>& transition) {
                         _success = transition.do_transition(_target);
-                        _current_state = transition.next_state();
+                        if (_success)
+                                _current_state = transition.next_state();
                 }
                 
                 void try_regular_transitions(int event) {
@@ -92,10 +93,10 @@ namespace romi {
                                 if (transition.state() == _current_state
                                     && transition.event() == event) {
                                         
-                                        /* r_debug("%s + %s -> %s", */
-                                        /*         get_state_name(_current_state), */
-                                        /*         get_event_name(event), */
-                                        /*         get_state_name(transition.next_state())); */
+                                        r_debug("%s + %s -> %s",
+                                                get_state_name(_current_state),
+                                                get_event_name(event),
+                                                get_state_name(transition.next_state()));
 
                                         do_transition(transition);
                                         _handled = true;
