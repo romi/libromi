@@ -39,6 +39,26 @@ namespace romi {
                 return timeout;
         }
 
+        struct NavRecording
+        {
+                double time_;
+                double left_encoder_;
+                double right_encoder_;
+                double position_x_;
+                double position_y_;
+                double distance_;
+
+                NavRecording(double t, double left, double right, double x, double y, double d)
+                        : time_(t),
+                          left_encoder_(left),
+                          right_encoder_(right),
+                          position_x_(x),
+                          position_y_(y),
+                          distance_(d) {
+                };
+        };
+        
+        // TODO: Spin off a seperate thread so the main event loop can continue?
         bool Navigation::wait_travel(WheelOdometry &odometry, double distance,
                                      double timeout)
         {
@@ -46,10 +66,13 @@ namespace romi {
                 double left, right, timestamp;
                 auto clock = rpp::ClockAccessor::GetInstance();
                 double start_time = clock->time();
-
+                std::vector<NavRecording> recording;
+                
                 _stop = false;
                 
                 while (!_stop) {
+
+                        // TODO: HANDLE USER INPUT AND HANDLE STOP REQUESTED USER-REQUESTED
                         
                         _driver.get_encoder_values(left, right, timestamp);
                         odometry.set_encoders(left, right, timestamp);
@@ -71,16 +94,29 @@ namespace romi {
                         }
 
                         double now = clock->time();
-                        if (now - start_time >= timestamp) {
+                        if (now - start_time >= timeout) {
                                 r_err("Navigation::wait_travel: time out (%f s)", timeout);
                                 _driver.moveat(0, 0);
                                 success = false;
                                 _stop = true;
                         }
 
-                        clock->sleep(0.010);
+                        recording.emplace_back(now - start_time, left, right, x, y, distance_travelled);
+                        clock->sleep(0.001);
                 }
 
+                FILE* fp = fopen("/tmp/nav.csv", "w");
+                if (fp) {
+                        for (size_t i = 0; i < recording.size(); i++)
+                                fprintf(fp, "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
+                                        recording[i].time_,
+                                        recording[i].left_encoder_,
+                                        recording[i].right_encoder_,
+                                        recording[i].position_x_,
+                                        recording[i].position_y_,
+                                        recording[i].distance_);
+                        fclose(fp);
+                }
                 return success;
         }
         
@@ -98,7 +134,7 @@ namespace romi {
                         if (_driver.moveat(speed, speed)) {
                                 
                                 success = wait_travel(odometry, distance,
-                                                        compute_timeout(distance, speed));
+                                                      compute_timeout(distance, speed));
                                 
                         } else {
                                 r_err("Navigation::do_move2: moveat failed");
