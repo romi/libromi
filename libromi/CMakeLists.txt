@@ -264,8 +264,6 @@ target_link_libraries(romi
         rpp
         rcompp-lite
         fluidsynth
-        jpeg
-        png
         ${ORTOOLS_SHARED_LIB}
         ${PICAMERA_SHARED_LIB})
 

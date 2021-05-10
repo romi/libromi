@@ -33,7 +33,7 @@ namespace romi {
         class Image
         {
         public:
-                enum ImageType { BW, RGB }; 
+                enum ImageType { BW, RGB};
                 
         protected:
                 size_t _width;
@@ -51,6 +51,7 @@ namespace romi {
                 Image(ImageType type, const uint8_t *data, size_t width, size_t height);
                 virtual ~Image();
                 Image& operator=(const Image&);
+
 
                 // Accessors
                 ImageType type() {
@@ -95,6 +96,8 @@ namespace romi {
                         }
                         return value;
                 }
+
+                std::vector<uint8_t> export_byte_data();
                 
                 // Operations
                 void init(ImageType type, size_t width, size_t height);

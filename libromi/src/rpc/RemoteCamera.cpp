@@ -39,9 +39,7 @@ namespace romi {
                 bool success = false;
                 rpp::MemBuffer& jpeg = grab_jpeg();
                 if (jpeg.size() > 0) {
-                        success = ImageIO::load_jpg(image,
-                                                    jpeg.data().data(),
-                                                    jpeg.size());
+                        success = ImageIO::load_from_buffer(image, jpeg.data());
                 }
                 return success;
         }
