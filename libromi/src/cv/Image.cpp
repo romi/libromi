@@ -170,4 +170,14 @@ namespace romi {
                 }
             return *this;
         }
+
+        std::vector<uint8_t> Image::export_byte_data()
+        {
+                std::vector<uint8_t> normalised_byte_data(_data.size(), 0);
+
+                for (size_t datum = 0; datum < _data.size(); datum++) {
+                    normalised_byte_data[datum] = (uint8_t) (_data[datum] * 255.0f);
+                }
+                return normalised_byte_data;
+        }
 }

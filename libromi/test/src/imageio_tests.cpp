@@ -57,6 +57,8 @@ TEST_F(imageio_tests, successful_store_jpg)
         ASSERT_EQ(success, true);
 }
 
+// NOTE: STB only saves jpeg in 3 channels.
+// Save as 1 channel BW load as 3 channel RGB.
 TEST_F(imageio_tests, successful_store_and_load_jpg_BW)
 {
         bool success = ImageIO::store_jpg(bw, jpg_file);
@@ -65,16 +67,11 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_BW)
         Image image;
         success = ImageIO::load(image, jpg_file);
         ASSERT_EQ(success, true);
-        ASSERT_EQ(image.type(), Image::BW);
+        ASSERT_EQ(image.type(), Image::RGB);
         ASSERT_EQ(image.width(), 4);
         ASSERT_EQ(image.height(), 4);
-        ASSERT_EQ(image.channels(), 1);
+        ASSERT_EQ(image.channels(), 3);
 
-        auto& p0 = bw.data();
-        auto& p1 = image.data();
-        for (size_t i = 0; i < image.length(); i++) {
-                ASSERT_NEAR(p0[i], p1[i], 0.004);
-        }
 }
 
 TEST_F(imageio_tests, successful_store_and_load_jpg_RGB)
@@ -91,28 +88,6 @@ TEST_F(imageio_tests, successful_store_and_load_jpg_RGB)
         ASSERT_EQ(image.height(), 4);
         ASSERT_EQ(image.channels(), 3);
         ASSERT_EQ(rgb.data().size(), image.data().size());
-
-        // No direct comparison of data due to compression. Can pass or fail on different machines.
-        //  for (size_t i = 0; i < image.length(); i++) {
-        //          ASSERT_NEAR(p0[i], p1[i], 0.1);
-        //  }
-}
-
-TEST_F(imageio_tests, store_jpg_to_buffer_correct)
-{
-        bool success = ImageIO::store_jpg(rgb, jpg_file);
-        ASSERT_EQ(success, true);
-
-        std::vector<uint8_t> outbuffer;
-        success = ImageIO::store_jpg(rgb, outbuffer);
-        ASSERT_EQ(success, true);
-
-        std::vector<uint8_t> inbuffer;
-        FileUtils::TryReadFileAsVector(jpg_file, inbuffer);
-
-        ASSERT_EQ(success, true);
-        ASSERT_EQ(outbuffer.size(), inbuffer.size());
-        ASSERT_EQ(outbuffer, inbuffer);
 }
 
 TEST_F(imageio_tests, load_jpg_from_buffer_correct)
@@ -120,12 +95,11 @@ TEST_F(imageio_tests, load_jpg_from_buffer_correct)
         bool success = ImageIO::store_jpg(rgb, jpg_file);
         ASSERT_EQ(success, true);
 
-        std::vector<uint8_t> outbuffer;
-        success = ImageIO::store_jpg(rgb, outbuffer);
-        ASSERT_EQ(success, true);
+        std::vector<uint8_t> inbuffer;
+        FileUtils::TryReadFileAsVector(jpg_file, inbuffer);
 
         Image image_from_buffer;
-        success = ImageIO::load_jpg(image_from_buffer, outbuffer.data(), outbuffer.size());
+        success = ImageIO::load_from_buffer(image_from_buffer, inbuffer);
 
         Image image_from_file;
         success = ImageIO::load(image_from_file, jpg_file);
@@ -147,7 +121,7 @@ TEST_F(imageio_tests, successful_store_png)
         ASSERT_EQ(success, true);
 }
 
-TEST_F(imageio_tests, successful_store_and_load_png_1)
+TEST_F(imageio_tests, successful_store_and_load_png_BW)
 {
         bool success = ImageIO::store_png(bw, png_file);
         ASSERT_EQ(success, true);
@@ -167,7 +141,7 @@ TEST_F(imageio_tests, successful_store_and_load_png_1)
         }
 }
 
-TEST_F(imageio_tests, successful_store_and_load_png_2)
+TEST_F(imageio_tests, successful_store_and_load_png_RGB)
 {
         bool success = ImageIO::store_png(rgb, png_file);
         ASSERT_EQ(success, true);

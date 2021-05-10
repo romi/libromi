@@ -26,29 +26,24 @@
 #define __ROMI_IMAGEIO_H
 
 #include <vector>
+
 #include "FileUtils.h"
 #include "cv/Image.h"
 
 namespace romi {
 
         using bytevector = std::vector<uint8_t>;
-        
+        const int JPEG_QUALITY_90 = 90;
         class ImageIO
         {
 
         public:
                 static bool store_jpg(Image& image, const char *path);
-                static bool store_jpg(Image& image, bytevector& out);
                 static bool store_png(Image& image, const char *path);
                 
                 static bool load(Image& image, const char *filename);
-                static bool load_jpg(Image& image, const uint8_t *data, size_t len);
+                static bool load_from_buffer(Image& image, const std::vector<uint8_t>& image_data);
 
-        protected:
-                static bool is_png(const char *filename);
-                static bool is_jpg(const char *filename);
-                static bool load_png(Image& image, const char *filename);
-                static bool load_jpg(Image& image, const char *filename);
         };
 }
 
