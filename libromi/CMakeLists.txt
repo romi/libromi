@@ -255,7 +255,7 @@ target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         # ${ORTOOLS_INCLUDE_DIR}
-        ${PICAMERA_INCLUDE_DIR}
+        # ${PICAMERA_INCLUDE_DIR}
         )
 
 target_link_libraries(romi
@@ -265,7 +265,7 @@ target_link_libraries(romi
         rcompp-lite
         fluidsynth
         ortools
-        ${PICAMERA_SHARED_LIB})
+        mmal)
 
 if(BUILD_TESTS)
     add_subdirectory(test)
