@@ -4,7 +4,7 @@ import asyncio
 import websockets
 import json
     
-class Registry(IRegistry):
+class Registry():
     def __init__(self, ip="127.0.0.1"):
         self.addr = f"ws://{ip}:10101"
         print(f"Using registry @ {self.addr}")
