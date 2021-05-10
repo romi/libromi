@@ -254,7 +254,7 @@ add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${PICAMERA_SOURCES})
 target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        ${ORTOOLS_INCLUDE_DIR}
+        # ${ORTOOLS_INCLUDE_DIR}
         ${PICAMERA_INCLUDE_DIR}
         )
 
@@ -264,15 +264,15 @@ target_link_libraries(romi
         rpp
         rcompp-lite
         fluidsynth
-        ${ORTOOLS_SHARED_LIB}
+        ortools
         ${PICAMERA_SHARED_LIB})
 
 if(BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
-add_custom_command(TARGET romi POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${ORTOOLS_SHARED_LIB_DIR}/*.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        DEPENDS romi
-        COMMENT "Copying binary ortools libs to ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} for distribution."
-        )
+# add_custom_command(TARGET romi POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E copy ${ORTOOLS_SHARED_LIB_DIR}/*.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+#         DEPENDS romi
+#         COMMENT "Copying binary ortools libs to ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} for distribution."
+#         )
