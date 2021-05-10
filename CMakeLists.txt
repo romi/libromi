@@ -169,59 +169,7 @@ include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
 
 ###########################################################
 
-# if(${PI_BUILD})
-#     get_directory_property(hasParent PARENT_DIRECTORY)
-#     set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
-
-#     find_path(PICAMERA_INCLUDE_DIR
-#             NAMES bcm_host.h
-#             PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
-#     if(hasParent)
-#         set(PICAMERA_INCLUDE_DIR ${PICAMERA_INCLUDE_DIR} PARENT_SCOPE)
-#     endif()
-
-#     find_library(PICAMERA_SHARED_LIB
-#             NAMES mmal
-#             PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
-
-#     if(PICAMERA_SHARED_LIB)
-
-#             set(PICAMERA_SHARED_LIB_DIR "${PICAMERA_LIB_PATH_ROOT}/lib")
-#             if(hasParent)
-#                 set(PICAMERA_SHARED_LIB_DIR ${PICAMERA_SHARED_LIB_DIR} PARENT_SCOPE)
-#             endif()
-#             message( "${PICAMERA_SHARED_LIB} found in ${PICAMERA_SHARED_LIB_DIR}")
-#     else()
-#         message(FATAL_ERROR "MMAL library not found")
-#     endif()
-# endif()
-
-if (${PI_BUILD})
-    set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
-
-    find_path(PICAMERA_INCLUDE_DIR
-            NAMES bcm_host.h
-            PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
-            
-    find_library(PICAMERA_SHARED_LIB
-            NAMES mmal
-            PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
-
-    add_library(mmal SHARED IMPORTED GLOBAL)   
-    set_property(TARGET mmal 
-                PROPERTY
-                IMPORTED_LOCATION ${PICAMERA_SHARED_LIB})    
-
-    set_property(TARGET mmal 
-                PROPERTY
-                INTERFACE_INCLUDE_DIRECTORIES "${PICAMERA_INCLUDE_DIR}"
-         )
-endif()
-
-###########################################################
-
 add_subdirectory(binortools)
 add_subdirectory(arduino_libraries)
-MESSAGE("libromi ORTOOLS_SHARED_LIB = ${ORTOOLS_SHARED_LIB} ORTOOLS_SHARED_LIB_DIR = ${ORTOOLS_SHARED_LIB_DIR} OR_INCLUDE = ${ORTOOLS_INCLUDE_DIR}" )
 add_subdirectory(libromi)
 

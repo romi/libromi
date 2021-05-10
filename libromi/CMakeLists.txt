@@ -11,6 +11,28 @@ set(romi_VERSION_MAJOR 0)
 set(romi_VERSION_MINOR 1)
 
 ############################################################
+if (${PI_BUILD})
+        set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
+
+        find_path(PICAMERA_INCLUDE_DIR
+                NAMES bcm_host.h
+                PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
+                
+        find_library(PICAMERA_SHARED_LIB
+                NAMES mmal
+                PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
+
+        add_library(mmal SHARED IMPORTED GLOBAL)   
+        set_property(TARGET mmal 
+                        PROPERTY
+                        IMPORTED_LOCATION ${PICAMERA_SHARED_LIB})    
+
+        set_property(TARGET mmal 
+                        PROPERTY
+                        INTERFACE_INCLUDE_DIRECTORIES "${PICAMERA_INCLUDE_DIR}"
+                )
+endif()
+############################################################
 
 if(${PI_BUILD})
     set(PICAMERA_SOURCES
@@ -243,12 +265,6 @@ set(DATA_PROVIDER_SOURCES
         include/debug_tools/debug_data_dumper.h
         src/debug_tools/debug_data_dumper.cpp)
 
-
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/weeder/som/SOM.cpp PROPERTIES COMPILE_FLAGS -O3)
-#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-conversion)
-#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-sign-conversion)
-#set_source_files_properties(${NO_CONV_SOURCES} PROPERTIES COMPILE_FLAGS -Wno-float-conversion)
-
 add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${PICAMERA_SOURCES})
 
 target_include_directories(romi
@@ -271,8 +287,3 @@ if(BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
-# add_custom_command(TARGET romi POST_BUILD
-#         COMMAND ${CMAKE_COMMAND} -E copy ${ORTOOLS_SHARED_LIB_DIR}/*.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-#         DEPENDS romi
-#         COMMENT "Copying binary ortools libs to ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} for distribution."
-#         )
