@@ -88,3 +88,32 @@ class Server:
             return handler(params)
         else:
             raise ValueError(f"Unknown method: {method}")
+    
+class Client:
+    def __init__(self, topic, ip="127.0.0.1"):
+        self.topic = topic
+        self.ip = ip
+
+    async def connect(self):
+        registry = Registry(self.ip)
+        addr = await registry.get_address(self.topic)
+        self.addr = "ws://" + addr
+        self.ws = await websockets.connect(self.addr)
+
+    async def execute(self, method, **kwargs):
+        request = { 'method': method, 'params': kwargs }
+        print(f"Sending request to {self.addr}: %s" % json.dumps(request))
+        response = await self.__rpc(json.dumps(request))
+        print(f"Got response: %s" % json.dumps(response))
+        return json.loads(response)
+
+    async def __rpc(self, data):
+        await self.ws.send(data)
+        return await self.ws.recv()
+
+    
+async def create_client(topic, ip="127.0.0.1"):
+    client = Client(topic, ip)
+    await client.connect()
+    return client
+
