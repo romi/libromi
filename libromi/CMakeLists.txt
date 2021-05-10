@@ -31,6 +31,9 @@ if (${PI_BUILD})
                         PROPERTY
                         INTERFACE_INCLUDE_DIRECTORIES "${PICAMERA_INCLUDE_DIR}"
                 )
+        set(PI_CAMERA_LIB mmal)
+else()
+        set(PI_CAMERA_LIB "")
 endif()
 ############################################################
 
@@ -270,8 +273,6 @@ add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${PICAMERA_SOURCES})
 target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        # ${ORTOOLS_INCLUDE_DIR}
-        # ${PICAMERA_INCLUDE_DIR}
         )
 
 target_link_libraries(romi
@@ -281,7 +282,7 @@ target_link_libraries(romi
         rcompp-lite
         fluidsynth
         ortools
-        mmal)
+        ${PI_CAMERA_LIB})
 
 if(BUILD_TESTS)
     add_subdirectory(test)
