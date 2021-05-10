@@ -41,13 +41,13 @@ namespace romi {
                 (void) params;
                 (void) result;
                 error.code = RPCError::kMethodNotFound;
-                error.message = "Unknown method";
+                error.message = "NavigationAdaptor::execute(binary): Unknown method";
         }
         
         void NavigationAdaptor::execute(const std::string& method, JsonCpp &params,
                                         JsonCpp &result, RPCError &error)
         {
-                r_debug("NavigationAdaptor::execute");
+                r_debug("NavigationAdaptor::execute(text): %s", method.c_str());
                 (void) result;
                 error.code = 0;
                 
