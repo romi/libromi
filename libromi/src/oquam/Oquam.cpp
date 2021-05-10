@@ -229,7 +229,7 @@ namespace romi {
                                             settings_.vmax_.values(),
                                             settings_.amax_.values());
                 if (svg != nullptr) {
-                        session_.store_svg("path.svg",
+                        session_.store_svg("oquam.svg",
                                            std::string(membuf_data(svg),
                                                        membuf_len(svg)));
                         delete_membuf(svg);
@@ -242,7 +242,7 @@ namespace romi {
         {
                 membuf_t *text = new_membuf();
                 print(script, text);
-                session_.store_txt("path.json",
+                session_.store_txt("oquam.json",
                                    std::string(membuf_data(text),
                                                membuf_len(text)));
                 delete_membuf(text);
