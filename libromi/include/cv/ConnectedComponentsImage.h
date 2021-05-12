@@ -12,17 +12,14 @@ namespace romi {
 
     public:
         explicit ConnectedComponentsImage(Image& image);
-     //   ConnectedComponentsImage() = default;
-//        ConnectedComponentsImage(uint8_t* imageData, int width, int height);
-        uint8_t *do_connected(uint8_t* imageData, int width, int height);
         ~ConnectedComponentsImage() override = default;
+        uint8_t label(int x, int y);
+
         std::vector<uint8_t> label_data(){return label_data_;}
-        unsigned char *label_data_raw(){return out_uc;}
     private:
         Image image_;
         ConnectedComponents cc_;
         std::vector<uint8_t> label_data_;
-        unsigned char *out_uc;
     };
 }
 
