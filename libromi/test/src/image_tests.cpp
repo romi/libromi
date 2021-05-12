@@ -325,3 +325,78 @@ TEST_F(image_tests, test_copy_to_rgb)
         }
 }
 
+TEST_F(image_tests, test_dilate)
+{
+        uint8_t data[] = { 0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 1, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0 };
+        
+        float expected[] = { 0, 0, 0, 0, 0, 0, 0,
+                             0, 1, 1, 1, 1, 1, 0,
+                             0, 1, 1, 1, 1, 1, 0,
+                             0, 1, 1, 1, 1, 1, 0,
+                             0, 1, 1, 1, 1, 1, 0,
+                             0, 1, 1, 1, 1, 1, 0,
+                             0, 0, 0, 0, 0, 0, 0 };
+        
+        Image orig(Image::BW, data, 7, 7);
+        Image out;
+        orig.dilate(2, out);
+
+        ASSERT_TRUE(memcmp(out.data().data(), expected, 7 * 7 * sizeof(float)) == 0);
+}
+
+TEST_F(image_tests, test_erode_1)
+{
+        uint8_t data[] = { 0, 0, 0, 0, 0, 0, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 0, 0, 0, 0, 0, 0 };
+        
+        float expected[] = { 0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 1, 1, 1, 0, 0,
+                             0, 0, 1, 1, 1, 0, 0,
+                             0, 0, 1, 1, 1, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0 };
+        
+        Image orig(Image::BW, data, 7, 7);
+        Image out;
+        orig.erode(1, out);
+
+        ASSERT_TRUE(memcmp(out.data().data(), expected, 7 * 7 * sizeof(float)) == 0);
+}
+
+TEST_F(image_tests, test_erode_2)
+{
+        uint8_t data[] = { 0, 0, 0, 0, 0, 0, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 1, 1, 1, 1, 1, 0,
+                           0, 0, 0, 0, 0, 0, 0 };
+        
+        float expected[] = { 0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 1, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0 };
+        
+        Image orig(Image::BW, data, 7, 7);
+        Image out;
+        orig.erode(2, out);
+
+        ASSERT_TRUE(memcmp(out.data().data(), expected, 7 * 7 * sizeof(float)) == 0);
+}
+

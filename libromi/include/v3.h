@@ -51,7 +51,7 @@ namespace romi {
         double vnorm(const double *v);
         double *normalize(double *w, const double *v);
 
-        double vdist(double *a, double *b);
+        double vdist(const double *a, const double *b);
         bool veq(const double *a, const double *b);
         bool vnear(double *a, double *b, double epsilon);
 
@@ -168,6 +168,10 @@ namespace romi {
                 
                 double norm() const {
                         return vnorm(_x);
+                }
+                
+                double dist(const v3& a) const {
+                        return vdist(_x, a._x);
                 }
                 
                 v3 clamp(const v3& lo, const v3& hi) const {
