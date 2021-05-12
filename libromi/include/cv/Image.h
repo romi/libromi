@@ -52,6 +52,9 @@ namespace romi {
                 Image(ImageType type, size_t width, size_t height);
                 Image(ImageType type, const uint8_t *data, size_t width, size_t height);
                 virtual ~Image();
+
+                Image(const romi::Image& other) = delete;
+                
                 Image& operator=(const Image&);
 
 

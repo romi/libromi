@@ -367,7 +367,8 @@ namespace romi {
                 if (_type != BW)
                         throw std::runtime_error("Dilate: not a BW image");
 
-                Image copy = *this;
+                Image copy;
+                copy = *this;
                 out.init(BW, _width, _height);
                 
                 float* a = &copy._data[0];
@@ -423,7 +424,8 @@ namespace romi {
                 if (_type != BW)
                         throw std::runtime_error("Erode: not a BW image");
 
-                Image copy = *this;
+                Image copy;
+                copy = *this;
                 out.init(BW, _width, _height);
                 
                 float* a = &copy._data[0];

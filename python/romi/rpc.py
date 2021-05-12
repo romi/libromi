@@ -46,14 +46,16 @@ class Registry():
     
 
 class Server:
-    def __init__(self, topic, handlers, ip="127.0.0.1", port=10111):
+    def __init__(self, topic, handlers, registry="127.0.0.1",
+                 ip="127.0.0.1", port=10111):
         self.topic = topic
         self.handlers = handlers
+        self.registry = registry
         self.ip = ip
         self.port = port
         
     async def register(self):
-        registry = Registry(self.ip)
+        registry = Registry(self.registry)
         await registry.register(self.topic, f"{self.ip}:{self.port}", 10)
 
     def start(self, callback):
@@ -90,12 +92,12 @@ class Server:
             raise ValueError(f"Unknown method: {method}")
     
 class Client:
-    def __init__(self, topic, ip="127.0.0.1"):
+    def __init__(self, topic, registry="127.0.0.1"):
         self.topic = topic
-        self.ip = ip
+        self.registry = registry
 
     async def connect(self):
-        registry = Registry(self.ip)
+        registry = Registry(self.registry)
         addr = await registry.get_address(self.topic)
         self.addr = "ws://" + addr
         self.ws = await websockets.connect(self.addr)
