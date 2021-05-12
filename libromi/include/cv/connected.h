@@ -5,6 +5,10 @@
 #include <vector>
 #include <algorithm>
 
+#pragma GCC system_header
+// TBD: NEED TO FIX ERRORS and remove system header pragma
+
+
 template <class T, T V>
 struct constant
 {
