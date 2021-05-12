@@ -44,6 +44,8 @@ namespace romi {
 
                 void import_data(const uint8_t *data);
                 void do_init(ImageType type, size_t width, size_t height);
+                void erode_slow(Image &out);
+                void dilate_slow(Image &out);
 
         public:
                 Image();
@@ -106,10 +108,18 @@ namespace romi {
                 void fill(size_t channel, float color);
                 void crop(size_t x, size_t y, size_t width, size_t height, Image &out);
                 void scale(size_t n, Image &out);
+                void erode(size_t n, Image &out);
+                void dilate(size_t n, Image &out);
+
+                void dilate_slow(size_t n, Image &out);
+                void erode_slow(size_t n, Image &out);
 
                 size_t length();
                 size_t byte_length();
         };
+
+        void dilate_n(size_t n, float *in, float *out, size_t w, size_t h);
+        void erode_n(size_t n, float *in, float *out, size_t w, size_t h);
 }
 
 #endif // __ROMI_IMAGE_H

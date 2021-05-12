@@ -167,7 +167,7 @@ namespace romi {
                 return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]));
         }
 
-        double vdist(double *a, double *b)
+        double vdist(const double *a, const double *b)
         {
                 double d[3];
                 return vnorm(vsub(d, a, b));
