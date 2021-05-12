@@ -87,6 +87,7 @@ set(SRCS_IMAGE_TESTS
         src/tests_main.cpp
         src/image_tests.cpp
         src/imageio_tests.cpp
+        src/connected_components_tests.cpp
   )
 
 add_executable(libromi_unit_tests_image ${SRCS_IMAGE_TESTS})
@@ -309,4 +310,17 @@ if(BUILD_COVERAGE)
                             libromi_unit_tests_rcommessagehandler
     )
 endif()
+
+SET(TEST_DATA_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_data)
+
+add_custom_command(TARGET libromi_unit_tests_image POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TEST_DATA_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy test_data/*.* ${TEST_DATA_DIR}
+        WORKING_DIRECTORY
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS
+        libromi_unit_tests_image
+        COMMENT
+        "Making directory ${TEST_DATA_DIR} and copying test files."
+        )
 
