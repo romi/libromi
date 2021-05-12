@@ -24,10 +24,23 @@ protected:
 	void TearDown() override {}
 };
 
+static std::string getexepath()
+{
+    char result[ PATH_MAX ];
+    std::string pstring;
+    ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+
+    std::string sresult(result, (count > 0) ? (size_t)count : 0 );
+    pstring = fs::path(result).parent_path();
+    return pstring;
+}
+
+const std::string test_data_directory = getexepath() + "/test_data/";
+
 TEST_F(connected_component_tests, test_constructor_1)
 {
-        std::string filename("test_data/separated_mask.png");
-        std::string filename_out("label_data.png");
+        std::string filename = test_data_directory + "separated_mask.png";
+        std::string filename_out(test_data_directory +"label_data.png");
         Image image;
         ImageIO::load(image, filename.c_str());
 

@@ -87,7 +87,7 @@ set(SRCS_IMAGE_TESTS
         src/tests_main.cpp
         src/image_tests.cpp
         src/imageio_tests.cpp
-#        src/connected_components_tests.cpp
+        src/connected_components_tests.cpp
   )
 
 add_executable(libromi_unit_tests_image ${SRCS_IMAGE_TESTS})
