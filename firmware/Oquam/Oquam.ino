@@ -48,6 +48,7 @@ void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg
 void handle_move(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_pause(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_continue(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_reset(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_idle(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
@@ -56,7 +57,7 @@ void handle_set_homing(RomiSerial *romiSerial, int16_t *args, const char *string
 void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_spindle(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_test(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_test(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { 'm', 4, false, handle_moveto },
