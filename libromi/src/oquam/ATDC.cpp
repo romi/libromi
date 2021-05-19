@@ -37,17 +37,15 @@ namespace romi {
         double amax_in_direction(double *amax, double *v)
         {
                 double e[3];
+                double a[3];
                 normalize(e, v);
 
-                // double s = DBL_MAX;
-                // for (int i = 0; i < 3; i++) {
-                //         if (e[i] != 0.0)
-                //                 s = std::min(s, amax[i] / fabs(e[i]));
-                // }
-                // smul(new_a, e, s);
-                
-                double a[3];
-                vmul(a, e, amax);
+                double s = DBL_MAX;
+                for (int i = 0; i < 3; i++) {
+                        if (e[i] != 0.0)
+                                s = std::min(s, amax[i] / fabs(e[i]));
+                }
+                smul(a, e, s);
                 return vnorm(a);
         }
 

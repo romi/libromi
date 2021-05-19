@@ -94,7 +94,7 @@ namespace romi {
                         }
                 }
                 
-                float get(size_t channel, size_t x, size_t y) {
+                float get(size_t channel, size_t x, size_t y) const {
                         float value = 0.0f;
                         if (contains(x, y)) {
                                 value = _data[offset(channel, x, y)];

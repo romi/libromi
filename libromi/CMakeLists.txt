@@ -93,6 +93,7 @@ set(SOURCES
         include/configuration/GetOpt.h
 
         include/cv/connected.h
+        include/cv/cv.h
         include/cv/ConnectedComponentsImage.h
         include/cv/ImageCropper.h
         include/cv/IImageCropper.h
@@ -186,11 +187,14 @@ set(SOURCES
         src/configuration/ConfigurationProvider.cpp
         src/configuration/GetOpt.cpp
 
+        src/cv/cv.cpp
         src/cv/ConnectedComponentsImage.cpp
         src/cv/Image.cpp
         src/cv/ImageIO.cpp
         src/cv/ImageCropper.cpp
-
+        src/cv/Superpixels.cpp
+        src/cv/slic.cpp
+        
         src/camera/FileCamera.cpp
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.h
