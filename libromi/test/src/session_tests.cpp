@@ -24,8 +24,8 @@ class weedersession : public ::testing::Test
 protected:
         
 	weedersession() : mockClock_(std::make_shared<rpp::MockClock>()), mockGps_(),
-	mockLocationProvider_(), deviceData_(), softwareVersion_(), sessions_basedir_("weedersession_test"),
-	homedir_("."), versionCurrent_("V1.0.1"), versionAlternate_("V1.0.1"), devicetype_("Rover"), devicID_("DEAD-BEEF")
+                      mockLocationProvider_(), deviceData_(), softwareVersion_(), sessions_basedir_("weedersession_test"),
+                      currentdir_(), versionCurrent_("V1.0.1"), versionAlternate_("V1.0.1"), devicetype_("Rover"), devicID_("DEAD-BEEF")
 	{
         }
 
@@ -34,6 +34,7 @@ protected:
 	void SetUp() override {
                 rpp::ClockAccessor::SetInstance(mockClock_);
                 mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
+                currentdir_ = std::filesystem::current_path().string();
         }
 
 	void TearDown() override {
@@ -61,7 +62,7 @@ protected:
         std::filesystem::path BuildSessionDirName(const std::string& deviceType, const std::string& deviceId, std::string& date_time)
         {
                 std::string separator("_");
-                std::filesystem::path session_dir = homedir_;
+                std::filesystem::path session_dir = currentdir_;
                 session_dir /= sessions_basedir_;
                 session_dir /= deviceType + separator + deviceId + separator + date_time;
 	        return session_dir;
@@ -73,7 +74,7 @@ protected:
         MockRomiDeviceData deviceData_;
         MockSoftwareVersion softwareVersion_;
         const std::string sessions_basedir_;
-        const std::string homedir_;
+        std::string currentdir_;
         const std::string versionCurrent_;
         const std::string versionAlternate_;
         const std::string devicetype_;
@@ -106,12 +107,8 @@ TEST_F(weedersession, can_construct_when_directory_exists)
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .Times(2)
-                        .WillRepeatedly(Return((char*)homedir_.c_str()));
-
         std::string session_dir = "weedersession_test";
-        auto weeder_session_dir = FileUtils::TryGetHomeDirectory(mock_linux);
+        auto weeder_session_dir = std::filesystem::current_path();
         weeder_session_dir /= session_dir;
         std::filesystem::remove_all(weeder_session_dir);
         auto create = std::filesystem::create_directories(weeder_session_dir);
@@ -130,11 +127,7 @@ TEST_F(weedersession, fail_construct_when_fails_to_create_directory)
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
-        std::string expected("/\\");
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .WillOnce(Return((char*)expected.c_str()));
-
-        std::string session_dir = "weedersession_test";
+        std::string session_dir = "/\\";
         bool exception_thrown = false;
 
         // Act
@@ -154,8 +147,7 @@ TEST_F(weedersession, start_creates_correct_directory)
 {
         // Arrange
         rpp::MockLinux mock_linux;
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .WillOnce(Return((char*)homedir_.c_str()));
+
         SetDeviceIDDataExpectations(devicetype_, devicID_, 2);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
@@ -189,8 +181,7 @@ TEST_F(weedersession, current_directory_correct)
 {
         // Arrange
         rpp::MockLinux mock_linux;
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .WillOnce(Return((char*)homedir_.c_str()));
+
         SetDeviceIDDataExpectations(devicetype_, devicID_, 2);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
@@ -223,8 +214,7 @@ TEST_F(weedersession, store_functions_store_files)
 {
         // Arrange
         rpp::MockLinux mock_linux;
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .WillOnce(Return((char*)homedir_.c_str()));
+
         SetDeviceIDDataExpectations(devicetype_, devicID_, 2);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
@@ -272,8 +262,7 @@ TEST_F(weedersession, store_functions_throw_on_failure)
 {
         // Arrange
         rpp::MockLinux mock_linux;
-        EXPECT_CALL(mock_linux, secure_getenv)
-                        .WillOnce(Return((char*)homedir_.c_str()));
+
         SetDeviceIDDataExpectations(devicetype_, devicID_, 2);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 

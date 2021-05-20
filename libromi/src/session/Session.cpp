@@ -10,18 +10,18 @@
 
 namespace romi {
 
-        Session::Session(rpp::ILinux &linux, const std::string &base_directory,
+        Session::Session(const rpp::ILinux &linux, const std::string &base_directory,
                      IRomiDeviceData &device_data, ISoftwareVersion &softwareVersion,
                      std::unique_ptr<ILocationProvider> location)
             :
-            base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(), observation_id_(){
+            linux_(linux), base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(), observation_id_(), roverIdentity_(){
 
-            auto roverIdentity = std::make_unique<RoverIdentityProvider>(device_data, softwareVersion);
+            roverIdentity_ = std::make_unique<RoverIdentityProvider>(device_data, softwareVersion);
             // TBD: Keep these variables local. Then make a new metafolder on start. Avoid use without create.
-            meta_folder_ = std::make_unique<MetaFolder>(std::move(roverIdentity), std::move(location));
+            meta_folder_ = std::make_unique<MetaFolder>(std::move(roverIdentity_), std::move(location));
 
-            auto homedir = FileUtils::TryGetHomeDirectory(linux);
-            base_directory_ = homedir;
+            auto currentdir = std::filesystem::current_path();
+            base_directory_ = currentdir;
             base_directory_ /= base_directory;
             if (!std::filesystem::exists(base_directory_)) {
                     std::filesystem::create_directories(base_directory_);
@@ -36,7 +36,7 @@ namespace romi {
             std::string session_dir = device_data_.RomiDeviceType() + separator + device_data_.RomiDeviceHardwareId() +
                                       separator + datatime;
             session_directory_.clear();
-            session_directory_ = base_directory_ /= session_dir;
+            session_directory_ = base_directory_ / session_dir;
             meta_folder_->try_create(session_directory_);
         }
 
