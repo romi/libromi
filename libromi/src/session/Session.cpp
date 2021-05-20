@@ -12,13 +12,10 @@ namespace romi {
 
         Session::Session(const rpp::ILinux &linux, const std::string &base_directory,
                      IRomiDeviceData &device_data, ISoftwareVersion &softwareVersion,
-                     std::unique_ptr<ILocationProvider> location)
+                     std::shared_ptr<ILocationProvider> location)
             :
-            linux_(linux), base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(), observation_id_(), roverIdentity_(){
-
-            roverIdentity_ = std::make_unique<RoverIdentityProvider>(device_data, softwareVersion);
-            // TBD: Keep these variables local. Then make a new metafolder on start. Avoid use without create.
-            meta_folder_ = std::make_unique<MetaFolder>(std::move(roverIdentity_), std::move(location));
+            linux_(linux), base_directory_(), session_directory_(), device_data_(device_data), meta_folder_(),
+            observation_id_(), roverIdentity_(std::make_unique<RoverIdentityProvider>(device_data, softwareVersion)), location_(location){
 
             auto currentdir = std::filesystem::current_path();
             base_directory_ = currentdir;
@@ -37,7 +34,7 @@ namespace romi {
                                       separator + datatime;
             session_directory_.clear();
             session_directory_ = base_directory_ / session_dir;
-            meta_folder_->try_create(session_directory_);
+            meta_folder_ = std::make_shared<MetaFolder>(roverIdentity_, location_, session_directory_);
         }
 
         void Session::stop() {

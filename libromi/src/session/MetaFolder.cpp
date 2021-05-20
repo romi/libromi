@@ -6,10 +6,11 @@
 
 
 namespace romi {
-    MetaFolder::MetaFolder(std::unique_ptr<IIdentityProvider> identityProvider,
-                           std::unique_ptr<ILocationProvider> locationProvider)
+    MetaFolder::MetaFolder(std::shared_ptr<IIdentityProvider> identityProvider,
+                           std::shared_ptr<ILocationProvider> locationProvider,
+                           std::filesystem::path folder_path)
         : identityProvider_(std::move(identityProvider)), locationProvider_(std::move(locationProvider)),
-          folderPath_(), meta_data_(), metadata_file_mutex_() {
+          folderPath_(folder_path), meta_data_(), metadata_file_mutex_() {
 
         if(nullptr == identityProvider_){
                 throw std::invalid_argument("identityProvider");
@@ -17,7 +18,7 @@ namespace romi {
         if(nullptr == locationProvider_){
                 throw std::invalid_argument("locationProvider");
         }
-
+        try_create();
     }
 
     std::filesystem::path MetaFolder::build_filename_with_extension(const std::string& filename, const std::string& extension)
@@ -27,8 +28,7 @@ namespace romi {
             return filename_extension;
     }
 
-    void MetaFolder::try_create(const std::filesystem::path& path) {
-            folderPath_ = path;
+    void MetaFolder::try_create() {
             std::filesystem::create_directories(folderPath_);
             std::string identity = identityProvider_->identity();
             JsonCpp identityObjet(identity.c_str());

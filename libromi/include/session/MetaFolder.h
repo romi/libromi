@@ -13,11 +13,11 @@ namespace romi {
     class MetaFolder : public IMetaFolder {
 
     public:
-        MetaFolder(std::unique_ptr<IIdentityProvider> identityProvider,
-                   std::unique_ptr<ILocationProvider> locationProvider);
+        MetaFolder(std::shared_ptr<IIdentityProvider> identityProvider,
+                   std::shared_ptr<ILocationProvider> locationProvider,
+                   std::filesystem::path folder_path);
 
         // TBD: Refactor this out to the constuctor.
-        void try_create(const std::filesystem::path &path) override;
         void try_store_jpg(const std::string &filename, romi::Image &image, const std::string &observationId) override;
         void try_store_png(const std::string &filename, romi::Image &image, const std::string &observationId) override;
         void try_store_svg(const std::string &filename, const std::string& body, const std::string &observationId) override;
@@ -27,12 +27,13 @@ namespace romi {
         inline static const std::string meta_data_filename_ = "meta_data.json";
 
     private:
+        void try_create();
         std::filesystem::path build_filename_with_extension(const std::string& filename, const std::string& extension);
         void add_file_metadata(const std::string &filename, const std::string &ovservationId);
         void CheckInput(Image& image) const;
         void CheckInput(const std::string& string_data) const;
-        std::unique_ptr<IIdentityProvider> identityProvider_;
-        std::unique_ptr<ILocationProvider> locationProvider_;
+        std::shared_ptr<IIdentityProvider> identityProvider_;
+        std::shared_ptr<ILocationProvider> locationProvider_;
         std::filesystem::path folderPath_;
         std::unique_ptr<JsonCpp> meta_data_;
         std::recursive_mutex metadata_file_mutex_;
