@@ -1,7 +1,8 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/mock" )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/mock
+                     ${CMAKE_CURRENT_SOURCE_DIR}/support)
 
 set(SRCS_V
         src/tests_main.cpp
@@ -102,6 +103,7 @@ set(SRCS_IMAGE_TESTS
         src/image_tests.cpp
         src/imageio_tests.cpp
         src/connected_components_tests.cpp
+        support/test_utility.cpp
   )
 
 add_executable(libromi_unit_tests_image ${SRCS_IMAGE_TESTS})
@@ -299,16 +301,19 @@ add_test(
 )
 
 ##
-  
+
+Message (${CMAKE_BINARY_DIR})
+
 if(BUILD_COVERAGE)
     SETUP_TARGET_FOR_COVERAGE_LCOV(
-            NAME romi_rover_libromi_coverage
+            NAME libromi_unit_tests_coverage
             EXECUTABLE ctest -V ${n_cores} -R "libromi"
+            EXCLUDE '*wrapper*' "src/Linux.cpp" "include/*" '${CMAKE_BINARY_DIR}/libr/*'
             DEPENDENCIES    libromi_unit_tests_v
                             libromi_unit_tests_cnc
                             libromi_unit_tests_cv
                             libromi_unit_tests_path
-                            libromi_unit_tests_navigationsettings
+                            libromi_unit_tests_navigation
                             libromi_unit_tests_wheelodometry
                             libromi_unit_tests_image
                             libromi_unit_tests_rover

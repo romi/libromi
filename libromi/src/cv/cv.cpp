@@ -191,6 +191,24 @@ namespace romi {
                 return list;
         }
 
+
+    std::vector<std::pair<uint32_t, uint32_t>>
+    calculate_adjacent_centres(const std::vector<double> &kseedsl,
+                               const std::vector<double> &kseedsx, const std::vector<double> &kseedsy)
+    {
+
+        // XY ORDER
+        std::vector<std::pair<uint32_t, uint32_t>> centres;
+        for (size_t xyindex = 0; xyindex < kseedsx.size(); xyindex++)
+        {
+            if((kseedsl[xyindex] >0 ) && (kseedsl[xyindex] < 1))
+            {
+                centres.push_back(std::pair<uint32_t, uint32_t>((uint32_t)kseedsx[xyindex], (uint32_t)kseedsy[xyindex]));
+            }
+        }
+        return centres;
+    }
+
         void compute_connected_components(Image &mask, Image &components)
         {
                 // TODO
