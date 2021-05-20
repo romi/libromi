@@ -100,16 +100,16 @@ namespace romi {
         void ScriptList::convert_action(Script& script, JsonCpp& action)
         {
                 std::string type = (const char *) action["action"];
-                if (type == Action::move_command)
+                if (type == Action::kMoveCommand)
                         convert_move(script, action);
-                else if (type == Action::hoe_command)
+                else if (type == Action::kHoeCommand)
                         convert_hoe(script);
-                else if (type == Action::homing_command)
+                else if (type == Action::kHomingCommand)
                         convert_homing(script);
-                else if (type == Action::pick_up_command)
-                        convert_pick_up(script);
-                else if (type == Action::put_down_command)
-                        convert_put_down(script);
+                else if (type == Action::kStartRecordingCommand)
+                        convert_start_recording(script);
+                else if (type == Action::kStopRecordingCommand)
+                        convert_stop_recording(script);
         }
         
         void ScriptList::convert_move(Script& script, JsonCpp& action)
@@ -145,13 +145,13 @@ namespace romi {
                 script.append(Action(Action::Homing));
         }
         
-        void ScriptList::convert_pick_up(Script& script)
+        void ScriptList::convert_start_recording(Script& script)
         {
-                script.append(Action(Action::PickUp));
+                script.append(Action(Action::StartRecording));
         }
         
-        void ScriptList::convert_put_down(Script& script)
+        void ScriptList::convert_stop_recording(Script& script)
         {
-                script.append(Action(Action::PutDown));
+                script.append(Action(Action::StopRecording));
         }
 }

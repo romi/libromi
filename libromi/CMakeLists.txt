@@ -75,6 +75,7 @@ set(SOURCES
         include/api/IDisplay.h
         include/api/IEventSource.h
         include/api/IGimbal.h
+        include/api/IImager.h
         include/api/IInputDevice.h
         include/api/IMotorDriver.h
         include/api/INavigation.h
@@ -87,6 +88,7 @@ set(SOURCES
 
         include/camera/FileCamera.h
         include/camera/USBCamera.h
+        include/camera/Imager.h
 
         include/configuration/ConfigurationProvider.h
         include/configuration/IOptions.h
@@ -199,6 +201,7 @@ set(SOURCES
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.h
         src/camera/camera_v4l.c
+        src/camera/Imager.cpp
 
         src/fake/FakeScriptEngine.cpp
 
@@ -290,6 +293,8 @@ target_link_libraries(romi
         fluidsynth
         ortools
         ${PI_CAMERA_LIB})
+
+add_subdirectory(test/mock)
 
 if(BUILD_TESTS)
     add_subdirectory(test)

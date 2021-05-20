@@ -57,6 +57,8 @@ namespace romi {
                 bool execute_move(Rover* rover, double distance, double speed);
                 bool execute_hoe(Rover* rover);
                 bool execute_homing(Rover* rover);
+                bool execute_start_recording(Rover* rover);
+                bool execute_stop_recording(Rover* rover);
 
                 void clear_result();
                 void set_result(int event);

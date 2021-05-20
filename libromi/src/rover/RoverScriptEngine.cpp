@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <r.h>
 #include "api/IActivity.h"
+#include "camera/Imager.h"
 #include "rover/RoverScriptEngine.h"
 
 namespace romi {
@@ -89,6 +90,10 @@ namespace romi {
                         success = execute_hoe(rover);
                 else if (action.type == Action::Homing)
                         success = execute_homing(rover);
+                else if (action.type == Action::StartRecording)
+                        success = execute_start_recording(rover);
+                else if (action.type == Action::StopRecording)
+                        success = execute_stop_recording(rover);
                 return success;
         }
                 
@@ -108,14 +113,28 @@ namespace romi {
                 return success;
         }
                 
-        bool RoverScriptEngine::execute_homing(__attribute__((unused))Rover* rover)
+        bool RoverScriptEngine::execute_homing(Rover* rover)
         {
+                (void) rover;
+                
                 // bool success = rover->cnc.homing();
                 // if (!success)
                 //         r_err("RoverScriptEngine: 'homing' failed");
                 // return success;
                 r_err("NOT IMPLEMENTED!");
                 return false;
+        }
+        
+        bool RoverScriptEngine::execute_start_recording(Rover* rover)
+        {
+                // FIXME: Get Observation Unit ID from somewhere
+                return rover->imager.start_recording("row", romi::Imager::kDefaultMaxImages,
+                                                     romi::Imager::kDefaultMaxDuration);
+        }
+        
+        bool RoverScriptEngine::execute_stop_recording(Rover* rover)
+        {
+                return rover->imager.stop_recording();
         }
 
         void RoverScriptEngine::execute_script(Rover& rover, size_t id)

@@ -47,6 +47,20 @@ add_test(
 
 ##
 
+set(SRCS_IMAGER
+        src/tests_main.cpp
+        src/imager_tests.cpp
+  )
+add_executable(libromi_unit_tests_imager ${SRCS_IMAGER})
+target_link_libraries(libromi_unit_tests_imager romi rpp gtest gmock)
+
+add_test(
+    NAME libromi_unit_tests_imager
+    COMMAND libromi_unit_tests_imager
+)
+
+##
+
 set(SRCS_PATH
         src/tests_main.cpp
         src/path_tests.cpp
@@ -307,6 +321,7 @@ if(BUILD_COVERAGE)
             DEPENDENCIES    libromi_unit_tests_v
                             libromi_unit_tests_cnc
                             libromi_unit_tests_cv
+                            libromi_unit_tests_imager
                             libromi_unit_tests_path
                             libromi_unit_tests_navigationsettings
                             libromi_unit_tests_wheelodometry

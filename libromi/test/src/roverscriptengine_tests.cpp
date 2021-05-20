@@ -9,6 +9,7 @@
 #include "mock_scriptengine.h"
 #include "mock_notifications.h"
 #include "mock_weeder.h"
+#include "mock_imager.h"
 #include "rover/Rover.h"
 #include "rover/RoverScriptEngine.h"
 #include "ui/ScriptList.h"
@@ -29,19 +30,29 @@ protected:
         MockMenu menu;
         MockNotifications notifications;
         MockWeeder weeder;
+        MockImager imager;
         JsonCpp json;
 
         
-	roverscriptengine_tests() : input_device(), display(), speed_controller(), navigation(), event_timer(),
-	                                menu(), notifications(), weeder(), json(){
+	roverscriptengine_tests()
+                : input_device(),
+                  display(),
+                  speed_controller(),
+                  navigation(),
+                  event_timer(),
+                  menu(),
+                  notifications(),
+                  weeder(),
+                  imager(),
+                  json() {
                 json = JsonCpp::parse("[{ 'id': 'foo', 'title': 'Foo', "
                                       "  'actions': [{'action':'move', 'distance': 1, 'speed': 0.5}]},"
                                       "{ 'id': 'bar', 'title': 'Bar', "
                                       "  'actions': [{'action':'hoe'}]}]");
 	}
-
+        
 	~roverscriptengine_tests() override = default;
-
+        
 	void SetUp() override {
 	}
 
@@ -69,13 +80,14 @@ TEST_F(roverscriptengine_tests, calls_move)
         romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
         romi::Rover rover(input_device, display,
-                    speed_controller,
-                    navigation,
-                    event_timer,
-                    menu,
-                    script_engine,
-                    notifications,
-                    weeder);
+                          speed_controller,
+                          navigation,
+                          event_timer,
+                          menu,
+                          script_engine,
+                          notifications,
+                          weeder,
+                          imager);
 
         EXPECT_CALL(navigation, move(1.0, 0.5))
                 .WillOnce(Return(true));
@@ -92,13 +104,14 @@ TEST_F(roverscriptengine_tests, calls_hoe)
         romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
         romi::Rover rover(input_device, display,
-                    speed_controller,
-                    navigation,
-                    event_timer,
-                    menu,
-                    script_engine,
-                    notifications,
-                    weeder);
+                          speed_controller,
+                          navigation,
+                          event_timer,
+                          menu,
+                          script_engine,
+                          notifications,
+                          weeder,
+                          imager);
 
         EXPECT_CALL(weeder, hoe())
                 .WillOnce(Return(true));
@@ -115,13 +128,14 @@ TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_1)
         romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
         romi::Rover rover(input_device, display,
-                    speed_controller,
-                    navigation,
-                    event_timer,
-                    menu,
-                    script_engine,
-                    notifications,
-                    weeder);
+                          speed_controller,
+                          navigation,
+                          event_timer,
+                          menu,
+                          script_engine,
+                          notifications,
+                          weeder,
+                          imager);
 
         EXPECT_CALL(navigation, move(1.0, 0.5))
                 .WillOnce(Return(false));
@@ -138,13 +152,14 @@ TEST_F(roverscriptengine_tests, returns_error_event_on_failed_script_2)
         romi::RoverScriptEngine script_engine(scripts, 1, 2);
 
         romi::Rover rover(input_device, display,
-                    speed_controller,
-                    navigation,
-                    event_timer,
-                    menu,
-                    script_engine,
-                    notifications,
-                    weeder);
+                          speed_controller,
+                          navigation,
+                          event_timer,
+                          menu,
+                          script_engine,
+                          notifications,
+                          weeder,
+                          imager);
 
         EXPECT_CALL(weeder, hoe())
                 .WillOnce(Return(false));

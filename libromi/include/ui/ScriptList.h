@@ -32,13 +32,16 @@ namespace romi {
         
         struct Action
         {
-                enum ActionType { Move, Hoe, Homing, PickUp, PutDown };
+                // FIXME: This enum is specific to the weeding
+                // rover. And this is a generic header for all
+                // devices.
+                enum ActionType { Move, Hoe, Homing, StartRecording, StopRecording };
 
-                static constexpr const char *move_command = "move";
-                static constexpr const char *hoe_command = "hoe";
-                static constexpr const char *homing_command = "homing";
-                static constexpr const char *pick_up_command = "pick-up";
-                static constexpr const char *put_down_command = "put-down";
+                static constexpr const char *kMoveCommand = "move";
+                static constexpr const char *kHoeCommand = "hoe";
+                static constexpr const char *kHomingCommand = "homing";
+                static constexpr const char *kStartRecordingCommand = "start-recording";
+                static constexpr const char *kStopRecordingCommand = "stop-recording";
                 
                 ActionType type;
                 double params[2];
@@ -81,8 +84,8 @@ namespace romi {
                 void assure_move_params(double distance, double speed);
                 void convert_hoe(Script& script);
                 void convert_homing(Script& script);
-                void convert_pick_up(Script& script);
-                void convert_put_down(Script& script);
+                void convert_start_recording(Script& script);
+                void convert_stop_recording(Script& script);
                 
         public:
                 

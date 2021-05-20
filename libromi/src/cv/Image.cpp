@@ -428,8 +428,8 @@ namespace romi {
                 copy = *this;
                 out.init(BW, _width, _height);
                 
-                float* a = &copy._data[0];
-                float* b = &out._data[0];
+                float* a = copy._data.data();
+                float* b = out._data.data();
                 erode_n(n, a, b, _width, _height);
         }
 }

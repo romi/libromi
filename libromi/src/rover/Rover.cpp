@@ -33,7 +33,8 @@ namespace romi {
                      Menu &menu_,
                      IScriptEngine<Rover>& script_engine_,
                      INotifications& notifications_,
-                     IWeeder& weeder_)
+                     IWeeder& weeder_,
+                     IImager& imager_)
                 : input_device(input_device_),
                   display(display_),
                   speed_controller(speed_controller_),
@@ -42,7 +43,8 @@ namespace romi {
                   menu(menu_),
                   script_engine(script_engine_),
                   notifications(notifications_),
-                  weeder(weeder_)
+                  weeder(weeder_),
+                  imager(imager_)
         {
         }
 

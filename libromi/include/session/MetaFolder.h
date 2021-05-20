@@ -19,6 +19,7 @@ namespace romi {
         // TBD: Refactor this out to the constuctor.
         void try_create(const std::filesystem::path &path) override;
         void try_store_jpg(const std::string &filename, romi::Image &image, const std::string &observationId) override;
+        void try_store_jpg(const std::string &filename, rpp::MemBuffer& jpeg, const std::string &observationId) override;
         void try_store_png(const std::string &filename, romi::Image &image, const std::string &observationId) override;
         void try_store_svg(const std::string &filename, const std::string& body, const std::string &observationId) override;
         void try_store_txt(const std::string &filename, const std::string& text, const std::string &observationId) override;
@@ -31,6 +32,7 @@ namespace romi {
         void add_file_metadata(const std::string &filename, const std::string &ovservationId);
         void CheckInput(Image& image) const;
         void CheckInput(const std::string& string_data) const;
+        void CheckInput(rpp::MemBuffer& jpeg) const;
         std::unique_ptr<IIdentityProvider> identityProvider_;
         std::unique_ptr<ILocationProvider> locationProvider_;
         std::filesystem::path folderPath_;

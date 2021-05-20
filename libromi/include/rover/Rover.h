@@ -32,6 +32,7 @@
 #include "api/INavigation.h"
 #include "api/StateMachine.h"
 #include "api/IEventTimer.h"
+#include "api/IImager.h"
 #include "ui/Menu.h"
 #include "ui/IScriptEngine.h"
 #include "ISpeedController.h"
@@ -50,6 +51,7 @@ namespace romi {
                 IScriptEngine<Rover>& script_engine;
                 INotifications& notifications;
                 IWeeder& weeder;
+                IImager& imager;
                 
                 Rover(IInputDevice& input_device_,
                       IDisplay& display_,
@@ -59,7 +61,8 @@ namespace romi {
                       Menu& menu,
                       IScriptEngine<Rover>& script_engine,
                       INotifications& notifications,
-                      IWeeder& weeder);
+                      IWeeder& weeder,
+                      IImager& imager);
                 
                 virtual ~Rover() = default;
 
