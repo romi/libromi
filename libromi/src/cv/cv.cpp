@@ -28,6 +28,7 @@
 #include <r.h>
 #include "cv/cv.h"
 #include "slic.h"
+#include "cv/connected.h"
 
 namespace romi {
 
@@ -211,7 +212,14 @@ namespace romi {
 
         void compute_connected_components(Image &mask, Image &components)
         {
-                // TODO
-                components = mask;
+            std::vector<uint8_t> label_data_(mask.data().size());
+            ConnectedComponents cc_(30);
+            std::vector<unsigned int> out_data(mask.width() * mask.height());
+            cc_.connected(mask.export_byte_data().data(), out_data.data(), (int)mask.width(), (int)mask.height(),
+                          std::equal_to<unsigned char>(),
+                          constant<bool,true>());
+            std::copy(out_data.data(), out_data.data() + out_data.size() , label_data_.data());
+            components.import(mask.type(), label_data_.data(), mask.width(), mask.height());
+
         }
 }
