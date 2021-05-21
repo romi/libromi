@@ -10,19 +10,16 @@ set(SRCS_ENVELOPE_PARSER
   ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
-add_executable(romi_rover_unit_tests_romiserial_envelope_parser ${SRCS_ENVELOPE_PARSER})
+add_executable(libromi_romiserial_envelope_parser ${SRCS_ENVELOPE_PARSER})
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../RomiSerial" )
 
-target_link_libraries(romi_rover_unit_tests_romiserial_envelope_parser rpp gtest gmock)
+target_link_libraries(libromi_romiserial_envelope_parser rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_romiserial_envelope_parser
-    COMMAND romi_rover_unit_tests_romiserial_envelope_parser
+    NAME libromi_romiserial_envelope_parser
+    COMMAND libromi_romiserial_envelope_parser
 )
-
-
-
 
 set(SRCS_MESSAGE_PARSER
   src/tests_main.cpp
@@ -31,15 +28,15 @@ set(SRCS_MESSAGE_PARSER
   ../RomiSerial/MessageParser.cpp
   ../RomiSerial/MessageParser.h)
 
-add_executable(romi_rover_unit_tests_romiserial_message_parser ${SRCS_MESSAGE_PARSER})
+add_executable(libromi_romiserial_message_parser ${SRCS_MESSAGE_PARSER})
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../RomiSerial" )
 
-target_link_libraries(romi_rover_unit_tests_romiserial_message_parser rpp gtest gmock)
+target_link_libraries(libromi_romiserial_message_parser rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_romiserial_message_parser
-    COMMAND romi_rover_unit_tests_romiserial_message_parser
+    NAME libromi_romiserial_message_parser
+    COMMAND libromi_romiserial_message_parser
 )
 
 
@@ -66,15 +63,15 @@ set(SRCS_ROMISERIAL
   ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
-add_executable(romi_rover_unit_tests_romiserial ${SRCS_ROMISERIAL})
+add_executable(libromi_romiserial ${SRCS_ROMISERIAL})
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../RomiSerial" )
 
-target_link_libraries(romi_rover_unit_tests_romiserial rpp gtest gmock)
+target_link_libraries(libromi_romiserial rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_romiserial
-    COMMAND romi_rover_unit_tests_romiserial
+    NAME libromi_romiserial
+    COMMAND libromi_romiserial
 )
 
 
@@ -99,15 +96,15 @@ set(SRCS_ROMISERIALCLIENT
   ../RomiSerial/CRC8.cpp
   ../RomiSerial/CRC8.h)
 
-add_executable(romi_rover_unit_tests_romiserialclient ${SRCS_ROMISERIALCLIENT})
+add_executable(libromi_romiserial_client ${SRCS_ROMISERIALCLIENT})
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../RomiSerial" )
 
-target_link_libraries(romi_rover_unit_tests_romiserialclient rpp gtest gmock)
+target_link_libraries(libromi_romiserial_client rpp gtest gmock)
 
 add_test(
-    NAME romi_rover_unit_tests_romiserialclient
-    COMMAND romi_rover_unit_tests_romiserialclient
+    NAME libromi_romiserial_client
+    COMMAND libromi_romiserial_client
 )
 
 
@@ -129,18 +126,21 @@ set(SRCS_ROMISERIAL_ARDUINO
   ../RomiSerial/RomiSerialClient.cpp
   ../RomiSerial/RomiSerialClient.h)
 
-add_executable(r_test_romiserial_arduino ${SRCS_ROMISERIAL_ARDUINO})
+add_executable(libromi_romiserial_arduino ${SRCS_ROMISERIAL_ARDUINO})
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../RomiSerial" )
 
-target_link_libraries(r_test_romiserial_arduino rpp gtest gmock)
-
-
+target_link_libraries(libromi_romiserial_arduino rpp gtest gmock)
 
 
 if(BUILD_COVERAGE)
     SETUP_TARGET_FOR_COVERAGE_LCOV(
-            NAME r_romiserial_coverage
+            NAME libromi_romiserial_coverage
             EXECUTABLE ctest -V ${n_cores}
-            DEPENDENCIES r_unit_tests_romiserial_envelope_parser r_unit_tests_romiserial_message_parser r_unit_tests_romiserial r_unit_tests_romiserialclient)
+            EXCLUDE '*wrapper*' "src/Linux.cpp" "RomiSerial/*.h" "include/*" '${CMAKE_BINARY_DIR}/libr/*'
+            DEPENDENCIES
+                libromi_romiserial_envelope_parser
+                libromi_romiserial_message_parser
+                libromi_romiserial
+                libromi_romiserial_client)
 endif()
