@@ -63,6 +63,7 @@ namespace romi {
             {
                 stbi_image_free(rgb_image);
                 rgb_image = stbi_load(filename, &width, &height, &channels, STBI_grey);
+                channels = STBI_grey;
             }
 
             // unlhandled re-load as RGB
@@ -70,6 +71,7 @@ namespace romi {
             {
                 stbi_image_free(rgb_image);
                 rgb_image = stbi_load(filename, &width, &height, &channels, STBI_rgb);
+                channels = STBI_rgb;
             }
 
             if(rgb_image)
@@ -95,6 +97,7 @@ namespace romi {
         {
             stbi_image_free(rgb_image);
             rgb_image = stbi_load_from_memory(image_data.data(), (int)image_data.size(), &width, &height, &channels, STBI_grey);
+            channels = STBI_grey;
         }
 
         // unlhandled re-load as RGB
@@ -102,6 +105,7 @@ namespace romi {
         {
             stbi_image_free(rgb_image);
             rgb_image = stbi_load_from_memory(image_data.data(), (int)image_data.size(), &width, &height, &channels, STBI_rgb);
+            channels = STBI_rgb;
         }
 
         if(rgb_image)

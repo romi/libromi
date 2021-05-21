@@ -1,8 +1,9 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "cv/ConnectedComponentsImage.h"
+#include "cv/cv.h"
 #include "cv/ImageIO.h"
-#include "cv/stb_includes.h"
+#include "FileUtils.h"
+#include "test_utility.h"
 
 
 using namespace std;
@@ -24,30 +25,24 @@ protected:
 	void TearDown() override {}
 };
 
-static std::string getexepath()
+const std::string test_data_directory = test_utility::getexepath() + "/test_data/";
+
+TEST_F(connected_component_tests, can_construct)
 {
-    char result[ PATH_MAX ];
-    std::string pstring;
-    ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-
-    std::string sresult(result, (count > 0) ? (size_t)count : 0 );
-    pstring = fs::path(result).parent_path();
-    return pstring;
-}
-
-const std::string test_data_directory = getexepath() + "/test_data/";
-
-TEST_F(connected_component_tests, test_constructor_1)
-{
+        // Arrange
         std::string filename = test_data_directory + "separated_mask.png";
-        std::string filename_out(test_data_directory +"label_data.png");
-        Image image;
-        ImageIO::load(image, filename.c_str());
+        std::string filename_reference(test_data_directory +"connected_component_reference_image.png");
+        Image mask;
+        Image components;
+        Image referenceComponent;
 
-        romi::ConnectedComponentsImage cc(image);
-        auto labal_data = cc.label_data();
+        // Act
+        if (ImageIO::load(mask, filename.c_str()))
+        {
+            compute_connected_components(mask, components);
+            ImageIO::load(referenceComponent, filename_reference.c_str());
+        }
 
-        Image labelImage(Image::BW, labal_data.data(), image.width(), image.height());
-        ImageIO::store_png(labelImage, filename_out.c_str());
+        // Assert
+        ASSERT_EQ(components.export_byte_data(), referenceComponent.export_byte_data());
 }
-

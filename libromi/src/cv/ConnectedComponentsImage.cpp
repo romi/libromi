@@ -9,7 +9,7 @@ namespace romi {
         cc_.connected(image_.export_byte_data().data(), out_data.data(), (int)image_.width(), (int)image_.height(),
                      std::equal_to<unsigned char>(),
                      constant<bool,true>());
-        std::copy(out_data.data(), out_data.data()+image_.width() * image_.height(), label_data_.data());
+       std::copy(out_data.data(), out_data.data() + out_data.size() , label_data_.data());
     }
 
     uint8_t ConnectedComponentsImage::label(int x, int y) {

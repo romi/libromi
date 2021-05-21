@@ -38,9 +38,9 @@ namespace romi {
     public:
         Session() = delete;
 
-        explicit Session(rpp::ILinux& linux, const std::string& base_directory,
-                         IRomiDeviceData& device_data, ISoftwareVersion& softwareVersion,
-                         std::unique_ptr<ILocationProvider> location);
+        explicit Session(const rpp::ILinux &linux, const std::string &base_directory,
+                         IRomiDeviceData &device_data, ISoftwareVersion &softwareVersion,
+                         std::shared_ptr<ILocationProvider> location);
         ~Session() override = default;
         void start(const std::string& observation_id) override;
         void stop() override;
@@ -53,13 +53,17 @@ namespace romi {
         std::filesystem::path current_path() override;
 
     private:
+        const rpp::ILinux& linux_;
         std::filesystem::path base_directory_;
         std::filesystem::path session_directory_;
         IRomiDeviceData& device_data_;
         std::shared_ptr<IMetaFolder> meta_folder_;
         std::string observation_id_;
+        std::shared_ptr<IIdentityProvider> roverIdentity_;
+        std::shared_ptr<ILocationProvider> location_;
 
     };
+
 }
 
 #endif //ROMI_ROVER_BUILD_AND_TEST_SESSION_H
