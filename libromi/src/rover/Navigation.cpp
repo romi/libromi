@@ -199,14 +199,16 @@ namespace romi {
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,
                                         "%.6f\t%.6f\t%.6f\t%.6f\t%.6f"
-                                        "\t%.6f\t%.6f\t%.6f\n",
+                                        "\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
                                         recording[i].time_,
                                         recording[i].left_encoder_,
                                         recording[i].right_encoder_,
                                         recording[i].position_x_,
                                         recording[i].position_y_,
-                                        recording[i].left_speed_,
-                                        recording[i].right_speed_,
+                                        recording[i].left_target_speed_,
+                                        recording[i].right_target_speed_,
+                                        recording[i].left_encoder_speed_,
+                                        recording[i].right_encoder_speed_,
                                         recording[i].distance_);
                         fclose(fp);
                 }
