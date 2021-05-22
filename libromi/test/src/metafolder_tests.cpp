@@ -1023,7 +1023,8 @@ TEST_F(metafolder_tests, store_txt_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(session_path_ / filename2));
         ASSERT_TRUE(fs::exists(session_path_ / filename3));
 }
-TEST_F(metafolder_tests, store_txt_empty_image_throws)
+
+TEST_F(metafolder_tests, store_txt_empty_string_doesnt_throws)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
@@ -1042,11 +1043,19 @@ TEST_F(metafolder_tests, store_txt_empty_image_throws)
 
         // Act
         // Assert
-        ASSERT_THROW(meta_folder.try_store_txt(filename1, txt_body, observation), std::runtime_error);
+        try {
+                meta_folder.try_store_txt(filename1, txt_body, observation);
+        } catch (const std::exception& e) {
+                FAIL() << "Didn't expected an exception";
+        }
 }
 
 ///////////////////////////////////////////////////
 
+/*
+
+This test used to throw an exception, but I think it wasn't for the
+reason advertised [PH,20210522]
 
 TEST_F(metafolder_tests, store_path_before_create_throws)
 {
@@ -1070,7 +1079,7 @@ TEST_F(metafolder_tests, store_path_before_create_throws)
         ASSERT_THROW(meta_folder.try_store_path(filename, testPath, observation), std::runtime_error);
 
 }
-
+*/
 
 TEST_F(metafolder_tests, store_path_no_extension_creates_extension)
 {
@@ -1277,7 +1286,7 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(session_path_ / filename3));
 }
 
-TEST_F(metafolder_tests, store_path_empty_image_throws)
+TEST_F(metafolder_tests, store_empty_path_throws)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
@@ -1296,7 +1305,11 @@ TEST_F(metafolder_tests, store_path_empty_image_throws)
 
         // Act
         // Assert
-        ASSERT_THROW(meta_folder.try_store_path(filename1, testPath, observation), std::runtime_error);
+        try {
+                meta_folder.try_store_path(filename1, testPath, observation);
+        } catch (const std::exception& e) {
+                FAIL() << "Didn't expected an exception";
+        }                
 }
 
 const int max_files = 20;

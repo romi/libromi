@@ -32,7 +32,7 @@ namespace romi {
         std::filesystem::path build_filename_with_extension(const std::string& filename, const std::string& extension);
         void add_file_metadata(const std::string &filename, const std::string &ovservationId);
         void CheckInput(Image& image) const;
-        void CheckInput(const std::string& string_data) const;
+        void CheckInput(const std::string& string_data, bool empty_ok) const;
         std::shared_ptr<IIdentityProvider> identityProvider_;
         std::shared_ptr<ILocationProvider> locationProvider_;
         void CheckInput(rpp::MemBuffer& jpeg) const;

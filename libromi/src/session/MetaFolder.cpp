@@ -60,14 +60,14 @@ namespace romi {
                         throw std::runtime_error("Image data empty");
         }
 
-        void MetaFolder::CheckInput(const std::string& string_data) const
+        void MetaFolder::CheckInput(const std::string& string_data,
+                                    bool empty_ok) const
         {
                 (void) string_data;
                 if (meta_data_ == nullptr)
                         throw std::runtime_error("Session not created");
-                // OK to write empty string [PH]
-                // if (string_data.empty())
-                //         throw std::runtime_error("String data empty");
+                if (string_data.empty() && !empty_ok)
+                        throw std::runtime_error("String data empty");
         }
 
         void MetaFolder::CheckInput(rpp::MemBuffer& jpeg) const
@@ -120,7 +120,7 @@ namespace romi {
                                        const std::string &observationId)
         {
                 std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
-                CheckInput(body);
+                CheckInput(body, false);
                 auto filename_extension = build_filename_with_extension(filename, "svg");
                 FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), body);
                 add_file_metadata(filename_extension, observationId);
@@ -131,7 +131,7 @@ namespace romi {
                                        const std::string &observationId)
         {
                 std::scoped_lock<std::recursive_mutex> scopedLock(metadata_file_mutex_);
-                CheckInput(text);
+                CheckInput(text, true);
                 auto filename_extension = build_filename_with_extension(filename, "txt");
                 FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), text);
                 add_file_metadata(filename_extension, observationId);
@@ -149,7 +149,7 @@ namespace romi {
                         ss << p.x() << "\t" << p.y() << "\r\n";
                 }
                 std::string path_data = ss.str();
-                CheckInput(path_data);
+                CheckInput(path_data, true);
                 auto filename_extension = build_filename_with_extension(filename, "path");
                 FileUtils::TryWriteStringAsFile((folderPath_ / filename_extension), path_data);
                 add_file_metadata(filename_extension, observationId);
