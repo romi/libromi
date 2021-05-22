@@ -178,10 +178,13 @@ namespace romi {
                         }
 
                         v3 encoders = pose.get_encoders();
+                        v3 speed_encoders = pose.get_speed();
                         recording.emplace_back(now - start_time,
                                                encoders.x(), encoders.y(),
                                                location.x(), location.y(),
                                                left_speed, right_speed,
+                                               speed_encoders.x(),
+                                               speed_encoders.y(),
                                                distance_travelled);
                         //clock->sleep(0.001);
                 }
