@@ -36,21 +36,26 @@ namespace romi {
                 double right_encoder_;
                 double position_x_;
                 double position_y_;
-                double left_speed_;
-                double right_speed_;
+                double left_target_speed_;
+                double right_target_speed_;
+                double left_encoder_speed_;
+                double right_encoder_speed_;
                 double distance_;
 
                 NavRecording(double t, double left, double right,
                              double x, double y,
-                             double vl, double vr,
+                             double v_target_left, double v_target_right,
+                             double v_encoder_left, double v_encoder_right,
                              double d)
                         : time_(t),
                           left_encoder_(left),
                           right_encoder_(right),
                           position_x_(x),
                           position_y_(y),
-                          left_speed_(vl),
-                          right_speed_(vr),
+                          left_target_speed_(v_target_left),
+                          right_target_speed_(v_target_right),
+                          left_encoder_speed_(v_encoder_left),
+                          right_encoder_speed_(v_encoder_right),
                           distance_(d) {
                 };
         };
