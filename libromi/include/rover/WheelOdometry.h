@@ -25,17 +25,19 @@
 #define __ROMI_WHEEL_ODOMETRY_H
 
 #include <mutex>
+#include "IPoseEstimator.h"
+#include "api/IMotorDriver.h"
 #include "NavigationSettings.h"
-
 
 namespace romi {
               
         using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
         
-        class WheelOdometry
+        class WheelOdometry : public IPoseEstimator
         {
         protected:
-                std::mutex _mutex;
+                IMotorDriver& driver_;
+                std::mutex mutex_;
                         
                 // The current location and orientation
                 double instantaneous_speed[2];
@@ -55,16 +57,17 @@ namespace romi {
                 
         public:
                 WheelOdometry(NavigationSettings &rover_config,
-                              double left_encoder,
-                              double right_encoder,
-                              double timestamp);
+                              IMotorDriver& driver);
                 
                 virtual ~WheelOdometry();
 
+                bool update_estimation() override;
                 void set_encoders(double left, double right, double timestamp);
-                void get_location(double &x, double &y);
-                void get_speed(double &vx, double &vy);
-                double get_orientation();
+                v3 get_location() override;
+                double get_orientation() override;
+                
+                v3 get_encoders();
+                v3 get_speed();
         };
 }
 

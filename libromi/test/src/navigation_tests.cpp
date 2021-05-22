@@ -95,14 +95,12 @@ TEST_F(navigation_tests, successful_move)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
+                
+        EXPECT_CALL(driver, stop())
+                .WillRepeatedly(Return(true));
 
         {
                 InSequence seq;
-                
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-                
                 EXPECT_CALL(driver, get_encoder_values(_,_,_))
                         .WillOnce(DoAll(SetArgReferee<0>(0.0),
                                         SetArgReferee<1>(0.0),
@@ -121,14 +119,9 @@ TEST_F(navigation_tests, successful_move)
                                         Return(true)))
                         .RetiresOnSaturation();
 
-                EXPECT_CALL(driver, moveat(0.0, 0.0))
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
+                // EXPECT_CALL(driver, moveat(0.0, 0.0))
+                //         .WillOnce(Return(true))
+                //         .RetiresOnSaturation();
         }
 
         // Move 3 meter, at the maximum speed of 3 m/s.
@@ -140,13 +133,12 @@ TEST_F(navigation_tests, successfully_move_distance_with_negative_speed)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
+                
+        EXPECT_CALL(driver, stop())
+                .WillRepeatedly(Return(true));
 
         {
                 InSequence seq;
-                
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
                 
                 EXPECT_CALL(driver, get_encoder_values(_,_,_))
                         .WillOnce(DoAll(SetArgReferee<0>(0.0),
@@ -165,15 +157,6 @@ TEST_F(navigation_tests, successfully_move_distance_with_negative_speed)
                                         SetArgReferee<2>(1.0),
                                         Return(true)))
                         .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, moveat(0.0, 0.0))
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
         }
 
         // Move 3 meter, at the maximum speed of 3 m/s.
@@ -185,13 +168,12 @@ TEST_F(navigation_tests, successfully_move_negative_distance_with_positive_speed
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
+        
+        EXPECT_CALL(driver, stop())
+                .WillRepeatedly(Return(true));
 
         {
                 InSequence seq;
-                
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
                 
                 EXPECT_CALL(driver, get_encoder_values(_,_,_))
                         .WillOnce(DoAll(SetArgReferee<0>(0.0),
@@ -210,15 +192,6 @@ TEST_F(navigation_tests, successfully_move_negative_distance_with_positive_speed
                                         SetArgReferee<2>(1.0),
                                         Return(true)))
                         .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, moveat(0.0, 0.0))
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
         }
 
         // Move 3 meter, at the maximum speed of 3 m/s.
@@ -231,12 +204,11 @@ TEST_F(navigation_tests, successfully_move_negative_distance_with_negative_speed
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
 
+        EXPECT_CALL(driver, stop())
+                .WillRepeatedly(Return(true));
+        
         {
                 InSequence seq;
-                
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
                 
                 EXPECT_CALL(driver, get_encoder_values(_,_,_))
                         .WillOnce(DoAll(SetArgReferee<0>(0.0),
@@ -255,15 +227,6 @@ TEST_F(navigation_tests, successfully_move_negative_distance_with_negative_speed
                                         SetArgReferee<2>(1.0),
                                         Return(true)))
                         .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, moveat(0.0, 0.0))
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
         }
 
         // Move 3 meter, at the maximum speed of 3 m/s.
@@ -357,17 +320,12 @@ TEST_F(navigation_tests, move_returns_false_on_failing_get_encoders)
 {
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
-        
+
         EXPECT_CALL(driver, stop())
-                .WillOnce(Return(true))
-                .RetiresOnSaturation();
+                .WillRepeatedly(Return(true));
                 
         EXPECT_CALL(driver, get_encoder_values(_,_,_))
                 .WillOnce(Return(false))
-                .RetiresOnSaturation();
-        
-        EXPECT_CALL(driver, stop())
-                .WillOnce(Return(true))
                 .RetiresOnSaturation();
         
         bool success = navigation.move(3.0, 0.5);
@@ -379,12 +337,11 @@ TEST_F(navigation_tests, move_returns_false_when_moveat_fails)
         NavigationSettings rover(config);
         Navigation navigation(driver, rover);
 
+        EXPECT_CALL(driver, stop())
+                .WillRepeatedly(Return(true));
+
         {
                 InSequence seq;
-                
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
                 
                 EXPECT_CALL(driver, get_encoder_values(_,_,_))
                         .WillOnce(DoAll(SetArgReferee<0>(0.0),
@@ -396,11 +353,6 @@ TEST_F(navigation_tests, move_returns_false_when_moveat_fails)
                 EXPECT_CALL(driver, moveat(1.0, 1.0))
                         .WillOnce(Return(false))
                         .RetiresOnSaturation();
-
-                EXPECT_CALL(driver, stop())
-                        .WillOnce(Return(true))
-                        .RetiresOnSaturation();
-
         }
 
         // Move 3 meter, at the maximum speed of 3 m/s.

@@ -62,10 +62,12 @@ namespace romi {
 
         void MetaFolder::CheckInput(const std::string& string_data) const
         {
+                (void) string_data;
                 if (meta_data_ == nullptr)
                         throw std::runtime_error("Session not created");
-                if (string_data.empty())
-                        throw std::runtime_error("String data empty");
+                // OK to write empty string [PH]
+                // if (string_data.empty())
+                //         throw std::runtime_error("String data empty");
         }
 
         void MetaFolder::CheckInput(rpp::MemBuffer& jpeg) const

@@ -26,16 +26,31 @@
 
 namespace romi {
         
-        WheelOdometry::WheelOdometry(NavigationSettings &rover_config, double left_encoder, double right_encoder, double timestamp)
-        :   _mutex(), last_timestamp(timestamp), theta(0.0),
-            wheel_circumference(M_PI * rover_config.wheel_diameter),
-            wheel_base(rover_config.wheel_base), encoder_steps(rover_config.encoder_steps)
+        WheelOdometry::WheelOdometry(NavigationSettings &rover_config,
+                                     IMotorDriver& driver)
+                :   driver_(driver),
+                    mutex_(),
+                    last_timestamp(0.0),
+                    theta(0.0),
+                    wheel_circumference(M_PI * rover_config.wheel_diameter),
+                    wheel_base(rover_config.wheel_base),
+                    encoder_steps(rover_config.encoder_steps)
         {
-                displacement[0] = 0;
-                displacement[1] = 0;       
+                double left, right, timestamp;
                 
-                encoder[0] = left_encoder;
-                encoder[1] = right_encoder;
+                if (!driver_.get_encoder_values(left, right, timestamp)) {
+                        r_err("WheelOdometry::WheelOdometry: "
+                              "get_encoder_values failed");
+                        throw std::runtime_error("WheelOdometry::WheelOdometry: "
+                                                 "get_encoder_values failed");
+                }
+                
+                displacement[0] = 0;
+                displacement[1] = 0;                       
+                encoder[0] = left;
+                encoder[1] = right;
+                last_timestamp = timestamp;
+                
                 for (int i = 0; i < 2; i++) {
                         instantaneous_speed[i] = 0;
                         filtered_speed[i] = 0;
@@ -46,34 +61,50 @@ namespace romi {
         {
         }
 
-        void WheelOdometry::get_location(double &x, double &y)
+        bool WheelOdometry::update_estimation()
         {
-                SynchronizedCodeBlock sync(_mutex);
-                x = displacement[0];
-                y = displacement[1];
+                bool success = false;
+                double left, right, timestamp;
+                if (driver_.get_encoder_values(left, right, timestamp)) {
+                        set_encoders(left, right, timestamp);
+                        success = true;
+                }
+                return success;
+        }
+        
+        v3 WheelOdometry::get_location()
+        {
+                SynchronizedCodeBlock sync(mutex_);
+                return v3(displacement[0], displacement[1], 0.0);
         }
 
-        void WheelOdometry::get_speed(double &vx, double &vy)
+        v3 WheelOdometry::get_speed()
         {
-                SynchronizedCodeBlock sync(_mutex);
-                vx = filtered_speed[0];
-                vy = filtered_speed[1];
+                SynchronizedCodeBlock sync(mutex_);
+                return v3(filtered_speed[0], filtered_speed[1], 0.0);
         }
-                
+        
         double WheelOdometry::get_orientation()
         {
-                SynchronizedCodeBlock sync(_mutex);
+                SynchronizedCodeBlock sync(mutex_);
                 return theta;
         }
 
-        void WheelOdometry::set_encoders(double left, double right, double timestamp)
+        v3 WheelOdometry::get_encoders()
+        {
+                SynchronizedCodeBlock sync(mutex_);
+                return v3(encoder[0], encoder[1], 0.0);
+        }
+        
+        void WheelOdometry::set_encoders(double left, double right,
+                                         double timestamp)
         {
                 double dx, dy;
                 double dL, dR;
                 double half_wheel_base = 0.5 * wheel_base;
                 double alpha;
 
-                SynchronizedCodeBlock sync(_mutex);
+                SynchronizedCodeBlock sync(mutex_);
                 
                 // r_debug("encL %f, encR %f steps", left, right);
         
