@@ -130,9 +130,9 @@ namespace romi {
                 return success;
         }
 
-        bool BrushMotorDriver::get_encoder_values(double &left,
-                                                  double &right,
-                                                  double &timestamp)
+        bool BrushMotorDriver::get_encoder_values(double& left,
+                                                  double& right,
+                                                  double& timestamp)
         {
                 JsonCpp response;
                 const char *command = "e";
@@ -142,6 +142,33 @@ namespace romi {
                         left = response.num(1);
                         right = response.num(2);
                         timestamp = response.num(3) / 1000.0;
+                }
+                return success;
+        }
+
+        bool BrushMotorDriver::get_pid_values(Axis axis,
+                                              double& target_speed,
+                                              double& measured_speed,
+                                              double& pid_output,
+                                              double& pid_error_p,
+                                              double& pid_error_i,
+                                              double& pid_error_d,
+                                              double& controller_input)
+        {
+                JsonCpp response;
+                char command[16];
+                snprintf(command, sizeof(command), "p[%d]", axis);
+
+                serial_->send(command, response);
+                bool success = check_response(command, response);
+                if (success) {
+                        target_speed = response.num(1);
+                        measured_speed = response.num(2);
+                        pid_output = response.num(3);
+                        pid_error_p = response.num(4);
+                        pid_error_i = response.num(5);
+                        pid_error_d = response.num(6);
+                        controller_input = response.num(7);
                 }
                 return success;
         }

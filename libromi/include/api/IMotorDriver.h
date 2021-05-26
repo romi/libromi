@@ -42,8 +42,19 @@ namespace romi {
 
                 /** Returns the values of the encoders. The timestamp
                  * is in seconds. */
-                virtual bool get_encoder_values(double &left, double &right,
-                                                double &timestamp) = 0;
+                virtual bool get_encoder_values(double& left, double& right,
+                                                double& timestamp) = 0;
+
+                enum Axis { kLeftWheel = 0, kRightWheel = 1 };
+                
+                virtual bool get_pid_values(Axis axis,
+                                            double& target_speed,
+                                            double& measured_speed,
+                                            double& pid_output,
+                                            double& pid_error_p,
+                                            double& pid_error_i,
+                                            double& pid_error_d,
+                                            double& controller_input) = 0;
         };
 }
 

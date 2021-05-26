@@ -75,8 +75,17 @@ namespace romi {
 
                 bool stop() override;
                 bool moveat(double left, double right) override;
-                bool get_encoder_values(double &left, double &right,
-                                        double &timestamp) override;
+                bool get_encoder_values(double& left, double& right,
+                                        double& timestamp) override;
+                
+                bool get_pid_values(Axis axis,
+                                    double& target_speed,
+                                    double& measured_speed,
+                                    double& pid_output,
+                                    double& pid_error_p,
+                                    double& pid_error_i,
+                                    double& pid_error_d,
+                                    double& controller_input) override;
         };
 }
 

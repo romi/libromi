@@ -50,7 +50,7 @@ namespace romi {
 
                 bool do_move(double distance, double speed);
                 bool travel(double speed, double distance);
-                void try_travel(WheelOdometry& pose, double speed,
+                bool try_travel(WheelOdometry& pose, double speed,
                                 double distance, double timeout);
                 double compute_timeout(double distance, double speed);
                                         
