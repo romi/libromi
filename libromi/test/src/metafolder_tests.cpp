@@ -1329,7 +1329,7 @@ int Write_multiple_thread_jpg(romi::MetaFolder& MetaFolder, romi::Image& image)
 {
         int file_index = 0;
         std::string filename("file");
-        std::string observation_id("png_observer");
+        std::string observation_id("jpg_observer");
         for (file_index = 0; file_index < 20; file_index++)
         {
                 MetaFolder.try_store_jpg((filename + to_string(file_index)), image, observation_id);
