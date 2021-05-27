@@ -41,6 +41,9 @@ namespace romi {
                 { RoverOptions::script, true, nullptr,
                   "The path of the file containing the scripts and menus" },
                 
+                { RoverOptions::registry, true, nullptr,
+                  "The IP address of the registry"},
+                
                 { RoverOptions::session_directory, true, ".",
                   "The session directory where the output "
                   "files are stored (logs, images...)"},
