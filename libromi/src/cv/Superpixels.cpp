@@ -24,7 +24,7 @@
 
 #include <iostream>
 #include "Superpixels.h"
-#include "slic.h"
+#include "cv/slic.h"
 
 namespace romi {
 
