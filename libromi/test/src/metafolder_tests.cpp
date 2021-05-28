@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "Linux.h"
 #include "FileUtils.h"
 #include "ClockAccessor.h"
 #include "data_provider/JsonFieldNames.h"
@@ -1024,17 +1023,20 @@ TEST_F(metafolder_tests, store_txt_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(session_path_ / filename3));
 }
 
-TEST_F(metafolder_tests, store_txt_empty_string_doesnt_throws)
+TEST_F(metafolder_tests, store_txt_empty_string_doesnt_throw)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                .WillOnce(Return(std::string("10:25:24-25/01/2020")));
+        EXPECT_CALL(mockGps_, CurrentLocation)
+                .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         auto mockLocationProvider_ = std::make_shared<romi::GpsLocationProvider>(mockGps_);
         auto roverIdentity = std::make_shared<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
         romi::MetaFolder meta_folder(roverIdentity, mockLocationProvider_, session_path_);
         fs::path meta_data_filename = session_path_ / romi::MetaFolder::meta_data_filename_;
-        // meta_folder.try_create(session_path_);
 
         romi::Image image;
         std::string filename1("file1.txt");
@@ -1051,35 +1053,6 @@ TEST_F(metafolder_tests, store_txt_empty_string_doesnt_throws)
 }
 
 ///////////////////////////////////////////////////
-
-/*
-
-This test used to throw an exception, but I think it wasn't for the
-reason advertised [PH,20210522]
-
-TEST_F(metafolder_tests, store_path_before_create_throws)
-{
-        // Arrange
-        SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
-        SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
-
-        auto mockLocationProvider_ = std::make_shared<romi::GpsLocationProvider>(mockGps_);
-        auto roverIdentity = std::make_shared<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
-        romi::MetaFolder meta_folder(roverIdentity, mockLocationProvider_, session_path_);
-
-        romi::Image image;
-        std::string filename("file1.path");
-        std::string observation("observe");
-        std::string path_body("body");
-
-        romi::Path testPath;
-
-        // Act
-        // Assert
-        ASSERT_THROW(meta_folder.try_store_path(filename, testPath, observation), std::runtime_error);
-
-}
-*/
 
 TEST_F(metafolder_tests, store_path_no_extension_creates_extension)
 {
@@ -1286,7 +1259,7 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
         ASSERT_TRUE(fs::exists(session_path_ / filename3));
 }
 
-TEST_F(metafolder_tests, store_empty_path_throws)
+TEST_F(metafolder_tests, store_empty_path_doesnt_throw)
 {
         // Arrange
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
@@ -1329,7 +1302,7 @@ int Write_multiple_thread_jpg(romi::MetaFolder& MetaFolder, romi::Image& image)
 {
         int file_index = 0;
         std::string filename("file");
-        std::string observation_id("png_observer");
+        std::string observation_id("jpg_observer");
         for (file_index = 0; file_index < 20; file_index++)
         {
                 MetaFolder.try_store_jpg((filename + to_string(file_index)), image, observation_id);

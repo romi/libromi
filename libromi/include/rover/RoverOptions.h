@@ -34,6 +34,7 @@ namespace romi {
         public:
                 static constexpr const char* config = "config";
                 static constexpr const char* script = "script";
+                static constexpr const char* registry = "registry";
                 static constexpr const char* soundfont = "soundfont";
                 static constexpr const char* session_directory = "session-directory";
                 static constexpr const char* joystick_device = "joystick-device";

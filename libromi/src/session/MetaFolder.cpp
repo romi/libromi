@@ -49,7 +49,7 @@ namespace romi {
                 json_object_setstr(newFile.ptr(), JsonFieldNames::date_time.c_str(),
                                    rpp::ClockAccessor::GetInstance()->datetime_compact_string().c_str());
                 json_object_set(meta_data_->ptr(), filename.c_str(), newFile.ptr());
-                meta_data_->save((folderPath_ / meta_data_filename_).string(), k_json_pretty);
+                meta_data_->save((folderPath_ / meta_data_filename_).string(), k_json_pretty | k_json_sort_keys);
         }
 
         void MetaFolder::CheckInput(Image& image) const

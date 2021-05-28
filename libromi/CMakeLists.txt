@@ -101,6 +101,7 @@ set(SOURCES
         include/cv/IImageCropper.h
         include/cv/Image.h
         include/cv/ImageIO.h
+        include/cv/slic.h
 
         include/fake/FakeCNC.h
         include/fake/FakeDisplay.h

@@ -27,7 +27,7 @@
 #include <map>
 #include <r.h>
 #include "cv/cv.h"
-#include "slic.h"
+#include "cv/slic.h"
 #include "cv/connected.h"
 
 namespace romi {
