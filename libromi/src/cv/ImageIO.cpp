@@ -20,7 +20,7 @@
   along with this program.  If not, see
   <http://www.gnu.org/licenses/>.
 
- */
+*/
 
 #include <png.h>
 #include <r.h>
@@ -30,95 +30,101 @@
 
 namespace romi {
 
-
-
-
         bool ImageIO::store_jpg(Image& image, const char *filename)
         {
                 auto image_bytes = image.export_byte_data();
-                auto write =  stbi_write_jpg(filename, (int)image.width(), (int)image.height(), (int)image.channels(), image_bytes.data(), JPEG_QUALITY_90);
+                auto write =  stbi_write_jpg(filename, (int) image.width(),
+                                             (int) image.height(), (int) image.channels(),
+                                             image_bytes.data(), JPEG_QUALITY_90);
                 bool retval = (write != 0);
                 return retval;
         }
         
         bool ImageIO::store_png(Image& image, const char *filename)
         {
-            auto image_bytes = image.export_byte_data();
-            int stride = (int)(image.width() * image.channels());
-            auto write =  stbi_write_png(filename, (int)image.width(), (int)image.height(), (int)image.channels(), image_bytes.data(), stride);
-            bool retval = (write != 0);
-            return retval;
+                auto image_bytes = image.export_byte_data();
+                int stride = (int)(image.width() * image.channels());
+                auto write =  stbi_write_png(filename, (int) image.width(),
+                                             (int) image.height(), (int) image.channels(),
+                                             image_bytes.data(), stride);
+                bool retval = (write != 0);
+                return retval;
         }
 
         // Loads an image. Converts to BW or RGB if alpha channel is included in original.
         bool ImageIO::load(Image& image, const char *filename)
         {
-            bool success = true;
-            int width, height, channels = 0;
+                bool success = true;
+                int width, height, channels = 0;
 
-            uint8_t* rgb_image = stbi_load(filename, &width, &height, &channels, STBI_default);
+                uint8_t* rgb_image = stbi_load(filename, &width, &height,
+                                               &channels, STBI_default);
 
-            // unlhandled re-load as BW
-            if (channels == STBI_grey_alpha)
-            {
-                stbi_image_free(rgb_image);
-                rgb_image = stbi_load(filename, &width, &height, &channels, STBI_grey);
-                channels = STBI_grey;
-            }
+                // unlhandled re-load as BW
+                if (channels == STBI_grey_alpha) {
+                        stbi_image_free(rgb_image);
+                        rgb_image = stbi_load(filename, &width, &height,
+                                              &channels, STBI_grey);
+                        channels = STBI_grey;
+                }
 
-            // unlhandled re-load as RGB
-            if (channels == STBI_rgb_alpha)
-            {
-                stbi_image_free(rgb_image);
-                rgb_image = stbi_load(filename, &width, &height, &channels, STBI_rgb);
-                channels = STBI_rgb;
-            }
+                // unlhandled re-load as RGB
+                if (channels == STBI_rgb_alpha) {
+                        stbi_image_free(rgb_image);
+                        rgb_image = stbi_load(filename, &width, &height,
+                                              &channels, STBI_rgb);
+                        channels = STBI_rgb;
+                }
 
-            if(rgb_image)
-            {
-                Image::ImageType type = (channels == STBI_grey) ? Image::BW : Image::RGB;
-                image.import(type, rgb_image, (size_t)width, (size_t)height);
-                stbi_image_free(rgb_image);
-            }
-            else
-                success = false;
-
-            return success;
+                if (rgb_image) {
+                        Image::ImageType type = (channels == STBI_grey) ? Image::BW : Image::RGB;
+                        image.import(type, rgb_image, (size_t)width, (size_t)height);
+                        stbi_image_free(rgb_image);
+                } else {
+                        success = false;
+                }
+                return success;
         }
 
-    bool ImageIO::load_from_buffer(Image& image, const std::vector<uint8_t>& image_data)
-    {
-        bool success = true;
-        int width, height, channels = 0;
-
-        uint8_t* rgb_image = stbi_load_from_memory(image_data.data(), (int)image_data.size(), &width, &height, &channels, STBI_default);
-
-        if (channels == STBI_grey_alpha)
+        bool ImageIO::load_from_buffer(Image& image, const std::vector<uint8_t>& image_data)
         {
-            stbi_image_free(rgb_image);
-            rgb_image = stbi_load_from_memory(image_data.data(), (int)image_data.size(), &width, &height, &channels, STBI_grey);
-            channels = STBI_grey;
-        }
+                bool success = true;
+                int width, height, channels = 0;
 
-        // unlhandled re-load as RGB
-        if (channels == STBI_rgb_alpha)
-        {
-            stbi_image_free(rgb_image);
-            rgb_image = stbi_load_from_memory(image_data.data(), (int)image_data.size(), &width, &height, &channels, STBI_rgb);
-            channels = STBI_rgb;
-        }
+                uint8_t* rgb_image = stbi_load_from_memory(image_data.data(),
+                                                           (int) image_data.size(),
+                                                           &width, &height, &channels,
+                                                           STBI_default);
 
-        if(rgb_image)
-        {
-            Image::ImageType type = (channels == STBI_grey) ? Image::BW : Image::RGB;
-            image.import(type, rgb_image, (size_t)width, (size_t)height);
-            stbi_image_free(rgb_image);
-        }
-        else
-            success = false;
+                if (channels == STBI_grey_alpha) {
+                        stbi_image_free(rgb_image);
+                        rgb_image = stbi_load_from_memory(image_data.data(),
+                                                          (int) image_data.size(),
+                                                          &width, &height, &channels,
+                                                          STBI_grey);
+                        channels = STBI_grey;
+                }
 
-        return success;
-    }
+                // unlhandled re-load as RGB
+                if (channels == STBI_rgb_alpha) {
+                        stbi_image_free(rgb_image);
+                        rgb_image = stbi_load_from_memory(image_data.data(),
+                                                          (int) image_data.size(),
+                                                          &width, &height, &channels,
+                                                          STBI_rgb);
+                        channels = STBI_rgb;
+                }
+
+                if (rgb_image) {
+                        Image::ImageType type = (channels == STBI_grey) ? Image::BW : Image::RGB;
+                        image.import(type, rgb_image, (size_t)width, (size_t)height);
+                        stbi_image_free(rgb_image);
+                } else {
+                        success = false;
+                }
+        
+                return success;
+        }
 
 
 }
