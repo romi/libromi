@@ -83,14 +83,14 @@ namespace romi {
                 }
         }
 
-    std::string RoverOptions::get_config_file()
-    {
-            std::string file = get_value(romi::RoverOptions::config);
-            if (file.empty()) {
-                    throw std::runtime_error("No configuration file was given (can't run without one...).");
-            }
-            return file;
-    }
+        std::string RoverOptions::get_config_file()
+        {
+                std::string file = get_value(romi::RoverOptions::config);
+                if (file.empty()) {
+                        throw std::runtime_error("No configuration file was given (can't run without one...).");
+                }
+                return file;
+        }
 
 }
 

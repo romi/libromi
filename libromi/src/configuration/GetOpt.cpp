@@ -28,45 +28,23 @@ using namespace std;
 
 namespace romi {
 
-    GetOpt::GetOpt(std::vector<Option> &options)
-            : _options(options), _long_options(), _descriptions(), _flags(), _values()
+        GetOpt::GetOpt(std::vector<Option> &options)
+                : _options(options), _long_options(),
+                  _flags(), _values()
         {
-                generate_long_options();
-                generate_descriptions();
-        }
-
-        void GetOpt::generate_long_options()
-        {
-                for (size_t i = 0; i < _options.size(); i++) {
-                        append_long_option(_options[i]);
-                }
-                append_zero_option();
         }
         
-        void GetOpt::append_long_option(Option& option)
+        void GetOpt::add_option(Option& option)
         {
-                struct option long_option = { option.name, no_argument, nullptr, 0 };
-                if (option.requires_value)
-                        long_option.has_arg = required_argument;
-                _long_options.push_back(long_option);
-        }
-        
-        void GetOpt::append_zero_option()
-        {
-                option long_option = {nullptr, 0, nullptr, 0 };
-                _long_options.push_back(long_option);
-        }
-        
-        void GetOpt::generate_descriptions()
-        {
-                for (size_t i = 0; i < _options.size(); i++)
-                        _descriptions.emplace_back(_options[i].description);
+                _options.push_back(option);
         }
         
         void GetOpt::parse(int argc, char **argv)
         {
                 int option_index;
                 optind = 1;
+                
+                generate_long_options();
                 
                 while (1) {
                         int c = getopt_long(argc, argv, "", &_long_options[0],
@@ -79,6 +57,28 @@ namespace romi {
                         else
                                 set_option(static_cast<size_t>(option_index), optarg);
                 }
+        }
+
+        void GetOpt::generate_long_options()
+        {
+                for (size_t i = 0; i < _options.size(); i++) {
+                        add_long_option(_options[i]);
+                }
+                append_zero_option();
+        }
+        
+        void GetOpt::add_long_option(Option& option)
+        {
+                struct option long_option = { option.name, no_argument, nullptr, 0 };
+                if (option.requires_value)
+                        long_option.has_arg = required_argument;
+                _long_options.push_back(long_option);
+        }
+        
+        void GetOpt::append_zero_option()
+        {
+                option long_option = {nullptr, 0, nullptr, 0 };
+                _long_options.push_back(long_option);
         }
 
         void GetOpt::set_option(size_t index, const char *value)
@@ -112,8 +112,10 @@ namespace romi {
 
         std::string GetOpt::get_default_value(const std::string& name)
         {
+                r_debug("get_default_value %s", name.c_str());
                 std::string retval;
                 for (auto & _option : _options) {
+                        r_debug("%s", _option.name);
                         if (_option.name == name
                             && _option.default_value != nullptr) {
                                 retval = _option.default_value;

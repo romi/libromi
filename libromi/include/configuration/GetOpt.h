@@ -32,29 +32,18 @@
 #include "configuration/IOptions.h"
 
 namespace romi {
-
-        class Option
-        {
-        public:
-                const char *name;
-                bool requires_value;
-                const char *default_value;
-                const char *description;
-        };
         
         class GetOpt : public IOptions
         {
         protected:
                 std::vector<Option> _options;
                 std::vector<option> _long_options;
-                std::vector<std::string> _descriptions;
                 std::map<std::string, bool> _flags;
                 std::map<std::string, std::string> _values;
 
                 void generate_long_options();
-                void append_long_option(Option& option);
+                void add_long_option(Option& option);
                 void append_zero_option();
-                void generate_descriptions();
                 void set_option(size_t index, const char *value);
                 std::string get_default_value(const std::string& name);
 
@@ -63,6 +52,7 @@ namespace romi {
                 explicit GetOpt(std::vector<Option> &options);
                 ~GetOpt() override = default;
 
+                void add_option(Option& option) override;
                 void parse(int argc, char **argv) override;
                 bool get_flag(const char *name) override;
                 std::string get_value(const std::string& name) override;

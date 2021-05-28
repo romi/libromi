@@ -26,12 +26,22 @@
 #define __ROMI_I_OPTIONS_H
 
 namespace romi {
+
+        class Option
+        {
+        public:
+                const char *name;
+                bool requires_value;
+                const char *default_value;
+                const char *description;
+        };
         
         class IOptions
         {
         public:
                 virtual ~IOptions() = default;
                 
+                virtual void add_option(Option& option) = 0;
                 virtual void parse(int argc, char **argv) = 0;
                 virtual bool get_flag(const char *name) = 0;
                 virtual std::string get_value(const std::string& name) = 0;
