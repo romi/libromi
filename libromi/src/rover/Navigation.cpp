@@ -93,8 +93,10 @@ namespace romi {
                            && distance >= -50.0 // 50 meters max!
                            && distance <= 50.0) {
 
-                        if (distance > 0.0 && speed > 0.0) {
+                        if (distance * speed >= 0.0) {
                                 // All is well, moving forward
+                                distance = fabs(distance);
+                                speed = fabs(speed);
                         } else {
                                 // Moving backwards. Make sur the
                                 // distance is positive and the speed
@@ -188,7 +190,17 @@ namespace romi {
                         
                         location = pose.get_location();
                         distance_travelled = location.norm(); // FIXME!!!
-                        
+                                
+                        if (distance_travelled >= distance - 0.1) {
+                                if (speed > 0.0) {
+                                        left_speed = 0.1;
+                                        right_speed = 0.1;
+                                } else {
+                                        left_speed = -0.1;
+                                        right_speed = -0.1;
+                                }
+                        }
+                                
                         if (distance_travelled >= distance) {
                                 success = true;
                                 break;
