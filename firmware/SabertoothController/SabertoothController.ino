@@ -23,10 +23,9 @@
 #include <RomiSerial.h>
 #include <ArduinoSerial.h>
 #include <SoftwareSerial.h>
-#include <Servo.h>
+#include "ServoConnection.h"
+#include "SabertoothSerialConnection.h"
 #include "PID_v1_romi.h"
-
-#define USE_SERVO
 
 using namespace romiserial;
 
@@ -81,18 +80,14 @@ unsigned char controlMode = CONTROL_DIRECT;
 
 /////////////////////////////////////////////////////////////////////////
 
-#ifdef USE_SERVO
 #define pinLeftMotor 9
 #define pinRightMotor 10
-Servo leftMotor;
-Servo rightMotor;
-float maxSignal = 20.0f;
+float kMaxSignal = 20.0f;
+ServoConnection driver(pinLeftMotor, pinRightMotor, kMaxSignal);
 
-#else
-#define sabertoothTxPin 9
-#define sabertoothRxPin 13
-SoftwareSerial sabertooth(sabertoothRxPin, sabertoothTxPin); // RX, TX
-#endif
+// #define kSabertoothTxPin 9
+// #define kSabertoothRxPin 13
+// SabertoothSerialConnection driver(kSabertoothRxPin, kSabertoothTxPin);
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -179,13 +174,8 @@ void setup()
         
         // We use the standard Servo library to generate the PWM
         // signal that go to the motor driver
-#ifdef USE_SERVO
-        leftMotor.attach(pinLeftMotor);
-        rightMotor.attach(pinRightMotor);
-#else
-        sabertooth.begin(9600);
-#endif
-        
+
+        driver.init();
         stop();
 
         leftPID.SetMode(AUTOMATIC);
@@ -221,97 +211,12 @@ void disable()
         state = STATE_DISABLED;
 }
 
-#define kLeftDriveForward 0
-#define kLeftDriveBackward 1
-#define kRightDriveForward 4
-#define kRightDriveBackward 5
-
-#ifdef USE_SERVO
-
-inline void sendCommand(unsigned char command, unsigned char data)
-{
-        if (command == kLeftDriveForward || command == kLeftDriveBackward)
-                leftMotor.write(data);
-        else
-                rightMotor.write(data);
-}
-
-inline unsigned char speedToData(float speed)
-{
-        return (unsigned char) (90.0f + maxSignal * speed); 
-}
-
-#else
-inline void sabertooth_putc(unsigned char c)
-{
-        sabertooth.write(c);
-}
-
-#define kControllerAddress 128
-
-inline void sendCommand(unsigned char command, unsigned char data)
-{
-        unsigned char checksum = (kControllerAddress + command + data) & 0b01111111;
-        sabertooth_putc(kControllerAddress);
-        sabertooth_putc(command);
-        sabertooth_putc(data);
-        sabertooth_putc(checksum);
-}
-
-inline unsigned char speedToData(float speed)
-{
-        if (speed >= 0.0)
-                return (unsigned char) (speed * 127.0);
-        else
-                return (unsigned char) (-speed * 127.0);
-}
-#endif
-
-
-inline void leftDriveForwardAt(float speed)
-{
-        sendCommand(kLeftDriveForward, speedToData(speed));
-}
-
-inline void leftDriveBackwardAt(float speed)
-{
-        sendCommand(kLeftDriveBackward, speedToData(speed));
-}
-
-inline void leftDriveAt(float speed)
-{
-        if (speed >= 0.0)
-                leftDriveForwardAt(speed);
-        else 
-                leftDriveBackwardAt(speed);
-}
-
-inline void rightDriveForwardAt(float speed)
-{
-        sendCommand(kRightDriveForward, speedToData(speed));
-}
-
-inline void rightDriveBackwardAt(float speed)
-{
-        sendCommand(kRightDriveBackward, speedToData(speed));
-}
-
-inline void rightDriveAt(float speed)
-{
-        if (speed >= 0.0)
-                rightDriveForwardAt(speed);
-        else 
-                rightDriveBackwardAt(speed);
-}
-
 inline void setOutputSignal(float l, float r)
 {
         // Memorize the last values
         leftSpeed = l;
         rightSpeed = r;
-        
-        leftDriveAt(leftSpeed);
-        rightDriveAt(rightSpeed);
+        driver.setOutputSignal(l, r);
 }
 
 inline void setTargetSpeed(float l, float r)
@@ -382,20 +287,20 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         char v[10];
 
         if (args[0] == 0) {
-                dtostrf(leftTarget, 3, 4, target);
-                dtostrf(leftInput, 3, 4, in);
-                dtostrf(leftOutput, 3, 4, out);
-                dtostrf(leftPID.Ep, 3, 4, ep);
-                dtostrf(leftPID.Ei, 3, 4, ei);
-                dtostrf(leftPID.Ed, 3, 4, ed);
-                dtostrf(pidLeftSpeed, 3, 4, v);
+                dtostrf(leftTarget, 3, 3, target);
+                dtostrf(leftInput, 3, 3, in);
+                dtostrf(leftOutput, 3, 3, out);
+                dtostrf(leftPID.Ep, 3, 3, ep);
+                dtostrf(leftPID.Ei, 3, 3, ei);
+                dtostrf(leftPID.Ed, 3, 3, ed);
+                dtostrf(pidLeftSpeed, 3, 3, v);
         } else {        
-                dtostrf(rightTarget, 3, 4, target);
-                dtostrf(rightInput, 3, 4, in);
-                dtostrf(rightOutput, 3, 4, out);
-                dtostrf(rightPID.Ep, 3, 4, ep);
-                dtostrf(rightPID.Ei, 3, 4, ei);
-                dtostrf(rightPID.Ed, 3, 4, ed);
+                dtostrf(rightTarget, 3, 3, target);
+                dtostrf(rightInput, 3, 3, in);
+                dtostrf(rightOutput, 3, 3, out);
+                dtostrf(rightPID.Ep, 3, 3, ep);
+                dtostrf(rightPID.Ei, 3, 3, ei);
+                dtostrf(rightPID.Ed, 3, 3, ed);
                 dtostrf(pidRightSpeed, 3, 3, v);
         }
         
@@ -472,12 +377,7 @@ void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_
         case STATE_UNINITIALIZED:
                 stepsPerRevolution = (float) args[0];
                 maxSpeed = (float) args[1] / 100.0f;
-#ifdef USE_SERVO
-                maxSignal = (float) args[2];
-                Serial.print("#!");
-                Serial.print(maxSignal);
-                Serial.print(":xxxx\r\n");
-#endif        
+                driver.setMaxSignal((float) args[2]);
                 int enablePID = args[3];
                 float kp = (float) args[4] / 1000.0f;
                 float ki = (float) args[5] / 1000.0f;
