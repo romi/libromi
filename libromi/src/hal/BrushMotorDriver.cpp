@@ -21,8 +21,11 @@
   <http://www.gnu.org/licenses/>.
 
 */
+#include <functional>
+#include <thread>
 #include <log.h>
 #include <util.h>
+#include <ClockAccessor.h>
 #include "hal/BrushMotorDriver.h"
 
 namespace romi {
@@ -31,7 +34,9 @@ namespace romi {
                                            JsonCpp &config,
                                            int encoder_steps,
                                            double max_revolutions_per_sec)
-                : serial_(), settings_()
+                : serial_(),
+                  settings_(),
+                  recording_pid_(false)
         {
                 //_serial.set_debug(true);
                 serial_ = std::move(serial);
@@ -41,6 +46,8 @@ namespace romi {
                         throw std::runtime_error("BrushMotorDriver: "
                                                  "Initialization failed");
                 }
+
+                record_pid();
         }
                 
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
@@ -171,5 +178,63 @@ namespace romi {
                         controller_input = response.num(7);
                 }
                 return success;
+        }
+
+        void BrushMotorDriver::record_pid()
+        {
+                recording_pid_ = true;
+                std::thread t([this]() { record_pid_main(); });
+                t.detach();
+        }
+
+        void BrushMotorDriver::record_pid_main()
+        {
+                double start_time = rpp::ClockAccessor::GetInstance()->time();
+                std::vector<PidStatus> recording;
+                
+                while (recording_pid_) {
+                        double now;
+                        double target;
+                        double measured_speed;
+                        double output;
+                        double error_p;
+                        double error_i;
+                        double error_d;
+                        double controller_input;
+
+                        now = rpp::ClockAccessor::GetInstance()->time();
+                        bool success = get_pid_values(kLeftWheel, target,
+                                                      measured_speed, output, error_p,
+                                                      error_i, error_d, controller_input);
+
+                        if (success) {
+                                recording.emplace_back(now - start_time, target,
+                                                       measured_speed, output, error_p,
+                                                       error_i, error_d, controller_input);
+                                if (recording.size() >= 100) {
+                                        store_pid_recordings(recording);
+                                }
+                        }
+                }
+        }
+
+        void BrushMotorDriver::store_pid_recordings(std::vector<PidStatus>& recording)
+        {
+                FILE* fp = fopen("/tmp/nav.csv", "a");
+                if (fp) {
+                        for (size_t i = 0; i < recording.size(); i++)
+                                fprintf(fp,
+                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
+                                        recording[i].time_,
+                                        recording[i].target_,
+                                        recording[i].measured_speed_,
+                                        recording[i].output_,
+                                        recording[i].error_p_,
+                                        recording[i].error_i_,
+                                        recording[i].error_d_,
+                                        recording[i].controller_input_);
+                        fclose(fp);
+                }
+                
         }
 }

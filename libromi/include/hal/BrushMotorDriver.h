@@ -26,6 +26,7 @@
 
 #include <stdexcept>
 #include <memory>
+#include <atomic>
 #include "api/IMotorDriver.h"
 #include "RomiSerialClient.h"
 
@@ -49,6 +50,31 @@ namespace romi {
                         dir_right = (int) params.get("encoder_directions").num("right");
                 }
         };
+
+        struct PidStatus
+        {
+                double time_;
+                double target_;
+                double measured_speed_;
+                double output_;
+                double error_p_;
+                double error_i_;
+                double error_d_;
+                double controller_input_;
+                
+                PidStatus(double t, double target, double measured_speed,
+                          double output, double error_p, double error_i,
+                          double error_d, double controller_input)
+                        : time_(t),
+                          target_(target),
+                          measured_speed_(measured_speed),
+                          output_(output),
+                          error_p_(error_p),
+                          error_i_(error_i),
+                          error_d_(error_d),
+                          controller_input_(controller_input) {
+                };
+        };
         
         class BrushMotorDriver : public IMotorDriver
         {
@@ -64,6 +90,12 @@ namespace romi {
                 bool check_response(const char *command,
                                     JsonCpp& response);
 
+                // Debugging
+                std::atomic<bool> recording_pid_;
+                void record_pid();
+                void record_pid_main();
+                void store_pid_recordings(std::vector<PidStatus>& recording);
+
         public:
 
                 BrushMotorDriver(std::unique_ptr<romiserial::IRomiSerialClient>& serial,
@@ -71,7 +103,9 @@ namespace romi {
                                  int encoder_steps,
                                  double max_revolutions_per_sec);
                 
-                ~BrushMotorDriver() override = default;
+                ~BrushMotorDriver() override {
+                        recording_pid_ = false;
+                }
 
                 bool stop() override;
                 bool moveat(double left, double right) override;
