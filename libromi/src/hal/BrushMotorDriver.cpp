@@ -53,6 +53,9 @@ namespace romi {
         BrushMotorDriver::~BrushMotorDriver()
         {
                 recording_pid_ = false;
+                if (pid_thread_) {
+                        pid_thread_->join();
+                }
         }
                 
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
@@ -193,7 +196,8 @@ namespace romi {
 
         void BrushMotorDriver::record_pid_main()
         {
-                double start_time = rpp::ClockAccessor::GetInstance()->time();
+                auto clock = rpp::ClockAccessor::GetInstance();
+                double start_time = clock->time();
                 std::vector<PidStatus> recording;
                 
                 while (recording_pid_) {
@@ -206,7 +210,7 @@ namespace romi {
                         double error_d;
                         double controller_input;
 
-                        now = rpp::ClockAccessor::GetInstance()->time();
+                        now = clock->time();
                         bool success = get_pid_values(kLeftWheel, target,
                                                       measured_speed, output, error_p,
                                                       error_i, error_d, controller_input);
@@ -219,6 +223,8 @@ namespace romi {
                                         store_pid_recordings(recording);
                                 }
                         }
+                        
+                        clock->sleep(0.050);
                 }
         }
 
