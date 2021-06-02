@@ -22,7 +22,6 @@
 
 */
 #include <functional>
-#include <thread>
 #include <log.h>
 #include <util.h>
 #include <ClockAccessor.h>
@@ -36,7 +35,8 @@ namespace romi {
                                            double max_revolutions_per_sec)
                 : serial_(),
                   settings_(),
-                  recording_pid_(false)
+                  recording_pid_(false),
+                  pid_thread_()
         {
                 //_serial.set_debug(true);
                 serial_ = std::move(serial);
@@ -47,7 +47,12 @@ namespace romi {
                                                  "Initialization failed");
                 }
 
-                record_pid();
+                //record_pid();
+        }
+        
+        BrushMotorDriver::~BrushMotorDriver()
+        {
+                recording_pid_ = false;
         }
                 
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
@@ -183,8 +188,7 @@ namespace romi {
         void BrushMotorDriver::record_pid()
         {
                 recording_pid_ = true;
-                std::thread t([this]() { record_pid_main(); });
-                t.detach();
+                pid_thread_ = std::make_unique<std::thread>([this]() { record_pid_main(); });
         }
 
         void BrushMotorDriver::record_pid_main()

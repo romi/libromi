@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <memory>
 #include <atomic>
+#include <thread>
 #include "api/IMotorDriver.h"
 #include "RomiSerialClient.h"
 
@@ -92,6 +93,7 @@ namespace romi {
 
                 // Debugging
                 std::atomic<bool> recording_pid_;
+                std::unique_ptr<std::thread> pid_thread_;
                 void record_pid();
                 void record_pid_main();
                 void store_pid_recordings(std::vector<PidStatus>& recording);
@@ -103,9 +105,7 @@ namespace romi {
                                  int encoder_steps,
                                  double max_revolutions_per_sec);
                 
-                ~BrushMotorDriver() override {
-                        recording_pid_ = false;
-                }
+                ~BrushMotorDriver() override;
 
                 bool stop() override;
                 bool moveat(double left, double right) override;
