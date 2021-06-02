@@ -51,6 +51,7 @@ namespace romi {
                               const double *scale_meters_to_steps, 
                               double path_max_deviation,
                               double path_slice_duration,
+                              double path_max_slice_duration,
                               const AxisIndex *homing);
         };
 }
