@@ -54,7 +54,7 @@ namespace romi {
                                          double max_duration);
                 void assert_not_recording();
                 void grab_loop();
-                bool grab();
+                virtual bool grab();
                 std::string make_image_name();
 
         public:

@@ -38,15 +38,21 @@ namespace romi {
                 double position_y_;
                 double left_target_speed_;
                 double right_target_speed_;
-                double left_encoder_speed_;
-                double right_encoder_speed_;
+                double pid_target_;
+                double measured_speed_;
+                double pid_output_;
+                double pid_error_p_;
+                double pid_error_i_;
+                double pid_error_d_;
+                double controller_input_;
                 double distance_;
 
                 NavRecording(double t, double left, double right,
                              double x, double y,
                              double v_target_left, double v_target_right,
-                             double v_encoder_left, double v_encoder_right,
-                             double d)
+                             double pid_target, double measured_speed, double pid_output,
+                             double pid_error_p, double pid_error_i, double pid_error_d,
+                             double controller_input, double d)
                         : time_(t),
                           left_encoder_(left),
                           right_encoder_(right),
@@ -54,8 +60,13 @@ namespace romi {
                           position_y_(y),
                           left_target_speed_(v_target_left),
                           right_target_speed_(v_target_right),
-                          left_encoder_speed_(v_encoder_left),
-                          right_encoder_speed_(v_encoder_right),
+                          pid_target_(pid_target),
+                          measured_speed_(measured_speed),
+                          pid_output_(pid_output),
+                          pid_error_p_(pid_error_p),
+                          pid_error_i_(pid_error_i),
+                          pid_error_d_(pid_error_d),
+                          controller_input_(controller_input),
                           distance_(d) {
                 };
         };
@@ -82,8 +93,10 @@ namespace romi {
                            && distance >= -50.0 // 50 meters max!
                            && distance <= 50.0) {
 
-                        if (distance > 0.0 && speed > 0.0) {
+                        if (distance * speed >= 0.0) {
                                 // All is well, moving forward
+                                distance = fabs(distance);
+                                speed = fabs(speed);
                         } else {
                                 // Moving backwards. Make sur the
                                 // distance is positive and the speed
@@ -118,9 +131,8 @@ namespace romi {
 
                 try {
                         WheelOdometry odometry(settings_, driver_);
-                        try_travel(odometry, speed, distance,
-                                   compute_timeout(distance, speed));
-                        success = true;
+                        success = try_travel(odometry, speed, distance,
+                                             compute_timeout(distance, speed));
                         
                 } catch (const std::runtime_error& re) {
                         r_err("Navigation::travel: %s", re.what());
@@ -131,19 +143,23 @@ namespace romi {
                 return success;
         }
 
-        double Navigation::compute_timeout(double distance, double speed)
+        double Navigation::compute_timeout(double distance, double relative_speed)
         {
                 double timeout = 0.0;
-                if (speed != 0.0) {
-                        double relative_speed = settings_.maximum_speed * speed;
-                        double time = distance / fabs(relative_speed);
-                        timeout = 1.5 * time;
+                if (relative_speed != 0.0) {
+                        double speed = settings_.maximum_speed * relative_speed;
+                        double time = distance / fabs(speed);
+                        timeout = 5.0 + 1.5 * time;
+
+                        r_debug("Navigation::compute_timeout: v_rel=%f, v_max=%f, "
+                                "v=%f, dist=%f, dt=%f, timeout=%f", relative_speed,
+                                settings_.maximum_speed, speed, distance, time, timeout);
                 }
                 return timeout;
         }
 
         // TODO: Spin off a seperate thread so the main event loop can continue?
-        void Navigation::try_travel(WheelOdometry& pose, double speed,
+        bool Navigation::try_travel(WheelOdometry& pose, double speed,
                                     double distance, double timeout)
         {
                 auto clock = rpp::ClockAccessor::GetInstance();
@@ -151,6 +167,9 @@ namespace romi {
                 std::vector<NavRecording> recording;
                 double left_speed = speed;
                 double right_speed = speed;
+                double distance_travelled;
+                v3 location;
+                bool success = false;
                 
                 stop_ = false;
                 
@@ -158,7 +177,7 @@ namespace romi {
                         
                         if (!driver_.moveat(left_speed, right_speed)) {
                                 r_err("Navigation::travel: moveat failed");
-                                throw std::runtime_error("Moveat failed");
+                                break;
                         }
 
                         // TODO: HANDLE USER INPUT AND HANDLE STOP
@@ -166,40 +185,104 @@ namespace romi {
 
                         if (!pose.update_estimation()) {
                                 r_err("Navigation::travel: pose estimation failed");
-                                throw std::runtime_error("Pose estimation failed");
+                                break;
                         }
                         
-                        v3 location = pose.get_location();
-                        double distance_travelled = location.norm(); // FIXME!!!
-                        
+                        location = pose.get_location();
+                        distance_travelled = location.norm(); // FIXME!!!
+                                
+                        if (distance_travelled >= distance - 0.1) {
+                                if (speed > 0.0) {
+                                        left_speed = 0.1;
+                                        right_speed = 0.1;
+                                } else {
+                                        left_speed = -0.1;
+                                        right_speed = -0.1;
+                                }
+                        }
+                                
                         if (distance_travelled >= distance) {
+                                success = true;
                                 break;
                         }
 
                         double now = clock->time();
                         if (now - start_time >= timeout) {
                                 r_err("Navigation::travel: time out (%f s)", timeout);
-                                throw std::runtime_error("Timeout");
+                                break;
                         }
 
+                        r_debug("distance travelled %f", distance_travelled);
+
+                        double pid_target;
+                        double measured_speed;
+                        double pid_output;
+                        double pid_error_p;
+                        double pid_error_i;
+                        double pid_error_d;
+                        double controller_input;
                         v3 encoders = pose.get_encoders();
-                        v3 speed_encoders = pose.get_speed();
+                        driver_.get_pid_values(IMotorDriver::kLeftWheel,
+                                               pid_target, measured_speed, pid_output,
+                                               pid_error_p, pid_error_i, pid_error_d, controller_input);
+
                         recording.emplace_back(now - start_time,
                                                encoders.x(), encoders.y(),
                                                location.x(), location.y(),
                                                left_speed, right_speed,
-                                               speed_encoders.x(),
-                                               speed_encoders.y(),
-                                               distance_travelled);
-                        //clock->sleep(0.001);
+                                               pid_target, measured_speed, pid_output,
+                                               pid_error_p, pid_error_i, pid_error_d,
+                                               controller_input, distance_travelled);
+                        
+                        //clock->sleep(0.100);
                 }
 
+                driver_.moveat(0.0, 0.0);
+                left_speed = 0.0;
+                right_speed = 0.0;
+                
+                if (true) {
+                        double end_time = clock->time() + 5.0;
+                        while (true) {
+
+                                double pid_target;
+                                double measured_speed;
+                                double pid_output;
+                                double pid_error_p;
+                                double pid_error_i;
+                                double pid_error_d;
+                                double controller_input;
+                                v3 encoders = pose.get_encoders();
+                                driver_.get_pid_values(IMotorDriver::kLeftWheel,
+                                                       pid_target, measured_speed, pid_output,
+                                                       pid_error_p, pid_error_i, pid_error_d, controller_input);
+                                
+                                double now = clock->time();
+
+                                recording.emplace_back(now - start_time,
+                                                       encoders.x(), encoders.y(),
+                                                       location.x(), location.y(),
+                                                       left_speed, right_speed,
+                                                       pid_target, measured_speed, pid_output,
+                                                       pid_error_p, pid_error_i, pid_error_d,
+                                                       controller_input, distance_travelled);
+                                if (now >= end_time) {
+                                        break;
+                                }
+                                
+                                //clock->sleep(0.100);
+                        }
+                }
+                
                 FILE* fp = fopen("/tmp/nav.csv", "w");
                 if (fp) {
+                        fprintf(fp,
+                                "# time\tleft-enc\tright-enc\tpos-x\tpos-y\ttarget-l\ttarget-r\t"
+                                "pid-target\tmeasured-speed\tpid-out\tpid-ep\tpid-ei\tpid-ed\tcontrol-in\tdist\n");
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,
-                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f"
-                                        "\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
+                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t"
+                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
                                         recording[i].time_,
                                         recording[i].left_encoder_,
                                         recording[i].right_encoder_,
@@ -207,11 +290,18 @@ namespace romi {
                                         recording[i].position_y_,
                                         recording[i].left_target_speed_,
                                         recording[i].right_target_speed_,
-                                        recording[i].left_encoder_speed_,
-                                        recording[i].right_encoder_speed_,
+                                        recording[i].pid_target_,
+                                        recording[i].measured_speed_,
+                                        recording[i].pid_output_,
+                                        recording[i].pid_error_p_,
+                                        recording[i].pid_error_i_,
+                                        recording[i].pid_error_d_,
+                                        recording[i].controller_input_,
                                         recording[i].distance_);
                         fclose(fp);
                 }
+
+                return success;
         }
 
         bool Navigation::moveat(double left, double right)

@@ -20,10 +20,12 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#include <PID_v1.h>
 #include <RomiSerial.h>
 #include <ArduinoSerial.h>
 #include <SoftwareSerial.h>
+#include "ServoConnection.h"
+#include "SabertoothSerialConnection.h"
+#include "PID_v1_romi.h"
 
 using namespace romiserial;
 
@@ -31,6 +33,7 @@ void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
@@ -39,6 +42,7 @@ void handle_stop(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 const static MessageHandler handlers[] = {
         { '?', 0, false, send_info },
         { 'e', 0, false, send_encoders },
+        { 'p', 1, false, send_pid },
         { 'V', 2, false, handle_moveat },
         { 'C', 9, false, handle_configure },
         { 'E', 1, false, handle_enable },
@@ -62,6 +66,7 @@ const char *errValue01 = "ERR expected 0|1";
 const char *errMissingValues = "ERR missing values";
 const char *errNotAnOption = "ERR not an option";
 
+
 unsigned char state = STATE_UNINITIALIZED;
 unsigned char controlMode = CONTROL_DIRECT;
 
@@ -75,10 +80,15 @@ unsigned char controlMode = CONTROL_DIRECT;
 
 /////////////////////////////////////////////////////////////////////////
 
-#define sabertoothTxPin 9
-#define sabertoothRxPin 13
+#define pinLeftMotor 9
+#define pinRightMotor 10
+float kMaxSignal = 20.0f;
+ServoConnection driver(pinLeftMotor, pinRightMotor, kMaxSignal);
 
-SoftwareSerial sabertooth(sabertoothRxPin, sabertoothTxPin); // RX, TX
+// #define kSabertoothTxPin 9
+// #define kSabertoothRxPin 13
+// SabertoothSerialConnection driver(kSabertoothRxPin, kSabertoothTxPin);
+
 
 /////////////////////////////////////////////////////////////////////////
 double lastLeftInput = 0;
@@ -108,10 +118,10 @@ float rightAbsoluteSpeed = 0;
 // The speed values that were last sent to setOutputSignal() [-1,1].
 float leftSpeed = 0;
 float rightSpeed = 0; 
-
-// The values send to the Servo controllers [0,180]
-unsigned char leftSignal = 0;
-unsigned char rightSignal = 0; 
+float pidLeftSpeed = 0;
+float pidRightSpeed = 0; 
+unsigned long updateTimeLeft = 0;
+unsigned long updateTimeRight = 0;
 
 // The PID controllers. The Kp, Ki, and Kd values must be set with
 // using the 'K' command.
@@ -133,6 +143,10 @@ long rightEncoderDirection = 1;
 
 #define readLeftEncoderPinB() digitalRead(leftEncoderPinB)
 #define readRightEncoderPinB() digitalRead(rightEncoderPinB)
+
+/////////////////////////////////////////////////////////////////////////
+
+static char reply_buffer[100];
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -160,19 +174,18 @@ void setup()
         
         // We use the standard Servo library to generate the PWM
         // signal that go to the motor driver
-        //leftMotor.attach(pinLeftMotor);
-        //rightMotor.attach(pinRightMotor);
-        sabertooth.begin(9600);
-  
+
+        driver.init();
         stop();
 
         leftPID.SetMode(AUTOMATIC);
         rightPID.SetMode(AUTOMATIC);
-        leftPID.SetSampleTime(200);
-        rightPID.SetSampleTime(200);
+        leftPID.SetSampleTime(20);
+        rightPID.SetSampleTime(20);
         leftPID.SetOutputLimits(-1.0, 1.0);
         rightPID.SetOutputLimits(-1.0, 1.0);
-	//rightPID.SetDebug(true);
+	updateTimeLeft = millis();
+	updateTimeRight = updateTimeLeft;
 }
 
 void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
@@ -198,77 +211,12 @@ void disable()
         state = STATE_DISABLED;
 }
 
-inline void sabertooth_putc(unsigned char c)
-{
-        sabertooth.write(c);
-}
-
-#define ADDRESS 128
-#define kLeftDriveForward 0
-#define kLeftDriveBackward 1
-#define kRightDriveForward 4
-#define kRightDriveBackward 5
-
-inline void sendCommand(unsigned char command, unsigned char data)
-{
-        unsigned char checksum = (ADDRESS + command + data) & 0b01111111;
-        sabertooth_putc(ADDRESS);
-        sabertooth_putc(command);
-        sabertooth_putc(data);
-        sabertooth_putc(checksum);
-}
-
-inline unsigned char speedToData(float speed)
-{
-        if (speed < 0.0)
-                return speedToData(-speed);
-        return (unsigned char) (speed * 127.0);
-}
-
-inline void leftDriveForwardAt(float speed)
-{
-        sendCommand(kLeftDriveForward, speedToData(speed));
-}
-
-inline void leftDriveBackwardAt(float speed)
-{
-        sendCommand(kLeftDriveBackward, speedToData(speed));
-}
-
-inline void leftDriveAt(float speed)
-{
-        if (speed >= 0.0)
-                leftDriveForwardAt(speed);
-        else 
-                leftDriveBackwardAt(speed);
-}
-
-inline void rightDriveForwardAt(float speed)
-{
-        sendCommand(kRightDriveForward, speedToData(speed));
-}
-
-inline void rightDriveBackwardAt(float speed)
-{
-        sendCommand(kRightDriveBackward, speedToData(speed));
-}
-
-inline void rightDriveAt(float speed)
-{
-        if (speed >= 0.0)
-                rightDriveForwardAt(speed);
-        else 
-                rightDriveBackwardAt(speed);
-}
-
 inline void setOutputSignal(float l, float r)
 {
         // Memorize the last values
         leftSpeed = l;
         rightSpeed = r;
-        
-        leftDriveAt(leftSpeed);
-        rightDriveAt(rightSpeed);
+        driver.setOutputSignal(l, r);
 }
 
 inline void setTargetSpeed(float l, float r)
@@ -282,7 +230,7 @@ inline void measureCurrentSpeed()
         static unsigned long lastTime = 0;
         unsigned long t = millis();
         
-        if (t > lastTime + 50) {
+        if (t > lastTime + 20) {
                 float dt = (t - lastTime) / 1000.0;
 
                 leftAbsoluteSpeed = (leftEncoderTicks - leftPrevEncoderTicks) / dt / stepsPerRevolution;
@@ -322,15 +270,48 @@ void moveat(int left, int right)
 
 void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
-        static char buffer[100];
-        snprintf(buffer, sizeof(buffer), "[0,%ld,%ld,%lu]",
+        snprintf(reply_buffer, sizeof(reply_buffer),
+                 "[0,%ld,%ld,%lu]",
                  leftEncoderTicks, rightEncoderTicks, millis());
-        romiSerial->send(buffer);                
+        romiSerial->send(reply_buffer);                
+}
+
+void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+        char target[10];
+        char in[10];
+        char out[10];
+        char ep[10];
+        char ei[10];
+        char ed[10];
+        char v[10];
+
+        if (args[0] == 0) {
+                dtostrf(leftTarget, 3, 3, target);
+                dtostrf(leftInput, 3, 3, in);
+                dtostrf(leftOutput, 3, 3, out);
+                dtostrf(leftPID.Ep, 3, 3, ep);
+                dtostrf(leftPID.Ei, 3, 3, ei);
+                dtostrf(leftPID.Ed, 3, 3, ed);
+                dtostrf(pidLeftSpeed, 3, 3, v);
+        } else {        
+                dtostrf(rightTarget, 3, 3, target);
+                dtostrf(rightInput, 3, 3, in);
+                dtostrf(rightOutput, 3, 3, out);
+                dtostrf(rightPID.Ep, 3, 3, ep);
+                dtostrf(rightPID.Ei, 3, 3, ei);
+                dtostrf(rightPID.Ed, 3, 3, ed);
+                dtostrf(pidRightSpeed, 3, 3, v);
+        }
+        
+        snprintf(reply_buffer, sizeof(reply_buffer),
+                 "[0,%s,%s,%s,%s,%s,%s,%s]",
+                 target, in, out, ep, ei, ed, v);
+        romiSerial->send(reply_buffer);                
 }
 
 void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
-        static char buffer[64];
         const char *state_str;
         const char *control_str;
         
@@ -349,19 +330,18 @@ void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         char g[8]; dtostrf(leftOutput, 5, 3, g);
         char h[8]; dtostrf(rightOutput, 5, 3, h);
         
-        snprintf(buffer, sizeof(buffer),
-                 "[0,\"%s\",%d,%d,%s,%s,%s,%s,%s,%s,%d,%d]",
+        snprintf(reply_buffer, sizeof(reply_buffer),
+                 "[0,\"%s\",%d,%d,%s,%s,%s,%s,%s,%s]",
                  state_str, 
                  (int) (1000.0 * leftTarget),
                  (int) (1000.0 * rightTarget),
-                 c, d, e, f, g, h, leftSignal, rightSignal);
+                 c, d, e, f, g, h);
         
-        romiSerial->send(buffer);                
+        romiSerial->send(reply_buffer);                
 }
 
 void send_configuration(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
-        static char buffer[64];
         const char *control_str;
         
         switch (controlMode) {
@@ -374,9 +354,11 @@ void send_configuration(RomiSerial *romiSerial, int16_t *args, const char *strin
         char ki[8]; dtostrf(leftPID.GetKi(), 5, 3, ki);
         char kd[8]; dtostrf(leftPID.GetKd(), 5, 3, kd);
         
-        snprintf(buffer, sizeof(buffer), "[0,\"%s\",%s,%s,%s]", control_str, kp, ki, kd);
+        snprintf(reply_buffer, sizeof(reply_buffer),
+                 "[0,\"%s\",%s,%s,%s]",
+                 control_str, kp, ki, kd);
         
-        romiSerial->send(buffer);                
+        romiSerial->send(reply_buffer);                
 }
 
 void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
@@ -395,16 +377,17 @@ void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_
         case STATE_UNINITIALIZED:
                 stepsPerRevolution = (float) args[0];
                 maxSpeed = (float) args[1] / 100.0f;
-        
+                driver.setMaxSignal((float) args[2]);
                 int enablePID = args[3];
+                float kp = (float) args[4] / 1000.0f;
+                float ki = (float) args[5] / 1000.0f;
+                float kd = (float) args[6] / 1000.0f;
+                leftPID.SetTunings(kp, ki, kd);
+                rightPID.SetTunings(kp, ki, kd);
+                lastLeftInput = 0;
+                lastRightInput = 0;
+                
                 if (enablePID) {
-                        float kp = (float) args[4] / 1000.0f;
-                        float ki = (float) args[5] / 1000.0f;
-                        float kd = (float) args[6] / 1000.0f;
-                        leftPID.SetTunings(kp, ki, kd);
-                        rightPID.SetTunings(kp, ki, kd);
-                        lastLeftInput = 0;
-                        lastRightInput = 0;
                         controlMode = CONTROL_PID;
                 } else {
                         controlMode = CONTROL_DIRECT;
@@ -463,20 +446,44 @@ void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
+bool updatePidSpeed()
+{
+        bool update = false;
+        unsigned long now = millis();
+        float left = pidLeftSpeed;
+        float right = pidRightSpeed;
+                
+        // Check for updates from the PID
+        if (leftPID.Compute()) {
+                float dt = (float) (now - updateTimeLeft) / 1000.0f;
+                left = pidLeftSpeed + leftOutput * dt;
+                left = constrain(left, -1.0f, 1.0f);
+                updateTimeLeft = now;
+        }
+                
+        if (rightPID.Compute()) {
+                float dt = (float) (now - updateTimeRight) / 1000.0f;
+                right = pidLeftSpeed + rightOutput * dt;
+                right = constrain(right, -1.0f, 1.0f);
+                updateTimeRight = now;
+        }
+
+        if (left != pidLeftSpeed || right != pidLeftSpeed) {
+                pidLeftSpeed = left;
+                pidRightSpeed = right;
+                update = true;
+        }
+        return update;
+}
+
 void updateOutputSignal()
 {
-        measureCurrentSpeed();
+        bool update_pid = updatePidSpeed();
+        
         if (controlMode == CONTROL_PID) {
-                // Check for updates from the PID
-                if (leftPID.Compute() || rightPID.Compute()) {
-                        // Force small outputs to zero when the target is zero 
-                        if (leftTarget == 0 && leftOutput > -0.1 && leftOutput < 0.1)
-                                leftOutput = 0.0;
-                        if (rightTarget == 0 && rightOutput > -0.1 && rightOutput < 0.1)
-                                rightOutput = 0.0;
-
-                        setOutputSignal(leftOutput, rightOutput);
-                }
+                if (update_pid)
+                        setOutputSignal(pidLeftSpeed, pidRightSpeed);
+                
         } else if (controlMode == CONTROL_DIRECT) {
                 // Nothing to do
         }
@@ -484,10 +491,9 @@ void updateOutputSignal()
 
 void loop()
 {
+        measureCurrentSpeed();
         updateOutputSignal();
         romiSerial.handle_input();
-        
-        delay(1);
 }
  
 // Interrupt service routines for the left motor's quadrature encoder

@@ -41,6 +41,9 @@ namespace romi {
                 { RoverOptions::script, true, nullptr,
                   "The path of the file containing the scripts and menus" },
                 
+                { RoverOptions::registry, true, nullptr,
+                  "The IP address of the registry"},
+                
                 { RoverOptions::session_directory, true, ".",
                   "The session directory where the output "
                   "files are stored (logs, images...)"},
@@ -83,14 +86,14 @@ namespace romi {
                 }
         }
 
-    std::string RoverOptions::get_config_file()
-    {
-            std::string file = get_value(romi::RoverOptions::config);
-            if (file.empty()) {
-                    throw std::runtime_error("No configuration file was given (can't run without one...).");
-            }
-            return file;
-    }
+        std::string RoverOptions::get_config_file()
+        {
+                std::string file = get_value(romi::RoverOptions::config);
+                if (file.empty()) {
+                        throw std::runtime_error("No configuration file was given (can't run without one...).");
+                }
+                return file;
+        }
 
 }
 

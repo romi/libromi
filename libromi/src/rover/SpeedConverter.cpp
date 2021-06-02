@@ -42,9 +42,9 @@ namespace romi {
                         && speed_curve_exponent <= 10.0
                         && direction_curve_exponent > 0.0
                         && direction_curve_exponent <= 10.0
-                        && speed_multiplier >= 0.1
+                        && speed_multiplier > 0.0
                         && speed_multiplier <= 1.0
-                        && direction_multiplier >= 0.1
+                        && direction_multiplier > 0.0
                         && direction_multiplier <= 1.0);
         }
 
