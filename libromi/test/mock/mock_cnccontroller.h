@@ -8,6 +8,7 @@ class MockCNCController : public romi::ICNCController
 public:
         MOCK_METHOD(bool, get_position, (int32_t *pos), (override));
         MOCK_METHOD(bool, homing, (), (override));
+        MOCK_METHOD(bool, spindle, (double speed), (override));
         MOCK_METHOD(bool, synchronize, (double timeout), (override));
         MOCK_METHOD(bool, move, (int16_t millis, int16_t steps_x, int16_t steps_y, int16_t steps_z), (override));
         MOCK_METHOD(bool, pause_activity, (), (override));

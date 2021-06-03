@@ -94,6 +94,12 @@ namespace romi {
                 return (send_command("H") == 0 && synchronize(60.0));
         }
 
+        bool StepperController::spindle(double speed)
+        {
+                const char* command = (speed == 0.0)? "S[0]" : "S[1]";
+                return (send_command(command) == 0);
+        }
+        
         bool StepperController::move(int16_t dt, int16_t dx, int16_t dy, int16_t dz)
         {
                 char buffer[64];
