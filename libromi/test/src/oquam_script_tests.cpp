@@ -55,7 +55,7 @@ TEST_F(oquam_script_tests, test_moveto)
         script.moveto(1.0, 0.0, 0.0, 1.0);
         script.convert(vmax, amax, deviation, period, maxlen);
 
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 
         //Assert
         ASSERT_EQ(script.count_moves(), 1);
@@ -125,7 +125,7 @@ TEST_F(oquam_script_tests, test_move_and_back)
         //Assert
         ASSERT_EQ(script.count_moves(), 2);
         ASSERT_EQ(script.count_atdc(), 2);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
         
         ATDC& first = script.get_atdc(0);
         ASSERT_GT(first.accelerate.duration, 0.0);
@@ -232,7 +232,7 @@ TEST_F(oquam_script_tests, test_move_forward_twice)
         
         ASSERT_EQ(script.count_moves(), 2);
         ASSERT_EQ(script.count_atdc(), 2);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 }
 
 TEST_F(oquam_script_tests, test_moves_at_90degrees)
@@ -247,7 +247,7 @@ TEST_F(oquam_script_tests, test_moves_at_90degrees)
         
         ASSERT_EQ(script.count_moves(), 2);
         ASSERT_EQ(script.count_atdc(), 2);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 }
 
 TEST_F(oquam_script_tests, test_three_small_moves_in_u)
@@ -268,7 +268,7 @@ TEST_F(oquam_script_tests, test_three_small_moves_in_u)
         
         ASSERT_EQ(script.count_moves(), 3);
         ASSERT_EQ(script.count_atdc(), 3);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 }
 
 TEST_F(oquam_script_tests, test_reduce_exit_speed)
@@ -287,7 +287,7 @@ TEST_F(oquam_script_tests, test_reduce_exit_speed)
 
         ASSERT_EQ(script.count_moves(), 2);
         ASSERT_EQ(script.count_atdc(), 2);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, test_amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, test_amax));
 }
 
 TEST_F(oquam_script_tests, test_reduce_entry_speed)
@@ -306,7 +306,7 @@ TEST_F(oquam_script_tests, test_reduce_entry_speed)
 
         ASSERT_EQ(script.count_moves(), 2);
         ASSERT_EQ(script.count_atdc(), 2);
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, test_amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, test_amax));
 }
 
 TEST_F(oquam_script_tests, moveto_throws_exception_if_negative_speed_1)
@@ -360,7 +360,7 @@ TEST_F(oquam_script_tests, test_zero_acceleration)
         } catch (std::runtime_error& e) {
         }
         
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax_));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax_));
 }
 
 TEST_F(oquam_script_tests, test_zero_max_speed)
@@ -379,7 +379,7 @@ TEST_F(oquam_script_tests, test_zero_max_speed)
         } catch (std::runtime_error& e) {
         }
         
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax_, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax_, amax));
 }
 
 TEST_F(oquam_script_tests, test_negative_deviation)
@@ -396,7 +396,7 @@ TEST_F(oquam_script_tests, test_negative_deviation)
         } catch (std::runtime_error& e) {
         }
         
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 }
 
 TEST_F(oquam_script_tests, test_zero_deviation)
@@ -414,6 +414,6 @@ TEST_F(oquam_script_tests, test_zero_deviation)
                 FAIL() << "Expected successful conversion";
         }
         
-        ASSERT_EQ(true, is_valid(script, 120.0, range, vmax, amax));
+        ASSERT_EQ(true, is_valid(script, range, vmax, amax));
 }
 

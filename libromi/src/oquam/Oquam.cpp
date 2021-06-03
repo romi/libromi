@@ -250,7 +250,7 @@ namespace romi {
 
         void Oquam::check_script(SmoothPath& script, v3& vmax) 
         {
-                if (!is_valid(script, settings_.path_max_slice_duration_,
+                if (!is_valid(script, 
                               settings_.range_, vmax.values(),
                               settings_.amax_.values())) {
                         r_err("Oquam::convert_script: generated script is invalid");

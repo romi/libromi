@@ -91,7 +91,7 @@ namespace romi {
         bool StepperController::homing()
         {
                 r_info("StepperController: homing");
-                return (send_command("H") == 0 && synchronize(60.0));
+                return (send_command("H") == 0 && synchronize(120.0));
         }
 
         bool StepperController::move(int16_t dt, int16_t dx, int16_t dy, int16_t dz)

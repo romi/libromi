@@ -30,15 +30,15 @@
 
 namespace romi {
         
-        bool is_valid(Section& section, const char *name, double tmax,
+        bool is_valid(Section& section, const char *name, 
                       const double *xmin, const double *xmax, 
                       const double *vmax, const double *amax);
 
-        bool is_valid(ATDC& atdc, double tmax,
+        bool is_valid(ATDC& atdc, 
                       double *xmin, double *xmax, 
                       double *vmax, double *amax);
 
-        bool is_valid(SmoothPath& script, double tmax, CNCRange& range, 
+        bool is_valid(SmoothPath& script, CNCRange& range, 
                       double *vmax, double *amax);
        
 }

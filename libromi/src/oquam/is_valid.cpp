@@ -167,24 +167,12 @@ namespace romi {
                 }
                 return valid;
         }
-
-        static bool has_valid_duration(Section& section, const char *name, double tmax)
-        {
-                bool valid = true;
-                if (is_out_of_range(name, "duration", section.duration, 0.0, tmax, 0.0)) {
-                        r_warn("is_valid: section (%s): duration=%f > max=%f",
-                               name, section.duration, tmax);
-                        valid = false;
-                }
-                return valid;
-        }
         
-        bool is_valid(Section& section, const char *name, double tmax,
+        bool is_valid(Section& section, const char *name, 
                       const double *xmin, const double *xmax, 
                       const double *vmax, const double *amax)
         {
                 return (has_valid_start_time(section, name)
-                        && has_valid_duration(section, name, tmax)
                         && has_valid_positions(section, name, xmin, xmax)
                         && has_valid_speeds(section, name, vmax)
                         && has_valid_acceleration(section, name, amax)
@@ -222,14 +210,14 @@ namespace romi {
                 return match;
         }
         
-        bool is_valid(ATDC& atdc, double tmax,
+        bool is_valid(ATDC& atdc, 
                       double *xmin, double *xmax, 
                       double *vmax, double *amax)
         {
-                return (is_valid(atdc.accelerate, "accelerate", tmax, xmin, xmax, vmax, amax)
-                        && is_valid(atdc.travel, "travel", tmax, xmin, xmax, vmax, amax)
-                        && is_valid(atdc.decelerate, "decelerate", tmax, xmin, xmax, vmax, amax)
-                        && is_valid(atdc.curve, "curve", tmax, xmin, xmax, vmax, amax)
+                return (is_valid(atdc.accelerate, "accelerate", xmin, xmax, vmax, amax)
+                        && is_valid(atdc.travel, "travel", xmin, xmax, vmax, amax)
+                        && is_valid(atdc.decelerate, "decelerate", xmin, xmax, vmax, amax)
+                        && is_valid(atdc.curve, "curve", xmin, xmax, vmax, amax)
                         && points_and_speeds_match(atdc));
         }
 
@@ -247,13 +235,13 @@ namespace romi {
                 return matches;
         }
         
-        bool is_valid(SmoothPath& script, double tmax,
+        bool is_valid(SmoothPath& script, 
                       double *xmin, double *xmax, 
                       double *vmax, double *amax)
         {
                 bool valid = true;
                 for (size_t i = 0; i < script.count_atdc(); i++) {
-                        if (!is_valid(script.get_atdc(i), tmax, xmin, xmax, vmax, amax)) {
+                        if (!is_valid(script.get_atdc(i), xmin, xmax, vmax, amax)) {
                                 valid = false;
                                 r_warn("is_valid: invalid atdc: atdc %d", i);
                                 print(script.get_atdc(i));
@@ -265,10 +253,10 @@ namespace romi {
                 return valid;
         }
 
-        bool is_valid(SmoothPath& script, double tmax, CNCRange& range, 
+        bool is_valid(SmoothPath& script, CNCRange& range, 
                       double *vmax, double *amax)
         {
-                return is_valid(script, tmax, range.min.values(),
+                return is_valid(script, range.min.values(),
                                 range.max.values(), vmax, amax);
         }
         
