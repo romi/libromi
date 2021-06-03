@@ -463,12 +463,12 @@ bool updatePidSpeed()
                 
         if (rightPID.Compute()) {
                 float dt = (float) (now - updateTimeRight) / 1000.0f;
-                right = pidLeftSpeed + rightOutput * dt;
+                right = pidRightSpeed + rightOutput * dt;
                 right = constrain(right, -1.0f, 1.0f);
                 updateTimeRight = now;
         }
 
-        if (left != pidLeftSpeed || right != pidLeftSpeed) {
+        if (left != pidLeftSpeed || right != pidRightSpeed) {
                 pidLeftSpeed = left;
                 pidRightSpeed = right;
                 update = true;

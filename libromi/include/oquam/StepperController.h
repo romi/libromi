@@ -55,6 +55,7 @@ namespace romi {
                                       AxisIndex axis3) override;
                 bool get_position(int32_t *pos) override;
                 bool homing() override;
+                bool spindle(double speed) override;
                 
                 bool move(int16_t millis, int16_t steps_x,
                           int16_t steps_y, int16_t steps_z) override;

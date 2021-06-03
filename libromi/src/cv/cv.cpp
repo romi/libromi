@@ -192,34 +192,38 @@ namespace romi {
                 return list;
         }
 
-
-    std::vector<std::pair<uint32_t, uint32_t>>
-    calculate_adjacent_centres(const std::vector<double> &kseedsl,
-                               const std::vector<double> &kseedsx, const std::vector<double> &kseedsy)
-    {
-
-        // XY ORDER
-        std::vector<std::pair<uint32_t, uint32_t>> centres;
-        for (size_t xyindex = 0; xyindex < kseedsx.size(); xyindex++)
+        std::vector<std::pair<uint32_t, uint32_t>>
+        calculate_adjacent_centres(const std::vector<double> &kseedsl,
+                                   const std::vector<double> &kseedsx,
+                                   const std::vector<double> &kseedsy)
         {
-            if((kseedsl[xyindex] >0 ) && (kseedsl[xyindex] < 1))
-            {
-                centres.push_back(std::pair<uint32_t, uint32_t>((uint32_t)kseedsx[xyindex], (uint32_t)kseedsy[xyindex]));
-            }
+                using Center = std::pair<uint32_t, uint32_t>;
+                // XY ORDER
+                std::vector<Center> centres;
+                for (size_t xyindex = 0; xyindex < kseedsx.size(); xyindex++) {
+                        if ((kseedsl[xyindex] > 0) && (kseedsl[xyindex] < 1)) {
+                                centres.emplace_back((uint32_t) kseedsx[xyindex],
+                                                     (uint32_t) kseedsy[xyindex]);
+                        }
+                }
+                return centres;
         }
-        return centres;
-    }
 
         void compute_connected_components(Image &mask, Image &components)
         {
             std::vector<uint8_t> label_data_(mask.data().size());
             ConnectedComponents cc_(30);
             std::vector<unsigned int> out_data(mask.width() * mask.height());
-            cc_.connected(mask.export_byte_data().data(), out_data.data(), (int)mask.width(), (int)mask.height(),
+            
+            cc_.connected(mask.export_byte_data().data(), out_data.data(),
+                          (int) mask.width(), (int) mask.height(),
                           std::equal_to<unsigned char>(),
                           constant<bool,true>());
-            std::copy(out_data.data(), out_data.data() + out_data.size() , label_data_.data());
-            components.import(mask.type(), label_data_.data(), mask.width(), mask.height());
+            std::copy(out_data.data(),
+                      out_data.data() + out_data.size() ,
+                      label_data_.data());
+            components.import(mask.type(), label_data_.data(),
+                              mask.width(), mask.height());
 
         }
 }

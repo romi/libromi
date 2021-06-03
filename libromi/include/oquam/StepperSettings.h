@@ -41,6 +41,7 @@ namespace romi {
                 void parse_array(JsonCpp& array, double *values);
                 void compute_maximum_speed();
                 void compute_steps_per_meter();
+                double compute_duration(double steps, int axis);
 
         public:
 
@@ -56,6 +57,7 @@ namespace romi {
                 StepperSettings(JsonCpp& json);
                 virtual ~StepperSettings() = default;
 
+                double compute_minimum_duration(double steps);
         };
 }
 

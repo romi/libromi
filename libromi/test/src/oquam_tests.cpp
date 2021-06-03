@@ -28,6 +28,7 @@ protected:
         const double amax[3] =  {0.2, 0.2, 0.2};
         const double scale[3] = {40000, 40000, 100000};
         const double slice_interval = 0.020;
+        const double max_slice_interval = 4.0;
         const romi::AxisIndex homing[3] = {romi::kAxisX, romi::kAxisY, romi::kNoAxis};
         
         CNCRange range;
@@ -37,7 +38,7 @@ protected:
 	oquam_tests()
                 : range(xmin, xmax),
                   settings(range, vmax, amax, scale, 0.005,
-                           slice_interval, homing),
+                           slice_interval, max_slice_interval, homing),
                   controller(),
                   linux(),
                   romiDeviceData(),

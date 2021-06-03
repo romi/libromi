@@ -31,14 +31,21 @@ namespace romi {
                                      const double *scale_meters_to_steps, 
                                      double path_max_deviation,
                                      double path_slice_duration,
+                                     double path_max_slice_duration,
                                      const AxisIndex *homing)
                 : range_(range),
                   vmax_(vmax),
                   amax_(amax),
                   path_max_deviation_(path_max_deviation),
                   path_slice_duration_(path_slice_duration),
-                  path_max_slice_duration_(32.0)
+                  path_max_slice_duration_(path_max_slice_duration)
         {
+                // 32 seconds = 32000 ms < 2^16/2, which is the
+                // maximum value in the int16_t used to send block
+                // moves.
+                if (path_max_slice_duration_ > 32.0)
+                        path_max_slice_duration_ = 32.0;
+                
                 vcopy(scale_meters_to_steps_, scale_meters_to_steps);
                 for (int i = 0; i < 3; i++) {
                         homing_[i] = homing[i];

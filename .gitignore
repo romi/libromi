@@ -3,8 +3,8 @@ thirdparty
 libr
 librcom
 *build*
-
 __pycache__
 .eggs
 *.egg-info
+*~
 

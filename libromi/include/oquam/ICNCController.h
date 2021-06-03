@@ -46,6 +46,7 @@ namespace romi {
                  * position AND resets the origin to the location
                  * after the homing operation. */
                 virtual bool homing() = 0;
+                virtual bool spindle(double speed) = 0;
                 virtual bool synchronize(double timeout) = 0;
                 virtual bool move(int16_t millis, int16_t steps_x,
                                   int16_t steps_y, int16_t steps_z) = 0;

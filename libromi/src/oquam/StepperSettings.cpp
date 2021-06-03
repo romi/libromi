@@ -22,6 +22,7 @@
 
  */
 
+#include <float.h>
 #include <stdexcept>
 #include "oquam/StepperSettings.h"
 
@@ -105,5 +106,26 @@ namespace romi {
                                                * steps_per_revolution[i])
                                               / displacement_per_revolution[i]);
                 }
+        }
+
+        double StepperSettings::compute_minimum_duration(double steps)
+        {
+                double minumim_duration = DBL_MAX;
+                for (int i = 0; i < 3; i++) {
+                        double duration = compute_duration(steps, i);
+                        if (duration < minumim_duration)
+                                minumim_duration = duration;
+                }
+                return minumim_duration;
+        }
+
+        double StepperSettings::compute_duration(double steps, int i)
+        {
+                double max_revolutions_per_sec = maximum_rpm[i] / 60.0;
+                double max_steps_per_sec = (max_revolutions_per_sec
+                                            * steps_per_revolution[i]
+                                            * microsteps[i]);
+                double duration = steps / max_steps_per_sec;
+                return duration;
         }
 }

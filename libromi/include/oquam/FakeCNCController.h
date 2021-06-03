@@ -63,6 +63,12 @@ namespace romi {
                         return true;
                 }
                 
+                bool spindle(double speed) override
+                {
+                        (void) speed;
+                        return true;
+                }
+                
                 bool synchronize(__attribute__((unused))double timeout) override{
                         return true;
                 }
