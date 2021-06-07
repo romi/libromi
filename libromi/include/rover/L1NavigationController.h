@@ -21,20 +21,25 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_I_NAVIGATION_CONTROLLER_H
-#define __ROMI_I_NAVIGATION_CONTROLLER_H
+#ifndef __ROMI_L1_NAVIGATION_CONTROLLER_H
+#define __ROMI_L1_NAVIGATION_CONTROLLER_H
 
-#include "v3.h"
+#include "rover/INavigationController.h"
 
 namespace romi {
         
-        class INavigationController
+        class L1NavigationController : public INavigationController
         {
+        protected:
+                double w_;
+                double L_;
         public:
-                virtual ~INavigationController() = default;
-                virtual double estimate_correction(double cross_track_error,
-                                                   double orientation_error) = 0;
+                L1NavigationController(double width, double L);
+                ~L1NavigationController() override = default;
+                
+                double estimate_correction(double cross_track_error,
+                                           double orientation_error) override;
         };
 }
 
-#endif // __ROMI_I_NAVIGATION_CONTROLLER_H
+#endif // __ROMI_L1_NAVIGATION_CONTROLLER_H

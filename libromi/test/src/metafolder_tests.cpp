@@ -39,12 +39,17 @@ protected:
 	~metafolder_tests() override = default;
 
 	void SetUp() override {
+                EXPECT_CALL(mockGps_, CurrentLocation(_,_))
+                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),
+                                              testing::SetArgReferee<1>(0.2)));
+                
                 rpp::ClockAccessor::SetInstance(mockClock_);
                 mockLocationProvider_ = std::make_shared<romi::GpsLocationProvider>(mockGps_);
                 if (fs::is_directory(session_path_))
                 {
                         fs::remove_all(session_path_);
                 }
+
         }
 
 	void TearDown() override {
@@ -250,9 +255,6 @@ TEST_F(metafolder_tests, store_jpg_no_extension_creates_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1");
         std::string filename_jpg("file1.jpg");
@@ -283,8 +285,6 @@ TEST_F(metafolder_tests, store_jpg_wrong_extension_changes_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1.xxx");
@@ -318,11 +318,6 @@ TEST_F(metafolder_tests, store_jpg_same_file_rewrites_metadata)
                         .Times(number_files)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1.jpg");
@@ -380,12 +375,6 @@ TEST_F(metafolder_tests, store_jpg_creates_files_and_correct_meta_data)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:13-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:24-25/01/2020")));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.2),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename1("file1.jpg");
@@ -466,9 +455,6 @@ TEST_F(metafolder_tests, store_png_no_extension_creates_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1");
         std::string filename_png("file1.png");
@@ -498,9 +484,6 @@ TEST_F(metafolder_tests, store_png_wrong_extension_changes_extension)
 
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1.xxx");
@@ -535,11 +518,6 @@ TEST_F(metafolder_tests, store_png_same_file_rewrites_metadata)
                         .Times(number_files)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename("file1.png");
@@ -597,12 +575,6 @@ TEST_F(metafolder_tests, store_png_creates_files_and_correct_meta_data)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:13-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:24-25/01/2020")));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.2),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename1("file1.png");
@@ -662,9 +634,6 @@ TEST_F(metafolder_tests, store_svg_no_extension_creates_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         std::string svg_body("body");
         std::string filename("file1");
         std::string filename_svg("file1.svg");
@@ -694,9 +663,6 @@ TEST_F(metafolder_tests, store_svg_wrong_extension_changes_extension)
 
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string svg_body("body");
         std::string filename("file1.xxx");
@@ -731,11 +697,6 @@ TEST_F(metafolder_tests, store_svg_same_file_rewrites_metadata)
                         .Times(number_files)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1.svg");
         std::string observation("observe");
@@ -794,12 +755,6 @@ TEST_F(metafolder_tests, store_svg_creates_files_and_correct_meta_data)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:13-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:24-25/01/2020")));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.2),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename1("file1.svg");
@@ -861,9 +816,6 @@ TEST_F(metafolder_tests, store_txt_no_extension_creates_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         std::string txt_body("body");
         std::string filename("file1");
         std::string filename_txt("file1.txt");
@@ -893,9 +845,6 @@ TEST_F(metafolder_tests, store_txt_wrong_extension_changes_extension)
 
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string txt_body("body");
         std::string filename("file1.xxx");
@@ -930,11 +879,6 @@ TEST_F(metafolder_tests, store_txt_same_file_rewrites_metadata)
                         .Times(number_files)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1.txt");
         std::string observation("observe");
@@ -994,12 +938,6 @@ TEST_F(metafolder_tests, store_txt_creates_files_and_correct_meta_data)
                         .WillOnce(Return(std::string("10:25:13-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:24-25/01/2020")));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.2),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
-
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename1("file1.txt");
         std::string filename2("file2.txt");
@@ -1030,8 +968,6 @@ TEST_F(metafolder_tests, store_txt_empty_string_doesnt_throw)
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                 .WillOnce(Return(std::string("10:25:24-25/01/2020")));
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         auto mockLocationProvider_ = std::make_shared<romi::GpsLocationProvider>(mockGps_);
         auto roverIdentity = std::make_shared<romi::RoverIdentityProvider>(deviceData_, softwareVersion_);
@@ -1069,9 +1005,6 @@ TEST_F(metafolder_tests, store_path_no_extension_creates_extension)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         std::string filename("file1");
         std::string filename_txt("file1.path");
         std::string observation("observe");
@@ -1107,9 +1040,6 @@ TEST_F(metafolder_tests, store_path_wrong_extension_changes_extension)
 
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1.xxx");
         std::string filename_txt("file1.path");
@@ -1150,11 +1080,6 @@ TEST_F(metafolder_tests, store_path_same_file_rewrites_metadata)
                         .Times(number_files)
                         .WillOnce(Return(std::string("10:25:02-25/01/2020")))
                         .WillOnce(Return(expected));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
 
         std::string filename("file1.path");
         std::string observation("observe");
@@ -1223,12 +1148,6 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
                         .WillOnce(Return(std::string("10:25:13-25/01/2020")))
                         .WillOnce(Return(std::string("10:25:24-25/01/2020")));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(number_files)
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.2),testing::SetArgReferee<1>(0.2)))
-                        .WillOnce(DoAll(testing::SetArgReferee<0>(0.3),testing::SetArgReferee<1>(0.2)));
-
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
         std::string filename1("file1.path");
         std::string filename2("file2.path");
@@ -1262,6 +1181,10 @@ TEST_F(metafolder_tests, store_path_creates_files_and_correct_meta_data)
 TEST_F(metafolder_tests, store_empty_path_doesnt_throw)
 {
         // Arrange
+        EXPECT_CALL(*mockClock_, datetime_compact_string)
+                        .Times(AnyNumber())
+                        .WillRepeatedly(Return(std::string("10:25:02-25/01/2020")));
+        
         SetDeviceIDDataExpectations(devicetype_, devicID_, 1);
         SetSoftwareVersionDDataExpectations(versionCurrent_, versionAlternate_);
 
@@ -1324,10 +1247,6 @@ TEST_F(metafolder_tests, store_multiple_threads_does_not_corrupt_metafolder)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .Times(AnyNumber())
                         .WillRepeatedly(Return(std::string("10:25:02-25/01/2020")));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .Times(AnyNumber())
-                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         romi::Image image(romi::Image::RGB, red_test_image, 4, 4);
 

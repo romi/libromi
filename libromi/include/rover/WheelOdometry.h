@@ -25,26 +25,30 @@
 #define __ROMI_WHEEL_ODOMETRY_H
 
 #include <mutex>
-#include "IPoseEstimator.h"
+#include "data_provider/ILocationProvider.h"
+#include "data_provider/IOrientationProvider.h"
 #include "api/IMotorDriver.h"
+#include "rover/ITrackFollower.h"
 #include "NavigationSettings.h"
 
 namespace romi {
               
         using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
         
-        class WheelOdometry : public IPoseEstimator
+        class WheelOdometry : public ILocationProvider,
+                              public IOrientationProvider,
+                              public ITrackFollower
         {
         protected:
                 IMotorDriver& driver_;
                 std::mutex mutex_;
                         
-                // The current location and orientation
                 double instantaneous_speed[2];
                 double filtered_speed[2];
                 double encoder[2];
                 double last_timestamp;
         
+                // The current location and orientation
                 // The displacement, in meters, and the change in orientation
                 // (only tracking the change in yaw) relative to the 'current'
                 // location;
@@ -54,6 +58,8 @@ namespace romi {
                 double wheel_circumference; 
                 double wheel_base;
                 double encoder_steps;
+
+                bool update_estimate();
                 
         public:
                 WheelOdometry(NavigationSettings &rover_config,
@@ -61,10 +67,23 @@ namespace romi {
                 
                 virtual ~WheelOdometry();
 
-                bool update_estimation() override;
                 void set_encoders(double left, double right, double timestamp);
+                void set_displacement(double x, double y);
+
+                // ILocationProvider
+                bool update_orientation_estimate() override;
                 v3 get_location() override;
+                std::string get_location_string() override;
+                
+                // IOrientationProvider
+                bool update_location_estimate() override;
                 double get_orientation() override;
+
+                // ITrackFollower
+                void start() override;
+                bool update_error_estimate() override;
+                double get_cross_track_error() override;
+                double get_orientation_error() override;
                 
                 v3 get_encoders();
                 v3 get_speed();

@@ -11,20 +11,23 @@
 
 namespace romi {
 
-    class GpsLocationProvider : public ILocationProvider {
-    public:
-        explicit GpsLocationProvider(IGps &Gps);
+        class GpsLocationProvider : public ILocationProvider {
+        public:
+                explicit GpsLocationProvider(IGps &Gps);
 
-        ~GpsLocationProvider() override = default;
+                ~GpsLocationProvider() override = default;
 
-        std::string location() override;
+                std::string get_location_string() override;
+                bool update_location_estimate() override;
+                v3 get_location() override;
 
-    private:
-        double latitude_;
-        double longitude_;
-        IGps &gps_;
-    };
-
+        private:
+                double startup_latitude_;
+                double startup_longitude_;
+                double latitude_;
+                double longitude_;
+                IGps &gps_;
+        };
 }
 
 #endif //ROMI_ROVER_BUILD_AND_TEST_GPSLOCATIONPROVIDER_H

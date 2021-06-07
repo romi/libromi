@@ -22,6 +22,7 @@
 
  */
 
+#include "data_provider/JsonFieldNames.h"
 #include "rover/WheelOdometry.h"
 
 namespace romi {
@@ -35,6 +36,15 @@ namespace romi {
                     wheel_circumference(M_PI * rover_config.wheel_diameter),
                     wheel_base(rover_config.wheel_base),
                     encoder_steps(rover_config.encoder_steps)
+        {
+                start();
+        }
+        
+        WheelOdometry::~WheelOdometry()
+        {
+        }
+
+        void WheelOdometry::start()
         {
                 double left, right, timestamp;
                 
@@ -57,11 +67,13 @@ namespace romi {
                 }
         }
         
-        WheelOdometry::~WheelOdometry()
+        void WheelOdometry::set_displacement(double x, double y)
         {
+                displacement[0] = x;
+                displacement[1] = y;                
         }
 
-        bool WheelOdometry::update_estimation()
+        bool WheelOdometry::update_estimate()
         {
                 bool success = false;
                 double left, right, timestamp;
@@ -71,11 +83,40 @@ namespace romi {
                 }
                 return success;
         }
+
+        bool WheelOdometry::update_location_estimate()
+        {
+                return update_estimate();
+        }
+        
+        bool WheelOdometry::update_orientation_estimate()
+        {
+                // Skip, let update_location_estimate() do the work...
+                // ... for now
+                return true;
+        }
         
         v3 WheelOdometry::get_location()
         {
                 SynchronizedCodeBlock sync(mutex_);
                 return v3(displacement[0], displacement[1], 0.0);
+        }
+        
+        std::string WheelOdometry::get_location_string()
+        {
+                update_estimate();
+                
+                json_object_t coordinate_object = json_object_create();
+                json_object_setnum(coordinate_object, JsonFieldNames::x_position.data(),
+                                   displacement[0]);
+                json_object_setnum(coordinate_object, JsonFieldNames::y_position.data(),
+                                   displacement[1]);
+                std::string locationString;
+                JsonCpp locationData(coordinate_object);
+                locationData.tostring(locationString, k_json_pretty);
+
+                json_unref(coordinate_object);
+                return locationString;
         }
 
         v3 WheelOdometry::get_speed()
@@ -168,5 +209,21 @@ namespace romi {
                 // r_debug("displacement:  %f %f - angle %f",
                 //         displacement[0], displacement[1], theta * 180.0 / M_PI);
                 //r_debug("speed:  %f %f", speed[0], speed[1]);
+        }
+
+        bool WheelOdometry::update_error_estimate()
+        {
+                // Nothing to do
+                return update_estimate();
+        }
+        
+        double WheelOdometry::get_cross_track_error()
+        {
+                return displacement[1];                       
+        }
+        
+        double WheelOdometry::get_orientation_error()
+        {
+                return theta;
         }
 }
