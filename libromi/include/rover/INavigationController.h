@@ -32,6 +32,9 @@ namespace romi {
         {
         public:
                 virtual ~INavigationController() = default;
+
+                /** estimate_correction() throws an std::runtime_error
+                 *  if it cannot compute a correction value. */
                 virtual double estimate_correction(double cross_track_error,
                                                    double orientation_error) = 0;
         };

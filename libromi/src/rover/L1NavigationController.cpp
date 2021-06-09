@@ -31,8 +31,42 @@ namespace romi {
         
         L1NavigationController::L1NavigationController(double width, double L)
                 : w_(width), L_(L) {
+                assert_valid_parameters();
         }
-                
+
+        void L1NavigationController::assert_valid_parameters()
+        {
+                assert_valid_width();
+                assert_valid_distance();
+        }
+
+        void L1NavigationController::assert_valid_width()
+        {
+                if (w_ <= 0.0) {
+                        r_err("L1NavigationController: The width should be > 0: %f ", w_);
+                        throw std::runtime_error("L1NavigationController: Invalid width");
+                }
+                if (w_ > 5.0) {
+                        r_err("L1NavigationController: Please verify the width, "
+                              "should be < 5 m: %f ", w_);
+                        throw std::runtime_error("L1NavigationController: Invalid width");
+                }
+        }
+
+        void L1NavigationController::assert_valid_distance()
+        {
+                if (L_ < w_) {
+                        r_err("L1NavigationController: L1 should be at least equal "
+                              "to the width: %f < %f", L_, w_);
+                        throw std::runtime_error("L1NavigationController: Invalid L1");
+                }
+                if (L_ > 20.0) {
+                        r_err("L1NavigationController: Please verify the value of L1."
+                              "The current value is high: %d > 20m", L_);
+                        throw std::runtime_error("L1NavigationController: Invalid L1");
+                }
+        }
+        
         double L1NavigationController::estimate_correction(double d, double phi) 
         {
                 if (d >= L_) {

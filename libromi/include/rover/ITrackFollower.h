@@ -34,6 +34,9 @@ namespace romi {
                 virtual ~ITrackFollower() = default;
                 
                 virtual void start() = 0;
+
+                /** update_error_estimate() returns false if it failed
+                 * toupdate the error estimates. */
                 virtual bool update_error_estimate() = 0;
                 virtual double get_cross_track_error() = 0;
                 virtual double get_orientation_error() = 0;

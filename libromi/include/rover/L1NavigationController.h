@@ -33,6 +33,11 @@ namespace romi {
         protected:
                 double w_;
                 double L_;
+
+                void assert_valid_parameters();
+                void assert_valid_width();
+                void assert_valid_distance();
+                
         public:
                 L1NavigationController(double width, double L);
                 ~L1NavigationController() override = default;
