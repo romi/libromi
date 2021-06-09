@@ -6,50 +6,65 @@
 
 
 namespace romi {
-    MetaFolder::MetaFolder(std::shared_ptr<IIdentityProvider> identityProvider,
+        MetaFolder::MetaFolder(std::shared_ptr<IIdentityProvider> identityProvider,
                            std::shared_ptr<ILocationProvider> locationProvider,
                            std::filesystem::path folder_path)
-        : identityProvider_(std::move(identityProvider)), locationProvider_(std::move(locationProvider)),
-          folderPath_(folder_path), meta_data_(), metadata_file_mutex_() {
-
-        if(nullptr == identityProvider_){
-                throw std::invalid_argument("identityProvider");
+                : identityProvider_(std::move(identityProvider)),
+                  locationProvider_(std::move(locationProvider)),
+                  folderPath_(folder_path),
+                  meta_data_(),
+                  metadata_file_mutex_() {
+                
+                if (nullptr == identityProvider_){
+                        throw std::invalid_argument("identityProvider");
+                }
+                if (nullptr == locationProvider_){
+                        throw std::invalid_argument("locationProvider");
+                }
+                try_create();
         }
-        if(nullptr == locationProvider_){
-                throw std::invalid_argument("locationProvider");
-        }
-        try_create();
-    }
 
-        std::filesystem::path MetaFolder::build_filename_with_extension(const std::string& filename,
-                                                                        const std::string& extension)
+        std::filesystem::path
+        MetaFolder::build_filename_with_extension(const std::string& filename,
+                                                  const std::string& extension)
         {
                 std::filesystem::path filename_extension(filename);
                 filename_extension.replace_extension(extension);
                 return filename_extension;
         }
-
-    void MetaFolder::try_create() {
-            std::filesystem::create_directories(folderPath_);
-            std::string identity = identityProvider_->identity();
-            JsonCpp identityObjet(identity.c_str());
-            meta_data_ = std::make_unique<JsonCpp>();
-            json_object_set(meta_data_->ptr(), JsonFieldNames::romi_identity.c_str(), identityObjet.ptr());
-            meta_data_->save((folderPath_ / meta_data_filename_).string(), k_json_pretty);
-    }
-
-        void MetaFolder::add_file_metadata(const std::string &filename, const std::string &ovservationId)
+        
+        void MetaFolder::try_create()
         {
-                std::string location = locationProvider_->location();
-                JsonCpp locationJson(location.c_str());
+                std::filesystem::create_directories(folderPath_);
+                std::string identity = identityProvider_->identity();
+                JsonCpp identityObjet(identity.c_str());
+                meta_data_ = std::make_unique<JsonCpp>();
+                json_object_set(meta_data_->ptr(),
+                                JsonFieldNames::romi_identity.c_str(),
+                                identityObjet.ptr());
+                meta_data_->save((folderPath_ / meta_data_filename_).string(),
+                                 k_json_pretty);
+        }
 
+        void MetaFolder::add_file_metadata(const std::string &filename,
+                                           const std::string &ovservationId)
+        {
+                std::string location = locationProvider_->get_location_string();
+                JsonCpp locationJson(location.c_str());
+                
                 JsonCpp newFile;
-                json_object_setstr(newFile.ptr(), JsonFieldNames::observation_id.c_str(), ovservationId.c_str());
-                json_object_set(newFile.ptr(), JsonFieldNames::location.c_str(), locationJson.ptr());
-                json_object_setstr(newFile.ptr(), JsonFieldNames::date_time.c_str(),
+                json_object_setstr(newFile.ptr(),
+                                   JsonFieldNames::observation_id.c_str(),
+                                   ovservationId.c_str());
+                json_object_set(newFile.ptr(),
+                                JsonFieldNames::location.c_str(),
+                                locationJson.ptr());
+                json_object_setstr(newFile.ptr(),
+                                   JsonFieldNames::date_time.c_str(),
                                    rpp::ClockAccessor::GetInstance()->datetime_compact_string().c_str());
                 json_object_set(meta_data_->ptr(), filename.c_str(), newFile.ptr());
-                meta_data_->save((folderPath_ / meta_data_filename_).string(), k_json_pretty | k_json_sort_keys);
+                meta_data_->save((folderPath_ / meta_data_filename_).string(),
+                                 k_json_pretty | k_json_sort_keys);
         }
 
         void MetaFolder::CheckInput(Image& image) const

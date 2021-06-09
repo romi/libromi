@@ -21,23 +21,26 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_I_NAVIGATION_CONTROLLER_H
-#define __ROMI_I_NAVIGATION_CONTROLLER_H
+#ifndef __ROMI_I_TRACKFOLLOWER_H
+#define __ROMI_I_TRACKFOLLOWER_H
 
 #include "v3.h"
 
 namespace romi {
         
-        class INavigationController
+        class ITrackFollower
         {
         public:
-                virtual ~INavigationController() = default;
+                virtual ~ITrackFollower() = default;
+                
+                virtual void start() = 0;
 
-                /** estimate_correction() throws an std::runtime_error
-                 *  if it cannot compute a correction value. */
-                virtual double estimate_correction(double cross_track_error,
-                                                   double orientation_error) = 0;
+                /** update_error_estimate() returns false if it failed
+                 * toupdate the error estimates. */
+                virtual bool update_error_estimate() = 0;
+                virtual double get_cross_track_error() = 0;
+                virtual double get_orientation_error() = 0;
         };
 }
 
-#endif // __ROMI_I_NAVIGATION_CONTROLLER_H
+#endif // __ROMI_I_TRACKFOLLOWER_H

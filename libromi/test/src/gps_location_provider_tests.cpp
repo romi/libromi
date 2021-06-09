@@ -2,6 +2,7 @@
 #include "gmock/gmock.h"
 #include "data_provider/GpsLocationProvider.h"
 #include "mock_gps.h"
+#include "JsonCpp.h"
 
 using namespace std;
 using namespace testing;
@@ -36,14 +37,21 @@ TEST_F(gps_location_provider_tests, will_create_location)
         double latitude = 0.1;
         double longitude = 0.2;
 
-        // Normally we use lat/long but the JSON parser retrieves things in reverse.
-        std::string expected("{\n    \"longitude\": 0.200000,\n    \"latitude\": 0.100000\n}");
+        std::string expected;
+        JsonCpp json = JsonCpp::parse("{ \"longitude\": 0.200000,"
+                                      "\"latitude\": 0.100000 }");
+        json.tostring(expected, k_json_pretty | k_json_sort_keys);
 
         MockGps gps;
         EXPECT_CALL(gps, CurrentLocation(_,_))
-                        .WillOnce(DoAll(SetArgReferee<0>(latitude), SetArgReferee<1>(longitude)));
-
+                .WillRepeatedly(DoAll(SetArgReferee<0>(latitude),
+                                      SetArgReferee<1>(longitude)));
+        
         romi::GpsLocationProvider locationProvider(gps);
-        std::string actual = locationProvider.location();
+
+        // Act
+        std::string actual = locationProvider.get_location_string();
+
+        // Assert
         ASSERT_EQ(actual, expected);
 }

@@ -21,21 +21,30 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_I_POSE_ESTIMATOR_H
-#define __ROMI_I_POSE_ESTIMATOR_H
+#ifndef __ROMI_L1_NAVIGATION_CONTROLLER_H
+#define __ROMI_L1_NAVIGATION_CONTROLLER_H
 
-#include "v3.h"
+#include "rover/INavigationController.h"
 
 namespace romi {
         
-        class IPoseEstimator
+        class L1NavigationController : public INavigationController
         {
+        protected:
+                double w_;
+                double L_;
+
+                void assert_valid_parameters();
+                void assert_valid_width();
+                void assert_valid_distance();
+                
         public:
-                virtual ~IPoseEstimator() = default;
-                virtual bool update_estimation() = 0;
-                virtual v3 get_location() = 0;
-                virtual double get_orientation() = 0;
+                L1NavigationController(double width, double L);
+                ~L1NavigationController() override = default;
+                
+                double estimate_correction(double cross_track_error,
+                                           double orientation_error) override;
         };
 }
 
-#endif // __ROMI_I_POSE_ESTIMATOR_H
+#endif // __ROMI_L1_NAVIGATION_CONTROLLER_H

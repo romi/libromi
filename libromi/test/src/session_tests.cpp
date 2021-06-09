@@ -23,18 +23,31 @@ class weedersession : public ::testing::Test
 {
 protected:
         
-	weedersession() : mockClock_(std::make_shared<rpp::MockClock>()), mockGps_(),
-                      mockLocationProvider_(), deviceData_(), softwareVersion_(), sessions_basedir_("weedersession_test"),
-                      currentdir_(), versionCurrent_("V1.0.1"), versionAlternate_("V1.0.1"), devicetype_("Rover"), devicID_("DEAD-BEEF")
+	weedersession() :
+                mockClock_(std::make_shared<rpp::MockClock>()), mockGps_(),
+                mockLocationProvider_(),
+                deviceData_(),
+                softwareVersion_(),
+                sessions_basedir_("weedersession_test"),
+                currentdir_(),
+                versionCurrent_("V1.0.1"),
+                versionAlternate_("V1.0.1"),
+                devicetype_("Rover"),
+                devicID_("DEAD-BEEF")
 	{
         }
 
 	~weedersession() override = default;
 
 	void SetUp() override {
+                EXPECT_CALL(mockGps_, CurrentLocation(_,_))
+                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),
+                                              testing::SetArgReferee<1>(0.2)));
+                
                 rpp::ClockAccessor::SetInstance(mockClock_);
                 mockLocationProvider_ = std::make_unique<romi::GpsLocationProvider>(mockGps_);
                 currentdir_ = std::filesystem::current_path().string();
+                
         }
 
 	void TearDown() override {
@@ -222,9 +235,6 @@ TEST_F(weedersession, store_functions_store_files)
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillRepeatedly(Return(date_time));
 
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
-
         std::string observation_id("obs_id_1");
         std::filesystem::path session_dir = BuildSessionDirName(devicetype_, devicID_, date_time);
         fs::remove_all(session_dir);
@@ -269,9 +279,6 @@ TEST_F(weedersession, store_functions_throw_on_failure)
         std::string date_time("01012025");
         EXPECT_CALL(*mockClock_, datetime_compact_string)
                         .WillRepeatedly(Return(date_time));
-
-        EXPECT_CALL(mockGps_, CurrentLocation)
-                        .WillRepeatedly(DoAll(testing::SetArgReferee<0>(0.1),testing::SetArgReferee<1>(0.2)));
 
         std::string observation_id("obs_id_1");
         std::filesystem::path session_dir = BuildSessionDirName(devicetype_, devicID_, date_time);

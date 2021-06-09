@@ -39,12 +39,13 @@ namespace romi {
                 double wheel_circumference;
                 double max_revolutions_per_sec;
 
-                NavigationSettings(JsonCpp &config): encoder_steps(config.num("encoder_steps")),
-                                                                   wheel_diameter(config.num("wheel_diameter")),
-                                                                   maximum_speed(config.num("maximum_speed")),
-                                                                   wheel_base(config.num("wheel_base")),
-                                                                   wheel_circumference(M_PI * wheel_diameter),
-                                                                   max_revolutions_per_sec(maximum_speed / wheel_circumference){
+                NavigationSettings(JsonCpp &config)
+                        : encoder_steps(config.num("encoder_steps")),
+                          wheel_diameter(config.num("wheel_diameter")),
+                          maximum_speed(config.num("maximum_speed")),
+                          wheel_base(config.num("wheel_base")),
+                          wheel_circumference(M_PI * wheel_diameter),
+                          max_revolutions_per_sec(maximum_speed / wheel_circumference) {
                 }
         };
 }

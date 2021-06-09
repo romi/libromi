@@ -131,6 +131,9 @@ set(SOURCES
         include/oquam/StepperSettings.h
 
         include/rover/EventsAndStates.h
+        include/rover/ITrackFollower.h
+        include/rover/INavigationController.h
+        include/rover/L1NavigationController.h
         include/rover/Rover.h
         include/rover/RoverInterface.h
         include/rover/RoverNotifications.h
@@ -138,11 +141,13 @@ set(SOURCES
         include/rover/RoverScriptEngine.h
         include/rover/RoverStateMachine.h
         include/rover/Navigation.h
+        include/rover/PythonTrackFollower.h
         include/rover/SpeedController.h
         include/rover/NavigationSettings.h
         include/rover/ISpeedController.h
         include/rover/SpeedConverter.h
         include/rover/WheelOdometry.h
+        include/rover/ZeroNavigationController.h
 
         include/rpc/CameraAdaptor.h
         include/rpc/CNCAdaptor.h
@@ -220,6 +225,8 @@ set(SOURCES
         src/oquam/StepperController.cpp
 
         src/rover/EventsAndStates.cpp
+        src/rover/L1NavigationController.cpp
+        src/rover/PythonTrackFollower.cpp
         src/rover/Rover.cpp
         src/rover/RoverInterface.cpp
         src/rover/RoverOptions.cpp
@@ -259,6 +266,7 @@ set(DATA_PROVIDER_SOURCES
         include/data_provider/JsonFieldNames.h
         include/data_provider/IGPS.h
         include/data_provider/ILocationProvider.h
+        include/data_provider/IOrientationProvider.h
         include/data_provider/GpsLocationProvider.h
         src/data_provider/GpsLocationProvider.cpp
         include/data_provider/IIdentityProvider.h
@@ -270,6 +278,7 @@ set(DATA_PROVIDER_SOURCES
         include/data_provider/RomiDeviceData.h
         src/data_provider/RomiDeviceData.cpp
         src/session/Session.cpp
+        include/session/ISession.h
         include/session/Session.h
         include/session/MetaFolder.h
         include/session/IMetaFolder.h

@@ -28,8 +28,12 @@
 
 #include "api/INavigation.h"
 #include "api/IMotorDriver.h"
-#include "NavigationSettings.h"
-#include "rover/IPoseEstimator.h"
+#include "rover/NavigationSettings.h"
+#include "session/ISession.h"
+#include "data_provider/ILocationProvider.h"
+#include "data_provider/IOrientationProvider.h"
+#include "rover/ITrackFollower.h"
+#include "rover/INavigationController.h"
 #include "rover/WheelOdometry.h"
 
 namespace romi {
@@ -44,19 +48,25 @@ namespace romi {
                 
                 IMotorDriver& driver_;
                 NavigationSettings& settings_;
+                ITrackFollower& track_follower_;
+                ISession& session_;
                 std::mutex mutex_;
                 move_status_t status_;
                 bool stop_;
 
                 bool do_move(double distance, double speed);
                 bool travel(double speed, double distance);
-                bool try_travel(WheelOdometry& pose, double speed,
-                                double distance, double timeout);
+                bool try_travel(ILocationProvider& location_provider,
+                                INavigationController& navigation_controller,
+                                double speed, double distance, double timeout);
                 double compute_timeout(double distance, double speed);
                                         
         public:
                 
-                Navigation(IMotorDriver &driver, NavigationSettings &settings);
+                Navigation(IMotorDriver &driver,
+                           NavigationSettings &settings,
+                           ITrackFollower& track_follower,
+                           ISession& session);
                 ~Navigation() override = default;
 
                 bool moveat(double left, double right) override;

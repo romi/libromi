@@ -315,6 +315,21 @@ add_test(
 )
 
 ##
+  
+set(SRCS_NAVIGATIONCONTROL 
+        src/tests_main.cpp
+        src/l1_navigationcontroller_tests.cpp
+)
+
+add_executable(libromi_unit_tests_navigation_control ${SRCS_NAVIGATIONCONTROL})
+target_link_libraries(libromi_unit_tests_navigation_control romi romiserial rpp rcompp-lite rcom-mocks gtest gmock)
+
+add_test(
+    NAME libromi_unit_tests_navigation_control
+    COMMAND libromi_unit_tests_navigation_control
+)
+
+##
 
 Message (${CMAKE_BINARY_DIR})
 
@@ -343,6 +358,7 @@ if(BUILD_COVERAGE)
                             libromi_unit_tests_oquam
                             libromi_unit_tests_brushmotordriver
                             libromi_unit_tests_rcommessagehandler
+                            libromi_unit_tests_navigation_control
     )
 endif()
 
