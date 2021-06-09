@@ -70,7 +70,7 @@ namespace romi {
                         max_duration_ = max_duration;
                         session_.start(observation_id);
                         recording_ = true;
-                        thread_ = std::make_unique<std::thread>(std::bind(&Imager::grab_loop, this));
+                        thread_ = std::make_unique<std::thread>([this] { grab_loop(); });
                 }
         }
                 
