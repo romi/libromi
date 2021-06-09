@@ -10,5 +10,7 @@ public:
                                             size_t max_images,
                                             double max_duration), (override));
         MOCK_METHOD(bool, stop_recording, (), (override));
+
+        MOCK_METHOD(bool, is_recording, (), (override));
 };
 #pragma GCC diagnostic pop

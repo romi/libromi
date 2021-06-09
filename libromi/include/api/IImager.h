@@ -45,6 +45,8 @@ namespace romi {
                                              double max_duration) = 0;
                 
                 virtual bool stop_recording() = 0;
+
+                virtual bool is_recording() = 0;
         };
 }
 

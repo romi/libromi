@@ -40,11 +40,10 @@ namespace romi {
         
         RcomClient::RcomClient(std::unique_ptr<rcom::IMessageLink>& link,
                                double timeout_seconds)
-                : link_(),
+                : link_(std::move(link)),
                   buffer_(),
                   timeout_(timeout_seconds)
         {
-                link_ = std::move(link);
         }
 
         static int32_t to_membuffer(void* userdata, const char* s, size_t len)
@@ -115,12 +114,11 @@ namespace romi {
                 bool success = false;
                 if (link_->recv(buffer, timeout_)) {
                         success = true;
-
-                        r_debug("RcomClient::receive_response: %.*s",
-                                buffer.size(), buffer.data());
+                        r_debug("RcomClient::receive_response kRecvText or kRecvBinary: %.*s",
+                                buffer.size(), buffer.data().data());
                 } else {
-                        r_debug("RcomClient::receive_response: %.*s",
-                                buffer.size(), buffer.data());
+                        r_debug("RcomClient::receive_response: not text/binary %.*s",
+                                buffer.size(), buffer.data().data());
                         set_error(error);
                 }
                 return success;
@@ -194,4 +192,8 @@ namespace romi {
         {
                 return link_->is_connected();
         }
+
+    RcomClient::~RcomClient() {
+ //       r_debug("RcomClient::destruct");
+    }
 }

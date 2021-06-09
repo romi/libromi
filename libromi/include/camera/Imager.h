@@ -65,6 +65,7 @@ namespace romi {
                                      size_t max_images,
                                      double max_duration) override;
                 bool stop_recording() override;
+                bool is_recording()override;
         };
 }
 

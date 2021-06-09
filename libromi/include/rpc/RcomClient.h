@@ -54,7 +54,7 @@ namespace romi {
                 
                 RcomClient(std::unique_ptr<rcom::IMessageLink>& link,
                            double timeout_seconds);
-                ~RcomClient() override = default;
+                ~RcomClient() override;
 
                 /** execute() does not throw exceptions. All errors
                  * are returned through the RPCError structure. */

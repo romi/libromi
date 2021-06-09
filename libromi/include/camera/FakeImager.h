@@ -31,8 +31,9 @@ namespace romi {
         
         class FakeImager : public IImager
         {
+            bool recording_;
         public:
-                FakeImager() = default;
+                FakeImager() : recording_(false) { };
                 ~FakeImager() override = default;
                 
                 bool start_recording(const std::string& observation_id,
@@ -42,13 +43,19 @@ namespace romi {
                         (void) max_images;
                         (void) max_duration;
                         r_warn("FakeImager::start_recording: No doing anything!");
+                        recording_ = true;
                         return true;
                 }
                 
                 bool stop_recording() override {
                         r_warn("FakeImager::stop_recording: No doing anything!");
+                        recording_ = false;
                         return true;
                 }
+
+                bool is_recording() override {
+                        return recording_;
+                    };
         };
 }
 

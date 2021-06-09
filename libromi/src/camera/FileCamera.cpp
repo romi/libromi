@@ -22,31 +22,40 @@
 
  */
 
+#include <FileUtils.h>
 #include "camera/FileCamera.h"
 
 namespace romi {
 
         FileCamera::FileCamera(const std::string& filename)
-                : _filename(filename), _image()
+                : filename_(filename), image_(), filebuffer_()
         {
-                if (_filename.length() == 0)
+                if (filename_.length() == 0)
                         throw std::runtime_error("FileCamera: Invalid filename");
                 
                 if (!open()) {
-                        r_err("Failed to load the file: %s", _filename.c_str());
+                        r_err("Failed to load the file: %s", filename_.c_str());
                         throw std::runtime_error("FileCamera::open failed");
                 }
         }
 
         bool FileCamera::open()
         {
-                return ImageIO::load(_image, _filename.c_str());
+                return ImageIO::load(image_, filename_.c_str());
         }
         
         bool FileCamera::grab(Image &image)
         {
-                image = _image;
+                image = image_;
                 return true;
         }
 
+        rpp::MemBuffer& FileCamera::grab_jpeg() {
+            std::vector<uint8_t > image_data;
+            filebuffer_.clear();
+            FileUtils::TryReadFileAsVector(filename_, image_data);
+            filebuffer_.append(image_data.data(), image_data.size());
+            return filebuffer_;
+        }
 }
+

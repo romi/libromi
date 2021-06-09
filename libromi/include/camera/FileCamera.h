@@ -38,9 +38,9 @@ namespace romi {
                 static constexpr const char *ClassName = "file-camera";
                 
         protected:
-                std::string _filename;
-                Image _image;
-
+                std::string filename_;
+                Image image_;
+                rpp::MemBuffer filebuffer_;
                 bool open();
                 
         public:
@@ -50,9 +50,7 @@ namespace romi {
         
                 bool grab(Image &image) override;
                 
-                rpp::MemBuffer& grab_jpeg() override {
-                        throw std::runtime_error("USBCamera::grab_jpeg: Not implemented");
-                }
+                rpp::MemBuffer& grab_jpeg() override;
         };
 }
 

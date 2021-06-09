@@ -93,6 +93,10 @@ namespace romi {
                 return true;
         }
 
+        bool Imager::is_recording()
+        {
+            return recording_;
+        }
         void Imager::grab_loop()
         {
                 double start_time = rpp::ClockAccessor::GetInstance()->time();
