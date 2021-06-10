@@ -114,8 +114,14 @@ namespace romi {
                 bool success = false;
                 if (link_->recv(buffer, timeout_)) {
                         success = true;
-                        r_debug("RcomClient::receive_response kRecvText or kRecvBinary: %.*s",
-                                buffer.size(), buffer.data().data());
+                        const std::vector<uint8_t>& data = buffer.data();
+                        uint8_t first_char = data[0];
+                        if (first_char == '{')
+                                r_debug("RcomClient::receive_response kRecvText: "
+                                        "%.*s", buffer.size(), data.data());
+                        else 
+                                r_debug("RcomClient::receive_response kRecvBinary: "
+                                        "length %zu", buffer.size());
                 } else {
                         r_debug("RcomClient::receive_response: not text/binary %.*s",
                                 buffer.size(), buffer.data().data());
