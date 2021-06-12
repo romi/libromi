@@ -118,8 +118,6 @@ float rightAbsoluteSpeed = 0;
 // The speed values that were last sent to setOutputSignal() [-1,1].
 float leftSpeed = 0;
 float rightSpeed = 0; 
-float pidLeftSpeed = 0;
-float pidRightSpeed = 0; 
 unsigned long updateTimeLeft = 0;
 unsigned long updateTimeRight = 0;
 
@@ -180,8 +178,8 @@ void setup()
 
         leftPID.SetMode(AUTOMATIC);
         rightPID.SetMode(AUTOMATIC);
-        leftPID.SetSampleTime(20);
-        rightPID.SetSampleTime(20);
+        leftPID.SetSampleTime(50);
+        rightPID.SetSampleTime(50);
         leftPID.SetOutputLimits(-1.0, 1.0);
         rightPID.SetOutputLimits(-1.0, 1.0);
 	updateTimeLeft = millis();
@@ -293,7 +291,7 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
                 dtostrf(leftPID.Ep, 3, 3, ep);
                 dtostrf(leftPID.Ei, 3, 3, ei);
                 dtostrf(leftPID.Ed, 3, 3, ed);
-                dtostrf(pidLeftSpeed, 3, 3, v);
+                dtostrf(leftOutput, 3, 3, v);
         } else {        
                 dtostrf(rightTarget, 3, 3, target);
                 dtostrf(rightInput, 3, 3, in);
@@ -301,12 +299,12 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
                 dtostrf(rightPID.Ep, 3, 3, ep);
                 dtostrf(rightPID.Ei, 3, 3, ei);
                 dtostrf(rightPID.Ed, 3, 3, ed);
-                dtostrf(pidRightSpeed, 3, 3, v);
+                dtostrf(rightOutput, 3, 3, v);
         }
         
         snprintf(reply_buffer, sizeof(reply_buffer),
-                 "[0,%s,%s,%s,%s,%s,%s,%s]",
-                 target, in, out, ep, ei, ed, v);
+                 "[0,%d,%s,%s,%s,%s,%s,%s]",
+                 (int)(leftTarget*1000), in, out, ep, ei, ed, v);
         romiSerial->send(reply_buffer);                
 }
 
@@ -345,9 +343,15 @@ void send_configuration(RomiSerial *romiSerial, int16_t *args, const char *strin
         const char *control_str;
         
         switch (controlMode) {
-        case CONTROL_PID: control_str = "P1"; break;
-        case CONTROL_DIRECT: control_str = "P0"; break;
-        default: control_str = "?"; break;
+        case CONTROL_PID:
+                control_str = "P1";
+                break;
+        case CONTROL_DIRECT:
+                control_str = "P0";
+                break;
+        default:
+                control_str = "?";
+                break;
         }
 
         char kp[8]; dtostrf(leftPID.GetKp(), 5, 3, kp);
@@ -449,30 +453,17 @@ void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg
 bool updatePidSpeed()
 {
         bool update = false;
-        unsigned long now = millis();
-        float left = pidLeftSpeed;
-        float right = pidRightSpeed;
-                
-        // Check for updates from the PID
-        if (leftPID.Compute()) {
-                float dt = (float) (now - updateTimeLeft) / 1000.0f;
-                left = pidLeftSpeed + leftOutput * dt;
-                left = constrain(left, -1.0f, 1.0f);
-                updateTimeLeft = now;
-        }
-                
-        if (rightPID.Compute()) {
-                float dt = (float) (now - updateTimeRight) / 1000.0f;
-                right = pidRightSpeed + rightOutput * dt;
-                right = constrain(right, -1.0f, 1.0f);
-                updateTimeRight = now;
-        }
 
-        if (left != pidLeftSpeed || right != pidRightSpeed) {
-                pidLeftSpeed = left;
-                pidRightSpeed = right;
+        if (leftPID.Compute() || rightPID.Compute()) {
                 update = true;
+                                
+                // Force small outputs to zero when the target is zero 
+                if (leftTarget == 0 && leftOutput > -0.1 && leftOutput < 0.1)
+                        leftOutput = 0.0;
+                if (rightTarget == 0 && rightOutput > -0.1 && rightOutput < 0.1)
+                        rightOutput = 0.0;                        
         }
+        
         return update;
 }
 
@@ -482,7 +473,7 @@ void updateOutputSignal()
         
         if (controlMode == CONTROL_PID) {
                 if (update_pid)
-                        setOutputSignal(pidLeftSpeed, pidRightSpeed);
+                        setOutputSignal(leftOutput, rightOutput);
                 
         } else if (controlMode == CONTROL_DIRECT) {
                 // Nothing to do
