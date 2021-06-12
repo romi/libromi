@@ -319,6 +319,7 @@ add_test(
 set(SRCS_NAVIGATIONCONTROL 
         src/tests_main.cpp
         src/l1_navigationcontroller_tests.cpp
+        src/pythontrackfollower_tests.cpp
 )
 
 add_executable(libromi_unit_tests_navigation_control ${SRCS_NAVIGATIONCONTROL})
