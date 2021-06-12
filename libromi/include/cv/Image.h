@@ -35,6 +35,11 @@ namespace romi {
         public:
                 enum ImageType { BW, RGB};
                 
+                enum ChannelName { kGreyChannel = 0,
+                                   kRChannel = 0,
+                                   kGChannel = 1,
+                                   kBChannel = 2 };
+                
         protected:
                 size_t _width;
                 size_t _height;
