@@ -186,6 +186,20 @@ namespace romi {
         void BrushMotorDriver::start_recording_pid()
         {
                 recording_pid_ = true;
+                FILE* fp = fopen("pid.csv", "w");
+                if (fp) {
+                        fprintf(fp,
+                                "# time\t"
+                                "target\t"
+                                "measured speed\t"
+                                "output\t"
+                                "error_p\t"
+                                "error_i\t"
+                                "error_d\t"
+                                "controller input\n");
+                        fclose(fp);
+                }
+                
                 pid_thread_ = std::make_unique<std::thread>(
                         [this]() {
                                 record_pid_main();
@@ -228,16 +242,19 @@ namespace romi {
                                                        error_i, error_d, controller_input);
                                 if (recording.size() >= 100) {
                                         store_pid_recordings(recording);
+                                        recording.clear();
                                 }
                         }
                         
                         clock->sleep(0.050);
                 }
+                
+                store_pid_recordings(recording);
         }
 
         void BrushMotorDriver::store_pid_recordings(std::vector<PidStatus>& recording)
         {
-                FILE* fp = fopen("/tmp/pid.csv", "w");
+                FILE* fp = fopen("pid.csv", "a");
                 if (fp) {
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,
