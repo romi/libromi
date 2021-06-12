@@ -32,11 +32,11 @@ namespace romi {
         class ImageCropper : public IImageCropper
         {
         protected:
-                CNCRange _range;
-                size_t _x0;
-                size_t _y0;
-                size_t _width;
-                size_t _height;
+                CNCRange range_;
+                size_t x0_;
+                size_t y0_;
+                size_t width_;
+                size_t height_;
 
                 void set_workspace(JsonCpp value);
                 void assert_workspace_dimensions();
