@@ -181,6 +181,10 @@ namespace romi {
                 bool success = false;
                 
                 stop_ = false;
+                if (!location_provider.update_location_estimate()) {
+                        r_err("Navigation::travel: pose estimation failed");
+                        return false;
+                }
                 start_location = location_provider.get_location();
                 track_follower_.start();
                 
