@@ -46,16 +46,11 @@ namespace romi {
                         throw std::runtime_error("BrushMotorDriver: "
                                                  "Initialization failed");
                 }
-
-                //record_pid();
         }
         
         BrushMotorDriver::~BrushMotorDriver()
         {
-                recording_pid_ = false;
-                if (pid_thread_) {
-                        pid_thread_->join();
-                }
+                stop_recording_pid();
         }
                 
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
@@ -188,10 +183,22 @@ namespace romi {
                 return success;
         }
 
-        void BrushMotorDriver::record_pid()
+        void BrushMotorDriver::start_recording_pid()
         {
                 recording_pid_ = true;
-                pid_thread_ = std::make_unique<std::thread>([this]() { record_pid_main(); });
+                pid_thread_ = std::make_unique<std::thread>(
+                        [this]() {
+                                record_pid_main();
+                        });
+        }
+
+        void BrushMotorDriver::stop_recording_pid()
+        {
+                recording_pid_ = false;
+                if (pid_thread_) {
+                        pid_thread_->join();
+                        pid_thread_ = nullptr;
+                }
         }
 
         void BrushMotorDriver::record_pid_main()
@@ -230,7 +237,7 @@ namespace romi {
 
         void BrushMotorDriver::store_pid_recordings(std::vector<PidStatus>& recording)
         {
-                FILE* fp = fopen("/tmp/nav.csv", "a");
+                FILE* fp = fopen("/tmp/pid.csv", "w");
                 if (fp) {
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,

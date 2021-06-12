@@ -120,6 +120,8 @@ namespace romi {
                                     double& pid_error_i,
                                     double& pid_error_d,
                                     double& controller_input) override;
+                void start_recording_pid();
+                void stop_recording_pid();
         };
 }
 
