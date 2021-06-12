@@ -42,11 +42,11 @@ namespace romi {
                 static constexpr const char *kOrientationErrorKey = "orientation-error";
 
                 ICamera& camera_;
+                std::unique_ptr<romi::IRPCClient> rpc_;
                 std::string function_name_;
                 ISession& session_;
                 double cross_track_error_;
                 double orientation_error_;
-                std::unique_ptr<romi::IRPCClient> rpc_;
                 size_t image_counter_;
                 
                 void try_update();
@@ -59,6 +59,7 @@ namespace romi {
                 
         public:
                 PythonTrackFollower(ICamera& camera,
+                                    std::unique_ptr<romi::IRPCClient>& rpc,
                                     const std::string& function_name,
                                     ISession& session);
                 ~PythonTrackFollower() override = default;

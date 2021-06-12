@@ -27,17 +27,19 @@
 namespace romi {
 
         PythonTrackFollower::PythonTrackFollower(ICamera& camera,
+                                                 std::unique_ptr<romi::IRPCClient>& rpc,
                                                  const std::string& function_name,
                                                  ISession& session)
                 : camera_(camera),
+                  rpc_(),
                   function_name_(function_name),
                   session_(session),
                   cross_track_error_(0.0),
                   orientation_error_(0.0),
-                  rpc_(),
                   image_counter_(0)
         {
-                rpc_ = romi::RcomClient::create("python", 30);
+                //rpc_ = romi::RcomClient::create("python", 30);
+                rpc_ = std::move(rpc);
         }
 
         void PythonTrackFollower::start()
