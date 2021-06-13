@@ -22,6 +22,7 @@
 
  */
 
+#include <algorithm>
 #include <log.h>
 #include <ClockAccessor.h>
 #include "rover/WheelOdometry.h"
@@ -75,8 +76,84 @@ namespace romi {
                   session_(session),
                   mutex_(),
                   status_(MOVEAT_CAPABLE),
-                  stop_(false)
+                  stop_(false),
+                  update_thread_(),
+                  max_acceleration_(0.0),
+                  left_target_(0.0),
+                  right_target_(0.0),
+                  left_speed_(0.0),
+                  right_speed_(0.0),
+                  quitting_(false)
         {
+                max_acceleration_  = 0.1; 
+                update_thread_ = std::make_unique<std::thread>(
+                        [this]() {
+                                update_speeds();
+                        });
+        }
+
+        Navigation::~Navigation()
+        {
+                quitting_ = true;
+                if (update_thread_) {
+                        update_thread_->join();
+                        update_thread_ = nullptr;
+                }
+        }
+
+        void Navigation::update_speeds()
+        {
+                auto clock = rpp::ClockAccessor::GetInstance();
+                double last_time = clock->time();
+
+                while (!quitting_) {
+                        double now = clock->time();
+                        double dt = now - last_time;
+                        double left = compute_next_speed(left_speed_, left_target_, dt);
+                        double right = compute_next_speed(right_speed_, right_target_, dt);
+                        
+                        if (left != left_speed_ || right != right_speed_) {
+                                left_speed_ = left;
+                                right_speed_ = right;
+                                send_moveat(left_speed_, right_speed_);
+                                r_debug("Navigation: speed now (%.2f, %.2f)",
+                                        left_speed_, right_speed_);
+                        }
+
+                        clock->sleep(0.040);
+                }
+        }
+        
+        double Navigation::compute_next_speed(double current_speed,
+                                              double target_speed,
+                                              double dt)
+        {
+                double new_speed = current_speed;
+                if (current_speed < target_speed) {
+                        new_speed += max_acceleration_ * dt;
+                        if (new_speed > target_speed)
+                                new_speed = target_speed;
+                } else if (current_speed > target_speed) {
+                        new_speed -= max_acceleration_ * dt;
+                        if (new_speed < target_speed)
+                                new_speed = target_speed;
+                }
+                return new_speed;
+        }
+        
+        bool Navigation::set_speed_targets(double left, double right)
+        {
+                // left_target_ = left;
+                // right_target_ = right;
+                // return true;
+                return send_moveat(left, right);
+        }
+
+        bool Navigation::send_moveat(double left, double right)
+        {
+                left = std::clamp(left, -1.0, 1.0);
+                right = std::clamp(right, -1.0, 1.0);
+                return driver_.moveat(left, right);
         }
         
         bool Navigation::do_move(double distance, double speed)
@@ -191,7 +268,7 @@ namespace romi {
                 while (!stop_) {
 
                         // Keep going
-                        if (!driver_.moveat(left_speed, right_speed)) {
+                        if (!set_speed_targets(left_speed, right_speed)) {
                                 r_err("Navigation::travel: moveat failed");
                                 break;
                         }
@@ -259,7 +336,7 @@ namespace romi {
                         //clock->sleep(0.100);
                 }
 
-                driver_.moveat(0.0, 0.0);
+                set_speed_targets(0.0, 0.0);
                 left_speed = 0.0;
                 right_speed = 0.0;
 
@@ -300,13 +377,13 @@ namespace romi {
 
                 return success;
         }
-
+        
         bool Navigation::moveat(double left, double right)
         {
                 SynchronizedCodeBlock sync(mutex_);
                 bool success = false;
-                if (status_ == MOVEAT_CAPABLE) 
-                        success = driver_.moveat(left, right);
+                if (status_ == MOVEAT_CAPABLE)
+                        success = set_speed_targets(left, right);
                 else
                         r_warn("Navigation::moveat: still moving");
                 return success;

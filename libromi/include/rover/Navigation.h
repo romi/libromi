@@ -25,6 +25,8 @@
 #define __ROMI_DEFAULT_NAVIGATION_H
 
 #include <mutex>
+#include <thread>
+#include <atomic>
 
 #include "api/INavigation.h"
 #include "api/IMotorDriver.h"
@@ -54,6 +56,21 @@ namespace romi {
                 move_status_t status_;
                 bool stop_;
 
+                // WIP
+                std::unique_ptr<std::thread> update_thread_;
+                double max_acceleration_; // in m/s²
+                std::atomic<double> left_target_;
+                std::atomic<double> right_target_;
+                double left_speed_;
+                double right_speed_;
+                std::atomic<bool> quitting_;
+                void update_speeds();
+                bool set_speed_targets(double left, double right);
+                double compute_next_speed(double current_speed, double target_speed,
+                                          double dt);
+                //
+                
+                bool send_moveat(double left, double right);
                 bool do_move(double distance, double speed);
                 bool travel(double speed, double distance);
                 bool try_travel(ILocationProvider& location_provider,
@@ -67,7 +84,7 @@ namespace romi {
                            NavigationSettings &settings,
                            ITrackFollower& track_follower,
                            ISession& session);
-                ~Navigation() override = default;
+                ~Navigation() override;
 
                 bool moveat(double left, double right) override;
                 bool move(double distance, double speed) override;
