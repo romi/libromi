@@ -233,7 +233,7 @@ namespace romi {
                 if (relative_speed != 0.0) {
                         double speed = settings_.maximum_speed * relative_speed;
                         double time = distance / fabs(speed);
-                        timeout = 5.0 + 1.5 * time;
+                        timeout = 7.0 + 2.0 * time;
 
                         r_debug("Navigation::compute_timeout: v_rel=%f, v_max=%f, "
                                 "v=%f, dist=%f, dt=%f, timeout=%f", relative_speed,
