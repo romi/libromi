@@ -143,10 +143,11 @@ namespace romi {
         
         bool Navigation::set_speed_targets(double left, double right)
         {
-                // left_target_ = left;
-                // right_target_ = right;
-                // return true;
-                return send_moveat(left, right);
+                left_target_ = left;
+                right_target_ = right;
+                r_debug("Navigation: Speed target now (%.2f, %.2f)", left, right);
+                return true;
+                //return send_moveat(left, right);
         }
 
         bool Navigation::send_moveat(double left, double right)
