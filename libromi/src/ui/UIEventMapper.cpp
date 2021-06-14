@@ -55,48 +55,48 @@ namespace romi {
                 int retval = 0;
                         
                 if (event.number == button_forward_mode) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_forward_mode)) {
                                 retval = event_forward_start;
                         } else {
                                 retval = event_forward_stop;
                         }
                                 
                 } else if (event.number == button_backward_mode) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_backward_mode)) {
                                 retval = event_backward_start;
                         } else {
                                 retval = event_backward_stop;
                         }
                                 
                 } else if (event.number == button_spin_mode) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_spin_mode)) {
                                 retval = event_spinning_start;
                         } else {
                                 retval = event_spinning_stop;
                         }
                                 
                 } else if (event.number == button_accurate_forward) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_accurate_forward)) {
                                 retval = event_accurate_forward_start;
                         } else {
                                 retval = event_accurate_forward_stop;
                         }
                                 
                 } else if (event.number == button_accurate_backward) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_accurate_backward)) {
                                 retval = event_accurate_backward_start;
                         } else {
                                 retval = event_accurate_backward_stop;
                         }
                 } else if (event.number == button_navigation_mode) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_navigation_mode)) {
                                 retval = event_navigation_mode_pressed;
                         } else {
                                 retval = event_navigation_mode_released;
                         }
                 } else if (event.number == button_menu_mode) {
                         r_debug("button_menu_mode");
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_menu_mode)) {
                                 r_debug("event_menu_mode_pressed");
                                 retval = event_menu_mode_pressed;
                         } else {
@@ -104,11 +104,11 @@ namespace romi {
                                 retval = event_menu_mode_released;
                         }
                 } else if (event.number == button_select) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_select)) {
                                 retval = event_select;
                         }
                 } else if (event.number == button_stop) {
-                        if (joystick.is_button_pressed(event.number)) {
+                        if (joystick.is_button_pressed(button_stop)) {
                                 retval = event_stop;
                         }
                 } 

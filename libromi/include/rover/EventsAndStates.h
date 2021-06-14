@@ -39,10 +39,10 @@ namespace romi {
                 button_navigation_mode = 1,   // circle (O)
                 button_menu_mode = 2,         // triangle (/\)
                 button_stop = 3,              // square ([])
-                button_accurate_backward = 4, // L1
-                button_accurate_forward = 5,  // R1
-                button_backward_mode = 6,     // L2
-                button_forward_mode = 7,      // R2
+                button_backward_mode = 4,     // L1
+                button_forward_mode = 5,      // R1
+                button_accurate_backward = 6, // L2
+                button_accurate_forward = 7,  // R2
                 button_spin_mode = 11,        // left stick
                 button_last = 12,
         };
