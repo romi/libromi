@@ -38,16 +38,16 @@ protected:
 	}
 };
 
-TEST_F(navigation_tests, test_moveat)
-{
-        NavigationSettings settings(config);
-        Navigation navigation(driver, settings, track_follower, session);
+// TEST_F(navigation_tests, test_moveat)
+// {
+//         NavigationSettings settings(config);
+//         Navigation navigation(driver, settings, track_follower, session);
 
-        EXPECT_CALL(driver, moveat(0.1, 0.2))
-                .WillOnce(Return(true));
+//         EXPECT_CALL(driver, moveat(0.1, 0.2))
+//                 .WillOnce(Return(true));
 
-        navigation.moveat(0.1, 0.2);
-}
+//         navigation.moveat(0.1, 0.2);
+// }
 
 TEST_F(navigation_tests, move_fails_with_invalid_speed_1)
 {

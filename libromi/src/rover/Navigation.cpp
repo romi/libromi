@@ -210,9 +210,9 @@ namespace romi {
                         WheelOdometry odometry(settings_, driver_);
                         //odometry.set_displacement(0, 0.1); // DEBUG
                         
-                        //ZeroNavigationController navigation_controller;
-                        L1NavigationController navigation_controller(settings_.wheel_base,
-                                                                     2.0);
+                        ZeroNavigationController navigation_controller;
+                        //L1NavigationController navigation_controller(settings_.wheel_base,
+                        //                                             2.0);
                         success = try_travel(odometry,
                                              navigation_controller,
                                              speed, distance,
