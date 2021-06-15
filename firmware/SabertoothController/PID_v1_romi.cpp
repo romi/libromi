@@ -64,35 +64,36 @@ bool PID::Compute()
         unsigned long timeChange = (now - lastTime);
    
         if (timeChange >= SampleTime) {
-                /*Compute all the working error variables*/
+                /* Compute all the working error variables */
                 double input = *myInput;
                 double error = *mySetpoint - input;
                 double dInput = (input - lastInput);
-                outputSum+= (ki * error);
+                outputSum += (ki * error);
 
-                /*Add Proportional on Measurement, if P_ON_M is specified*/
+                /* Add Proportional on Measurement, if P_ON_M is specified */
                 if (!pOnE)
-                        outputSum-= kp * dInput;
+                        outputSum -= kp * dInput;
 
                 if (outputSum > outMax)
                         outputSum = outMax;
                 else if (outputSum < outMin)
                         outputSum= outMin;
 
-                /*Add Proportional on Error, if P_ON_E is specified*/
+                /* Add Proportional on Error, if P_ON_E is specified */
                 double output;
                 if (pOnE)
                         output = kp * error;
                 else
                         output = 0;
 
-                /*Compute Rest of PID Output*/
+                /* Compute Rest of PID Output */
                 output += outputSum - kd * dInput;
 
                 if (output > outMax)
                         output = outMax;
                 else if(output < outMin)
                         output = outMin;
+                
                 *myOutput = output;
 
                 /*Remember some variables for next time*/
@@ -102,7 +103,7 @@ bool PID::Compute()
                 Err = error;
                 Ep = kp * error;
                 Ei = outputSum;
-                Ed =  - kd * dInput;
+                Ed = - kd * dInput;
 
                 return true;
         } else {
@@ -209,10 +210,14 @@ void PID::SetMode(int Mode)
  ******************************************************************************/
 void PID::Initialize()
 {
-        outputSum = *myOutput;
+        // outputSum = *myOutput; [PH]
+        outputSum = 0.0;
         lastInput = *myInput;
-        if(outputSum > outMax) outputSum = outMax;
-        else if(outputSum < outMin) outputSum = outMin;
+        
+        if (outputSum > outMax)
+                outputSum = outMax;
+        else if (outputSum < outMin)
+                outputSum = outMin;
 }
 
 /* SetControllerDirection(...)*************************************************

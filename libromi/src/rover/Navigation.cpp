@@ -33,6 +33,10 @@
 
 namespace romi {
 
+        static const double kDefaultMaxAcceleration = 0.3;
+        static const double kSlowNavigationSpeed = 0.3;
+        static const double kDistanceSlowNavigation = 0.1;
+        
         struct NavRecording
         {
                 double time_;
@@ -78,14 +82,14 @@ namespace romi {
                   status_(MOVEAT_CAPABLE),
                   stop_(false),
                   update_thread_(),
-                  max_acceleration_(0.0),
+                  max_acceleration_(kDefaultMaxAcceleration),
                   left_target_(0.0),
                   right_target_(0.0),
                   left_speed_(0.0),
                   right_speed_(0.0),
                   quitting_(false)
         {
-                max_acceleration_  = 0.1; 
+                send_moveat(0.0, 0.0);
                 update_thread_ = std::make_unique<std::thread>(
                         [this]() {
                                 update_speeds();
@@ -99,6 +103,7 @@ namespace romi {
                         update_thread_->join();
                         update_thread_ = nullptr;
                 }
+                send_moveat(0.0, 0.0);
         }
 
         void Navigation::update_speeds()
@@ -106,11 +111,33 @@ namespace romi {
                 auto clock = rpp::ClockAccessor::GetInstance();
                 double last_time = clock->time();
 
+                static double start_time = clock->time();
+                
+
+                {
+                        FILE* fp = fopen("nav-speeds.csv", "w");
+                        if (fp) {
+                                fprintf(fp, "# time\tleft target\tright target\tleft output\tright output\n");
+                                fclose(fp);
+                        }
+                }
+                
                 while (!quitting_) {
                         double now = clock->time();
                         double dt = now - last_time;
                         double left = compute_next_speed(left_speed_, left_target_, dt);
                         double right = compute_next_speed(right_speed_, right_target_, dt);
+                        
+                        {
+                                FILE* fp = fopen("nav-speeds.csv", "a");
+                                if (fp) {
+                                        fprintf(fp, "%.3f\t%.3f\t%.3f\t%.3f\t%.3f\n",
+                                                clock->time() - start_time,
+                                                left_target_.load(), right_target_.load(),
+                                                left, right);
+                                        fclose(fp);
+                                }
+                        }
                         
                         if (left != left_speed_ || right != right_speed_) {
                                 left_speed_ = left;
@@ -118,10 +145,14 @@ namespace romi {
                                 send_moveat(left_speed_, right_speed_);
                                 r_debug("Navigation: speed now (%.2f, %.2f)",
                                         left_speed_, right_speed_);
+
                         }
 
+                        last_time = now;
                         clock->sleep(0.040);
                 }
+                
+                send_moveat(0.0, 0.0);
         }
         
         double Navigation::compute_next_speed(double current_speed,
@@ -130,11 +161,11 @@ namespace romi {
         {
                 double new_speed = current_speed;
                 if (current_speed < target_speed) {
-                        new_speed += max_acceleration_ * dt;
+                        new_speed = current_speed + max_acceleration_ * dt;
                         if (new_speed > target_speed)
                                 new_speed = target_speed;
                 } else if (current_speed > target_speed) {
-                        new_speed -= max_acceleration_ * dt;
+                        new_speed = current_speed - max_acceleration_ * dt;
                         if (new_speed < target_speed)
                                 new_speed = target_speed;
                 }
@@ -300,13 +331,13 @@ namespace romi {
                         distance_travelled = (location - start_location).norm(); // FIXME!!!
 
                         // If the rover is close to the end, force a slow-down.
-                        if (distance_travelled >= distance - 0.1) {
+                        if (distance_travelled >= distance - kDistanceSlowNavigation) {
                                 if (speed > 0.0) {
-                                        left_speed = 0.1;
-                                        right_speed = 0.1;
+                                        left_speed = kSlowNavigationSpeed;
+                                        right_speed = kSlowNavigationSpeed;
                                 } else {
-                                        left_speed = -0.1;
-                                        right_speed = -0.1;
+                                        left_speed = -kSlowNavigationSpeed;
+                                        right_speed = -kSlowNavigationSpeed;
                                 }
                         }
 
@@ -341,7 +372,7 @@ namespace romi {
                 left_speed = 0.0;
                 right_speed = 0.0;
 
-                FILE* fp = fopen("/tmp/nav.csv", "w");
+                FILE* fp = fopen("nav.csv", "w");
                 if (fp) {
                         fprintf(fp,
                                 "# time\tx\ty\tdistance\tcross-track error\torientation\t"
