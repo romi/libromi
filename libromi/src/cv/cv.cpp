@@ -154,9 +154,8 @@ namespace romi {
                                                                           kseedsl, kseedsa,
                                                                           kseedsb, kseedsx,
                                                                           kseedsy);
-                
-                std::cout << "number unique segments (slic) = "
-                          << kseedsl.size() << std::endl;
+
+                r_info("calculate_centers (slic): number unique segments = %u", kseedsl.size());
 
                 // Use Centres from algo
                 return calculate_centers(kseedsl, kseedsa, kseedsb, kseedsx, kseedsy);
