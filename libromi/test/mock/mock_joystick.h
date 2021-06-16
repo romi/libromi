@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
-#include "api/Joystick.h"
+#include "api/IJoystick.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
-class MockJoystick : public romi::Joystick
+class MockJoystick : public romi::IJoystick
 {
 public:
         MOCK_METHOD(romi::JoystickEvent&, get_next_event, (), (override));

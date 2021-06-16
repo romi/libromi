@@ -24,22 +24,22 @@
 #ifndef __ROMI_UI_EVENT_MAPPER_H
 #define __ROMI_UI_EVENT_MAPPER_H
 
-#include "api/Joystick.h"
-#include "ui/JoystickEventMapper.h"
+#include "api/IJoystick.h"
+#include "ui/IJoystickEventMapper.h"
 #include "rover/EventsAndStates.h"
 
 namespace romi {
 
-        class UIEventMapper : public JoystickEventMapper
+        class UIEventMapper : public IJoystickEventMapper
         {
         protected:
-                int map_axis(Joystick& joystick, JoystickEvent& event);
-                int map_button(Joystick& joystick, JoystickEvent& event);                
+                int map_axis(IJoystick& joystick, JoystickEvent& event);
+                int map_button(IJoystick& joystick, JoystickEvent& event);                
         public:
                 
                 virtual ~UIEventMapper() override = default;
 
-                int map(Joystick& joystick, JoystickEvent& event);
+                int map(IJoystick& joystick, JoystickEvent& event);
         };
 }
 

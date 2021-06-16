@@ -27,7 +27,7 @@
 
 namespace romi {
 
-        int UIEventMapper::map_axis(Joystick& joystick, JoystickEvent& event)
+        int UIEventMapper::map_axis(IJoystick& joystick, JoystickEvent& event)
         {
                 int retval = 0;
                         
@@ -50,7 +50,7 @@ namespace romi {
                 return retval;
         }
 
-        int UIEventMapper::map_button(Joystick& joystick, JoystickEvent& event)
+        int UIEventMapper::map_button(IJoystick& joystick, JoystickEvent& event)
         {
                 int retval = 0;
                         
@@ -116,7 +116,7 @@ namespace romi {
                 return retval;
         }
                 
-        int UIEventMapper::map(Joystick& joystick, JoystickEvent& event)
+        int UIEventMapper::map(IJoystick& joystick, JoystickEvent& event)
         {
                 int retval = 0;
                         

@@ -30,8 +30,8 @@
 
 namespace romi {
         
-        JoystickInputDevice::JoystickInputDevice(Joystick &joystick,
-                                                 JoystickEventMapper &event_mapper)
+        JoystickInputDevice::JoystickInputDevice(IJoystick &joystick,
+                                                 IJoystickEventMapper &event_mapper)
                 : _joystick(joystick),
                   _event_mapper(event_mapper) {
                 

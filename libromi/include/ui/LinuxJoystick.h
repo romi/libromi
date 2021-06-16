@@ -27,11 +27,11 @@
 #include <string>
 #include <vector>
 #include <ILinux.h>
-#include "api/Joystick.h"
+#include "api/IJoystick.h"
 
 namespace romi {
         
-        class LinuxJoystick : public Joystick
+        class LinuxJoystick : public IJoystick
         {
         protected:
                 rpp::ILinux &_linux;

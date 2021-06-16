@@ -82,7 +82,7 @@ set(SOURCES
         include/api/INotifications.h
         include/api/IPowerDevice.h
         include/api/IWeeder.h
-        include/api/Joystick.h
+        include/api/IJoystick.h
         include/api/Path.h
         include/api/StateMachine.h
 
@@ -176,7 +176,7 @@ set(SOURCES
 
         include/ui/CrystalDisplay.h
         include/ui/JoystickInputDevice.h
-        include/ui/JoystickEventMapper.h
+        include/ui/IJoystickEventMapper.h
         include/ui/LinuxJoystick.h
         include/ui/Menu.h
         include/ui/IScriptEngine.h

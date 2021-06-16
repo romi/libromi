@@ -27,8 +27,8 @@
 #include <string>
 #include <vector>
 #include "api/IInputDevice.h"
-#include "api/Joystick.h"
-#include "ui/JoystickEventMapper.h"
+#include "api/IJoystick.h"
+#include "ui/IJoystickEventMapper.h"
 
 namespace romi {
         
@@ -38,15 +38,15 @@ namespace romi {
                 static constexpr const char *ClassName = "joystick";
                 
         protected:
-                Joystick &_joystick;
-                JoystickEventMapper &_event_mapper;
+                IJoystick &_joystick;
+                IJoystickEventMapper &_event_mapper;
                 
                 void assure_number_of_axes(size_t minimum);
                 void assure_number_of_buttons(size_t minimum);
 
         public:
-                JoystickInputDevice(Joystick &joystick,
-                                    JoystickEventMapper &event_mapper);                
+                JoystickInputDevice(IJoystick &joystick,
+                                    IJoystickEventMapper &event_mapper);                
                 ~JoystickInputDevice() override = default;
                 
                 int get_next_event() override;
