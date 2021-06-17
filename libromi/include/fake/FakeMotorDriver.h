@@ -24,8 +24,8 @@
 #ifndef __ROMI_FAKE_MOTORDRIVER_H
 #define __ROMI_FAKE_MOTORDRIVER_H
 
-#include "r.h"
-#include "IMotorDriver.h"
+#include <r.h>
+#include "api/IMotorDriver.h"
 
 namespace romi {
         
@@ -54,6 +54,26 @@ namespace romi {
                         timestamp = 0.0;
                         return true;
                 }
+
+                bool get_pid_values(Axis axis,
+                                    double& target_speed,
+                                    double& measured_speed,
+                                    double& pid_output,
+                                    double& pid_error_p,
+                                    double& pid_error_i,
+                                    double& pid_error_d,
+                                    double& controller_input) {
+                        (void) axis;
+                        target_speed = 0.0;
+                        measured_speed = 0.0;
+                        pid_output = 0.0;
+                        pid_error_p = 0.0;
+                        pid_error_i = 0.0;
+                        pid_error_d = 0.0;
+                        controller_input = 0.0;
+                        return true;
+                }
+                
         };
 }
 

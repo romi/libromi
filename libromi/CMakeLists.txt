@@ -226,6 +226,7 @@ set(SOURCES
 
         src/rover/EventsAndStates.cpp
         src/rover/L1NavigationController.cpp
+        src/rover/NavigationSettings.cpp
         src/rover/PythonTrackFollower.cpp
         src/rover/Rover.cpp
         src/rover/RoverInterface.cpp

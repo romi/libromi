@@ -24,7 +24,6 @@
 #ifndef __ROMI_NAVIGATION_SETTINGS_H
 #define __ROMI_NAVIGATION_SETTINGS_H
 
-#include <math.h>
 #include <JsonCpp.h>
 
 namespace romi {
@@ -32,21 +31,23 @@ namespace romi {
         class NavigationSettings
         {
         public:
+
+                static constexpr const char *kEncoderStepsKey = "encoder-steps"; 
+                static constexpr const char *kWheelDiameterKey = "wheel-diameter"; 
+                static constexpr const char *kMaximumSpeedKey = "maximum-speed"; 
+                static constexpr const char *kWheelBaseKey = "wheel-base"; 
+                static constexpr const char *kMaximumAccelerationKey = "maximum-acceleration"; 
+                
                 double encoder_steps;
                 double wheel_diameter;
                 double maximum_speed;
                 double wheel_base;
                 double wheel_circumference;
                 double max_revolutions_per_sec;
+                double maximum_acceleration;
 
-                NavigationSettings(JsonCpp &config)
-                        : encoder_steps(config.num("encoder_steps")),
-                          wheel_diameter(config.num("wheel_diameter")),
-                          maximum_speed(config.num("maximum_speed")),
-                          wheel_base(config.num("wheel_base")),
-                          wheel_circumference(M_PI * wheel_diameter),
-                          max_revolutions_per_sec(maximum_speed / wheel_circumference) {
-                }
+                NavigationSettings(JsonCpp &config);
+                virtual ~NavigationSettings() = default;
         };
 }
 

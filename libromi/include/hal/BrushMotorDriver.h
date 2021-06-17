@@ -41,14 +41,24 @@ namespace romi {
                 int dir_left;
                 int dir_right;
 
+                static constexpr const char *kMaxSignalAmpKey = "maximum-signal-amplitude"; 
+                static constexpr const char *kUsePidKey = "use-pid"; 
+                static constexpr const char *kPidKey = "pid"; 
+                static constexpr const char *kKpKey = "kp"; 
+                static constexpr const char *kKiKey = "ki"; 
+                static constexpr const char *kKdKey = "kd"; 
+                static constexpr const char *kEncoderDirectionsKey = "encoder-directions"; 
+                static constexpr const char *kLeftKey = "left"; 
+                static constexpr const char *kRightKey = "right"; 
+
                 void parse(JsonCpp &params) {
-                        max_signal = (int) params.num("maximum_signal_amplitude");
-                        use_pid = params.boolean("use_pid");
-                        kp = params.get("pid").num("kp");
-                        ki = params.get("pid").num("ki");
-                        kd = params.get("pid").num("kd");
-                        dir_left = (int) params.get("encoder_directions").num("left");
-                        dir_right = (int) params.get("encoder_directions").num("right");
+                        max_signal = (int) params.num(kMaxSignalAmpKey);
+                        use_pid = params.boolean(kUsePidKey);
+                        kp = params.get(kPidKey).num(kKpKey);
+                        ki = params.get(kPidKey).num(kKiKey);
+                        kd = params.get(kPidKey).num(kKdKey);
+                        dir_left = (int) params.get(kEncoderDirectionsKey).num(kLeftKey);
+                        dir_right = (int) params.get(kEncoderDirectionsKey).num(kRightKey);
                 }
         };
 

@@ -27,11 +27,11 @@ protected:
           driver_config(),
           encoder_steps(default_encoder_steps),
           maximum_revolutions_per_second(default_maximum_revolutions_per_second) {
-                const char * config_string = "{"
-                        "'maximum_signal_amplitude': 71,"
-                        "'use_pid': false,"
+                const char *config_string = "{"
+                        "'maximum-signal-amplitude': 71,"
+                        "'use-pid': false,"
                         "'pid': {'kp': 1.1, 'ki': 2.2, 'kd': 3.3},"
-                        "'encoder_directions': {'left': -1, 'right': 1 }}";
+                        "'encoder-directions': {'left': -1, 'right': 1 }}";
                 driver_config = JsonCpp::parse(config_string);
 	}
 
