@@ -83,9 +83,9 @@ namespace romi {
                         set(values);
                 }
                 
-                v3(const v3& v) {
-                        set(v._x);
-                }
+                /* v3(const v3& v) { */
+                /*         set(v._x); */
+                /* } */
                 
                 virtual ~v3() = default;
                 
@@ -102,6 +102,16 @@ namespace romi {
                 }
 
                 //
+                v3& operator=(double v) {
+                        set(v);
+                        return *this;
+                }
+
+                v3& operator=(const double *v) {
+                        set(v);
+                        return *this;
+                }
+                
                 void set(double v) {
                         vset(_x, v);
                 }
