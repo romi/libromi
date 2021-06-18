@@ -87,6 +87,8 @@ namespace romi {
                         set(v._x);
                 }
                 
+                virtual ~v3() = default;
+                
                 double& x() {
                         return _x[0];
                 }
@@ -119,16 +121,6 @@ namespace romi {
                         _x[2] = z;
                 }
                 //
-                
-                // v3& operator=(double v) {
-                //         set(v);
-                //         return *this;
-                // }
-                        
-                // v3& operator=(const double *v) {
-                //         set(v);
-                //         return *this;
-                // }
                                 
                 const double *values() const {
                         return _x;
