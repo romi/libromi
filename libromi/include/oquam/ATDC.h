@@ -29,7 +29,7 @@
 
 namespace romi {
 
-        double amax_in_direction(double *amax, double *v);
+        double amax_in_direction(const double *amax, double *v);
         void assert_equal_speeds(double *v0, double *v1);
 
         /**  The ATDC structure combines four sections: 
@@ -53,7 +53,7 @@ namespace romi {
                 
                 void compute_accelerations(double *p0, double *p1,
                                            double *v0, double *v, double *v1,
-                                           double *amax);
+                                           const double *amax);
                 void update_start_times(double at);
                 double get_end_time();
                 void slow_down_curve(double factor);
@@ -62,16 +62,20 @@ namespace romi {
                 
                 void do_compute_accelerations(double *p0, double *p1,
                                               double *v0, double *v, double *v1,
-                                              double *amax);
+                                              const double *amax);
                 void curve_only(double *p, double *v);
                 
-                void compute_acceleration(double *p0, double *v0, double *v1, double *amax);
+                void compute_acceleration(double *p0, double *v0, double *v1,
+                                          const double *amax);
                 void zero_acceleration(double *p, double *v);
-                void normal_acceleration(double *p0, double *v0, double *v1, double *amax);
+                void normal_acceleration(double *p0, double *v0, double *v1,
+                                         const double *amax);
                 
-                void compute_deceleration(double *p1, double *v0, double *v1, double *amax);
+                void compute_deceleration(double *p1, double *v0, double *v1,
+                                          const double *amax);
                 void zero_deceleration(double *p, double *v);
-                void normal_deceleration(double *p1, double *v0, double *v1, double *amax);
+                void normal_deceleration(double *p1, double *v0, double *v1,
+                                         const double *amax);
                 
                 void compute_travel(double *p0, double *p1, double *v);                
                 void zero_travel(double *p, double *v);
@@ -81,7 +85,7 @@ namespace romi {
                 
                 void scale_target_speed(double *p0, double *p1,
                                         double *v0, double *v, double *v1, 
-                                        double *amax, double *scaled_v);
+                                        const double *amax, double *scaled_v);
 
         };
 

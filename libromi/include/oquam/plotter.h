@@ -32,8 +32,8 @@ namespace romi {
 
         membuf_t *plot_to_mem(SmoothPath& script,
                               CNCRange& range,
-                              double *vmax,
-                              double *amax);
+                              const double *vmax,
+                              const double *amax);
 }
 
 #endif // _OQUAM_PLOTTER_H_

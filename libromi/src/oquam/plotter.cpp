@@ -267,7 +267,7 @@ namespace romi {
                                   SmoothPath& script,
                                   int i,
                                   double duration,
-                                  double *vm)
+                                  const double *vm)
         {
                 double xscale = plot->v[i].w / duration;
                 double yscale = plot->v[i].h / vmax(vm);
@@ -330,7 +330,7 @@ namespace romi {
         static void print_speeds(plot_t *plot,
                                  SmoothPath& script,
                                  double duration,
-                                 double *vmax)
+                                 const double *vmax)
         {
                 for (int i = 0; i < 3; i++)
                         print_speed_i(plot, script, i, duration, vmax);
@@ -340,7 +340,7 @@ namespace romi {
                                          SmoothPath& script,
                                          int i,
                                          double duration,
-                                         double *amax)
+                                         const double *amax)
         {
                 double xscale = plot->a[i].w / duration;
                 double yscale = plot->a[i].h / vmax(amax);
@@ -396,14 +396,14 @@ namespace romi {
         static void print_accelerations(plot_t *plot,
                                         SmoothPath& script,
                                         double duration,
-                                        double *amax)
+                                        const double *amax)
         {
                 for (int i = 0; i < 3; i++)
                         print_acceleration_i(plot, script, i, duration, amax);
         }
 
         static void print_slices_speed_i(plot_t *plot, SmoothPath& script, int i,
-                                         double duration, double *vm)
+                                         double duration, const double *vm)
         {
                 double xscale = plot->v[i].w / duration;
                 double yscale = plot->v[i].h / vmax(vm);
@@ -442,7 +442,7 @@ namespace romi {
                 membuf_printf(plot->buffer, "    </g>\n");
         }
 
-        static void print_slices(plot_t *plot, SmoothPath& script, double duration, double *vm)
+        static void print_slices(plot_t *plot, SmoothPath& script, double duration, const double *vm)
         {
                 membuf_printf(plot->buffer,
                               "    <g inkscape:groupmode=\"layer\" "
@@ -560,7 +560,7 @@ namespace romi {
                 membuf_printf(plot->buffer, "    </g>\n");
         }
 
-        static void plot_init_dimensions(plot_t *plot, double *xmin, double *xmax)
+        static void plot_init_dimensions(plot_t *plot, const double *xmin, const double *xmax)
         {
                 plot->d = 0.1;
 
@@ -576,7 +576,7 @@ namespace romi {
                 plot->scale = 1000.0;
         }
 
-        static void plot_init_xy(plot_t *plot, double *xmin, double *xmax)
+        static void plot_init_xy(plot_t *plot, const double *xmin, const double *xmax)
         {
                 plot->xy.x = plot->d;
                 plot->xy.y = plot->h - plot->d - plot->L;
@@ -588,7 +588,7 @@ namespace romi {
                 plot->xy.y1 = xmax[1];
         }
 
-        static void plot_init_xz(plot_t *plot, double *xmin, double *xmax)
+        static void plot_init_xz(plot_t *plot, const double *xmin, const double *xmax)
         {
                 plot->xz.x = plot->xy.x + plot->xy.w + plot->d;
                 plot->xz.y = plot->xy.y;
@@ -600,7 +600,7 @@ namespace romi {
                 plot->xz.y1 = xmax[2];
         }
         
-        static void plot_init_yz(plot_t *plot, double *xmin, double *xmax)
+        static void plot_init_yz(plot_t *plot, const double *xmin, const double *xmax)
         {
                 plot->yz.x = plot->xz.x + plot->xz.w + plot->d;
                 plot->yz.y = plot->xy.y;
@@ -648,7 +648,7 @@ namespace romi {
                 plot->a[2].h = 0.9 * plot->d / 2.0;
         }
         
-        static void plot_init(plot_t *plot, double *xmin, double *xmax)
+        static void plot_init(plot_t *plot, const double *xmin, const double *xmax)
         {
                 plot_init_dimensions(plot, xmin, xmax);
                 plot_init_xy(plot, xmin, xmax);
@@ -659,7 +659,7 @@ namespace romi {
         }
         
         static void plot_draw_graphs(plot_t *plot, SmoothPath& script,
-                                     double *vmax_, double *amax)
+                                     const double *vmax_, const double *amax)
         {
                 double duration = script.get_duration();
                 if (duration > 0) {
@@ -672,8 +672,8 @@ namespace romi {
         }
 
         membuf_t *plot_to_mem(SmoothPath& script,
-                              double *xmin, double *xmax,
-                              double *vmax_, double *amax)
+                              const double *xmin, const double *xmax,
+                              const double *vmax_, const double *amax)
         {
                 membuf_t *buffer = new_membuf();
                 plot_t *plot = new_plot(buffer);
@@ -689,7 +689,7 @@ namespace romi {
         }
 
         membuf_t *plot_to_mem(SmoothPath& script, CNCRange& range,
-                              double *vmax, double *amax)
+                              const double *vmax, const double *amax)
         {
                 return plot_to_mem(script, range.min.values(),
                                    range.max.values(), vmax, amax);

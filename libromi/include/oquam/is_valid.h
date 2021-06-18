@@ -35,11 +35,11 @@ namespace romi {
                       const double *vmax, const double *amax);
 
         bool is_valid(ATDC& atdc, 
-                      double *xmin, double *xmax, 
-                      double *vmax, double *amax);
+                      const double *xmin, const double *xmax, 
+                      const double *vmax, const double *amax);
 
         bool is_valid(SmoothPath& script, CNCRange& range, 
-                      double *vmax, double *amax);
+                      const double *vmax, const double *amax);
        
 }
 

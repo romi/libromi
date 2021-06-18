@@ -120,8 +120,8 @@ namespace romi {
                 void moveto(double x, double y, double z, double v);
                 void moveto(v3 p, double v);
 
-                void convert(double *vmax,
-                             double *amax,
+                void convert(const double *vmax,
+                             const double *amax,
                              double deviation,
                              double slice_duration,
                              double max_slice_duration);
@@ -168,32 +168,33 @@ namespace romi {
                 void convert_segment(Move& move);
                 void init_segment_positions(Segment& segment, Move& move);
                 void init_segment_speed(Segment& segment, Move& move);
-                void convert_segments_to_atdc(double d, double *vmax, double *amax);
+                void convert_segments_to_atdc(double d, const double *vmax,
+                                              const double *amax);
                 void copy_start_position_to_atdc();
-                void check_max_speeds(double *vmax);
-                void check_max_speed(size_t index, double *vmax);
+                void check_max_speeds(const double *vmax);
+                void check_max_speed(size_t index, const double *vmax);
                 void create_atdc();
                 void slice(double period, double max_slice_duration);
                 void slice(ATDC& atdc, double period, double max_slice_duration);
-                void compute_curves_and_speeds(double d, double *amax);
-                void compute_curve_and_speeds(size_t index, double d, double *amax);
-                void compute_curve(size_t index, double deviation, double *amax);
+                void compute_curves_and_speeds(double d, const double *amax);
+                void compute_curve_and_speeds(size_t index, double d, const double *amax);
+                void compute_curve(size_t index, double deviation, const double *amax);
                 void no_curve(size_t index);                
-                void default_curve(size_t index, double deviation, double *amax);
+                void default_curve(size_t index, double deviation, const double *amax);
                 void initialize_next_acceleration(size_t index);
-                bool update_speeds_if_needed(size_t index, double *amax);
+                bool update_speeds_if_needed(size_t index, const double *amax);
 
                 // Returns true if the changes should be
                 // back-propagated to the previous sections
-                bool adjust_speeds(ATDC& t, double *amax);
+                bool adjust_speeds(ATDC& t, const double *amax);
                 
                 bool update_curve_speed_if_needed(size_t index);
-                void reduce_entry_speed(ATDC& t, double *amax);
-                void reduce_exit_speed(ATDC& t, double *amax);
-                void back_propagate_speed_change(size_t index, double *amax);
+                void reduce_entry_speed(ATDC& t, const double *amax);
+                void reduce_exit_speed(ATDC& t, const double *amax);
+                void back_propagate_speed_change(size_t index, const double *amax);
                 void assert_not_first(size_t index);
-                void compute_accelerations(double *amax);
-                void compute_accelerations(size_t index, double *amax);
+                void compute_accelerations(const double *amax);
+                void compute_accelerations(size_t index, const double *amax);
                 void update_start_times();
                 double get_curve_speed_magnitude(Segment& s0, Segment& s1);
                 void get_curve_speed_vector(Segment& s, double magnitude, double *w);
@@ -202,16 +203,18 @@ namespace romi {
                 double scale_speed(double am, double deviation, double speed);
                 double scale_distance(double distance, Segment& s0, Segment& s1);
                 double shortest_length(Segment& s0, Segment& s1);
-                double required_acceleration_path_length(ATDC& t, double *amax);
+                double required_acceleration_path_length(ATDC& t, const double *amax);
                 double required_acceleration_path_length(double *v0, double *v1,
-                                                         double *amax);
+                                                         const double *amax);
                 double required_acceleration_path_length(double *v0, double *v1,
-                                                         double *d, double *amax);
+                                                         double *d, const double *amax);
                 double required_acceleration_path_length(double v0, double v1, double a);
-                double maximum_entry_speed(double *displacement, double v1, double *amax);
-                double maximum_exit_speed(double *displacement, double v0, double *amax);
-                void assert_vmax(double *vmax);
-                void assert_amax(double *amax);
+                double maximum_entry_speed(double *displacement, double v1,
+                                           const double *amax);
+                double maximum_exit_speed(double *displacement, double v0,
+                                          const double *amax);
+                void assert_vmax(const double *vmax);
+                void assert_amax(const double *amax);
                 void assert_deviation(double deviation);
                 void assert_slice_duration(double duration, double max_duration);
                 bool has_next_segment(size_t index);

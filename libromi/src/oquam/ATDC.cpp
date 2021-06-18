@@ -34,7 +34,7 @@ namespace romi {
 
         /* Compute the maximum allowed acceleration in the direction
            of v. */
-        double amax_in_direction(double *amax, double *v)
+        double amax_in_direction(const double *amax, double *v)
         {
                 double e[3];
                 double a[3];
@@ -70,7 +70,7 @@ namespace romi {
         
         void ATDC::compute_accelerations(double *p0, double *p1,
                                          double *v0, double *v, double *v1,
-                                         double *amax)
+                                         const double *amax)
         {
                 double dx[3];
                 //vsub(dx, curve.p0, accelerate.p0);
@@ -109,7 +109,7 @@ namespace romi {
 
         void ATDC::do_compute_accelerations(double *p0, double *p1,
                                             double *v0, double *v, double *v1,
-                                            double *amax)
+                                            const double *amax)
         {
                 double v_target[3];
                 scale_target_speed(p0, p1, v0, v, v1, amax, v_target);                
@@ -143,7 +143,7 @@ namespace romi {
         }
         
         void ATDC::compute_acceleration(double *p0, double *v0,
-                                        double *v1, double *amax)
+                                        double *v1, const double *amax)
         {
                 double dv[3];
                 vsub(dv, v1, v0);
@@ -166,7 +166,7 @@ namespace romi {
         }
 
         void ATDC::normal_acceleration(double *p0, double *v0,
-                                       double *v1, double *amax)
+                                       double *v1, const double *amax)
         {
                 double dx[3];
                 double dv[3];
@@ -190,7 +190,7 @@ namespace romi {
                 vadd(accelerate.p1, accelerate.p0, dx);
         }
         
-        void ATDC::compute_deceleration(double *p1, double *v0, double *v1, double *amax)
+        void ATDC::compute_deceleration(double *p1, double *v0, double *v1, const double *amax)
         {
                 double dv[3];
                 vsub(dv, v0, v1);
@@ -212,7 +212,7 @@ namespace romi {
                 vcopy(decelerate.v1, v);
         }
 
-        void ATDC::normal_deceleration(double *p1, double *v0, double *v1, double *amax)
+        void ATDC::normal_deceleration(double *p1, double *v0, double *v1, const double *amax)
         {
                 double dx[3];
                 double dv[3];
@@ -287,7 +287,7 @@ namespace romi {
                                       __attribute__((unused)) double *v0,
                                       double *v,
                                       __attribute__((unused)) double *v1,
-                                      double *amax,
+                                      const double *amax,
                                       double *scaled_v)
         {
                 double dx[3];

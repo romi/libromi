@@ -50,7 +50,13 @@ namespace romi {
         }
 
         
-        SmoothPath::SmoothPath(v3 start_position) : _moves(), _segments(), _atdc(), _slices(), _start_position(), _current_position()
+        SmoothPath::SmoothPath(v3 start_position)
+                : _moves(),
+                  _segments(),
+                  _atdc(),
+                  _slices(),
+                  _start_position(),
+                  _current_position()
         {
                 _start_position = start_position;
                 set_current_position(start_position);
@@ -79,8 +85,8 @@ namespace romi {
                 _moves.emplace_back(p, v);
         }
 
-        void SmoothPath::convert(double *vmax, double *amax, double deviation,
-                             double slice_duration, double max_slice_duration)
+        void SmoothPath::convert(const double *vmax, const double *amax, double deviation,
+                                 double slice_duration, double max_slice_duration)
         {
                 assert_vmax(vmax);
                 assert_amax(amax);
@@ -95,7 +101,7 @@ namespace romi {
                 }
         }
 
-        void SmoothPath::assert_vmax(double *vmax)
+        void SmoothPath::assert_vmax(const double *vmax)
         {
                 double vn = vnorm(vmax);
                 if (vn == 0 || vn > 10.0) { // 10 m/s = 36 km/h
@@ -105,7 +111,7 @@ namespace romi {
                 }
         }
 
-        void SmoothPath::assert_amax(double *amax)
+        void SmoothPath::assert_amax(const double *amax)
         {
                 double an = vnorm(amax);
                 if (an == 0 || an > 10.0) { // 10 m/s² = 0 -> 36 km/h in 1 sec
@@ -173,14 +179,14 @@ namespace romi {
                 smul(segment.v, d, move.v);
         }
 
-        void SmoothPath::check_max_speeds(double *vmax)
+        void SmoothPath::check_max_speeds(const double *vmax)
         {
                 for (size_t i = 0; i < count_segments(); i++) {
                         check_max_speed(i, vmax);
                 }
         }
 
-        void SmoothPath::check_max_speed(size_t index, double *vmax)
+        void SmoothPath::check_max_speed(size_t index, const double *vmax)
         {
                 double s = 1.0;
                 Segment& segment = _segments[index];
@@ -192,8 +198,10 @@ namespace romi {
                 smul(segment.v, segment.v, s);
         }
         
-        void SmoothPath::convert_segments_to_atdc(double d, __attribute__((unused)) double *vmax, double *amax)
+        void SmoothPath::convert_segments_to_atdc(double d, const double *vmax,
+                                                  const double *amax)
         {
+                (void) vmax;
                 create_atdc();
                 copy_start_position_to_atdc();
                 compute_curves_and_speeds(d, amax);
@@ -216,7 +224,7 @@ namespace romi {
                 vcopy(_atdc[0].accelerate.p0, _start_position.values());                
         }
 
-        void SmoothPath::compute_curves_and_speeds(double deviation, double *amax)
+        void SmoothPath::compute_curves_and_speeds(double deviation, const double *amax)
         {
                 for (size_t i = 0; i < _segments.size(); i++) {
                         
@@ -236,7 +244,8 @@ namespace romi {
          *  s0: The current segment.
          *  amax: The maximum acceleration that the machine tolerates. 
          */
-        void SmoothPath::compute_curve_and_speeds(size_t index, double deviation, double *amax)
+        void SmoothPath::compute_curve_and_speeds(size_t index, double deviation,
+                                                  const double *amax)
         {
                 compute_curve(index, deviation, amax);
                 
@@ -248,7 +257,7 @@ namespace romi {
                 initialize_next_acceleration(index);
         }
                 
-        void SmoothPath::compute_curve(size_t index, double deviation, double *amax)
+        void SmoothPath::compute_curve(size_t index, double deviation, const double *amax)
         {
                 if (!has_next_segment(index)) {
                         no_curve(index);
@@ -266,7 +275,7 @@ namespace romi {
                 vcopy(t.curve.p1, s.p1);
         }
         
-        void SmoothPath::default_curve(size_t index, double deviation, double *amax)
+        void SmoothPath::default_curve(size_t index, double deviation, const double *amax)
         {
                 // The speeds and their directions before and after the curve.
                 double w;
@@ -477,19 +486,22 @@ namespace romi {
                 else if (w1[2] != 0.0)
                         n = w0[2] / w1[2];
                 return (n > 0.0);
-        }        
-        static void define_unit_vectors_same_dir(double *w0, __attribute__((unused)) double *w1,
+        }
+        
+        static void define_unit_vectors_same_dir(double *w0, double *w1,
                                                  double *ex, double *ey)
         {
+                (void) w1;
                 normalize(ex, w0);
                 ey[0] = -ex[1];
                 ey[1] = ex[0];
                 ey[2] = ex[2];
         }
 
-        static void define_unit_vectors_opposite_dir(double *w0, __attribute__((unused)) double *w1,
+        static void define_unit_vectors_opposite_dir(double *w0, double *w1,
                                                      double *ex, double *ey)
         {
+                (void) w1;
                 normalize(ey, w0);
                 smul(ey, ey, -1);
                 ex[0] = ey[1];
@@ -513,14 +525,16 @@ namespace romi {
                 return std::min(vnorm(s0.v), vnorm(s1.v));
         }
         
-        void SmoothPath::get_curve_speed_vector(Segment& segment, double magnitude, double *w)
+        void SmoothPath::get_curve_speed_vector(Segment& segment, double magnitude,
+                                                double *w)
         {
                 double dir[3];
                 segment.direction(dir);
                 smul(w, dir, magnitude);
         }
         
-        void SmoothPath::compute_curve_entry_point(Segment& segment, double distance, double *p)
+        void SmoothPath::compute_curve_entry_point(Segment& segment, double distance,
+                                                   double *p)
         {
                 double dir[3];
                 segment.direction(dir);
@@ -530,7 +544,8 @@ namespace romi {
                 vsub(p, segment.p1, p);
         }
         
-        void SmoothPath::compute_curve_exit_point(Segment& segment, double distance, double *p)
+        void SmoothPath::compute_curve_exit_point(Segment& segment, double distance,
+                                                  double *p)
         {
                 double dir[3];
                 segment.direction(dir);
@@ -573,7 +588,7 @@ namespace romi {
                 return std::min(len0, len1);
         }
 
-        bool SmoothPath::update_speeds_if_needed(size_t index, double *amax)
+        bool SmoothPath::update_speeds_if_needed(size_t index, const double *amax)
         {
                 bool must_backpropagate = false;
                 ATDC& t = _atdc[index];
@@ -594,7 +609,7 @@ namespace romi {
                 return must_backpropagate;
         }
         
-        double SmoothPath::required_acceleration_path_length(ATDC& t, double *amax)
+        double SmoothPath::required_acceleration_path_length(ATDC& t, const double *amax)
         {
                 double length = 0.0;
                 double displacement[3];
@@ -616,7 +631,7 @@ namespace romi {
         }
         
         double SmoothPath::required_acceleration_path_length(double *v0, double *v1,
-                                                         double *amax)
+                                                         const double *amax)
         {
                 double v0n = vnorm(v0);
                 double v1n = vnorm(v1);
@@ -625,7 +640,7 @@ namespace romi {
         }
 
         double SmoothPath::required_acceleration_path_length(double *v0, double *v1,
-                                                         double *d, double *amax)
+                                                         double *d, const double *amax)
         {
                 double v0n = vnorm(v0);
                 double v1n = vnorm(v1);
@@ -641,7 +656,7 @@ namespace romi {
                 return dx;
         }
 
-        bool SmoothPath::adjust_speeds(ATDC& t, double *amax)
+        bool SmoothPath::adjust_speeds(ATDC& t, const double *amax)
         {
                 /* We know that the segment length is smaller than the
                  * required length to accelerate or slow down to the
@@ -672,7 +687,7 @@ namespace romi {
                 return must_backpropagate;
         }
 
-        void SmoothPath::reduce_entry_speed(ATDC& t, double *amax)
+        void SmoothPath::reduce_entry_speed(ATDC& t, const double *amax)
         {
                 double displacement[3];
                 vsub(displacement, t.curve.p0, t.accelerate.p0);
@@ -686,7 +701,8 @@ namespace romi {
                 smul(t.accelerate.v0, t.accelerate.v0, factor);
         }
 
-        double SmoothPath::maximum_entry_speed(double *displacement, double v1, double *amax)
+        double SmoothPath::maximum_entry_speed(double *displacement, double v1,
+                                               const double *amax)
         {
                 /*  v1 < v0 and a > 0 and t > 0
                     v1 = v0 - at  => t = (v0 - v1) / a    (1)
@@ -701,7 +717,7 @@ namespace romi {
                 return sqrt(v1 * v1 + 2 * a * length);
         }
         
-        void SmoothPath::reduce_exit_speed(ATDC& t, double *amax)
+        void SmoothPath::reduce_exit_speed(ATDC& t, const double *amax)
         {
                 double displacement[3];
                 vsub(displacement, t.curve.p0, t.accelerate.p0);
@@ -715,7 +731,8 @@ namespace romi {
                 t.slow_down_curve(factor);
         }
 
-        double SmoothPath::maximum_exit_speed(double *displacement, double v0, double *amax)
+        double SmoothPath::maximum_exit_speed(double *displacement, double v0,
+                                              const double *amax)
         {
                 /*  L = v0.t + at²/2                      (1)
                     v1 = v0 + at  => t = (v1 - v0) / a    (2)
@@ -748,7 +765,7 @@ namespace romi {
                 return changed;
         }
         
-        void SmoothPath::back_propagate_speed_change(size_t index, double *amax)
+        void SmoothPath::back_propagate_speed_change(size_t index, const double *amax)
         {
                 /* This fuctions is called recursively to propagate
                  * changes from the end of the path back to the
@@ -782,14 +799,14 @@ namespace romi {
                 }
         }
         
-        void SmoothPath::compute_accelerations(double *amax)
+        void SmoothPath::compute_accelerations(const double *amax)
         {
                 for (size_t i = 0; i < _segments.size(); i++) {
                         compute_accelerations(i, amax);
                 }
         }
 
-        void SmoothPath::compute_accelerations(size_t index, double *amax)
+        void SmoothPath::compute_accelerations(size_t index, const double *amax)
         {
                 double from[3];
                 double to[3];

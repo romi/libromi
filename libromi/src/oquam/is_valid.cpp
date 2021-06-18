@@ -211,8 +211,8 @@ namespace romi {
         }
         
         bool is_valid(ATDC& atdc, 
-                      double *xmin, double *xmax, 
-                      double *vmax, double *amax)
+                      const double *xmin, const double *xmax, 
+                      const double *vmax, const double *amax)
         {
                 return (is_valid(atdc.accelerate, "accelerate", xmin, xmax, vmax, amax)
                         && is_valid(atdc.travel, "travel", xmin, xmax, vmax, amax)
@@ -236,8 +236,8 @@ namespace romi {
         }
         
         bool is_valid(SmoothPath& script, 
-                      double *xmin, double *xmax, 
-                      double *vmax, double *amax)
+                      const double *xmin, const double *xmax, 
+                      const double *vmax, const double *amax)
         {
                 bool valid = true;
                 for (size_t i = 0; i < script.count_atdc(); i++) {
@@ -254,7 +254,7 @@ namespace romi {
         }
 
         bool is_valid(SmoothPath& script, CNCRange& range, 
-                      double *vmax, double *amax)
+                      const double *vmax, const double *amax)
         {
                 return is_valid(script, range.min.values(),
                                 range.max.values(), vmax, amax);
