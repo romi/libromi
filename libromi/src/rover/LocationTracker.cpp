@@ -22,6 +22,7 @@
 
  */
 #include <math.h>
+#include <r.h>
 #include <ClockAccessor.h>
 #include "rover/LocationTracker.h"
 
@@ -71,8 +72,8 @@ namespace romi {
                                 p2_ = v3(p1_.x() + dx, p1_.y() + dy, 0.0);
                                 ex_ = v3(dx, dy, 0.0);
                                 ey_ = v3(-dy, dx, 0.0);
-                                ex_.normalize();
-                                ey_.normalize();
+                                ex_ = ex_.normalize();
+                                ey_ = ey_.normalize();
                         } else {
                                 double dx = cos(theta0_);
                                 double dy = sin(theta0_);
@@ -94,7 +95,7 @@ namespace romi {
         {
                 auto clock = rpp::ClockAccessor::GetInstance();
                 double now = clock->time();
-                bool success = false;
+                bool success = true;
                 if (now - last_time_ >= kMinimumUpdateInterval) {
                         success = update();
                         last_time_ = now;
@@ -112,6 +113,11 @@ namespace romi {
                         v3 q = p0_ - p1_;
                         distance_from_start_ = q.dot(ex_);
                         cross_track_error_ = q.dot(ey_);
+
+                        r_debug("LocationTracker: p0(%f,%f), p1(%f,%f), "
+                                "ex=(%f,%f), distance: %f",
+                                p0_.x(), p0_.y(), p1_.x(), p1_.y(),
+                                ex_.x(), ex_.y(), distance_from_start_);
                 }
 
                 return success;

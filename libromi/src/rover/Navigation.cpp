@@ -33,7 +33,6 @@
 
 namespace romi {
 
-        static const double kDefaultMaxAcceleration = 0.3;
         static const double kSlowNavigationSpeed = 0.3;
         static const double kDistanceSlowNavigation = 0.1;
         
@@ -80,7 +79,6 @@ namespace romi {
                   status_(MOVEAT_CAPABLE),
                   stop_(false),
                   update_thread_(),
-                  max_acceleration_(kDefaultMaxAcceleration),
                   left_target_(0.0),
                   right_target_(0.0),
                   left_speed_(0.0),
@@ -159,11 +157,11 @@ namespace romi {
         {
                 double new_speed = current_speed;
                 if (current_speed < target_speed) {
-                        new_speed = current_speed + max_acceleration_ * dt;
+                        new_speed = current_speed + settings_.maximum_acceleration * dt;
                         if (new_speed > target_speed)
                                 new_speed = target_speed;
                 } else if (current_speed > target_speed) {
-                        new_speed = current_speed - max_acceleration_ * dt;
+                        new_speed = current_speed - settings_.maximum_acceleration * dt;
                         if (new_speed < target_speed)
                                 new_speed = target_speed;
                 }
@@ -172,9 +170,13 @@ namespace romi {
         
         bool Navigation::set_speed_targets(double left, double right)
         {
+                bool print = (left != left_target_ && right != right_target_);
+                
                 left_target_ = left;
                 right_target_ = right;
-                r_debug("Navigation: Speed target now (%.2f, %.2f)", left, right);
+                
+                if (print)
+                        r_debug("Navigation: Speed target now (%.2f, %.2f)", left, right);
                 return true;
                 //return send_moveat(left, right);
         }
@@ -273,6 +275,7 @@ namespace romi {
                 double left_speed = speed;
                 double right_speed = speed;
                 bool success = false;
+                double last_distance = 0.0;
                 
                 stop_ = false;
                 
@@ -316,7 +319,8 @@ namespace romi {
                         double distance_to_end = distance_measure_.get_distance_to_end();
 
                         // If the rover is close to the end, force a slow-down.
-                        if (distance_to_end <= kDistanceSlowNavigation) {
+                        if (distance_to_end <= kDistanceSlowNavigation
+                            && fabs(speed) > kSlowNavigationSpeed) {
                                 if (speed > 0.0) {
                                         left_speed = kSlowNavigationSpeed;
                                         right_speed = kSlowNavigationSpeed;
@@ -338,9 +342,13 @@ namespace romi {
                                 break;
                         }
 
-                        r_debug("distance %f",
-                                distance_measure_.get_distance_from_start());
-
+                        if (last_distance != distance_measure_.get_distance_from_start()) {
+                                r_debug("Distance: from start: %f, to end: %f",
+                                        distance_measure_.get_distance_from_start(),
+                                        distance_measure_.get_distance_to_end());
+                                last_distance = distance_measure_.get_distance_from_start();
+                        }
+                        
                         recording.emplace_back(now - start_time,
                                                distance_measure_.get_distance_from_start(),
                                                cross_track_error,
@@ -349,7 +357,7 @@ namespace romi {
                                                left_speed,
                                                right_speed);
                         
-                        //clock->sleep(0.100);
+                        clock->sleep(0.025);
                 }
 
                 set_speed_targets(0.0, 0.0);

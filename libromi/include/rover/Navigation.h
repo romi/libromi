@@ -61,7 +61,6 @@ namespace romi {
 
                 // WIP
                 std::unique_ptr<std::thread> update_thread_;
-                double max_acceleration_; // in m/s²
                 std::atomic<double> left_target_;
                 std::atomic<double> right_target_;
                 double left_speed_;
