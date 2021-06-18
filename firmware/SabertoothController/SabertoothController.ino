@@ -34,6 +34,7 @@ void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_
 void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
@@ -43,6 +44,7 @@ const static MessageHandler handlers[] = {
         { '?', 0, false, send_info },
         { 'e', 0, false, send_encoders },
         { 'p', 1, false, send_pid },
+        { 'v', 0, false, send_speeds },
         { 'V', 2, false, handle_moveat },
         { 'C', 9, false, handle_configure },
         { 'E', 1, false, handle_enable },
@@ -305,6 +307,18 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         snprintf(reply_buffer, sizeof(reply_buffer),
                  "[0,%d,%s,%s,%s,%s,%s,%s]",
                  (int)(leftTarget*1000), in, out, ep, ei, ed, v);
+        romiSerial->send(reply_buffer);                
+}
+
+void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+        char left[10];
+        char right[10];
+
+        dtostrf(leftInput, 3, 3, left);
+        dtostrf(rightInput, 3, 3, right);
+        
+        snprintf(reply_buffer, sizeof(reply_buffer), "[0,%s,%s]", left, right);
         romiSerial->send(reply_buffer);                
 }
 

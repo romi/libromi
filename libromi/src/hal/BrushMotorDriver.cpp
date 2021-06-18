@@ -36,7 +36,9 @@ namespace romi {
                 : serial_(),
                   settings_(),
                   recording_pid_(false),
-                  pid_thread_()
+                  pid_thread_(),
+                  recording_speeds_(false),
+                  speeds_thread_()
         {
                 //_serial.set_debug(true);
                 serial_ = std::move(serial);
@@ -51,6 +53,7 @@ namespace romi {
         BrushMotorDriver::~BrushMotorDriver()
         {
                 stop_recording_pid();
+                stop_recording_speeds();
         }
                 
         bool BrushMotorDriver::configure_controller(JsonCpp &config, int steps,
@@ -156,33 +159,6 @@ namespace romi {
                 return success;
         }
 
-        bool BrushMotorDriver::get_pid_values(Axis axis,
-                                              double& target_speed,
-                                              double& measured_speed,
-                                              double& pid_output,
-                                              double& pid_error_p,
-                                              double& pid_error_i,
-                                              double& pid_error_d,
-                                              double& controller_input)
-        {
-                JsonCpp response;
-                char command[16];
-                snprintf(command, sizeof(command), "p[%d]", axis);
-
-                serial_->send(command, response);
-                bool success = check_response(command, response);
-                if (success) {
-                        target_speed = response.num(1);
-                        measured_speed = response.num(2);
-                        pid_output = response.num(3);
-                        pid_error_p = response.num(4);
-                        pid_error_i = response.num(5);
-                        pid_error_d = response.num(6);
-                        controller_input = response.num(7);
-                }
-                return success;
-        }
-
         void BrushMotorDriver::start_recording_pid()
         {
                 recording_pid_ = true;
@@ -252,9 +228,36 @@ namespace romi {
                 store_pid_recordings(recording);
         }
 
+        bool BrushMotorDriver::get_pid_values(Axis axis,
+                                              double& target_speed,
+                                              double& measured_speed,
+                                              double& pid_output,
+                                              double& pid_error_p,
+                                              double& pid_error_i,
+                                              double& pid_error_d,
+                                              double& controller_input)
+        {
+                JsonCpp response;
+                char command[16];
+                snprintf(command, sizeof(command), "p[%d]", axis);
+
+                serial_->send(command, response);
+                bool success = check_response(command, response);
+                if (success) {
+                        target_speed = response.num(1);
+                        measured_speed = response.num(2);
+                        pid_output = response.num(3);
+                        pid_error_p = response.num(4);
+                        pid_error_i = response.num(5);
+                        pid_error_d = response.num(6);
+                        controller_input = response.num(7);
+                }
+                return success;
+        }
+
         void BrushMotorDriver::store_pid_recordings(std::vector<PidStatus>& recording)
         {
-                FILE* fp = fopen("pid.csv", "a");
+                FILE* fp = fopen("speeds.csv", "a");
                 if (fp) {
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,
@@ -267,6 +270,88 @@ namespace romi {
                                         recording[i].error_i_,
                                         recording[i].error_d_,
                                         recording[i].controller_input_);
+                        fclose(fp);
+                }
+                
+        }
+
+        void BrushMotorDriver::start_recording_speeds()
+        {
+                recording_speeds_ = true;
+                FILE* fp = fopen("speeds.csv", "w");
+                if (fp) {
+                        fprintf(fp, "# time\tleft\tright\n");
+                        fclose(fp);
+                }
+                
+                speeds_thread_ = std::make_unique<std::thread>(
+                        [this]() {
+                                record_speeds_main();
+                        });
+        }
+
+        void BrushMotorDriver::stop_recording_speeds()
+        {
+                recording_speeds_ = false;
+                if (speeds_thread_) {
+                        speeds_thread_->join();
+                        speeds_thread_ = nullptr;
+                }
+        }
+
+        void BrushMotorDriver::record_speeds_main()
+        {
+                auto clock = rpp::ClockAccessor::GetInstance();
+                double start_time = clock->time();
+                std::vector<Speeds> recording;
+                
+                while (recording_speeds_) {
+                        double now;
+                        double left;
+                        double right;
+
+                        now = clock->time();
+                        bool success = get_speeds_values(left, right);
+
+                        if (success) {
+                                recording.emplace_back(now - start_time, left, right);
+                                if (recording.size() >= 100) {
+                                        store_speed_recordings(recording);
+                                        recording.clear();
+                                }
+                        }
+                        
+                        clock->sleep(0.050);
+                }
+                
+                store_speed_recordings(recording);
+        }
+
+        bool BrushMotorDriver::get_speeds_values(double& left, double& right)
+        {
+                JsonCpp response;
+                char command[16];
+                snprintf(command, sizeof(command), "v");
+
+                serial_->send(command, response);
+                bool success = check_response(command, response);
+                if (success) {
+                        left = response.num(1);
+                        right = response.num(2);
+                }
+                return success;
+        }
+
+        void BrushMotorDriver::store_speed_recordings(std::vector<Speeds>& recording)
+        {
+                FILE* fp = fopen("speeds.csv", "a");
+                if (fp) {
+                        for (size_t i = 0; i < recording.size(); i++)
+                                fprintf(fp,
+                                        "%.6f\t%.6f\t%.6f\n",
+                                        recording[i].time_,
+                                        recording[i].left_,
+                                        recording[i].right_);
                         fclose(fp);
                 }
                 

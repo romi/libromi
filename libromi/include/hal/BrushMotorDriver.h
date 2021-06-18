@@ -86,6 +86,19 @@ namespace romi {
                           controller_input_(controller_input) {
                 };
         };
+
+        struct Speeds
+        {
+                double time_;
+                double left_;
+                double right_;
+                
+                Speeds(double t, double left, double right)
+                        : time_(t),
+                          left_(left),
+                          right_(right) {
+                };
+        };
         
         class BrushMotorDriver : public IMotorDriver
         {
@@ -108,6 +121,13 @@ namespace romi {
                 void record_pid_main();
                 void store_pid_recordings(std::vector<PidStatus>& recording);
 
+                std::atomic<bool> recording_speeds_;
+                std::unique_ptr<std::thread> speeds_thread_;
+                void record_speeds();
+                void record_speeds_main();
+                void store_speed_recordings(std::vector<Speeds>& recording);
+                bool get_speeds_values(double& left, double& right);
+                
         public:
 
                 BrushMotorDriver(std::unique_ptr<romiserial::IRomiSerialClient>& serial,
@@ -132,6 +152,8 @@ namespace romi {
                                     double& controller_input) override;
                 void start_recording_pid();
                 void stop_recording_pid();
+                void start_recording_speeds();
+                void stop_recording_speeds();
         };
 }
 
