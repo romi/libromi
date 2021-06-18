@@ -131,9 +131,11 @@ set(SOURCES
         include/oquam/StepperSettings.h
 
         include/rover/EventsAndStates.h
+        include/rover/IDistanceMeasure.h
         include/rover/ITrackFollower.h
         include/rover/INavigationController.h
         include/rover/L1NavigationController.h
+        include/rover/LocationTracker.h
         include/rover/Rover.h
         include/rover/RoverInterface.h
         include/rover/RoverNotifications.h
@@ -226,6 +228,7 @@ set(SOURCES
 
         src/rover/EventsAndStates.cpp
         src/rover/L1NavigationController.cpp
+        src/rover/LocationTracker.cpp
         src/rover/NavigationSettings.cpp
         src/rover/PythonTrackFollower.cpp
         src/rover/Rover.cpp

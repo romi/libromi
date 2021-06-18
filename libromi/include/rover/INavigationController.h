@@ -24,8 +24,6 @@
 #ifndef __ROMI_I_NAVIGATION_CONTROLLER_H
 #define __ROMI_I_NAVIGATION_CONTROLLER_H
 
-#include "v3.h"
-
 namespace romi {
         
         class INavigationController

@@ -147,11 +147,12 @@ add_test(
 
 set(SRCS_NAVIGATION
         src/tests_main.cpp
-        src/navigationsettings_tests.cpp
-        src/navigationadaptor_tests.cpp
-        src/remotenavigation_tests.cpp
-        src/navigation_tests.cpp
-  )
+        src/locationtracker_tests.cpp
+#        src/navigationsettings_tests.cpp
+#        src/navigationadaptor_tests.cpp
+#        src/remotenavigation_tests.cpp
+#        src/navigation_tests.cpp
+        )
 
 add_executable(libromi_unit_tests_navigation ${SRCS_NAVIGATION})
 target_link_libraries(libromi_unit_tests_navigation romi romi rpp rcompp-lite gtest gmock)

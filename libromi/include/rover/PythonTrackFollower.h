@@ -64,7 +64,6 @@ namespace romi {
                                     ISession& session);
                 ~PythonTrackFollower() override = default;
                 
-                void start() override;
                 bool update_error_estimate() override;
                 double get_cross_track_error() override;
                 double get_orientation_error() override;

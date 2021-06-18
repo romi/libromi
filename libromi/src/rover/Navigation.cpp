@@ -40,8 +40,6 @@ namespace romi {
         struct NavRecording
         {
                 double time_;
-                double location_x_;
-                double location_y_;
                 double distance_;
                 double cross_track_error_;
                 double orientation_error_;
@@ -50,8 +48,6 @@ namespace romi {
                 double right_speed_;
 
                 NavRecording(double time,
-                             double location_x,
-                             double location_y,
                              double distance,
                              double cross_track_error,
                              double orientation_error,
@@ -59,8 +55,6 @@ namespace romi {
                              double left_speed,
                              double right_speed)
                         : time_(time),
-                          location_x_(location_x),
-                          location_y_(location_y),
                           distance_(distance),
                           cross_track_error_(cross_track_error),
                           orientation_error_(orientation_error),
@@ -70,13 +64,17 @@ namespace romi {
                 };
         };
 
-        Navigation::Navigation(IMotorDriver &driver,
-                               NavigationSettings &settings,
+        Navigation::Navigation(NavigationSettings &settings,
+                               IMotorDriver& driver,
+                               IDistanceMeasure& distance_measure,
                                ITrackFollower& track_follower,
+                               INavigationController& navigation_controller,
                                ISession& session)
-                : driver_(driver),
-                  settings_(settings),
+                : settings_(settings),
+                  driver_(driver),
+                  distance_measure_(distance_measure),
                   track_follower_(track_follower),
+                  navigation_controller_(navigation_controller),
                   session_(session),
                   mutex_(),
                   status_(MOVEAT_CAPABLE),
@@ -238,16 +236,8 @@ namespace romi {
                 bool success = false;
 
                 try {
-                        WheelOdometry odometry(settings_, driver_);
-                        //odometry.set_displacement(0, 0.1); // DEBUG
-                        
-                        ZeroNavigationController navigation_controller;
-                        //L1NavigationController navigation_controller(settings_.wheel_base,
-                        //                                             2.0);
-                        success = try_travel(odometry,
-                                             navigation_controller,
-                                             speed, distance,
-                                             compute_timeout(distance, speed));
+                        double timeout = compute_timeout(distance, speed);
+                        success = try_travel(speed, distance, timeout);
                         
                 } catch (const std::runtime_error& re) {
                         r_err("Navigation::travel: %s", re.what());
@@ -274,11 +264,7 @@ namespace romi {
         }
 
         // TODO: Spin off a seperate thread so the main event loop can continue?
-        bool Navigation::try_travel(ILocationProvider& location_provider,
-                                    INavigationController& navigation_controller,
-                                    double speed,
-                                    double distance,
-                                    double timeout)
+        bool Navigation::try_travel(double speed, double distance, double timeout)
         {
                 auto clock = rpp::ClockAccessor::GetInstance();
                 double start_time = clock->time();
@@ -286,16 +272,14 @@ namespace romi {
                 std::vector<NavRecording> recording;
                 double left_speed = speed;
                 double right_speed = speed;
-                double distance_travelled;
                 bool success = false;
                 
                 stop_ = false;
-                if (!location_provider.update_location_estimate()) {
+                
+                if (!distance_measure_.set_distance_to_navigate(distance)) {
                         r_err("Navigation::travel: pose estimation failed");
                         return false;
                 }
-                start_location = location_provider.get_location();
-                track_follower_.start();
                 
                 while (!stop_) {
 
@@ -308,30 +292,31 @@ namespace romi {
                         // TODO: HANDLE USER INPUT AND HANDLE STOP
                         // REQUESTED USER-REQUESTED
 
-                        // Where are we now?
-                        if (!location_provider.update_location_estimate()) {
-                                r_err("Navigation::travel: pose estimation failed");
+                        // How far off-track is the rover?
+                        if (!track_follower_.update_error_estimate()) {
+                                r_err("Navigation::travel: track error estimation failed");
                                 break;
                         }
-                        v3 location = location_provider.get_location();
-
-                        // How far off-track is the rover?
-                        track_follower_.update_error_estimate();
+                        
                         double cross_track_error = track_follower_.get_cross_track_error();
                         double orientation_error = track_follower_.get_orientation_error();
 
                         // By how much should the wheel speeds be
                         // adapted to get the rover back on the track?
-                        double correction = navigation_controller.estimate_correction(
+                        double correction = navigation_controller_.estimate_correction(
                                 cross_track_error, orientation_error); 
                         left_speed = speed * (1.0 + correction);
                         right_speed = speed * (1.0 - correction);
 
-                        // How much has the rover travelled so far?
-                        distance_travelled = (location - start_location).norm(); // FIXME!!!
+                        // Where are we now?
+                        if (!distance_measure_.update_distance_estimate()) {
+                                r_err("Navigation::travel: distance estimation failed");
+                                break;
+                        }
+                        double distance_to_end = distance_measure_.get_distance_to_end();
 
                         // If the rover is close to the end, force a slow-down.
-                        if (distance_travelled >= distance - kDistanceSlowNavigation) {
+                        if (distance_to_end <= kDistanceSlowNavigation) {
                                 if (speed > 0.0) {
                                         left_speed = kSlowNavigationSpeed;
                                         right_speed = kSlowNavigationSpeed;
@@ -342,7 +327,7 @@ namespace romi {
                         }
 
                         // The rover has arrived
-                        if (distance_travelled >= distance) {
+                        if (distance_to_end <= 0.0) {
                                 success = true;
                                 break;
                         }
@@ -353,12 +338,11 @@ namespace romi {
                                 break;
                         }
 
-                        r_debug("distance travelled %f", distance_travelled);
+                        r_debug("distance %f",
+                                distance_measure_.get_distance_from_start());
 
                         recording.emplace_back(now - start_time,
-                                               location.x(),
-                                               location.y(),
-                                               distance_travelled,
+                                               distance_measure_.get_distance_from_start(),
                                                cross_track_error,
                                                orientation_error,
                                                correction,
@@ -379,11 +363,9 @@ namespace romi {
                                 "correction\tleft speed\tright speed\n");
                         for (size_t i = 0; i < recording.size(); i++) {
                                 fprintf(fp,
-                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t"
-                                        "%.6f\t%.6f\t%.6f\t%.6f\n",
+                                        "%.6f\t%.6f\t%.6f\t%.6f\t"
+                                        "%.6f\t%.6f\t%.6f\n",
                                         recording[i].time_,
-                                        recording[i].location_x_,
-                                        recording[i].location_y_,
                                         recording[i].distance_,
                                         recording[i].cross_track_error_,
                                         recording[i].orientation_error_,
@@ -392,11 +374,9 @@ namespace romi {
                                         recording[i].right_speed_);
 
 
-                                printf("%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t"
-                                       "%.6f\t%.6f\t%.6f\t%.6f\n",
+                                printf("%.6f\t%.6f\t%.6f\t%.6f\t"
+                                       "%.6f\t%.6f\t%.6f\n",
                                        recording[i].time_,
-                                       recording[i].location_x_,
-                                       recording[i].location_y_,
                                        recording[i].distance_,
                                        recording[i].cross_track_error_,
                                        recording[i].orientation_error_,

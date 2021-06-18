@@ -33,8 +33,6 @@ namespace romi {
         public:
                 virtual ~ITrackFollower() = default;
                 
-                virtual void start() = 0;
-
                 /** update_error_estimate() returns false if it failed
                  * toupdate the error estimates. */
                 virtual bool update_error_estimate() = 0;

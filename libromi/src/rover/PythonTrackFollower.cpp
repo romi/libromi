@@ -41,10 +41,6 @@ namespace romi {
                 //rpc_ = romi::RcomClient::create("python", 30);
                 rpc_ = std::move(rpc);
         }
-
-        void PythonTrackFollower::start()
-        {
-        }
         
         double PythonTrackFollower::get_cross_track_error()
         {

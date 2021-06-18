@@ -36,8 +36,7 @@ namespace romi {
         using SynchronizedCodeBlock = std::lock_guard<std::mutex>;
         
         class WheelOdometry : public ILocationProvider,
-                              public IOrientationProvider,
-                              public ITrackFollower
+                              public IOrientationProvider
         {
         protected:
                 IMotorDriver& driver_;
@@ -78,12 +77,6 @@ namespace romi {
                 // IOrientationProvider
                 bool update_location_estimate() override;
                 double get_orientation() override;
-
-                // ITrackFollower
-                void start() override;
-                bool update_error_estimate() override;
-                double get_cross_track_error() override;
-                double get_orientation_error() override;
                 
                 v3 get_encoders();
                 v3 get_speed();

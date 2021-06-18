@@ -37,15 +37,6 @@ namespace romi {
                     wheel_base(rover_config.wheel_base),
                     encoder_steps(rover_config.encoder_steps)
         {
-                start();
-        }
-        
-        WheelOdometry::~WheelOdometry()
-        {
-        }
-
-        void WheelOdometry::start()
-        {
                 double left, right, timestamp;
                 
                 if (!driver_.get_encoder_values(left, right, timestamp)) {
@@ -65,6 +56,10 @@ namespace romi {
                         instantaneous_speed[i] = 0;
                         filtered_speed[i] = 0;
                 }
+        }
+        
+        WheelOdometry::~WheelOdometry()
+        {
         }
         
         void WheelOdometry::set_displacement(double x, double y)
@@ -209,21 +204,5 @@ namespace romi {
                 // r_debug("displacement:  %f %f - angle %f",
                 //         displacement[0], displacement[1], theta * 180.0 / M_PI);
                 //r_debug("speed:  %f %f", speed[0], speed[1]);
-        }
-
-        bool WheelOdometry::update_error_estimate()
-        {
-                // Nothing to do
-                return update_estimate();
-        }
-        
-        double WheelOdometry::get_cross_track_error()
-        {
-                return displacement[1];                       
-        }
-        
-        double WheelOdometry::get_orientation_error()
-        {
-                return theta;
         }
 }
