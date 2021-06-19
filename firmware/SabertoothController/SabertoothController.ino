@@ -255,10 +255,14 @@ void moveat(int left, int right)
 {
         float l = (float) left / 1000.0f;
         float r = (float) right / 1000.0f;
-        if (l > 1.0) l = 1.0f;
-        if (r > 1.0) r = 1.0f;
-        if (l < -1.0) l = -1.0f;
-        if (r < -1.0) r = -1.0f;
+        if (l > 1.0)
+                l = 1.0f;
+        if (r > 1.0)
+                r = 1.0f;
+        if (l < -1.0)
+                l = -1.0f;
+        if (r < -1.0)
+                r = -1.0f;
         
         if (controlMode == CONTROL_DIRECT)  {
                 setTargetSpeed(l, r);
@@ -312,13 +316,19 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
 
 void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
-        char left[10];
-        char right[10];
+        char left_absolute[10];
+        char right_absolute[10];
+        char left_normalized[10];
+        char right_normalized[10];
 
-        dtostrf(leftInput, 3, 3, left);
-        dtostrf(rightInput, 3, 3, right);
+        dtostrf(leftAbsoluteSpeed, 5, 3, left_absolute);
+        dtostrf(rightAbsoluteSpeed, 5, 3, right_absolute);
+        dtostrf(leftInput, 3, 3, left_normalized);
+        dtostrf(rightInput, 3, 3, right_normalized);
         
-        snprintf(reply_buffer, sizeof(reply_buffer), "[0,%s,%s]", left, right);
+        snprintf(reply_buffer, sizeof(reply_buffer), "[0,%s,%s,%s,%s]",
+                 left_absolute, right_absolute,
+                 left_normalized, right_normalized);
         romiSerial->send(reply_buffer);                
 }
 

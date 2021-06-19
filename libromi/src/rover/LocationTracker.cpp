@@ -135,7 +135,7 @@ namespace romi {
 
         double LocationTracker::get_distance_to_end()
         {
-                return distance_ - distance_from_start_;
+                return fabs(distance_) - distance_from_start_;
         }
 
         bool LocationTracker::update_error_estimate()

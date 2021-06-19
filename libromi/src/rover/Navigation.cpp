@@ -113,7 +113,8 @@ namespace romi {
                 {
                         FILE* fp = fopen("nav-speeds.csv", "w");
                         if (fp) {
-                                fprintf(fp, "# time\tleft target\tright target\tleft output\tright output\n");
+                                fprintf(fp, "# time\tleft target\tright target\t"
+                                        "left output\tright output\n");
                                 fclose(fp);
                         }
                 }
@@ -183,8 +184,16 @@ namespace romi {
 
         bool Navigation::send_moveat(double left, double right)
         {
+                // Convert the speeds to normalized speeds. The driver
+                // uses normalized angular speeds which amounts to the
+                // same thing.
+                left /= settings_.maximum_speed;
+                right /= settings_.maximum_speed;
+
+                // Clamp to [-1,1]
                 left = std::clamp(left, -1.0, 1.0);
                 right = std::clamp(right, -1.0, 1.0);
+                
                 return driver_.moveat(left, right);
         }
         
@@ -209,7 +218,7 @@ namespace romi {
                                 // Moving backwards. Make sur the
                                 // distance is positive and the speed
                                 // negative.
-                                distance = fabs(distance);
+                                distance = -fabs(distance);
                                 speed = -fabs(speed);
                         }
                         
@@ -250,17 +259,16 @@ namespace romi {
                 return success;
         }
 
-        double Navigation::compute_timeout(double distance, double relative_speed)
+        double Navigation::compute_timeout(double distance, double absolute_speed)
         {
                 double timeout = 0.0;
-                if (relative_speed != 0.0) {
-                        double speed = settings_.maximum_speed * relative_speed;
-                        double time = distance / fabs(speed);
+                if (absolute_speed != 0.0) {
+                        double time = fabs(distance) / fabs(absolute_speed);
                         timeout = 7.0 + 2.0 * time;
 
-                        r_debug("Navigation::compute_timeout: v_rel=%f, v_max=%f, "
-                                "v=%f, dist=%f, dt=%f, timeout=%f", relative_speed,
-                                settings_.maximum_speed, speed, distance, time, timeout);
+                        r_debug("Navigation::compute_timeout: v=%f, v_max=%f, "
+                                "dist=%f, dt=%f, timeout=%f", absolute_speed,
+                                settings_.maximum_speed, distance, time, timeout);
                 }
                 return timeout;
         }
@@ -276,7 +284,23 @@ namespace romi {
                 double right_speed = speed;
                 bool success = false;
                 double last_distance = 0.0;
+
+                /*
+                  Estimate the distance needed to slow down from
+                  travel speed to stand-still.
+
+                  v1 = v0 - a.dt (v0=speed; v1=0)
+                  => 0 = v - a.dt => dt = v/a
                 
+                  x1 = x0 + v0.dt - 0.5 a.dt² (x0=0, v0=speed, dt=v/a)
+                  => x = 0.5 v²/a
+                */
+                double slowdown_distance = (0.5 * speed * speed
+                                             / settings_.maximum_acceleration);
+                r_debug("Navigation: slowdown_distance %f", slowdown_distance);
+                if (slowdown_distance < kDistanceSlowNavigation)
+                        slowdown_distance = kDistanceSlowNavigation;
+
                 stop_ = false;
                 
                 if (!distance_measure_.set_distance_to_navigate(distance)) {
@@ -311,6 +335,18 @@ namespace romi {
                         left_speed = speed * (1.0 + correction);
                         right_speed = speed * (1.0 - correction);
 
+                        // Make sure the speeds don't pass the maximum speed.
+                        if (left_speed > settings_.maximum_speed) {
+                                double scale = settings_.maximum_speed / left_speed;
+                                left_speed *= scale;
+                                right_speed *= scale;
+                        }
+                        if (right_speed > settings_.maximum_speed) {
+                                double scale = settings_.maximum_speed / right_speed;
+                                left_speed *= scale;
+                                right_speed *= scale;
+                        }
+                        
                         // Where are we now?
                         if (!distance_measure_.update_distance_estimate()) {
                                 r_err("Navigation::travel: distance estimation failed");
@@ -319,7 +355,7 @@ namespace romi {
                         double distance_to_end = distance_measure_.get_distance_to_end();
 
                         // If the rover is close to the end, force a slow-down.
-                        if (distance_to_end <= kDistanceSlowNavigation
+                        if (distance_to_end <= slowdown_distance
                             && fabs(speed) > kSlowNavigationSpeed) {
                                 if (speed > 0.0) {
                                         left_speed = kSlowNavigationSpeed;

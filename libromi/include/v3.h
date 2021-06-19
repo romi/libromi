@@ -87,8 +87,6 @@ namespace romi {
                 /*         set(v._x); */
                 /* } */
                 
-                virtual ~v3() = default;
-                
                 double& x() {
                         return _x[0];
                 }

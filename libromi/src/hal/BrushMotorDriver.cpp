@@ -307,27 +307,35 @@ namespace romi {
                 
                 while (recording_speeds_) {
                         double now;
-                        double left;
-                        double right;
+                        double left_absolute;
+                        double right_absolute;
+                        double left_normalized;
+                        double right_normalized;
 
                         now = clock->time();
-                        bool success = get_speeds_values(left, right);
+                        bool success = get_speeds_values(left_absolute, right_absolute,
+                                                         left_normalized, right_normalized);
 
                         if (success) {
-                                recording.emplace_back(now - start_time, left, right);
+                                recording.emplace_back(now - start_time,
+                                                       left_absolute, right_absolute,
+                                                       left_normalized, right_normalized);
                                 if (recording.size() >= 100) {
                                         store_speed_recordings(recording);
                                         recording.clear();
                                 }
                         }
                         
-                        clock->sleep(0.050);
+                        clock->sleep(0.020);
                 }
                 
                 store_speed_recordings(recording);
         }
 
-        bool BrushMotorDriver::get_speeds_values(double& left, double& right)
+        bool BrushMotorDriver::get_speeds_values(double& left_absolute,
+                                                 double& right_absolute,
+                                                 double& left_normalized,
+                                                 double& right_normalized)
         {
                 JsonCpp response;
                 char command[16];
@@ -336,8 +344,15 @@ namespace romi {
                 serial_->send(command, response);
                 bool success = check_response(command, response);
                 if (success) {
-                        left = response.num(1);
-                        right = response.num(2);
+                        // These speeds are driver works with speeds,
+                        // not m/s.
+                        left_absolute = response.num(1);
+                        right_absolute = response.num(2);
+
+                        // The angular speed as a factor of the
+                        // maximum angular speed (1 = maximum speed)
+                        left_normalized = response.num(3);
+                        right_normalized = response.num(4);
                 }
                 return success;
         }
@@ -348,10 +363,12 @@ namespace romi {
                 if (fp) {
                         for (size_t i = 0; i < recording.size(); i++)
                                 fprintf(fp,
-                                        "%.6f\t%.6f\t%.6f\n",
+                                        "%.6f\t%.6f\t%.6f\t%.6f\t%.6f\n",
                                         recording[i].time_,
-                                        recording[i].left_,
-                                        recording[i].right_);
+                                        recording[i].left_absolute_,
+                                        recording[i].right_absolute_,
+                                        recording[i].left_normalized_,
+                                        recording[i].right_normalized_);
                         fclose(fp);
                 }
                 

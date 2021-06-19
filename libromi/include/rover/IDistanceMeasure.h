@@ -45,6 +45,12 @@ namespace romi {
            respectively. Also, distance-from-start is negative before
            the start point and distance-to-end is negative beyond the
            end point.
+
+           When the distance used to initialize the measurements
+           (using set_distance_to_navigate) is negative, the rover
+           must drive backwards. However, both distance_from_start and
+           distance_to_end will be positive when moving from the start
+           position to the end point.
            
          */
         class IDistanceMeasure

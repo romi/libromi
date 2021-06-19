@@ -88,8 +88,14 @@ namespace romi {
                            ISession& session);
                 ~Navigation() override;
 
+                // The left and right speed are in absolute values, in
+                // m/s.
                 bool moveat(double left, double right) override;
+
+                // The distance and speed are absolute values, in m
+                // and m/s, respectively.
                 bool move(double distance, double speed) override;
+                
                 bool stop() override;
                 
                 bool pause_activity() override;

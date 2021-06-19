@@ -90,13 +90,18 @@ namespace romi {
         struct Speeds
         {
                 double time_;
-                double left_;
-                double right_;
+                double left_absolute_;
+                double right_absolute_;
+                double left_normalized_;
+                double right_normalized_;
                 
-                Speeds(double t, double left, double right)
+                Speeds(double t, double left_absolute, double right_absolute,
+                       double left_normalized, double right_normalized)
                         : time_(t),
-                          left_(left),
-                          right_(right) {
+                          left_absolute_(left_absolute),
+                          right_absolute_(right_absolute),
+                          left_normalized_(left_normalized),
+                          right_normalized_(right_normalized) {
                 };
         };
         
@@ -126,7 +131,10 @@ namespace romi {
                 void record_speeds();
                 void record_speeds_main();
                 void store_speed_recordings(std::vector<Speeds>& recording);
-                bool get_speeds_values(double& left, double& right);
+                bool get_speeds_values(double& left_absolute,
+                                       double& right_absolute,
+                                       double& left_normalized,
+                                       double& right_normalized);
                 
         public:
 
