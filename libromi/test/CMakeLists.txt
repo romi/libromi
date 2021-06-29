@@ -37,6 +37,7 @@ add_test(
 set(SRCS_CV
         src/tests_main.cpp
         src/cv_tests.cpp
+        src/principal_component_analysis_tests.cpp
   )
 add_executable(libromi_unit_tests_cv ${SRCS_CV})
 target_link_libraries(libromi_unit_tests_cv romi rpp gtest gmock)

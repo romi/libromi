@@ -165,6 +165,21 @@ if (NOT DEFINED librcom_SOURCE_DIR)
     SET(BUILD_TESTS OFF SAVED_TEST_OPTION)
 endif()
 
+######################################
+
+if (NOT DEFINED eigen3_SOURCE_DIR)
+    set (EIGEN_VERSION "3.3.9" CACHE STRING "Select Eigen Version.")
+    download_project(
+            PROJ              eigen3
+            URL               https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_VERSION}/eigen-${EIGEN_VERSION}.tar.bz2
+            PREFIX            ${CMAKE_THIRDPARTY_DIRECTORY}/eigen3
+            TIMEOUT           180
+            ${UPDATE_DISCONNECTED_IF_AVAILABLE}
+    )
+    include_directories ("${eigen3_SOURCE_DIR}")
+endif()
+######################################
+
 ###########################################################
 
 include(${CMAKE_MODULES_DIRECTORY}/RomiProjectBuildOptions.cmake)
