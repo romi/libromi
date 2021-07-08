@@ -1,0 +1,7 @@
+#ifndef ROMI_ROVER_BUILD_AND_TEST_EIGENINCLUDES_H
+#define ROMI_ROVER_BUILD_AND_TEST_EIGENINCLUDES_H
+
+#pragma GCC system_header
+#include <Eigen/Eigenvalues>
+
+#endif //ROMI_ROVER_BUILD_AND_TEST_EIGENINCLUDES_H

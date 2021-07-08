@@ -101,6 +101,7 @@ set(SOURCES
         include/cv/IImageCropper.h
         include/cv/Image.h
         include/cv/ImageIO.h
+        include/cv/IPrincipalComponentAnalysis.h
         include/cv/slic.h
 
         include/fake/FakeCNC.h
@@ -202,6 +203,7 @@ set(SOURCES
         src/cv/Image.cpp
         src/cv/ImageIO.cpp
         src/cv/ImageCropper.cpp
+        src/cv/PrincipalComponentAnalysis.cpp
         src/cv/Superpixels.cpp
         src/cv/slic.cpp
         
