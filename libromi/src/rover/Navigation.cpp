@@ -107,8 +107,6 @@ namespace romi {
                 auto clock = rpp::ClockAccessor::GetInstance();
                 double last_time = clock->time();
 
-                static double start_time = clock->time();
-                
                 while (!quitting_) {
                         double now = clock->time();
                         double dt = now - last_time;
