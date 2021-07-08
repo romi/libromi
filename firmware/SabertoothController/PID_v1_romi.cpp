@@ -45,7 +45,7 @@ PID::PID(double* Input, double* Output, double* Setpoint,
 
 PID::PID(double* Input, double* Output, double* Setpoint,
          double Kp, double Ki, double Kd, int ControllerDirection)
-        :PID::PID(Input, Output, Setpoint, Kp, Ki, Kd, P_ON_E, ControllerDirection)
+        : PID::PID(Input, Output, Setpoint, Kp, Ki, Kd, P_ON_E, ControllerDirection)
 {
 }
 
@@ -197,16 +197,16 @@ void PID::SetOutputLimits(double Min, double Max)
 void PID::SetMode(int Mode)
 {
         bool newAuto = (Mode == AUTOMATIC);
-        if(newAuto && !inAuto) {
-                /*we just went from manual to auto*/
+        if (newAuto && !inAuto) {
+                /* we just went from manual to auto */
                 PID::Initialize();
         }
         inAuto = newAuto;
 }
 
 /* Initialize()****************************************************************
- *	does all the things that need to happen to ensure a bumpless transfer
- *  from manual to automatic mode.
+ * Does all the things that need to happen to ensure a bumpless transfer
+ * from manual to automatic mode.
  ******************************************************************************/
 void PID::Initialize()
 {
@@ -228,7 +228,7 @@ void PID::Initialize()
  ******************************************************************************/
 void PID::SetControllerDirection(int Direction)
 {
-        if(inAuto && Direction !=controllerDirection) {
+        if (inAuto && Direction !=controllerDirection) {
                 kp = (0 - kp);
                 ki = (0 - ki);
                 kd = (0 - kd);
