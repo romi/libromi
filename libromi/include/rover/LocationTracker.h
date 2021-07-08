@@ -34,7 +34,7 @@ namespace romi {
         class LocationTracker : public IDistanceMeasure, public ITrackFollower
         {
         public:
-                static constexpr double kMinimumUpdateInterval = 0.050;
+                static constexpr double kMinimumUpdateInterval = 0.010;
                 
         protected:
                 ILocationProvider& location_provider_;

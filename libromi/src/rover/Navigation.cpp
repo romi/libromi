@@ -109,44 +109,20 @@ namespace romi {
 
                 static double start_time = clock->time();
                 
-
-                {
-                        FILE* fp = fopen("nav-speeds.csv", "w");
-                        if (fp) {
-                                fprintf(fp, "# time\tleft target\tright target\t"
-                                        "left output\tright output\n");
-                                fclose(fp);
-                        }
-                }
-                
                 while (!quitting_) {
                         double now = clock->time();
                         double dt = now - last_time;
                         double left = compute_next_speed(left_speed_, left_target_, dt);
                         double right = compute_next_speed(right_speed_, right_target_, dt);
                         
-                        {
-                                FILE* fp = fopen("nav-speeds.csv", "a");
-                                if (fp) {
-                                        fprintf(fp, "%.3f\t%.3f\t%.3f\t%.3f\t%.3f\n",
-                                                clock->time() - start_time,
-                                                left_target_.load(), right_target_.load(),
-                                                left, right);
-                                        fclose(fp);
-                                }
-                        }
-                        
                         if (left != left_speed_ || right != right_speed_) {
                                 left_speed_ = left;
                                 right_speed_ = right;
                                 send_moveat(left_speed_, right_speed_);
-                                r_debug("Navigation: speed now (%.2f, %.2f)",
-                                        left_speed_, right_speed_);
-
                         }
 
                         last_time = now;
-                        clock->sleep(0.040);
+                        clock->sleep(0.020);
                 }
                 
                 send_moveat(0.0, 0.0);
@@ -393,7 +369,7 @@ namespace romi {
                                                left_speed,
                                                right_speed);
                         
-                        clock->sleep(0.025);
+                        clock->sleep(0.020);
                 }
 
                 set_speed_targets(0.0, 0.0);
