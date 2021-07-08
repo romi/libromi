@@ -186,7 +186,7 @@ void init_stepper_timer()
         //   0     1     0     8
         //   0     1     1     64
         //   1     0     0     256
-        //   1     0     1     1025
+        //   1     0     1     1024
         //   1     1     0     Use external clock, falling edge
         //   1     1     1     Use external clock, rising edge
 
