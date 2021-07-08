@@ -17,8 +17,8 @@ public:
         
         ~IncrementalEncoderUno() override = default;
 
-        void init(int32_t pulses_per_revolution,
-                  int32_t increment, 
+        void init(uint16_t pulses_per_revolution,
+                  int8_t increment, 
                   uint8_t pin_a,
                   uint8_t pin_b,
                   EncoderInterruptHandler callback);

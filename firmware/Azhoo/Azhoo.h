@@ -25,17 +25,17 @@ public:
 
         void setup();
         
-        void init_encoders(int16_t encoder_steps,
+        void init_encoders(uint16_t encoder_steps,
                            int8_t left_increment,
                            int8_t right_increment);
 
         // The maximum acceleration in rev/s².
-        void init_envelope(double max_acceleration);
+        void init_speed_envelope(double max_acceleration);
 
         // The controller constants Kp and Ki as fractions
         // (numerator/denominator).
-        void init_controllers(int16_t kp_numerator, int16_t kp_denominator,
-                              int16_t ki_numerator, int16_t ki_denominator);
+        void init_pi_controllers(int16_t kp_numerator, int16_t kp_denominator,
+                                 int16_t ki_numerator, int16_t ki_denominator);
 
         // Set the new target angular speeds. The left and right
         // values are the angular speed in revolutions/s, multiplied

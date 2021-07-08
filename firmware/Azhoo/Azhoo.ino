@@ -35,8 +35,8 @@ void setup()
         //
         
         azhoo_.init_encoders(encoder_steps, -1, 1);
-        azhoo_.init_envelope(max_acceleration);
-        azhoo_.init_controllers(KpNumerator, KpDenominator, KiNumerator, KiDenominator);
+        azhoo_.init_speed_envelope(max_acceleration);
+        azhoo_.init_pi_controllers(KpNumerator, KpDenominator, KiNumerator, KiDenominator);
 }
 
 void loop()

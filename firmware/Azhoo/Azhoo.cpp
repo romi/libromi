@@ -21,7 +21,7 @@ void Azhoo::setup()
         last_time_ = arduino_.milliseconds();
 }
 
-void Azhoo::init_encoders(int16_t encoder_steps,
+void Azhoo::init_encoders(uint16_t encoder_steps,
                           int8_t left_increment,
                           int8_t right_increment)
 {
@@ -30,14 +30,14 @@ void Azhoo::init_encoders(int16_t encoder_steps,
         right_controller_.update_encoder_values(interval_ / 1000.0);
 }
 
-void Azhoo::init_envelope(double max_acceleration)
+void Azhoo::init_speed_envelope(double max_acceleration)
 {
         left_speed_envelope_.init(max_acceleration, interval_ / 1000.0);
         right_speed_envelope_.init(max_acceleration, interval_ / 1000.0);
 }
 
-void Azhoo::init_controllers(int16_t kp_numerator, int16_t kp_denominator,
-                             int16_t ki_numerator, int16_t ki_denominator)
+void Azhoo::init_pi_controllers(int16_t kp_numerator, int16_t kp_denominator,
+                                int16_t ki_numerator, int16_t ki_denominator)
 {
         left_controller_.init(kp_numerator, kp_denominator,
                               ki_numerator, ki_denominator);
@@ -60,12 +60,6 @@ bool Azhoo::update()
         if (dt >= interval_) {
                 int16_t left_speed = left_speed_envelope_.update();
                 int16_t right_speed = right_speed_envelope_.update();
-                
-                // Serial.print(left_speed);
-                // Serial.print(" ");
-                // Serial.print(right_speed);
-                // Serial.println();
-                
                 left_controller_.update(left_speed);
                 right_controller_.update(right_speed);
                 last_time_ = now;

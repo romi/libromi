@@ -10,7 +10,7 @@ public:
         volatile int32_t position_;
         int32_t increment_;
         // https://www.cuidevices.com/blog/what-is-encoder-ppr-cpr-and-lpr
-        int32_t pulses_per_revolution_;
+        uint16_t pulses_per_revolution_;
 
         IncrementalEncoder()
                 : position_(0),
@@ -20,13 +20,9 @@ public:
         
         ~IncrementalEncoder() override = default;
         
-        void init(int16_t pulses_per_revolution, int8_t direction) override {
-                init((int32_t) pulses_per_revolution, (int32_t) direction);
-        }
-        
-        void init(int32_t pulses_per_revolution, int32_t increment) {
+        void init(uint16_t pulses_per_revolution, int8_t direction) override {
                 pulses_per_revolution_ = pulses_per_revolution;
-                increment_ = increment;
+                increment_ = (int32_t) direction;
                 position_ = 0;
         }
 
@@ -34,7 +30,7 @@ public:
                 return position_;
         }
 
-        int32_t positions_per_revolution() override {
+        uint16_t positions_per_revolution() override {
                 return pulses_per_revolution_;
         }
         

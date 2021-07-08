@@ -27,13 +27,10 @@ protected:
 TEST_F(picontroller_tests, test_constructor)
 {
         // Arrange
-        EXPECT_CALL(encoder_, get_position())
-                .WillOnce(Return(0));
-        EXPECT_CALL(encoder_, positions_per_revolution())
-                .WillOnce(Return(10000));
-
+        // pass
+        
         // Act
-        PIController controller(encoder_, pwm_, 0.020);
+        PIController controller(encoder_, pwm_);
 
         // Assert
         ASSERT_EQ(controller.last_position_, 0);
@@ -45,6 +42,23 @@ TEST_F(picontroller_tests, test_constructor)
         ASSERT_EQ(controller.i_, 0);
         ASSERT_EQ(controller.out_, 0);
         ASSERT_EQ(controller.pulsewidth_, 0);
+        // expected: speed (1 rev/s) x dt (0.020 s) x ppr (pulse/rev)
+        //ASSERT_EQ(controller.delta_coeff_, 1.0 * 0.020 * 10000.0);
+}
+
+TEST_F(picontroller_tests, test_update_encoder_values)
+{
+        // Arrange
+        EXPECT_CALL(encoder_, get_position())
+                .WillOnce(Return(0));
+        EXPECT_CALL(encoder_, positions_per_revolution())
+                .WillOnce(Return(10000));
+        PIController controller(encoder_, pwm_);
+
+        // Act
+        controller.update_encoder_values(0.020);
+
+        // Assert
         // expected: speed (1 rev/s) x dt (0.020 s) x ppr (pulse/rev)
         ASSERT_EQ(controller.delta_coeff_, 1.0 * 0.020 * 10000.0);
 }
@@ -63,7 +77,8 @@ TEST_F(picontroller_tests, test_update_1)
                 .WillRepeatedly(Return(1000));
         EXPECT_CALL(pwm_, set(1040));
 
-        PIController controller(encoder_, pwm_, 0.020);
+        PIController controller(encoder_, pwm_);
+        controller.update_encoder_values(0.020);
         controller.init(1, 1, 1, 1);
         
         // Act
@@ -98,7 +113,8 @@ TEST_F(picontroller_tests, test_update_2)
         EXPECT_CALL(pwm_, set(1040));
         EXPECT_CALL(pwm_, set(1020));
 
-        PIController controller(encoder_, pwm_, 0.020);
+        PIController controller(encoder_, pwm_);
+        controller.update_encoder_values(0.020);
         controller.init(1, 1, 1, 1);
         
         // Act

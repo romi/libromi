@@ -30,7 +30,7 @@ public:
         
         void setup();
         
-        void init_encoders(int16_t encoder_steps,
+        void init_encoders(uint16_t encoder_steps,
                            int8_t left_increment,
                            int8_t right_increment) override;
         

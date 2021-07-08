@@ -15,7 +15,7 @@ public:
         virtual IPWM& right_pwm() = 0;
         virtual uint32_t milliseconds() = 0;
 
-        virtual void init_encoders(int16_t encoder_steps,
+        virtual void init_encoders(uint16_t encoder_steps,
                                    int8_t left_increment,
                                    int8_t right_increment) = 0;
 };

@@ -26,7 +26,7 @@ void ArduinoUno::setup()
         init_pwm();
 }
 
-void ArduinoUno::init_encoders(int16_t encoder_steps,
+void ArduinoUno::init_encoders(uint16_t encoder_steps,
                                int8_t left_increment,
                                int8_t right_increment)
 {

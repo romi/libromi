@@ -112,6 +112,7 @@ public:
                 pulsewidth_ = (int16_t) (pwm_.center() + out_);
                 pwm_.set(pulsewidth_);
 
+#if ARDUINO                
                 if (debug_) {  // TODO
                         Serial.print(millis());
                         Serial.print(" ");
@@ -130,6 +131,7 @@ public:
                         Serial.print(pulsewidth_);
                         Serial.println();
                 }
+#endif
                 
                 last_position_ = position;
         }
