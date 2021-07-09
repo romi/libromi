@@ -23,7 +23,7 @@
  */
 
 #include <ctype.h>
-#include "Util.h"
+#include "RomiSerialUtil.h"
 
 namespace romiserial {
 

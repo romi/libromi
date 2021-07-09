@@ -77,6 +77,7 @@ namespace romiserial {
 
         public:
 
+                RomiSerial(IInputStream& in, IOutputStream& out);
                 RomiSerial(IInputStream& in, IOutputStream& out,
                            const MessageHandler *handlers, uint8_t num_handlers);
                 RomiSerial(const RomiSerial&) = delete;
@@ -84,6 +85,7 @@ namespace romiserial {
 
                 ~RomiSerial() override = default;
 
+                void set_handlers(const MessageHandler *handlers, uint8_t num_handlers);
                 void handle_input() override;
                 void send_ok() override;
                 void send_error(int code, const char *message) override;

@@ -26,22 +26,33 @@
 #include "RomiSerial.h"
 #include "RomiSerialErrors.h"
 #include "Printer.h"
-#include "Util.h"
+#include "RomiSerialUtil.h"
 #include <stdio.h>
 
 namespace romiserial {
 
-        RomiSerial::RomiSerial(IInputStream& in, IOutputStream& out,
-                               const MessageHandler *handlers, uint8_t num_handlers)
+        RomiSerial::RomiSerial(IInputStream& in, IOutputStream& out)
                 : in_(in), out_(out),
-                  handlers_(handlers),
-                  num_handlers_(num_handlers),
+                  handlers_(nullptr),
+                  num_handlers_(0),
                   envelope_parser_(),
                   message_parser_(),
                   sent_response_(false),
                   crc_(),
                   last_id_(255)
         {
+        }
+
+        RomiSerial::RomiSerial(IInputStream& in, IOutputStream& out,
+                               const MessageHandler *handlers, uint8_t num_handlers)
+                : RomiSerial(in, out) {
+                set_handlers(handlers, num_handlers);
+        }
+
+        void RomiSerial::set_handlers(const MessageHandler *handlers, uint8_t num_handlers)
+        {
+                handlers_ = handlers;
+                num_handlers_ = num_handlers;
         }
 
         void RomiSerial::handle_input()

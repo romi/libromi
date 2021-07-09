@@ -4,7 +4,7 @@
 #include <vector>
 #include <RomiSerial.h>
 #include <RomiSerialErrors.h>
-#include <Util.h>
+#include <RomiSerialUtil.h>
 #include "../mock/mock_inputstream.h"
 #include "../mock/mock_outputstream.h"
 

@@ -32,7 +32,7 @@
 #include <RomiSerialErrors.h>
 #include <log.h>
 #include <ClockAccessor.h>
-#include "Util.h"
+#include "RomiSerialUtil.h"
 #include "RSerial.h"
 #include <stdlib.h>
 #include <time.h>
