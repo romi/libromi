@@ -34,6 +34,6 @@ if (BUILD_COVERAGE)
                             NAME libromi_unit_tests_azhoo_coverage
                             EXECUTABLE ctest -V ${n_cores} -R "libromi"
                             #EXCLUDE "src/rcom-registry.cpp" "include/*" "examples/*"
-                            #DEPENDENCIES librcom_unit_tests
+                            DEPENDENCIES libromi_unit_tests_azhoo
                             )
 endif()
