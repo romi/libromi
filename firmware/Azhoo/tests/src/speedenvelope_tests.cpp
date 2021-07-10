@@ -39,7 +39,7 @@ TEST_F(speedenvelope_tests, test_init_set_correct_increment)
         SpeedEnvelope envelope;
 
         // Act
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
 
         // Assert
         ASSERT_EQ(envelope.increment_, 6);
@@ -49,7 +49,7 @@ TEST_F(speedenvelope_tests, test_set_target)
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
 
         // Act
         envelope.set_target(1000);
@@ -62,7 +62,7 @@ TEST_F(speedenvelope_tests, test_update_once_increments_speed_once)
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
         envelope.set_target(1000);
 
         // Act
@@ -76,7 +76,7 @@ TEST_F(speedenvelope_tests, test_multiple_update_increments_speed)
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
         envelope.set_target(1000);
 
         // Act
@@ -93,7 +93,7 @@ TEST_F(speedenvelope_tests, test_multiple_update_increments_speed_negative_targe
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
         envelope.set_target(-1000);
 
         // Act
@@ -110,7 +110,7 @@ TEST_F(speedenvelope_tests, test_handles_changing_target_speeds)
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
 
         // Act
         int n = 3;
@@ -132,7 +132,7 @@ TEST_F(speedenvelope_tests, test_handles_target_speed_limits)
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
 
         // Act
         int n = 3;
@@ -150,7 +150,7 @@ TEST_F(speedenvelope_tests, test_handles_target_speed_limits_for_negative_values
 {
         // Arrange
         SpeedEnvelope envelope;
-        envelope.init(0.3, 0.020);
+        envelope.init(1.0, 0.3, 0.020);
 
         // Act
         int n = 3;

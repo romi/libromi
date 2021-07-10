@@ -12,32 +12,57 @@ using namespace std;
 using namespace testing;
 using namespace romiserial;
 
-void handler_without_args(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_without_args(IRomiSerial *romi_serial,
+                          int16_t *args,
+                          const char *string_arg)
 {
+        (void) args;
+        (void) string_arg;
         romi_serial->send_ok();
 }
 
-void handler_fails_to_send_message(__attribute__((unused)) RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_fails_to_send_message(IRomiSerial *romi_serial,
+                                   int16_t *args,
+                                   const char *string_arg)
 {
+        (void) romi_serial;
+        (void) args;
+        (void) string_arg;
 }
 
-void handler_with_two_arguments(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_with_two_arguments(IRomiSerial *romi_serial,
+                                int16_t *args,
+                                const char *string_arg)
 {
+        (void) args;
+        (void) string_arg;
         romi_serial->send_ok();
 }
 
-void handler_with_string_arg(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_with_string_arg(IRomiSerial *romi_serial,
+                             int16_t *args,
+                             const char *string_arg)
 {
+        (void) args;
+        (void) string_arg;
         romi_serial->send_ok();
 }
 
-void handler_returning_values(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_returning_values(IRomiSerial *romi_serial,
+                              int16_t *args,
+                              const char *string_arg)
 {
+        (void) args;
+        (void) string_arg;
         romi_serial->send("[0,1,2]");
 }
 
-void handler_returning_error(RomiSerial *romi_serial, __attribute__((unused)) int16_t *args, __attribute__((unused)) const char *string_arg)
+void handler_returning_error(IRomiSerial *romi_serial,
+                             int16_t *args,
+                             const char *string_arg)
 {
+        (void) args;
+        (void) string_arg;
         romi_serial->send_error(101, "I will try again tomorrow");
 }
 
@@ -61,7 +86,12 @@ protected:
         string output_message;
         string expected_message;
         
-	romiserial_tests() : in(), out(), serial(in, out, handlers, num_handlers), output_message(), expected_message() {}
+	romiserial_tests() :
+                in(),
+                out(),
+                serial(in, out, handlers, num_handlers),
+                output_message(), expected_message() {
+        }
 
 	~romiserial_tests() override = default;
 
@@ -83,7 +113,7 @@ protected:
 
         void initSerialAvailable(const char *s) {
                 InSequence seq;
-            size_t len = strlen(s);
+                size_t len = strlen(s);
                 for (size_t i = 0; i <= len; i++) {
                         EXPECT_CALL(in, available)
                                 .WillOnce(Return(len - i))
@@ -106,7 +136,10 @@ protected:
                         .WillRepeatedly(Invoke(this, &romiserial_tests::append_output));
         }
 
-        void expectErrorMessage(char opcode, uint8_t id, int error, const char *message = nullptr) {
+        void expectErrorMessage(char opcode,
+                                uint8_t id,
+                                int error,
+                                const char *message = nullptr) {
                 initAppendOutput();                
                 CRC8 crc;
                 expected_message += "#";
@@ -121,7 +154,8 @@ protected:
                 expected_message += "]:";
                 expected_message += to_hex((uint8_t)(id >> 4));
                 expected_message += to_hex(id);
-                uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
+                uint8_t code = crc.compute(expected_message.c_str(),
+                                           expected_message.length());
                 expected_message += to_hex((uint8_t) (code >> 4));
                 expected_message += to_hex(code);
                 expected_message += "\r";
@@ -136,7 +170,8 @@ protected:
                 expected_message += "[0]:";
                 expected_message += to_hex((uint8_t) (id >> 4));
                 expected_message += to_hex(id);
-                uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
+                uint8_t code = crc.compute(expected_message.c_str(),
+                                           expected_message.length());
                 expected_message += to_hex((uint8_t) (code >> 4));
                 expected_message += to_hex(code);
                 expected_message += "\r";
@@ -152,7 +187,8 @@ protected:
                 expected_message += ":";
                 expected_message += to_hex((uint8_t) (id >> 4));
                 expected_message += to_hex(id);
-                uint8_t code = crc.compute(expected_message.c_str(), expected_message.length());
+                uint8_t code = crc.compute(expected_message.c_str(),
+                                           expected_message.length());
                 expected_message += to_hex((uint8_t)(code >> 4));
                 expected_message += to_hex(code);
                 expected_message += "\r";

@@ -27,9 +27,9 @@
 
 using namespace romiserial;
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_show(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_clear(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_show(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_clear(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { '?', 0, false, send_info },
@@ -41,12 +41,12 @@ ArduinoSerial serial(Serial);
 RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
 CrystalDisplay display(PIN_RS,  PIN_EN,  PIN_D4,  PIN_D5,  PIN_D6,  PIN_D7);
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send("[0,\"CrystalDisplay\",\"0.1\",\"" __DATE__ " " __TIME__ "\"]"); 
 }
 
-void handle_show(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_show(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         int line = args[0];
         if (line >= 0 && line < display.count_lines()) {
@@ -57,7 +57,7 @@ void handle_show(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         }
 }
 
-void handle_clear(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_clear(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         int line = args[0];
         if (line >= 0 && line < display.count_lines()) {

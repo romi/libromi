@@ -4,14 +4,18 @@ set(SRCS
   src/tests_main.cpp
   src/picontroller_tests.cpp
   src/speedenvelope_tests.cpp
+  src/azhoo_tests.cpp
+  src/azhoocommands_tests.cpp
   mocks/mock_arduino.h
   mocks/mock_pwm.h
   mocks/mock_encoder.h
+  ../Azhoo.cpp
+  ../AzhooCommands.cpp
   )
 
 add_executable(libromi_unit_tests_azhoo ${SRCS})
 
-target_link_libraries(libromi_unit_tests_azhoo
+target_link_libraries(libromi_unit_tests_azhoo romiserial
                         gtest
                         gmock)
 

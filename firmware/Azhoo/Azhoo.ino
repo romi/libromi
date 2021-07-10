@@ -1,27 +1,36 @@
+/*
+  Romi motor controller for brushed motors
+
+  Copyright (C) 2021 Sony Computer Science Laboratories
+  Author(s) Peter Hanappe
+
+  Azhoo is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see
+  <http://www.gnu.org/licenses/>.
+
+ */
+#include <RomiSerial.h>
+#include <ArduinoSerial.h>
 #include "ArduinoUno.h"
 #include "Azhoo.h"
+#include "AzhooCommands.h"
 
-static const unsigned long kUpdateInterval = 20;
+using namespace romiserial;
 
 ArduinoUno arduino_;
-Azhoo azhoo_(arduino_, kUpdateInterval);
-
-#if 1
-double encoder_steps = 2100.0;
-double max_acceleration = 0.2;
-int32_t KpNumerator = 1400;
-int32_t KpDenominator = 100;
-int32_t KiNumerator = 7;
-int32_t KiDenominator = 10;
-        
-#else
-double encoder_steps = 16000.0;
-double max_acceleration = 0.2;
-int32_t KpNumerator = 7;
-int32_t KpDenominator = 100;
-int32_t KiNumerator = 1;
-int32_t KiDenominator = 1;
-#endif
+Azhoo azhoo_(arduino_, Azhoo::kDefaultUpdateInterval);
+ArduinoSerial serial(Serial);
+RomiSerial romi_serial_(serial, serial);
 
 void setup()
 {
@@ -31,62 +40,11 @@ void setup()
         
         arduino_.setup();
         azhoo_.setup();
-
-        //
-        
-        azhoo_.init_encoders(encoder_steps, -1, 1);
-        azhoo_.init_speed_envelope(max_acceleration);
-        azhoo_.init_pi_controllers(KpNumerator, KpDenominator, KiNumerator, KiDenominator);
+        setup_commands(&azhoo_, &romi_serial_);
 }
 
 void loop()
 {
-        //azhoo_.update();
-        test1();
+        azhoo_.update();
+        handle_commands();
 }
-
-void test1()
-{
-        int16_t counter = 0;
-
-        counter = 0;
-        azhoo_.set_target_speeds(500, 500);
-        while (true) {
-                if (azhoo_.update()) {
-                        counter++;
-                        if (counter == 400)
-                                break;
-                }
-        }
-
-        counter = 0;
-        azhoo_.set_target_speeds(0, 0);
-        while (true) {
-                if (azhoo_.update()) {
-                        counter++;
-                        if (counter == 400)
-                                break;
-                }
-        }
-
-        counter = 0;
-        azhoo_.set_target_speeds(-500, -500);
-        while (true) {
-                if (azhoo_.update()) {
-                        counter++;
-                        if (counter == 400)
-                                break;
-                }
-        }
-
-        counter = 0;
-        azhoo_.set_target_speeds(0, 0);
-        while (true) {
-                if (azhoo_.update()) {
-                        counter++;
-                        if (counter == 400)
-                                break;
-                }
-        }
-}
-

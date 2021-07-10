@@ -29,16 +29,16 @@
 
 using namespace romiserial;
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_stop(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_configure(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_encoders(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_pid(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_speeds(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_moveat(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_status(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_configure(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_stop(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { '?', 0, false, send_info },
@@ -188,7 +188,7 @@ void setup()
 	updateTimeRight = updateTimeLeft;
 }
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send("[0,\"SabertoothController\",\"0.1\","
                          "\"" __DATE__ " " __TIME__ "\"]"); 
@@ -272,7 +272,7 @@ void moveat(int left, int right)
         }
 }
 
-void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_encoders(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         snprintf(reply_buffer, sizeof(reply_buffer),
                  "[0,%ld,%ld,%lu]",
@@ -280,7 +280,7 @@ void send_encoders(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         romiSerial->send(reply_buffer);                
 }
 
-void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_pid(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         char target[10];
         char in[10];
@@ -314,7 +314,7 @@ void send_pid(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         romiSerial->send(reply_buffer);                
 }
 
-void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_speeds(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         char left_absolute[10];
         char right_absolute[10];
@@ -332,7 +332,7 @@ void send_speeds(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         romiSerial->send(reply_buffer);                
 }
 
-void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_status(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         const char *state_str;
         const char *control_str;
@@ -362,7 +362,7 @@ void send_status(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         romiSerial->send(reply_buffer);                
 }
 
-void send_configuration(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_configuration(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         const char *control_str;
         
@@ -389,7 +389,7 @@ void send_configuration(RomiSerial *romiSerial, int16_t *args, const char *strin
         romiSerial->send(reply_buffer);                
 }
 
-void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_configure(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         switch(state) {
         case STATE_ERROR:
@@ -428,13 +428,13 @@ void handle_configure(RomiSerial *romiSerial, int16_t *args, const char *string_
         }
 }
 
-void handle_stop(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_stop(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         stop();
         romiSerial->send_ok();  
 }
 
-void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_moveat(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         switch(state) {
         case STATE_ERROR:
@@ -449,7 +449,7 @@ void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
-void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         switch(state) {
         case STATE_ERROR:

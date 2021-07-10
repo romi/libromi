@@ -54,12 +54,12 @@ BLDC motor(&arduino, &encoder, &pwmGenerator, &sleepPin, &resetPin);
 
 unsigned long prev_time = 0;
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_set_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_get_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_set_power(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_calibrate(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_moveto(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_set_position(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_get_position(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_set_power(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_calibrate(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { '?', 0, false, send_info },
@@ -104,13 +104,13 @@ void loop()
         delay(1000);
 }
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send("[0,\"BLDCController\",\"0.1\","
                          "\"" __DATE__ " " __TIME__ "\"]"); 
 }
 
-void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_moveto(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         float value = (float) args[0] / 3600.0f;
         bool success = motor.moveto(value);
@@ -121,7 +121,7 @@ void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
-void handle_get_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_get_position(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         static char buffer[32];
         int value = (int) (3600.0f * encoder.getAngle()); 
@@ -129,7 +129,7 @@ void handle_get_position(RomiSerial *romiSerial, int16_t *args, const char *stri
         romiSerial->send(buffer);                
 }
 
-void handle_set_power(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_set_power(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         float value = (float) args[0] / 100.0f;
         if (value > 1.0f)
@@ -140,7 +140,7 @@ void handle_set_power(RomiSerial *romiSerial, int16_t *args, const char *string_
         romiSerial->send_ok();  
 }
 
-void handle_calibrate(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_calibrate(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send_ok();  
         motor.calibrate();

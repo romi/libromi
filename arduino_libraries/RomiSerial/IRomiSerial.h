@@ -24,13 +24,31 @@
 #ifndef __ROMISERIAL_IROMISERIAL_H
 #define __ROMISERIAL_IROMISERIAL_H
 
+#include <stdint.h>
+
 namespace romiserial {
+
+        class IRomiSerial;
+        
+        typedef void (*MessageCallback)(IRomiSerial *romi_serial,
+                                        int16_t *args,
+                                        const char *string_arg);
+
+        struct MessageHandler 
+        {
+                char opcode;
+                uint8_t number_arguments;
+                bool requires_string;
+                MessageCallback callback;
+        };
 
         class IRomiSerial
         {
         public:
                 virtual ~IRomiSerial() = default;
 
+                virtual void set_handlers(const MessageHandler *handlers,
+                                          uint8_t num_handlers) = 0;
                 virtual void handle_input() = 0;
                 virtual void send_ok() = 0;
                 virtual void send_error(int code, const char *message) = 0;

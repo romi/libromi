@@ -44,20 +44,20 @@ uint8_t controller_state;
 
 static const char *kInvalidState = "Invalid state";
 
-void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_move(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_pause(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_continue(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_reset(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_idle(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_set_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_spindle(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
-void handle_test(RomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_moveto(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_move(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_moveat(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_pause(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_continue(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_reset(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_position(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_idle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_set_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_spindle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_test(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { 'm', 4, false, handle_moveto },
@@ -169,7 +169,7 @@ int move(int dt, int dx, int dy, int dz)
         return err;
 }
 
-void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_moveto(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_RUNNING
             || controller_state == STATE_PAUSED) {
@@ -194,7 +194,7 @@ void handle_moveto(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
-void handle_move(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_move(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_RUNNING
             || controller_state == STATE_PAUSED) {
@@ -212,7 +212,7 @@ void handle_move(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         }
 }
 
-void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_moveat(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_RUNNING
             || controller_state == STATE_PAUSED) {
@@ -228,7 +228,7 @@ void handle_moveat(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
-void handle_pause(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_pause(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_RUNNING) {
                 disable_stepper_timer();
@@ -241,7 +241,7 @@ void handle_pause(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         }
 }
 
-void handle_continue(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_continue(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_PAUSED) {
                 controller_state = STATE_RUNNING;
@@ -254,7 +254,7 @@ void handle_continue(RomiSerial *romiSerial, int16_t *args, const char *string_a
         }
 }
 
-void handle_reset(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_reset(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_PAUSED) {
                 controller_state = STATE_RUNNING;
@@ -269,7 +269,7 @@ void handle_reset(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
         }
 }
 
-void send_position(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_position(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         int32_t pos[3];
         get_stepper_position(pos);
@@ -294,7 +294,7 @@ static inline void wait()
         }
 }
 
-void send_idle(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_idle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         snprintf(reply_string, sizeof(reply_string), "[0,%d,\"%c\"]",
                  is_idle(), controller_state);
@@ -400,7 +400,7 @@ bool do_homing()
         return success;
 }
 
-void handle_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         // Stop whatever is ongoing
         reset();
@@ -423,14 +423,14 @@ void handle_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         }
 }
 
-void handle_set_homing(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_set_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         for (int i = 0; i < 3; i++)
                 homing_axes[i] = args[i];        
         romiSerial->send_ok();
 }
 
-void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (args[0] == 0) {
                 disable_driver();
@@ -440,7 +440,7 @@ void handle_enable(RomiSerial *romiSerial, int16_t *args, const char *string_arg
         romiSerial->send_ok();
 }
 
-void handle_spindle(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_spindle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (args[0] == 0) {
                 digitalWrite(PIN_SPINLDE, LOW);
@@ -450,7 +450,7 @@ void handle_spindle(RomiSerial *romiSerial, int16_t *args, const char *string_ar
         romiSerial->send_ok();
 }
 
-void send_info(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send("[0,\"Oquam\",\"0.1\",\"" __DATE__ " " __TIME__ "\"]"); 
 }
@@ -487,7 +487,7 @@ void stop_test()
         moveat(0, 0, 0);
 }
 
-void handle_test(RomiSerial *romiSerial, int16_t *args, const char *string_arg)
+void handle_test(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         romiSerial->send_ok();
         if (args[0] == 0) {

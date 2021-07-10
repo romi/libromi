@@ -1,4 +1,24 @@
+/*
+  Romi motor controller for brushed motors
 
+  Copyright (C) 2021 Sony Computer Science Laboratories
+  Author(s) Peter Hanappe
+
+  Azhoo is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see
+  <http://www.gnu.org/licenses/>.
+
+ */
 #ifndef _AHZOO_SPEEDENVELOPE_H
 #define _AHZOO_SPEEDENVELOPE_H
 
@@ -6,22 +26,29 @@ class SpeedEnvelope
 {
 public:
         
+        int16_t max_;
         int16_t target_;
         int16_t current_;
         int16_t increment_;
         
         SpeedEnvelope()
-                : target_(0),
+                : max_(0),
+                  target_(0),
                   current_(0),
                   increment_(0) {
         }
         
-        void init(double acceleration, double dt) {
+        void init(double max_speed, double acceleration, double dt) {
+                max_ = (int16_t) (max_speed * 1000.0);
                 double dv = acceleration * dt;
                 increment_ = (int16_t) (dv * 1000.0);
         }
 
         void set_target(int16_t target) {
+                if (target > max_)
+                        target = max_;
+                else if (target < -max_)
+                        target = (int16_t) -max_;
                 target_ = target;
         }
 
@@ -36,6 +63,11 @@ public:
                                 current_ = target_;
                 }
                 return current_;
+        }
+
+        void stop() {
+                target_ = 0;
+                current_ = 0;
         }
 };
 

@@ -19,19 +19,9 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#include "IncrementalEncoderUno.h"
-        
-void IncrementalEncoderUno::init(uint16_t pulses_per_revolution,
-                                 int8_t increment, 
-                                 uint8_t pin_a,
-                                 uint8_t pin_b,
-                                 EncoderInterruptHandler callback)
-{
-        IncrementalEncoder::init(pulses_per_revolution, increment);
-        pin_b_ = pin_b;
-        pinMode(pin_a, INPUT_PULLUP);
-        pinMode(pin_b, INPUT_PULLUP);
-        attachInterrupt(digitalPinToInterrupt(pin_a),
-                        callback,
-                        RISING);
-}
+#ifndef _AZHOO_AZHOOVERSION_H
+#define _AZHOO_AZHOOVERSION_H
+
+#define kAzhooVersion "0.1"
+
+#endif // _AZHOO_AZHOOVERSION_H
