@@ -9,12 +9,13 @@ using namespace romiserial;
 class romiserial_arduino_tests : public ::testing::Test
 {
 protected:
+        std::string controller_name;
         std::shared_ptr<RSerial> serial;
         RomiSerialClient romiserial;
 
 	romiserial_arduino_tests()
-                : serial(std::make_shared<RSerial>("/dev/ttyACM0", 115200, 1)),
-                  romiserial(serial, serial, 255) {
+                : controller_name("romiserial_arduino_tests"), serial(std::make_shared<RSerial>("/dev/ttyACM0", 115200, 1)),
+                  romiserial(serial, serial, 255, controller_name) {
                 //romiserial.set_debug(true);
 	}
         

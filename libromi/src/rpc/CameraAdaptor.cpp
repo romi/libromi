@@ -49,6 +49,8 @@ namespace romi {
                                 result.append(jpeg); // TODO: can we avoid a copy?
                                 
                         } else {
+                                r_warn("Unknown method: %s", method.c_str());
+                                r_debug("Known methods: %s", MethodsCamera::grab_jpeg_binary);
                                 error.code = RPCError::kMethodNotFound;
                                 error.message = "Unknown method";
                         }

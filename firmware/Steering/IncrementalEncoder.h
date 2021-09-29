@@ -31,7 +31,8 @@ public:
         int32_t increment_;
         // https://www.cuidevices.com/blog/what-is-encoder-ppr-cpr-and-lpr
         uint16_t pulses_per_revolution_;
-
+        bool index_;
+        
         IncrementalEncoder()
                 : position_(0),
                   increment_(1),
@@ -65,6 +66,22 @@ public:
         // For testing only
         void set_position(int32_t t) {
                 position_ = t;
+        }
+
+        bool get_index() override {
+                return index_;
+        }
+        
+        void reset_index() override {
+                index_ = false;
+        }
+        
+        void set_index() {
+                index_ = true;
+        }
+
+        void set_zero() override {
+                position_ = 0;
         }
 };
 

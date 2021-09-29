@@ -212,8 +212,6 @@ namespace romi {
 
         bool SteeringController::response_ok(JsonCpp& response)
         {
-//                std::cout<<"response.isarray() = "<<response.isarray()<<", response.get(0).isnumber() = "<<
-//                                    response.get(0).isnumber()<<", response.num(0) = "<<response.num(0)<<std::endl;
                 return  (response.isarray()
                          && response.get(0).isnumber()
                          && response.num(0) == 0);
@@ -226,7 +224,6 @@ namespace romi {
                 for (int i = 0; i < 10; i++) {
                         _romi_serial->send(command, response);
                         if (response_ok(response)) {
-                                //std::cout<<"response success = "<<success<<std::endl;
                                 success = true;
                                 break;
                         }

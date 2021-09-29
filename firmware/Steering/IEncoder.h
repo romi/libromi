@@ -32,6 +32,9 @@ public:
         virtual void init(uint16_t pulses_per_revolution, int8_t direction) = 0;
         virtual int32_t get_position() = 0;
         virtual uint16_t positions_per_revolution() = 0;
+        virtual bool get_index() = 0;
+        virtual void reset_index() = 0;
+        virtual void set_zero() = 0;
 };
 
 #endif // _STEERING_I_ENCODER_H

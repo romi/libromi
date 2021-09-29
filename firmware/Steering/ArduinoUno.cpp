@@ -25,6 +25,13 @@
 static IncrementalEncoderUno left_encoder_;
 static IncrementalEncoderUno right_encoder_;
 
+void setup_pin_change_interrupt(byte pin)
+{
+        *digitalPinToPCMSK(pin) |= bit (digitalPinToPCMSKbit(pin));  // enable pin
+        PCIFR  |= bit (digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+        PCICR  |= bit (digitalPinToPCICRbit(pin)); // enable interrupt for the group
+}
+
 ArduinoUno::ArduinoUno()
 {
 }
@@ -53,13 +60,14 @@ void ArduinoUno::init_encoders(uint16_t encoder_steps,
                            kLeftEncoderPinA,
                            kLeftEncoderPinB,
                            update_left_encoder);
-
+        setup_pin_change_interrupt(A0);
+        
         right_encoder_.init(encoder_steps,
                             right_increment, 
                             kRightEncoderPinA,
                             kRightEncoderPinB,
                             update_right_encoder);
-        
+        setup_pin_change_interrupt(A1);
 }
 
 IEncoder& ArduinoUno::left_encoder()
@@ -71,4 +79,15 @@ IEncoder& ArduinoUno::right_encoder()
 {
         return right_encoder_;
 }
+
+ISR(PCINT1_vect) // handle pin change interrupt for A0 to A5 here
+{
+        if (digitalRead(A0)) {
+                left_encoder_.set_index();
+        }
+        if (digitalRead(A1)) {
+                right_encoder_.set_index();
+        }
+}  
+
 

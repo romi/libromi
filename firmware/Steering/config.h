@@ -27,7 +27,7 @@
 #ifndef _OQUAM_GSHIELD_H_
 #define _OQUAM_GSHIELD_H_
 
-#define ENABLE_PIN_HIGH   0
+#define ENABLE_PIN_HIGH   1
 #define ENCODER_REVERSED 0
 #define PRESCALING         1
 #define FREQUENCY_STEPPER  25000

@@ -423,3 +423,16 @@ TEST_F(navigation_tests, stop_fails_when_stop_driver_fails)
         bool success = navigation.stop();
         ASSERT_EQ(success, false);
 }
+
+TEST_F(navigation_tests, initialise_initialises_steering)
+{
+    NavigationSettings settings(config);
+    Navigation navigation(settings, driver, distance_measure, track_follower,
+                          navigation_controller, session);
+
+    EXPECT_CALL(navigation_controller, initialise())
+        .WillOnce(Return(true));
+
+    bool success = navigation.stop();
+    ASSERT_EQ(success, false);
+}

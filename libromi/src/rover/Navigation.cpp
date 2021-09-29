@@ -322,4 +322,8 @@ namespace romi {
                 // return driver_.disable_controller();
                 return true;
         }
+
+        bool Navigation::initialise() {
+                return steering_.initialise();
+        }
 }

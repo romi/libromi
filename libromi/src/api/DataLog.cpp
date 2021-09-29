@@ -38,13 +38,17 @@ namespace romi {
                   mutex_map_(),
                   fp_(nullptr),
                   thread_(nullptr),
-                  quitting_(false)
+                  quitting_(false),
+                  hub_(),
+                  message_(),
+                  last_handle_events_(0.0)
         {
                 fp_ = fopen(path.c_str(), "w");
                 if (fp_ == nullptr) {
                         r_err("DataLog: can't open file %s", path.c_str());
                         throw std::runtime_error("DataLog: can't open file");
                 }
+                try_create_hub();
                 thread_ = std::make_unique<std::thread>([this]() {
                                 this->write_entries_to_storage_in_background();
                         });
@@ -54,13 +58,24 @@ namespace romi {
                 : DataLog(filepath.string())
         {
         }
-
+        
         DataLog::~DataLog()
         {
                 quitting_ = true;
                 if (thread_ != nullptr)
                         thread_->join();
                 fclose(fp_);
+        }
+
+        void DataLog::try_create_hub()
+        {
+                try {
+                        hub_ = std::make_unique<rcom::MessageHub>("datalog");
+
+                } catch (const std::runtime_error& re) {
+                        r_err("Failed to create the message hub: %s", re.what());
+                        hub_ = nullptr;
+                }
         }
         
         void DataLog::store(const std::string& name, double value)
@@ -72,8 +87,23 @@ namespace romi {
         void DataLog::store(double time, const std::string& name, double value)
         {
                 SynchronizedCodeBlock synchronize(mutex_vector_);
+                store_in_queue(time, name, value);
+                handle_events(time);
+        }
+        
+        void DataLog::store_in_queue(double time, const std::string& name, double value)
+        {
                 uint32_t index = get_index(name);
                 entries_.emplace_back(time, index, value);
+        }
+        
+        void DataLog::handle_events(double time)
+        {
+                if (hub_ != nullptr
+                    && time - last_handle_events_ >= 1.0) {
+                        last_handle_events_ = time;
+                        hub_->handle_events();
+                }
         }
 
         uint32_t DataLog::get_index(const std::string& name)
@@ -98,9 +128,7 @@ namespace romi {
                 auto clock = rpp::ClockAccessor::GetInstance();
                 
                 while (!quitting_) {
-                        if (entries_.size() >= kCacheSize) {
-                                try_writing_entries_to_storage();
-                        }
+                        try_writing_entries_to_storage();
                         clock->sleep(1.0);
                 }
 
@@ -113,8 +141,11 @@ namespace romi {
                 try {
                         std::vector<DataLogEntry> entries;
                         copy_entries(entries);
-                        write_entries_to_storage(entries);
-                        
+                        if (entries.size() > 0) {
+                                write_entries_to_storage(entries);
+                                transmit_entries(entries);
+                        }
+
                 } catch (const std::runtime_error& e) {
                         r_err("DataLog: failed to store the data: %s", e.what());
                 }
@@ -140,6 +171,33 @@ namespace romi {
         {
                 const std::string& name = get_name(entry.index_);
                 fprintf(fp_, "%f,%s,%f\n", entry.time_, name.c_str(), entry.value_); 
+        }
+        
+        void DataLog::transmit_entries(std::vector<DataLogEntry>& entries)
+        {
+                if (hub_ != nullptr
+                    && hub_->count_links() > 0) {
+                        message_.clear();
+                        append_entries(entries);
+                        hub_->broadcast(message_, rcom::kTextMessage, nullptr);
+                }
+        }
+        
+        void DataLog::append_entries(std::vector<DataLogEntry>& entries)
+        {
+                message_.printf("[");
+                for (size_t i = 0; i < entries.size() - 1; i++) {
+                        append_entry(entries[i]);
+                        message_.printf(",");
+                }
+                append_entry(entries[entries.size() - 1]);
+                message_.printf("]");
+        }
+        
+        void DataLog::append_entry(DataLogEntry& entry)
+        {
+                const std::string& name = get_name(entry.index_);
+                message_.printf("[%f,\"%s\",%f]", entry.time_, name.c_str(), entry.value_);
         }
 
         const std::string& DataLog::get_name(uint32_t index)

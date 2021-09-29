@@ -51,6 +51,7 @@ namespace romi {
                 bool drive(double speed, SteeringData steering) override;
                 bool forward(double speed) override;
                 bool turn(double speed, double radius) override;
+                bool initialise() override;
         };
 }
 

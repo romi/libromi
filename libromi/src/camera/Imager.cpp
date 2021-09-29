@@ -48,6 +48,7 @@ namespace romi {
                                      size_t max_images,
                                      double max_duration)
         {
+                counter_ = 0;
                 bool success = false;
                 try {
                         try_start_recording(observation_id, max_images,

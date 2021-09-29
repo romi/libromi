@@ -58,6 +58,7 @@ namespace romiserial {
                 EnvelopeParser _parser;
                 JsonCpp default_response_;
                 double timeout_;
+                const std::string client_name_;
                 
                 int make_request(const std::string &command, std::string &request);
                 JsonCpp try_sending_request(std::string &request);
@@ -75,12 +76,13 @@ namespace romiserial {
 
         public:
         
-                static std::unique_ptr<IRomiSerialClient> create(const std::string& device);
+                static std::unique_ptr<IRomiSerialClient> create(const std::string& device, const std::string& client_name);
                 static uint8_t any_id();
                 
                 explicit RomiSerialClient(std::shared_ptr<IInputStream> in,
                                           std::shared_ptr<IOutputStream> out,
-                                          uint8_t start_id);
+                                          uint8_t start_id,
+                                          const std::string& client_name);
                 RomiSerialClient(const RomiSerialClient&) = delete;
                 RomiSerialClient& operator=(const RomiSerialClient&) = delete;
                 ~RomiSerialClient() override;

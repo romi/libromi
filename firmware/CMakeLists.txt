@@ -48,6 +48,16 @@ if (${BUILD_ARDUINO})
             install_romiserial_lib
             )
 
+    add_custom_target(BatteryMonitor ALL
+            COMMAND "${ARDUINOCLI_EXE}" "compile" "--clean" "--export-binaries" "--fqbn" "arduino:avr:uno" "${CMAKE_CURRENT_SOURCE_DIR}/BatteryMonitor"
+            COMMENT
+            "Building Battery Monitor"
+            WORKING_DIRECTORY
+            ${CMAKE_CURRENT_SOURCE_DIR}/BatteryMonitor
+            DEPENDS
+            install_romiserial_lib
+            )
+
     MESSAGE(WARNING "BLDC, ToolCarrierJrkG2 do not compile. Need updating.")
 
 #    add_custom_target(BLDC ALL

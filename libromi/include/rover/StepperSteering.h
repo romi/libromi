@@ -53,7 +53,6 @@ namespace romi {
                 std::unique_ptr<std::thread> thread_;
                 std::atomic<bool> quitting_;
                 
-                bool turn_wheels(double left_angle, double right_angle);
                 bool set_target(double target_left, double target_right);
                 void run_target_updates();
                 bool angles_need_updating();
@@ -62,6 +61,7 @@ namespace romi {
                 bool do_turn_wheel(double target_left, double target_right);
                 bool moveto(int16_t steps_left, int16_t steps_right);
                 int16_t angle_to_steps(double angle);
+                bool homing();
 
         public:
                 StepperSteering(ISteeringController& stepper_controller,
@@ -76,6 +76,9 @@ namespace romi {
                 bool drive(double speed, SteeringData steering) override;
                 bool forward(double speed) override;
                 bool turn(double speed, double radius) override;
+
+                bool turn_wheels(double left_angle, double right_angle);
+                bool initialise() override;
         };
 }
 

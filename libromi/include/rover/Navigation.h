@@ -89,6 +89,7 @@ namespace romi {
                 bool pause_activity() override;
                 bool continue_activity() override;
                 bool reset_activity() override;
+                bool initialise() override;
         };
 }
 

@@ -63,4 +63,10 @@ namespace romi {
                 return first_.turn(speed, radius)
                         && second_.turn(speed, radius);
         }
+
+    bool DoubleSteering::initialise() {
+
+        return first_.initialise()
+                        && second_.initialise();;
+    }
 }

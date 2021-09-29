@@ -135,4 +135,8 @@ namespace romi {
         {
                 return motors_.disable_controller();
         }
+
+        bool DifferentialSteering::initialise() {
+            return true;
+        }
 }

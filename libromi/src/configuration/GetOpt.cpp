@@ -99,6 +99,12 @@ namespace romi {
                 return _flags.find(name) != _flags.end();
         }
 
+        bool GetOpt::is_set(const char *name)
+        {
+                auto index = _values.find(name);
+                return (index != _values.end());
+        }
+        
         std::string GetOpt::get_value(const std::string& name)
         {
                 std::string retval;
@@ -112,10 +118,8 @@ namespace romi {
 
         std::string GetOpt::get_default_value(const std::string& name)
         {
-                r_debug("get_default_value %s", name.c_str());
                 std::string retval;
                 for (auto & _option : _options) {
-                        r_debug("%s", _option.name);
                         if (_option.name == name
                             && _option.default_value != nullptr) {
                                 retval = _option.default_value;

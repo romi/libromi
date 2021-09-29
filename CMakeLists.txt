@@ -129,6 +129,7 @@ if (${BUILD_ARDUINO})
         arduino_cli_function ("config" "set" "library.enable_unsafe_install" "true")
         arduino_cli_function ("core" "update-index")
         arduino_cli_function ("core" "install" "arduino:avr")
+#        arduino_cli_function ("core" "install" "arduino:sam")
 
     #    Add any other Adruino hosted library dependencies here.
         arduino_cli_function ("lib" "install" "PID")

@@ -37,7 +37,7 @@ namespace romi {
         class Imager : public IImager
         {
         public:
-                static const size_t kDefaultMaxImages = 1000; 
+                static const size_t kDefaultMaxImages = 10000;
                 static constexpr double kDefaultMaxDuration = 10.0 * 60.0; // 10 minutes or 600 s
                 
         protected:

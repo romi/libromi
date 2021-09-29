@@ -39,6 +39,7 @@ namespace romi {
                 virtual bool drive(double speed, SteeringData steering) = 0;
                 virtual bool forward(double speed) = 0;
                 virtual bool turn(double speed, double radius) = 0;
+                virtual bool initialise() = 0;
         };
 }
 

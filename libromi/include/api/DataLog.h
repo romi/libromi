@@ -33,6 +33,8 @@
 #include <mutex>
 #include <atomic>
 #include <filesystem>
+#include <MessageHub.h>
+#include <IMessageListener.h>
 #include "api/IDataLog.h"
 
 namespace romi {
@@ -62,6 +64,9 @@ namespace romi {
                 FILE *fp_;
                 std::unique_ptr<std::thread> thread_;
                 std::atomic<bool> quitting_;
+                std::unique_ptr<rcom::MessageHub> hub_;
+                rpp::MemBuffer message_;
+                double last_handle_events_;
                 
                 uint32_t get_index(const std::string& name);
                 void write_entries_to_storage_in_background();
@@ -70,6 +75,12 @@ namespace romi {
                 void write_entry_to_storage(DataLogEntry& entry);
                 const std::string& get_name(uint32_t index);
                 void copy_entries(std::vector<DataLogEntry>& entries);
+                void store_in_queue(double time, const std::string& name, double value);
+                void transmit_entries(std::vector<DataLogEntry>& entries);
+                void append_entries(std::vector<DataLogEntry>& entries);
+                void append_entry(DataLogEntry& entry);
+                void handle_events(double time);
+                void try_create_hub();
                 
                 DataLog(const DataLog& other) = delete;
                 DataLog& operator=(const DataLog& other) = delete;

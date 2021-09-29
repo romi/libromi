@@ -35,7 +35,6 @@ volatile int32_t accumulation_error_[3];
 volatile int32_t delta_[3];
 volatile int32_t dt_;
 volatile int16_t step_dir_[3];
-//volatile int32_t counter_reset_timer = 0;
 volatile block_t *current_block_;
 volatile int32_t interrupts_ = 0;
 volatile int16_t milliseconds_ = 0;

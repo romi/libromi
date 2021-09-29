@@ -14,6 +14,7 @@ public:
         MOCK_METHOD(bool, reset_activity, (), (override));
         MOCK_METHOD(bool, disable_controller, (), (override));
         MOCK_METHOD(bool, enable_controller, (), (override));
+        MOCK_METHOD(bool, initialise, (), (override));
 
 };
 #pragma GCC diagnostic pop

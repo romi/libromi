@@ -97,6 +97,9 @@ set(SOURCES
         include/api/Path.h
         include/api/StateMachine.h
 
+        include/battery_monitor/IBatteryMonitor.h
+        include/battery_monitor/BatteryMonitor.h
+
         include/camera/FileCamera.h
         include/camera/USBCamera.h
         include/camera/Imager.h
@@ -217,6 +220,8 @@ set(SOURCES
         src/api/Path.cpp
         src/api/ActivityHelper.cpp
         src/api/EventTimer.cpp
+
+        src/battery_monitor/BatteryMonitor.cpp
 
         src/hal/BldcGimbal.cpp
         src/hal/BrushMotorDriver.cpp

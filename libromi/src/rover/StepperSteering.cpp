@@ -61,6 +61,12 @@ namespace romi {
                 update_interval_ = 0.200;
                 last_update_ = rpp::ClockAccessor::GetInstance()->time();
                 
+                if (!enable())
+                        throw std::runtime_error("StepperSteering: enable failed");
+
+                if (!homing())
+                        throw std::runtime_error("StepperSteering: homing failed");
+
                 thread_ = std::make_unique<std::thread>([this]() {
                                 this->run_target_updates();
                         });
@@ -71,6 +77,19 @@ namespace romi {
                 quitting_ = true;
                 if (thread_ != nullptr)
                         thread_->join();
+        }
+        
+        bool StepperSteering::homing()
+        {
+                r_info("StepperSteering::homing()");
+                bool success = false;
+                try {
+                        success = controller_.homing();
+                        
+                } catch (const std::runtime_error& re) {
+                        r_err("StepperSteering: homing failed: %s", re.what());
+                }
+                return success;
         }
         
         bool StepperSteering::drive(double speed, SteeringData steering)
@@ -92,11 +111,14 @@ namespace romi {
         bool StepperSteering::turn(double speed, double radius)
         {
                 (void) speed;
-                double left_angle = atan(settings_.wheelbase
-                                         / (radius - settings_.wheeltrack / 2.0));
-                double right_angle = atan(settings_.wheelbase
-                                          / (radius + settings_.wheeltrack / 2.0));
-                return turn_wheels(left_angle, right_angle);
+                // double left_angle = atan(settings_.wheelbase
+                //                          / (radius - settings_.wheeltrack / 2.0));
+                // double right_angle = atan(settings_.wheelbase
+                //                           / (radius + settings_.wheeltrack / 2.0));
+                // return turn_wheels(left_angle, right_angle);
+                
+                double angle = atan(settings_.wheelbase / (radius / 2.0));
+                return turn_wheels(angle, angle);
         }
         
         bool StepperSteering::turn_wheels(double left_angle, double right_angle)
@@ -203,7 +225,6 @@ namespace romi {
                 
                 if (steps_left_ != steps_left
                     || steps_right_ != steps_right) {
-                        
                         success = controller_.moveto(steps_per_second_,
                                                      (int16_t) steps_left,
                                                      (int16_t) steps_right); 
@@ -226,5 +247,9 @@ namespace romi {
         bool StepperSteering::disable()
         {
                 return controller_.disable();
+        }
+
+        bool StepperSteering::initialise() {
+            return homing();
         }
 }

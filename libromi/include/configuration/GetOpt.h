@@ -55,6 +55,7 @@ namespace romi {
                 void add_option(Option& option) override;
                 void parse(int argc, char **argv) override;
                 bool get_flag(const char *name) override;
+                bool is_set(const char *name) override;
                 std::string get_value(const std::string& name) override;
                 bool is_help_requested() override;
                 void print_usage() override;

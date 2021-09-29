@@ -56,6 +56,7 @@ void send_position(IRomiSerial *romiSerial, int16_t *args, const char *string_ar
 void send_idle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_print(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void send_info(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 void handle_test(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
@@ -71,6 +72,7 @@ const static MessageHandler handlers[] = {
         { 'I', 0, false, send_idle },
         { 'H', 0, false, handle_homing },
         { 'E', 1, false, handle_enable },
+        { 'D', 1, false, handle_print },
         { 'T', 1, false, handle_test },
         { '?', 0, false, send_info },
 };
@@ -89,20 +91,6 @@ void reset()
         stepper_reset();
 }
 
-/**
- * \brief Check the accuracy of the path following.
- *
- * Check that the difference between the actual position of the arm,
- * as measured by the encoders, and the supposed position of the arm,
- * as measured by the number of executed motor steps, is less than a
- * given threshold. If the deviation is larger than the threshold then
- * the controller will stop the execution and request the controlling
- * program to make the necessary adjustments.
- */
-void check_accuracy()
-{
-}
-
 void setup()
 {
         disable_driver();
@@ -112,7 +100,8 @@ void setup()
                 ;
         
         arduino_.setup();
-        
+        arduino_.init_encoders(1024, 1, -1);
+
         init_block_buffer();
         init_pins();
         init_stepper();
@@ -124,12 +113,33 @@ void setup()
 static unsigned long last_time = 0;
 static unsigned long last_print_time = 0;
 static int16_t id = 0;
+static bool print_ = false;
 
 void loop()
 {
         romiSerial.handle_input();
-        check_accuracy();
         delay(1);
+
+        if (print_) {
+                print_status();
+                delay(50);
+        }
+}
+
+void print_status()
+{
+        Serial.print(arduino_.left_encoder().get_position());
+        if (arduino_.left_encoder().get_index()) {
+                Serial.print("***");
+                arduino_.left_encoder().reset_index();
+        }
+        Serial.print("    ");
+        Serial.print(arduino_.right_encoder().get_position());
+        if (arduino_.right_encoder().get_index()) {
+                Serial.print("***");
+                arduino_.right_encoder().reset_index();
+        }
+        Serial.println();
 }
 
 int moveat(int dx, int dy)
@@ -269,6 +279,8 @@ void handle_zero(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 {
         if (controller_state == STATE_PAUSED || is_idle()) {
                 stepper_zero();
+                arduino_.left_encoder().set_zero();
+                arduino_.right_encoder().set_zero();
                 romiSerial->send_ok();  
         } else {
                 romiSerial->send_error(101, kInvalidState);  
@@ -307,19 +319,77 @@ void send_idle(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
         romiSerial->send(reply_string); 
 }
 
-bool do_homing_axis(int axis)
+bool seek_index(int axis, int speed, int max_steps, IEncoder& encoder)
 {
+        bool found = false;
+        int32_t start = encoder.get_position();
+        int32_t end;
+        int8_t direction;
+
+        encoder.reset_index();
+        
+        if (speed > 0) {
+                direction = 1;
+                end = start + max_steps;
+        } else {
+                direction = -1;
+                end = start - max_steps;
+        }
+        
+        if (axis == 0)
+                moveat(speed, 0);
+        else
+                moveat(0, speed);
+        
+        while (true) {
+                romiSerial.handle_input();
+                
+                int32_t current = encoder.get_position();
+                
+                // Serial.print(axis);
+                // Serial.print(": ");
+                // Serial.print(current);
+                // Serial.print(" ");
+                // Serial.print(start);
+                // Serial.print(" ");
+                // Serial.print(end);
+                // Serial.print(" ");
+                // Serial.println(direction);
+                
+                if ((direction > 0 && current > end)
+                    || (direction < 0 && current < end)) {
+                        break;
+                } else if (encoder.get_index()) {
+                        found = true;
+                        break;
+                }
+                delay(10);
+        }
+
+        moveat(0, 0);
+        return found;
+}
+
+bool do_homing_axis(int axis, IEncoder& encoder)
+{
+        bool success = false;
+        uint16_t steps = encoder.positions_per_revolution();
+        // steps/16 = 22.5°
+        // steps/180 = 2°
+        if (seek_index(axis, -500, steps/180, encoder)
+            || seek_index(axis, 500, steps/16, encoder)
+            || seek_index(axis, -500, steps+1, encoder)) {
+                success = true;
+                encoder.set_zero();
+                stepper_zero();
+        }
+        return success;
 }
 
 bool do_homing()
 {
-        bool success = true;
-        for (int i = 0; i < 2; i++) {
-                success = do_homing_axis(i);
-                if (!success)
-                        break;
-        }
-        return success;
+        return (do_homing_axis(0, arduino_.left_encoder())
+                && do_homing_axis(1, arduino_.right_encoder()));
 }
 
 void handle_homing(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
@@ -351,6 +421,16 @@ void handle_enable(IRomiSerial *romiSerial, int16_t *args, const char *string_ar
                 disable_driver();
         } else {
                 enable_driver()
+        }
+        romiSerial->send_ok();
+}
+
+void handle_print(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+        if (args[0] == 0) {
+                print_ = false;
+        } else {
+                print_ = true;
         }
         romiSerial->send_ok();
 }
