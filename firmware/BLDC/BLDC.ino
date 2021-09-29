@@ -94,6 +94,11 @@ void setup()
                 ;
 
         // Serial.println("OK");
+	// IMU
+	if (!imu.begin()) {
+		Serial.println("Failed to start IMU");
+		// TODO Manage error
+	}
         
         motor.wake();
         motor.setPower(0.5f);
