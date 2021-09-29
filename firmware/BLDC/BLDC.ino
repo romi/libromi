@@ -52,6 +52,12 @@ PwmGenerator pwmGenerator(&pwm1, &pwm2, &pwm3,
 DigitalOut sleepPin(&arduino, P_SLEEP);
 DigitalOut resetPin(&arduino, P_RESET);
 
+// When building on Arduino IDE you need to modify variant.cpp file (from the adafruit M0 core) to free SERCOM0:
+// 1. Pins PA04 and PA05 changed from PIO_ANALOG to PIO_SERCOM_ALT (lines ~57,58)
+// 2. Comment references to Serial1 at the end of file
+// In platformio this is not needed (it is solved using a custom variant)
+TwoWire myWire(&sercom0, P_IMU_SDA, P_IMU_SCL);
+IMU imu(&myWire);
 
 BLDC motor(&arduino, &encoder, &pwmGenerator, &sleepPin, &resetPin);
 

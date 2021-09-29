@@ -28,9 +28,10 @@
 #ifndef __ROMISERIAL_READER_H
 #define __ROMISERIAL_READER_H
 
-#ifndef __ssize_t_defined
-// Arduino 1.8.13 doesn't seem to define ssize_t
+#ifndef __ssize_t_defined // Arduino 1.8.13 doesn't seem to define ssize_t
+#ifndef _SSIZE_T_DECLARED // But platformio does
 typedef signed long ssize_t;
+#endif
 #endif
 
 namespace romiserial {
