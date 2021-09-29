@@ -29,11 +29,14 @@
 #include "PwmGenerator.h"
 #include "DigitalOut.h"
 #include "pins.h"
+#include "IMU.h"
 #include <RomiSerial.h>
 #include <ArduinoSerial.h>
 
+using namespace romiserial;
+
 ArduinoImpl arduino;
-PwmEncoder encoder(&arduino, P_ENC, 11, 959);
+PwmEncoder encoder(&arduino, P_ENC, 11, 915);
 Parser parser("XP", "?sC");
 
 PwmOut pwm1(&arduino, P_IN1);

@@ -29,8 +29,6 @@
 #include "IOutputPin.h"
 #include "IPwmGenerator.h"
 
-#define SINE_TABLE_SIZE 384
-
 float normalizeAngle(float angle);
 double normalizeAngle(double angle);
 
