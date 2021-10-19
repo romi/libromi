@@ -41,3 +41,6 @@ void PwmEncoderFall()
         if (pwmEncoder)
                 pwmEncoder->fall();
 }
+
+// TODO 
+// implement SPI interface for AS5048A encoder
