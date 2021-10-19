@@ -2,7 +2,7 @@
   bldc_featherwing
 
   Copyright (C) 2019-2020 Sony Computer Science Laboratories
-  Author(s) Peter Hanappe
+  Author(s) Peter Hanappe, Victor Barberan
 
   bldc_featherwing is Arduino firmware to control a brushless motor.
 
@@ -29,6 +29,7 @@
 #include <Wire.h>
 #include <Adafruit_ISM330DHCX.h>
 #include <Adafruit_LSM6DSOX.h>
+#include "BLDC.h"
 
 #define GRAVITY_EARTH 9.807
 #define DEGREES_PER_RADIAN 180.0 / 3.141592653589793238463
@@ -54,10 +55,11 @@ class IMU
 		};
 
 		float zero_offset = 0;
+		float max_travel = 0.5f;
 
 	public:
 		IMU (TwoWire *_theWire,
-		     byte _deviceAdress=NULL);
+		     byte _deviceAdress=0);
 
 		accSources mySource;
 		byte deviceAddress;
@@ -73,12 +75,15 @@ class IMU
 		void setZeroOffset(float wichOffset) {
 			zero_offset = wichOffset;
 		};
+		float getZeroOffset() {
+			return zero_offset;
+		};
 
 		// Update sensor readings
 		void update();
 
 		// Returns inclination of camera (0 is verticaly aligned)
-		double getRoll();
+		float getRoll(bool raw = false);
 };
 
 

@@ -2,7 +2,7 @@
   bldc_featherwing
 
   Copyright (C) 2019-2020 Sony Computer Science Laboratories
-  Author(s) Peter Hanappe
+  Author(s) Peter Hanappe, Victor Barberan
 
   bldc_featherwing is Arduino firmware to control a brushless motor.
 
@@ -23,7 +23,6 @@
  */
 #include "IMU.h"
 
-
 IMU::IMU (TwoWire *_theWire, 
      byte _deviceAdress) 
 {
@@ -34,7 +33,7 @@ IMU::IMU (TwoWire *_theWire,
 bool IMU::begin()
 {
 	// Find device I2C address (if not manually specified)
-	if (deviceAddress == NULL) {
+	if (deviceAddress == 0) {
 		for (uint8_t src = 0; src < ACC_SOURCE_NUM; src++){
 			deviceAddress = sourceAddress[src];
 			theWire->beginTransmission(deviceAddress);
@@ -82,14 +81,23 @@ void IMU::update()
 	ism330dhcx.getEvent(&accel, &gyro, &temp);
 }
 
-double IMU::getRoll()
+float IMU::getRoll(bool raw)
 {
 	update();
 	double accel_yg = accel.acceleration.y / GRAVITY_EARTH;
 	accel_yg = min(accel_yg, 0.9999999);
 	accel_yg = max(accel_yg, -0.9999999);	
-	double inclination_y = acos(accel_yg) * DEGREES_PER_RADIAN;
 
-	return inclination_y;
+	double accel_zg = accel.acceleration.z / GRAVITY_EARTH;
+	accel_zg = min(accel_zg, 0.9999999);
+	accel_zg = max(accel_zg, -0.9999999);	
+
+	double inclination_y = (acos(accel_yg) * DEGREES_PER_RADIAN);
+	if (accel_zg > 0) inclination_y = 360 - inclination_y;
+	inclination_y = inclination_y / 360;
+
+	if (raw) inclination_y = normalizeAngle(inclination_y);
+	else inclination_y = normalizeAngle(inclination_y + zero_offset);
+
+	return (float) inclination_y;
 }
-
