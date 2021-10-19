@@ -32,6 +32,8 @@
 float normalizeAngle(float angle);
 double normalizeAngle(double angle);
 
+class IMU;
+
 class BLDC
 {
 protected:
@@ -44,6 +46,7 @@ protected:
         double offsetAngleZero;
         double speed;
         double lastSpeed;
+        unsigned long lastUpdate;
         double maxAcceleration;
         double kp;
         float power;
@@ -72,6 +75,9 @@ public:
         virtual ~BLDC() {}
 
         void setPower(float p);
+        float getPower() {
+                return power;
+        }
         
         /** Set the target position of the motor. The position is a
             normalized angle: a value of 1 is equal to an absolute
@@ -82,15 +88,34 @@ public:
         /** Set the offset that corresponds to a 0° angle on your
          * device.  */
         void setOffsetAngleZero(double pos);        
+        double getOffsetAngleZero() {
+                return offsetAngleZero;
+        };
+
+        void setKp(double newkp) {
+                kp = newkp;
+        };
+        double getKp() {
+                return kp;
+        };
+        void setMaxAcceleration(double ma) {
+                maxAcceleration = ma;
+        };
+        double getMaxAcceleration() {
+                return maxAcceleration;
+        };
 
         void wake();
         void sleep();
+        void reset();
 
         void update(float dt);
 
         void calibrate();
 
         bool moveto(float angle);
+
+        void followIMU(IMU* imu, float angle);
 };
 
 #endif // __BLDC_H

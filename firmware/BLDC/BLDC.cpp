@@ -22,6 +22,7 @@
 
  */
 #include "BLDC.h"
+#include "IMU.h"
 #include <math.h>
 
 float normalizeAngle(float angle)
@@ -59,10 +60,13 @@ BLDC::BLDC(IArduino *_arduino,
         setPhase(0.0f);
         speed = 0.0f;
         lastSpeed = 0.0f;
+        lastUpdate = 0;
         offsetAngleZero = 0.0;
         resetPin->set(1.0f);
-        maxAcceleration = 20.0;
-        kp = 10.0;
+        maxAcceleration = 1000.0;
+        /* maxAcceleration = 20.0; */
+        kp = 70.0;
+        /* kp = 10.0; */
 }
 
 void BLDC::setOffsetAngleZero(double angle)
@@ -101,6 +105,13 @@ void BLDC::wake()
 void BLDC::sleep()
 {
         sleepPin->set(0.0f);
+}
+
+void BLDC::reset()
+{
+        resetPin->set(0.0f);
+        delay(150);
+        resetPin->set(1.0f);
 }
 
 void BLDC::setPhase(double value)
@@ -174,6 +185,39 @@ bool BLDC::updatePosition(float dt)
         }
         
         return done;
+}
+
+void BLDC::followIMU(IMU* imu, float targetAngle)
+{
+        float angle = imu->getRoll();
+        float error = targetAngle - angle;
+        while (error > 0.5f)
+                error -= 1.0f;
+        while (error <= -0.5f)
+                error += 1.0f;
+
+        // We are allready there
+        if (error >= -0.001 && error <= 0.001) return;
+
+        //TODO manage motor power depending on requirements
+
+        double speed = kp * error;
+        unsigned long t = arduino->micros();
+        float dt = (t - lastUpdate) / 1000000.0f;
+        double acceleration = (speed - lastSpeed) / dt;
+
+        if (acceleration < -maxAcceleration) acceleration = -maxAcceleration;
+        else if (acceleration > maxAcceleration) acceleration = maxAcceleration;
+        speed = lastSpeed + acceleration * dt;
+
+        float delta_phase = speed * dt;
+
+        Serial.print("\t");
+        Serial.println(delta_phase, 8);
+        
+        incrPhase(delta_phase);
+        lastSpeed = speed;
+        lastUpdate = t;
 }
 
 void BLDC::update(float dt)
