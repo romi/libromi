@@ -85,6 +85,7 @@ static char reply_string[80];
 static int8_t homing_axes[3] =  {-1, -1, -1};
 static int16_t homing_speeds[3] =  {1000, 1000, 400};
 static uint8_t limit_switches[3] = {0, 0, 0};
+static uint8_t old_z = 200;
 
 int moveat(int dx, int dy, int dz);
 
@@ -123,6 +124,8 @@ void setup()
 
         controller_state = STATE_RUNNING;
         enable_stepper_timer();
+        romiSerial.send("Init OK");
+      
 }
 
 static unsigned long last_time = 0;
@@ -131,6 +134,7 @@ static int16_t id = 0;
 
 void loop()
 {
+//    update_limit_switches();
         romiSerial.handle_input();
         check_accuracy();
         delay(1);
@@ -319,6 +323,13 @@ void update_limit_switches()
         limit_switches[0] = digitalRead(PIN_LIMIT_SWITCH_X);
         limit_switches[1] = digitalRead(PIN_LIMIT_SWITCH_Y);
         limit_switches[2] = digitalRead(PIN_LIMIT_SWITCH_Z);
+        if (old_z != limit_switches[2])
+        {
+            old_z = limit_switches[2];
+            snprintf(reply_string, sizeof(reply_string), "limit switch z changed [%d]", old_z);
+            romiSerial.send(reply_string);
+        }
+
 }
 
 int homing_move(int dt, int delta, int axis)
@@ -475,11 +486,11 @@ void start_test()
         quit_testing = false;
         while (!quit_testing) {
                 
-                moveat(1000, 1000, 100);
-                delay(500);
-                
-                moveat(-1000, -1000, -100);
-                delay(500);
+//                moveat(1000, 1000, 100);
+//                delay(500);
+//
+//                moveat(-1000, -1000, -100);
+//                delay(500);
                 
                 update_limit_switches();
                 Serial.print("#![");
