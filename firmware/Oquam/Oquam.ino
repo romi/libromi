@@ -85,7 +85,7 @@ static char reply_string[80];
 static int8_t homing_axes[3] =  {-1, -1, -1};
 static int16_t homing_speeds[3] =  {1000, 1000, 400};
 static uint8_t limit_switches[3] = {0, 0, 0};
-static uint8_t old_z = 200;
+static uint8_t old_z = 0;
 
 int moveat(int dx, int dy, int dz);
 
@@ -361,9 +361,9 @@ int homing_wait_switch(int speed, int axis, int state)
         int err = 0;
         int dx, dy, dz;
 
-        // Serial.print("#!Axis=");
-        // Serial.print(axis);
-        // Serial.print(":xxxx\r\n");
+//         Serial.print("#!Axis=");
+//         Serial.print(axis);
+//         Serial.print(":xxxx\r\n");
 
         err = homing_moveat(speed, axis);
         if (err != 0)
@@ -377,6 +377,7 @@ int homing_wait_switch(int speed, int axis, int state)
                 
                 if (limit_switches[axis] == state) {
                         err = move(0, 0, 0, 0); // This will stop the moveat
+                        Serial.println("Homing complete");
                         break;
                 }
                 
