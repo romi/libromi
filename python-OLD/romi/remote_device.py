@@ -8,7 +8,7 @@ from io import BytesIO
 
 class RemoteDevice():
 
-    def __init__(self, topic, registry='127.0.0.1'):
+    def __init__(self, topic, registry='10.10.10.1'):
         registry = websocket.create_connection(f'ws://{registry}:10101')
         cmd = '{"request": "get", "topic": "%s"}' % topic
         registry.send(cmd)
@@ -50,7 +50,7 @@ class RemoteDevice():
 
 class Oquam(RemoteDevice):
    
-    def __init__(self, topic, registry="127.0.0.1"):
+    def __init__(self, topic, registry="10.10.10.1"):
         super().__init__(topic, registry)
        
     def homing(self):
@@ -87,7 +87,7 @@ class Oquam(RemoteDevice):
         
 class OquamXYTheta(Oquam):
    
-    def __init__(self, topic, registry="127.0.0.1"):
+    def __init__(self, topic, registry="10.10.10.1"):
         super().__init__(topic, registry)
 
     def current_theta(self):
@@ -108,16 +108,16 @@ class OquamXYTheta(Oquam):
         super().helix(xc, yc, alpha, theta, speed)
 
         
-class Camera(RemoteDevice):
+class RomiCamera(RemoteDevice):
    
-    def __init__(self, topic, registry="127.0.0.1"):
+    def __init__(self, topic, registry="10.10.10.1"):
         super().__init__(topic, registry)
     
     def print_error(self, data):
        r = json.loads(data)
        print(f"Failed to grab the image: {r['error']['message']}")
        
-    def grab(self):
+    def grab_img(self):
         cmd = '{"method": "camera-grab-jpeg-binary"}'
         self.connection.send(cmd, websocket.ABNF.OPCODE_BINARY)
         data = self.connection.recv()
@@ -130,7 +130,7 @@ class Camera(RemoteDevice):
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--registry', type=str, nargs='?', default="127.0.0.1",
+    parser.add_argument('--registry', type=str, nargs='?', default="10.10.10.1",
                     help='IP address of the registry')
     args = parser.parse_args()
     
@@ -140,16 +140,32 @@ if __name__ == '__main__':
     dimension = cnc.get_range()
     print(f"dimension={dimension}")
 
+    #cnc.moveto(0.1, 0, 0, 0.5)
+    #cnc.moveto(0, 0.1, 0, 0.5)
+    #cnc.moveto(0.2, 0.2, 0, 0.5)
+    #cnc.moveto(0.2, 0.2, 0, 0.5)
+    #cnc.moveto(0.2, 0.2, math.pi, 0.5)
+    #cnc.moveto(0.2, 0.2, math.pi, 0.5)
+    #cnc.moveto(0.05, 0.05, 0, 1)
+    #cnc.moveto(0.7, 0.7, 0, 1)
+    #cnc.moveto(0, 0.7, 0, 1)
+    #cnc.moveto(0.7, 0, 0, 1)
+    #cnc.moveto(0.05, 0.05, 0, 0.1)
+
     xc = (dimension[0][0] + dimension[0][1]) / 2.0
     yc = (dimension[1][0] + dimension[1][1]) / 2.0
     d = min(dimension[0][1] - dimension[0][0],
             dimension[1][1] - dimension[1][0])
     r = (d - 0.02) / 2
     print(f"c=({xc}, {yc}), r={r}")
-    
+
+    #print("xc - r = ", xc - r)
+    #print ("yc = ", yc)
+    #cnc.moveto(0.010000000000000009, 0.375, 0, 0.5)
+
     cnc.moveto(xc - r, yc, 0.0, 0.5)
     
-    cnc.helix(xc, yc, -2.0 * math.pi, -2.0 * math.pi, 1.0)
+    #cnc.helix(xc, yc, -2.0 * math.pi, -2.0 * math.pi, 1.0)
 
     position = cnc.get_position()
     print(f"position={position}")
