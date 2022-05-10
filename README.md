@@ -14,7 +14,7 @@ Libromi provides common abstractions and functions for ROMI applications.
 # Using the serial camera on Raspberry Pi
 
 The serial camera is intended to be used with a Raspberry Pi 4 (the
-host) and a Raspberri Pi Zero W (the camera).
+host) and a Raspberry Pi Zero W (the camera).
 
 In order to work, the serial ports of both Raspberry Pi's have to be
 set up correctly.
