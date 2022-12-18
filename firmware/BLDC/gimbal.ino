@@ -377,7 +377,7 @@ void i2c_send(int data)
 {
 	// All i2c comunications are done with integrers (4 bytes)
 	uint8_t b[4];
-	uint16_t sum;
+	uint16_t sum = 0;
 	b[0] =  data & 0x000000ff;
 	b[1] = (data & 0x0000ff00) >> 8;
 	b[2] = (data & 0x00ff0000) >> 16;
@@ -393,7 +393,7 @@ bool i2c_receive(int *data)
 {
 	// All i2c comunications are done with integrers (4 bytes)
 	uint8_t b[4];
-	uint16_t sum;
+	uint16_t sum = 0;
 	for (uint8_t i=0; i<4; i++) {
 		b[i] = Wire.read();
 		sum += b[i];
