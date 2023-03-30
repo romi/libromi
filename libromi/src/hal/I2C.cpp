@@ -82,10 +82,10 @@ namespace romi {
 
         uint8_t I2C::compute_checksum()
         {
-                uint16_t sum = 0;
+                uint32_t sum = 0;
                 for (int i = 0; i < kCheckSumIndex; i++) 
                         sum += buffer_[i];
-                return (uint8_t) (sum & 0x00ff);
+                return (uint8_t) (sum & 0x000000ff);
         }
         
         void I2C::assure_checksum(uint8_t sum)
