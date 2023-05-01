@@ -32,11 +32,9 @@ void loop() {
 
 ## A Python example
 
-The complete [Python code](blink.py) and [Arduino code](blink/blink.ino) look as follows:
+The complete [Python code](blink.py) look as follows:
 
-| Python | Arduino |
-|--------|---------|
-| """python
+"""python
 import time
 import sys
 sys.path.append('../python')
@@ -68,8 +66,43 @@ if __name__ == '__main__':
     while True:
         loop()
 """
-| dsfdsf|
 
+The associated [code for the Arduino](blink/blink.ino) is as follows:
+
+"""c++
+#include <ArduinoSerial.h>
+#include <RomiSerial.h>
+
+void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+
+const static MessageHandler handlers[] = {
+        { 'L', 1, false, handle_led },
+};
+
+ArduinoSerial serial(Serial);
+RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
+
+void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    Serial.begin(115200);
+}
+
+void loop() {
+    romiSerial.handle_input();
+}
+
+void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+    if (args[0] == 0) {
+        digitalWrite(LED_BUILTIN, LOW);
+    } else {
+        digitalWrite(LED_BUILTIN, HIGH);
+    }
+    romiSerial->send_ok();
+}
+"""
+
+## Code explanation
 
 We will go over it step by step.
 
