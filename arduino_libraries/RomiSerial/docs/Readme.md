@@ -59,6 +59,8 @@ The associated [code for the Arduino](blink/blink.ino) is as follows:
 #include <ArduinoSerial.h>
 #include <RomiSerial.h>
 
+using namespace romiserial;
+
 void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
