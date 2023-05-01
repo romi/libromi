@@ -301,22 +301,20 @@ there are many tutorials on the web that explain this. Two examples
 are [this page](https://pythonbasics.org/execute-python-scripts/) and
 [this page](https://realpython.com/run-python-scripts/).
 
-In the console (ms-dos `cmd` or Linux/iOS Terminal) you cen type:
-
-On Linux:
+In the Linux console you can type:
 
 ```bash
 $ python3 blink.py --device /dev/ttyACM0
 ```
 
-On Windows:
+On Windows, using the MS-DOS `cmd` application:
 
 ```bash
-$ python3 blink.py --device COM5
+C:> python3 blink.py --device COM5
 ```
 
-The port the is given as argument (/dev/ttyACM0, COM5) corresponds to
-the serial device to which the Arduino is attached.
+The port that is given as argument (/dev/ttyACM0, COM5) corresponds to
+the serial device to which the Arduino is attached (more [here](https://www.mathworks.com/help/supportpkg/arduinoio/ug/find-arduino-port-on-windows-mac-and-linux.html)).
 
 
 ### Using C++
