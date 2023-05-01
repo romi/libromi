@@ -15,6 +15,15 @@ You can find the original code for Blink
 [online](https://docs.arduino.cc/built-in-examples/basics/Blink) and
 also in the Arduino IDE in the File > Examples > 01.Basics > Blink.
 
+## Requirements
+
+The file `romi_device.py` requires the `crc8` module that can be
+installed as follows:
+
+```
+pip3 install crc8
+```
+
 ## The Python example
 
 The complete [Python code](blink.py) look as follows:
@@ -36,9 +45,9 @@ def setup(device):
     
 def loop():
     global remoteDevice
-    remoteDevice.send_command('L[1]')
+    remoteDevice.execute('L', 1)
     time.sleep(1)
-    remoteDevice.send_command('L[0]')
+    remoteDevice.execute('L', 0)
     time.sleep(1)
     
 
@@ -92,7 +101,7 @@ void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 
 ## Code explanation
 
-We will go over it step by step.
+We will go over the code above, step by step.
 
 These two lines make sure that you can run the example code from
 within the docs directory. If you installed the
@@ -116,16 +125,15 @@ We will create one instance of a RomiDevice that we will store in a
 global variable for simplicity.
 
 ```python
-remoteDevice = False
+remoteDevice = None
 ```
 
-For the code itself, we tried to mimick the original Arduino code and
-wrote two functions: `setup` and `loop`. The `setup` function
-initializes the remote device. It opens a serial connection to the
-Arduino to enable the exchange. The function takes as a single
-argument the name of serial device that it should connect to. You will
-be able to specify this name on the command line, as we will show
-below.
+We structured the code to mimick the original Arduino example and wrote
+two functions: `setup` and `loop`. The `setup` function initializes
+the remote device. It opens a serial connection to the Arduino to
+enable the exchange. The function takes as a single argument the name
+of serial device that it should connect to. You will be able to
+specify this name on the command line, as we will show below.
 
 ```python
 def setup(device):
@@ -134,18 +142,19 @@ def setup(device):
 ```
 
 The loop function turns the LED on and off by sending a command to the
-Arduino. Commands consist of a single character, lower- or
-uppercase. If the command requires arguments, they can be given in
-square brackets. In the example below, we pass one argument: whether
-the LED should be off (the argument is 0) or whether the LED should be
-on (the argument is 1):
+Arduino. Commands consist of a single character: a lowercase or
+uppercase ASCII character, or a digit. If the command requires
+arguments, they can be given as additional parameters to the execute
+function. In the example below, we pass one argument: whether the LED
+should be off (the argument is 0) or whether the LED should be on (the
+argument is 1):
 
 ```python
 def loop():
     global remoteDevice
-    remoteDevice.send_command('L[0]')
+    remoteDevice.execute('L', 1)
     time.sleep(1)
-    remoteDevice.send_command('L[1]')
+    remoteDevice.execute('L', 0)
     time.sleep(1)
 ```
 
@@ -153,11 +162,109 @@ In this example we choose `L` as the opcode of the command. You are
 free to choose any character but it should correspond to the same
 character used in your code on the Arduino side (see below).
 
+There are some constraints on the arguments you can pass:
+
+* The number of arguments should be less or equal to 12.
+* The arguments should be integers with a value between -32768 and 32767.
+* It is possible to one, and only one, string as an argument.
+
+The number of expected arguments for each opcode will be coded also on
+the Arduino side. More on that below.
+
+
+## The Arduino code
+
+Let's have a look at the code for the Arduino. To begin with, you have
+to include the required headers. The RomiSerial classes lives in a
+namespace of their own, `romiserial`. In the code below we added a
+`using namespace` statement to simplify the example:
+
+
+```cpp
+#include <ArduinoSerial.h>
+#include <RomiSerial.h>
+
+using namespace romiserial;
+```
+
+The following line wraps the standard Serial object in one of our
+classes. The reason is technical. It is so that we can instantiate our
+classes before the Serial object has completed its initialisation.
+
+```cpp
+ArduinoSerial serial(Serial);
+```
+
+Here is the most important part of the code. The following code
+defines all the functions that will handle the commands sent by the
+user. The first line (`handle_led`) is simply a function declaration
+so that we can use the name in the following table, `handlers[]`.
+
+This table lists all our commands and the functions that will handle
+them. Each command definition consists of:
+
+* The opcode. Valid opcodes are (a-z, A-Z, 0-9, ?)
+* The number of arguments that are expected
+* Whether one of the arguments is a string.
+* The function that will handle the commands.
+
+Finally, we create an instance of `RomiSerial`. It takes four arguments:
+
+* The serial object used to read the input.
+* The serial object used to write the output (can be the same as the input above).
+* The list of command definitions.
+* The number of command definitions.
+
+
+```cpp
+void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+
+const static MessageHandler handlers[] = {
+        { 'L', 1, false, handle_led },
+};
+
+RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
+```
+
+Once this has been set up, you should call the method
+`romiSerial.handle_input()` regularly. The best way to do this is to
+put it in Arduino's `loop()` function. However, if you have some
+functions in your code that require a lot of time to complete, it may
+be worth considering calling `handle_input` in those functions as
+well, to assure that the Arduino remains responsive.
+
+```cpp
+void loop() {
+    romiSerial.handle_input();
+}
+```
+
+Finally, you have to define the function handlers that we declared
+previously. In our example, the `handle_led` function expects one
+integer argument, and based on its value, it turns the LED on or off:
+
+```cpp
+void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+    if (args[0] == 0) {
+        digitalWrite(LED_BUILTIN, LOW);
+    } else {
+        digitalWrite(LED_BUILTIN, HIGH);
+    }
+    romiSerial->send_ok();
+}
+```
+
+That's it!
+
+
+
+## The C++ example
+
+The 
 
 
 ##
-
-
 
 The Romi Serial library helps improve the reliability of the
 communication between a computer and an Arduino over the serial

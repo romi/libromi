@@ -3,13 +3,14 @@
 
 using namespace romiserial;
 
+ArduinoSerial serial(Serial);
+
 void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
 
 const static MessageHandler handlers[] = {
         { 'L', 1, false, handle_led },
 };
 
-ArduinoSerial serial(Serial);
 RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
 
 void setup() {

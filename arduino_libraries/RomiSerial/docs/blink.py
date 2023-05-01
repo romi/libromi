@@ -5,7 +5,7 @@ import time
 import argparse
 from romi_device import RomiDevice
 
-remoteDevice = False
+remoteDevice = None
 
 def setup(device):
     global remoteDevice
@@ -14,13 +14,9 @@ def setup(device):
     
 def loop():
     global remoteDevice
-    print('on')
-    remoteDevice.send_command('L[1]')
-    print('sleep')
+    remoteDevice.execute('L', 1)
     time.sleep(1)
-    print('off')
-    remoteDevice.send_command('L[0]')
-    print('sleep')
+    remoteDevice.execute('L', 0)
     time.sleep(1)
     
 
