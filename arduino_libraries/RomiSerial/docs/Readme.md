@@ -777,7 +777,7 @@ message:
 (the CRC-8 of '#M[1,"Out of boundary"]:7b' is 0xa7.)
 
 
-## Host: Time outs and message IDs
+### Host: Time outs and message IDs
 
 All communication is synchronous. When the host sends a request, the
 controller must send a response within less than one second. The host
