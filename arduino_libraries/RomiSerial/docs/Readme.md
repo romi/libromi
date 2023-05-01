@@ -514,8 +514,6 @@ like `[0,123]` where 123 (or `response[1]`) is the value of the sensor
 you are looking for.
 
 
-### The C++ code 
-
 ### Using C++
 
 
