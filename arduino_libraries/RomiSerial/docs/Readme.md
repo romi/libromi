@@ -677,7 +677,7 @@ The total length of the request, including the hashtag, ID, the CRC,
 and CRLF, must not be longer than 64 bytes. This is the size of the
 internal buffer used by the Arduino Uno.
 
-## Manual input
+### Manual input
 
 The trailing colon, ID and CRC code are obligatory. To simplify
 sending commands manually from a terminal it is possible to replace
