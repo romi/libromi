@@ -53,7 +53,6 @@ class EnvelopeEncoder():
             raise ValueError(f'Invalid opcode: {opcode}')
     
     def _assert_args(self, *args):
-        print(f'_assert_args: args={args}')
         if len(args) > 12:
             raise ValueError(f'Too many arguments: {len(args)} > 12')
         if self._count_strings(*args) > 1:
@@ -68,12 +67,10 @@ class EnvelopeEncoder():
         return count
     
     def _assert_types(self, *args):
-        print(f'_assert_types: args={args}')
         for x in args:
             self._assert_type(x)
 
     def _assert_type(self, arg):
-        print(f'arg={arg}')
         if type(arg) != str and type(arg) != int:
             raise ValueError(f'Unsupported agrument type: {type(arg)}')
     
@@ -83,11 +80,17 @@ class EnvelopeEncoder():
         else:
             return str(arg)
 
+    def _assert_string_length(self, s):
+        if len(s) > 58:
+            raise ValueError(f'The command it too long: {len(s)} > 58')
+        
     def _create_command_simple(self, s):
+        self._assert_string_length(s)
         command = "#" + s + ":xxxx\r\n"
         return command
     
     def _create_command_with_crc(self, s):
+        self._assert_string_length(s)
         partial_command = f'#{s}:{self.counter:02x}'
         crc = self._compute_crc(partial_command)
         command = f'{partial_command}{crc}\r\n'
@@ -131,7 +134,7 @@ class RomiDevice():
         time.sleep(2.0)
         self.encoder = EnvelopeEncoder()
         self.decoder = EnvelopeDecoder()
-        self.debug = True
+        self.debug = False
         
     def get_driver(self):
         return self.driver
@@ -149,12 +152,12 @@ class RomiDevice():
     def execute(self, opcode, *args):
         command = self.encoder.convert(opcode, *args)
         self.print_debug(f"Command: {opcode}, {args} -> {command}")
-        self._iterate_command(command, 5)
+        return self._iterate_command(command, 5)
         
     def send_command(self, s):
         command = self.encoder.convert_string(s)
         self.print_debug(f"Command: {s} -> {command}")
-        self._iterate_command(command, 5)
+        return self._iterate_command(command, 5)
 
     def _iterate_command(self, command, n):
         for i in range(n):
@@ -253,3 +256,11 @@ if __name__ == '__main__':
     except (RuntimeError, ValueError) as e:
         print({e})
         print('Test 7: OK')
+
+    #
+    try:
+        test.convert('e', '012345678901234567890123456789012345678901234567890123456789')
+        print('Test 8: Failed: expected exception')
+    except (RuntimeError, ValueError) as e:
+        print({e})
+        print('Test 8: OK')

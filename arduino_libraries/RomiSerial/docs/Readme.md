@@ -9,11 +9,14 @@ Arduino.
 The Serial link has some caveats, though, and Romi Serial tries to
 address some of those. We will go into detail further below. First, we
 show some examples on how to use it in your projects. We will show the
-classic "blink" example, but control the LED from Python and C++.
+classic "Blink" and "AnalogReadSerial" examples. In the first example
+we will control the LED from Python and C++. In the second example, we
+will se how to get data off the Arduino, in Python and C++.
 
-You can find the original code for Blink
-[online](https://docs.arduino.cc/built-in-examples/basics/Blink) and
-also in the Arduino IDE in the File > Examples > 01.Basics > Blink.
+You can find the original code for Blink and AnalogReadSerial
+[online](https://docs.arduino.cc/built-in-examples) and also in the
+Arduino IDE in the menu `File` > `Examples` > `01.Basics`.
+
 
 ## Requirements
 
@@ -24,7 +27,9 @@ installed as follows:
 pip3 install crc8
 ```
 
-## The Python example
+## Blink
+
+### Using Python 
 
 The complete [Python code](blink.py) look as follows:
 
@@ -103,8 +108,8 @@ void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 
 We will go over the code above, step by step.
 
-These two lines make sure that you can run the example code from
-within the docs directory. If you installed the
+The first two lines of the Python code make sure that you can run the
+example code from within the docs directory. If you installed the
 [romi_device.py](../python/romi_device.py) file in your code
 directory, you will not need this.
 
@@ -128,18 +133,22 @@ global variable for simplicity.
 remoteDevice = None
 ```
 
-We structured the code to mimick the original Arduino example and wrote
-two functions: `setup` and `loop`. The `setup` function initializes
-the remote device. It opens a serial connection to the Arduino to
-enable the exchange. The function takes as a single argument the name
-of serial device that it should connect to. You will be able to
-specify this name on the command line, as we will show below.
+We structured the code to mimick the original Arduino example and
+wrote two functions, `setup` and `loop`. The `setup` function
+initializes the remote device. It opens a serial connection to the
+Arduino to enable the sending of the commands. The function takes as a
+single argument the name of serial device that it should connect
+to. You will be able to specify this name on the command line, as we
+will show below.
 
 ```python
 def setup(device):
     global remoteDevice
     remoteDevice = RomiDevice(device)
 ```
+
+If you want more debugging information, you can call
+`remoteDevice.set_debug(True)` in the set-up.
 
 The loop function turns the LED on and off by sending a command to the
 Arduino. Commands consist of a single character: a lowercase or
@@ -167,6 +176,9 @@ There are some constraints on the arguments you can pass:
 * The number of arguments should be less or equal to 12.
 * The arguments should be integers with a value between -32768 and 32767.
 * It is possible to one, and only one, string as an argument.
+
+Also, the total length of the message cannot exceed 58 bytes. This is
+due to the limited size of the buffer on the Arduino.
 
 The number of expected arguments for each opcode will be coded also on
 the Arduino side. More on that below.
@@ -226,6 +238,20 @@ const static MessageHandler handlers[] = {
 RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
 ```
 
+This example only shows one command. To add more, simple add more
+commands, as much as you need. Below the command `x` takes three
+arguments and will be handled by the function `handle_another_command`:
+
+```cpp
+void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+void handle_another_command(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+
+const static MessageHandler handlers[] = {
+        { 'L', 1, false, handle_led },
+        { 'x', 3, false, handle_another_command },
+};
+```
+
 Once this has been set up, you should call the method
 `romiSerial.handle_input()` regularly. The best way to do this is to
 put it in Arduino's `loop()` function. However, if you have some
@@ -255,25 +281,300 @@ void handle_led(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
 }
 ```
 
+When all went well, the handler should call `send_ok()`. If an error
+occured, you should call `send_error(error_number, "Error
+message")`. The error number is any positive integer of your
+choosing. The code on the Python-side will receive it. Similarly for
+the error message.
+
 That's it!
 
+### Running the example
+
+To run the example, you first have to upload the Arduino code using
+the Arduino IDE. The [following
+page](https://support.arduino.cc/hc/en-us/articles/4733418441116-Upload-a-sketch-in-Arduino-IDE) explains in detail how to do this.
+
+Then, you execute the `blink.py` [Python script](blink.py) that you
+can find in this docs directory. If you're not sure how to do that,
+there are many tutorials on the web that explain this. Two examples
+are [this page](https://pythonbasics.org/execute-python-scripts/) and
+[this page](https://realpython.com/run-python-scripts/).
+
+In the console (ms-dos `cmd` or Linux/iOS Terminal) you cen type:
+
+On Linux:
+
+```bash
+$ python3 blink.py --device /dev/ttyACM0
+```
+
+On Windows:
+
+```bash
+$ python3 blink.py --device COM5
+```
+
+The port the is given as argument (/dev/ttyACM0, COM5) corresponds to
+the serial device to which the Arduino is attached.
 
 
-## The C++ example
-
-The 
+### Using C++
 
 
-##
+The C++ code is also quite straightforward. Here is the [full listing](blink.cpp):
+
+```cpp
+#include <memory>
+#include <unistd.h>
+#include <RomiSerialClient.h>
+#include <RSerial.h>
+#include <Console.h>
+
+using namespace romiserial;
+
+void delay(size_t milliseconds)
+{
+        usleep(milliseconds * 1000);
+}
+
+int main(int argc, char **argv)
+{
+        if (argc < 2) {
+                throw std::runtime_error("Usage: blink <serial-device>");
+        }
+        
+        std::string device = argv[1];
+        auto log = std::make_shared<Console>(); 
+        auto serial = std::make_shared<RSerial>(device, 115200, true, log);
+        
+        RomiSerialClient romiClient(serial, serial, log, 0, "blink");
+        nlohmann::json response;
+        
+        while (true) {
+                romiClient.send("L[1]", response);
+                delay(1000);
+                romiClient.send("L[0]", response);
+                delay(1000);
+        }
+}
+```
+
+This docs directory contains a minimal [Makefile](Makefile) to compile
+the code. If the compilation is successful, there will be two
+executable binaries, `blink_app` and `analogread_app` (see below):
+
+```bash
+$ make
+...
+$ ./blink_app
+```
+
+
+## AnalogRead
+
+### The Arduino code 
+
+The Blink example showed how to set the LED lights, but it didn't show
+how you can get data back from the Arduino. If you have some sensor
+attached to the Arduino, you may want to read the value of the sensor
+from your Python application. The rewrite of the AnalogRead example,
+below, will show you how to do it.
+
+The original Arduino code looks somethings like [this](https://docs.arduino.cc/built-in-examples/basics/AnalogReadSerial):
+
+```cpp
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  int sensorValue = analogRead(A0);
+  Serial.println(sensorValue);
+  delay(1);
+}
+```
+
+We are going to replace this with the following version, based on RomiSerial:
+
+```cpp
+#include <ArduinoSerial.h>
+#include <RomiSerial.h>
+
+using namespace romiserial;
+
+ArduinoSerial serial(Serial);
+
+void read_sensor(IRomiSerial *romiSerial, int16_t *args, const char *string_arg);
+
+const static MessageHandler handlers[] = {
+        { 'A', 0, false, read_sensor },
+};
+
+RomiSerial romiSerial(serial, serial, handlers, sizeof(handlers) / sizeof(MessageHandler));
+
+void setup() {
+    Serial.begin(115200);
+}
+
+void loop() {
+    romiSerial.handle_input();
+}
+
+void read_sensor(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+    char reply[16];
+    int sensorValue = analogRead(A0);
+    snprintf(reply, sizeof(reply), "[0,%d]", sensorValue);
+    romiSerial->send(reply); 
+}
+```
+
+Most of the code above is similar to the Blink example discussed
+earlier. The command handler is now called `read_sensor`. As you can
+see from the command definition, the handler does not take any
+arguments (second value is zero):
+
+```cpp
+const static MessageHandler handlers[] = {
+        { 'A', 0, false, read_sensor },
+};
+```
+
+The main difference is in the `read_sensor` handler. Instead of
+calling `romiSerial->send_ok()` we send back a string. The string
+should contain an array ([]) with a list of values. The first value
+should be zero because it indicates whether an error
+occured. Following that, you can insert as many values as you want,
+including strings in double quotes.
+
+ 
+```cpp
+void read_sensor(IRomiSerial *romiSerial, int16_t *args, const char *string_arg)
+{
+    char reply[16];
+    int sensorValue = analogRead(A0);
+    snprintf(reply, sizeof(reply), "[0,%d]", sensorValue);
+    romiSerial->send(reply); 
+}
+```
+
+### The Python code 
+
+On the Python side, there is not so much change neither. Here's the
+[full listing](analogread.py):
+
+
+```cpp
+import sys
+sys.path.append('../python')
+
+import time
+import argparse
+from romi_device import RomiDevice
+
+remoteDevice = None
+
+def setup(device):
+    global remoteDevice
+    remoteDevice = RomiDevice(device)
+
+    
+def loop():
+    global remoteDevice
+    response = remoteDevice.execute('A')
+    print(f'Sensor value: {response[1]}')
+    time.sleep(1)
+    
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, nargs='?', default="COM5",
+                    help='The serial device to connect to')
+    args = parser.parse_args()
+    
+    setup(args.device)
+    while True:
+        loop()
+    
+```
+
+The main change is that we store the result of the call
+`remoteDevice.execute` into the variable `reponse`:
+
+```cpp
+    response = remoteDevice.execute('A')
+    print(f'Sensor value: {response[1]}')
+```
+
+`response` is an array containing the values that were sent back by
+the Arduino, starting with the zero error code and followed by the
+value of the sensor. If you print `response` you should look something
+like `[0,123]` where 123 (or `response[1]`) is the value of the sensor
+you are looking for.
+
+
+### The C++ code 
+
+### Using C++
+
+
+Below is the [C++ version](analogread.cpp). The code is similar to the
+Blink example. The response object is a [full-featured JSON
+object](https://github.com/nlohmann/json), in this case an
+array. Similar to the Python implementation, the first element of the
+array represents the error code, and the second element the sensor
+value returned by the Arduino.
+
+
+```cpp
+#include <memory>
+#include <iostream>
+#include <unistd.h>
+#include <RomiSerialClient.h>
+#include <RSerial.h>
+#include <Console.h>
+
+using namespace romiserial;
+
+void delay(size_t milliseconds)
+{
+        usleep(milliseconds * 1000);
+}
+
+int main(int argc, char **argv)
+{
+        if (argc < 2) {
+                throw std::runtime_error("Usage: analogread_app <serial-device>");
+        }
+        
+        std::string device = argv[1];
+        auto log = std::make_shared<Console>(); 
+        auto serial = std::make_shared<RSerial>(device, 115200, true, log);
+        
+        RomiSerialClient romiClient(serial, serial, log, 0, "analogread");
+        nlohmann::json response;
+        
+        while (true) {
+                romiClient.send("A", response);
+                std::cout << "Sensor value: " << response[1] << std::endl;
+                delay(1000);
+        }
+}
+```
+
+
+
+## More in depth
 
 The Romi Serial library helps improve the reliability of the
 communication between a computer and an Arduino over the serial
 connection. 
 
-
-The Romi Rover communicates with several microcontrollers over a
-serial bus. The proposition below should help improve the reliability
-of the serial communication. It aims to address the following issues:
+It was developed for the Romi Rover because it communicates with
+several microcontrollers over a serial bus. The proposed library
+should help improve the reliability of these serial communications. It
+aims to address the following issues:
 
 * When the serial connection is used without proper synchronisation,
   the Arduino Uno may loose data without a warning because its
