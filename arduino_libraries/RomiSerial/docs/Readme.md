@@ -611,7 +611,7 @@ Unless specified otherwise, the serial connections should be set to:
 115200 baudrate, 8 data bits, no parity, and 1 stop bit (115200 8N1).
 
 
-# Message formats
+### Message formats
 
 The exchange always follows a request-response pattern. The formats of
 the request and the response are detailed below. However, for
@@ -621,7 +621,7 @@ treated in whatever way that is most appropriate, for example, writing
 them to a log file.
 
 
-## Log messages
+### Log messages
 
 At any time, the controller may send log messages in the following
 form:
@@ -631,7 +631,7 @@ form:
 The TEXT is a string of variable length.
 
 
-## Requests:
+### Requests
 
 A request is a string that consists, in summary, of a one-character
 opcode followed by zero or more arguments, an ID and a cyclic
@@ -696,7 +696,7 @@ line ending in the pop-up menu at the bottom of the window. In the
 `picocom` terminal, use the `--omap crcrlf` command line option. For
 other terminal applications, check their documentation.
 
-## Responses:
+### Response
 
 The reponse is formatted as follows:
 
@@ -731,7 +731,7 @@ controller will always return an ID and CRC code. The CRC code is
 computed on the complete response, starting with the hashtag until
 and including the ID.
 
-## Examples
+### Examples
 
 Let's look at a couple of simple examples. The first example is a
 request with the opcode 'e' but without any arguments, ID, or CRC. The
@@ -779,7 +779,7 @@ message:
 (the CRC-8 of '#M[1,"Out of boundary"]:7b' is 0xa7.)
 
 
-# Host: Time outs and message IDs
+## Host: Time outs and message IDs
 
 All communication is synchronous. When the host sends a request, the
 controller must send a response within less than one second. The host
@@ -813,7 +813,7 @@ than 2 seconds to complete. The host should therefore keep track of
 the total time spent even when at re-attempts to read a response after
 receiving a log message or a stale message.
 
-# Controller
+### Controller
 
 The controller must respond to requests within one second. Vice versa,
 the host should assure that a request is completely sent within less
@@ -829,13 +829,13 @@ the application. The protocol layer will only use negative error
 codes. They are discussed below. The application can freely use
 positive error codes.
 
-# Error codes
+### Error codes
 
 The complete list of error codes can be found in the
 RomiSerialErrors.h file.
 
 
-# Notes on the CRC-8
+### Notes on the CRC-8
 
 There exists several varieties of the CRC8 algorithm (see this
 [https://reveng.sourceforge.io/crc-catalogue/1-15.htm#crc.cat.crc-8](catalogue)). Romi
