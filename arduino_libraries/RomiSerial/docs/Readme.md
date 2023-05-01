@@ -11,34 +11,20 @@ address some of those. We will go into detail further below. First, we
 show some examples on how to use it in your projects. We will show the
 classic "blink" example, but control the LED from Python and C++.
 
-The original code looks like
-[this](https://docs.arduino.cc/built-in-examples/basics/Blink):
+You can find the original code for Blink
+[online](https://docs.arduino.cc/built-in-examples/basics/Blink) and
+also in the Arduino IDE in the File > Examples > 01.Basics > Blink.
 
-```c++
-// the setup function runs once when you press reset or power the board
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
-}
-
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(1000);                      // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-  delay(1000);                      // wait for a second
-}
-```
-
-## A Python example
+## The Python example
 
 The complete [Python code](blink.py) look as follows:
 
 ```python
-import time
 import sys
 sys.path.append('../python')
 
+import time
+import argparse
 from romi_device import RomiDevice
 
 remoteDevice = False
@@ -50,9 +36,9 @@ def setup(device):
     
 def loop():
     global remoteDevice
-    remoteDevice.send_command('L[0]')
-    time.sleep(1)
     remoteDevice.send_command('L[1]')
+    time.sleep(1)
+    remoteDevice.send_command('L[0]')
     time.sleep(1)
     
 
@@ -69,7 +55,7 @@ if __name__ == '__main__':
 
 The associated [code for the Arduino](blink/blink.ino) is as follows:
 
-```c++
+```cpp
 #include <ArduinoSerial.h>
 #include <RomiSerial.h>
 
@@ -116,7 +102,7 @@ import sys
 sys.path.append('../python')
 ```
 
-We will use a small utility class, called 'RomiDevice'. It wraps the
+We will use a small utility class, called `RomiDevice`. It wraps the
 lower-level functions of sending and receiving commands, and handling
 errors.
 
@@ -132,10 +118,12 @@ remoteDevice = False
 ```
 
 For the code itself, we tried to mimick the original Arduino code and
-created a setup and loop function. The setup function initializes the
-remote device. It receives as an argument the name of serial device
-that it should connect to. You will be able to specify this name on
-the command line, as we will show below.
+wrote two functions: `setup` and `loop`. The `setup` function
+initializes the remote device. It opens a serial connection to the
+Arduino to enable the exchange. The function takes as a single
+argument the name of serial device that it should connect to. You will
+be able to specify this name on the command line, as we will show
+below.
 
 ```python
 def setup(device):
@@ -159,7 +147,7 @@ def loop():
     time.sleep(1)
 ```
 
-In this example we choose 'L' as the opcode of the command. You are
+In this example we choose `L` as the opcode of the command. You are
 free to choose any character but it should correspond to the same
 character used in your code on the Arduino side (see below).
 
