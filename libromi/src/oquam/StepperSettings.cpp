@@ -103,10 +103,14 @@ namespace romi {
         void StepperSettings::compute_steps_per_meter()
         {
                 for (int i = 0; i < 3; i++) {
-                        steps_per_meter[i] = ((gears_ratio[i]
-                                               * microsteps[i]
-                                               * steps_per_revolution[i])
-                                              / displacement_per_revolution[i]);
+                        if (displacement_per_revolution[i] > 0.0) {
+                                steps_per_meter[i] = ((gears_ratio[i]
+                                                       * microsteps[i]
+                                                       * steps_per_revolution[i])
+                                                      / displacement_per_revolution[i]);
+                        } else {
+                                steps_per_meter[i] = 0;
+                        }
                 }
         }
 
