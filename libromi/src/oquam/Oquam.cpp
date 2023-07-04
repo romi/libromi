@@ -71,9 +71,16 @@ namespace romi {
                 int32_t p[3];
                 bool success = get_position(p);
                 if (success) {
-                        position.set(p[0] / settings_.scale_meters_to_steps_[0],
-                                     p[1] / settings_.scale_meters_to_steps_[1],
-                                     p[2] / settings_.scale_meters_to_steps_[2]);
+                        double x = p[0];
+                        double y = p[1];
+                        double z = p[2];
+                        if (settings_.scale_meters_to_steps_[0] != 0.0)
+                                x /= settings_.scale_meters_to_steps_[0];
+                        if (settings_.scale_meters_to_steps_[1] != 0.0)
+                                y /= settings_.scale_meters_to_steps_[1];
+                        if (settings_.scale_meters_to_steps_[2] != 0.0)
+                                z /= settings_.scale_meters_to_steps_[2];
+                        position.set(x, y, z);
                 }
                 //else std::cout<<"get_position failed"<<std::endl; //test
                 return success;
