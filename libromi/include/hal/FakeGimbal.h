@@ -44,6 +44,7 @@ namespace romi {
                 bool get_position(v3& position) override; 
                 bool get_range(IRange& range) override; 
                 bool homing() override;
+                bool synchronize(double timeout_seconds);
 
                 // IActivity
                 bool pause_activity() override;

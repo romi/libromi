@@ -61,6 +61,8 @@ namespace romi {
                 void synchronize_with_base(double timeout);
                 bool is_base_on_target();
                 bool get_base_position(v3& xyz); 
+                bool synchronize_base(double timeout_seconds);
+                int on_position();
 
         public:
                 CablebotBase(std::unique_ptr<romiserial::IRomiSerialClient>& base_serial,
@@ -74,6 +76,7 @@ namespace romi {
                 bool moveto(double x, double y, double z,
                             double ax, double ay, double az,
                             double relative_speed) override;
+                bool synchronize(double timeout_seconds) override; 
                 
                 // IActivity interface
                 bool pause_activity() override;

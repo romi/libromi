@@ -34,18 +34,13 @@ namespace romi {
         protected:
                 ICNC &cnc_;
                 
-                void execute_get_range(nlohmann::json& params, nlohmann::json& result,
-                                       rcom::RPCError &error);
-                void execute_get_position(nlohmann::json& params, nlohmann::json& result,
-                                          rcom::RPCError &error);
-                void execute_moveto(nlohmann::json& params, nlohmann::json& result,
-                                    rcom::RPCError &error);
-                void execute_spindle(nlohmann::json& params, nlohmann::json& result,
-                                     rcom::RPCError &error);
-                void execute_travel(nlohmann::json& params, nlohmann::json& result,
-                                    rcom::RPCError &error);
-                void execute_helix(nlohmann::json&, nlohmann::json& result,
-                                   rcom::RPCError &error);
+                void execute_get_range(nlohmann::json& result, rcom::RPCError &error);
+                void execute_get_position(nlohmann::json& result, rcom::RPCError &error);
+                void execute_synchronize(nlohmann::json& params, rcom::RPCError &error);
+                void execute_moveto(nlohmann::json& params, rcom::RPCError &error);
+                void execute_spindle(nlohmann::json& params, rcom::RPCError &error);
+                void execute_travel(nlohmann::json& params, rcom::RPCError &error);
+                void execute_helix(nlohmann::json&, rcom::RPCError &error);
                 void execute_homing(rcom::RPCError &error);
                 void execute_pause(rcom::RPCError &error);
                 void execute_continue(rcom::RPCError &error);

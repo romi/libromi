@@ -55,6 +55,12 @@ namespace romi {
                         && gimbal_->get_position(angles));
         }
 
+        bool CNCAndGimbal::synchronize(double timeout_seconds)
+        {
+                return cnc_->synchronize(timeout_seconds)
+                        && gimbal_->synchronize(timeout_seconds);
+        }
+
         bool CNCAndGimbal::homing()
         {
                 return (cnc_->homing() && gimbal_->homing());

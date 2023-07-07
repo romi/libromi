@@ -19,7 +19,8 @@ public:
         MOCK_METHOD(bool, power_down, (), (override));
         MOCK_METHOD(bool, stand_by, (), (override));
         MOCK_METHOD(bool, wake_up, (), (override));
-        MOCK_METHOD(bool, get_position, (romi::v3& position), (override)); 
+        MOCK_METHOD(bool, get_position, (romi::v3& position), (override));
+        MOCK_METHOD(bool, synchronize, (double timeout_seconds), (override));
         MOCK_METHOD(bool, helix, (double xc, double yc, double alpha, double dz, double relative_speed), (override)); 
 };
 #pragma GCC diagnostic pop

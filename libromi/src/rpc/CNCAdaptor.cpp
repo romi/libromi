@@ -68,22 +68,25 @@ namespace romi {
                                 execute_homing(error);
                                  
                         } else if (method == MethodsCNC::moveto) {
-                                execute_moveto(params, result, error);
+                                execute_moveto(params, error);
                                 
                         } else if (method == MethodsCNC::spindle) {
-                                execute_spindle(params, result, error);
+                                execute_spindle(params, error);
                                 
                         } else if (method == MethodsCNC::travel) {
-                                execute_travel(params, result, error);
+                                execute_travel(params, error);
                                 
                         } else if (method == MethodsCNC::helix) {
-                                execute_helix(params, result, error);
+                                execute_helix(params, error);
                                 
                         } else if (method == MethodsCNC::get_range) {
-                                execute_get_range(params, result, error);
+                                execute_get_range(result, error);
                                 
                         } else if (method == MethodsCNC::get_position) {
-                                execute_get_position(params, result, error);
+                                execute_get_position(result, error);
+                                
+                        } else if (method == MethodsCNC::synchronize) {
+                                execute_synchronize(params, error);
                                 
                         } else if (method == MethodsActivity::activity_pause) {
                                 execute_pause(error);
@@ -118,11 +121,8 @@ namespace romi {
                 }
         }
 
-        void CNCAdaptor::execute_get_range(nlohmann::json& params,
-                                           nlohmann::json& result,
-                                           rcom::RPCError &error)
+        void CNCAdaptor::execute_get_range(nlohmann::json& result, rcom::RPCError &error)
         {
-                (void) params;
                 r_debug("CNCAdaptor::execute_get_range");
                 CNCRange range;
                 if (cnc_.get_range(range)) {
@@ -141,11 +141,9 @@ namespace romi {
                 }
         }
 
-        void CNCAdaptor::execute_get_position(nlohmann::json& params,
-                                              nlohmann::json& result,
+        void CNCAdaptor::execute_get_position(nlohmann::json& result,
                                               rcom::RPCError &error)
         {
-            (void) params;
             r_debug("CNCAdaptor::execute_get_position");
             v3 position;
             if (cnc_.get_position(position)) {
@@ -163,11 +161,22 @@ namespace romi {
             }
         }
 
-        void CNCAdaptor::execute_moveto(nlohmann::json& params,
-                                        nlohmann::json& result,
-                                        rcom::RPCError &error)
+        void CNCAdaptor::execute_synchronize(nlohmann::json& params,
+                                             rcom::RPCError &error)
         {
-                (void) result;
+            r_debug("CNCAdaptor::execute_synchronize");
+            
+            double timeout = params[MethodsCNC::kTimoutParam];
+            
+            if (!cnc_.synchronize(timeout)) {
+                r_err("CNCAdaptor::execute_synchronize failed");
+                error.code = 1;
+                error.message = "get_position failed";
+            }
+        }
+
+        void CNCAdaptor::execute_moveto(nlohmann::json& params, rcom::RPCError &error)
+        {
                 r_debug("CNCAdaptor::execute_moveto");
                 {
                         r_debug("CNCAdaptor::execute_moveto: %s", params.dump().c_str());
@@ -195,11 +204,8 @@ namespace romi {
                 }
         }
 
-        void CNCAdaptor::execute_spindle(nlohmann::json& params,
-                                         nlohmann::json& result,
-                                        rcom::RPCError &error)
+        void CNCAdaptor::execute_spindle(nlohmann::json& params, rcom::RPCError &error)
         {
-                (void) result;
                 r_debug("CNCAdaptor::execute_spindle");
                 
                 try {
@@ -217,11 +223,8 @@ namespace romi {
                 }
         }
 
-        void CNCAdaptor::execute_travel(nlohmann::json& params,
-                                        nlohmann::json& result,
-                                        rcom::RPCError &error)
+        void CNCAdaptor::execute_travel(nlohmann::json& params, rcom::RPCError &error)
         {
-                (void) result;
                 r_debug("CNCAdaptor::execute_travel");
                 
                 try {
@@ -244,11 +247,8 @@ namespace romi {
                 }
         }
         
-        void CNCAdaptor::execute_helix(nlohmann::json& params,
-                                       nlohmann::json& result,
-                                       rcom::RPCError &error)
+        void CNCAdaptor::execute_helix(nlohmann::json& params, rcom::RPCError &error)
         {
-                (void) result;
                 r_debug("CNCAdaptor::execute_helix");
                 
                 try {

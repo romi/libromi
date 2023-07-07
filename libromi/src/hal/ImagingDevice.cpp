@@ -64,6 +64,11 @@ namespace romi {
                 return mount_->get_position(xyz, angles);
         }
         
+        bool ImagingDevice::synchronize(double timeout_seconds)
+        {
+                return mount_->synchronize(timeout_seconds);
+        }
+        
         bool ImagingDevice::homing()
         {
                 return mount_->homing();

@@ -43,6 +43,7 @@ namespace romi {
                 virtual bool moveto(double x, double y, double z,
                                     double phi_x, double phi_y, double phi_z,
                                     double relative_speed) = 0;
+                virtual bool synchronize(double timeout_seconds) = 0; 
         };
 }
 

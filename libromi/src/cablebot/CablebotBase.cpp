@@ -236,6 +236,53 @@ namespace romi {
                 return get_base_position(xyz);
         }
 
+        bool CablebotBase::synchronize(double timeout_seconds)
+        {
+                return gimbal_->synchronize(timeout_seconds)
+                        && synchronize_base(timeout_seconds);
+        }
+        
+        bool CablebotBase::synchronize_base(double timeout)
+        {
+                auto clock = romi::ClockAccessor::GetInstance();
+                bool success = false;
+                double start_time = clock->time();
+                
+                while (true) {
+
+                        int arrived = on_position();
+                        
+                        if (arrived == 1) {
+                                success = true;
+                                break;
+                        } else if (arrived == -1) {
+                                break;
+                        } else {
+                                clock->sleep(0.2);
+                        }
+
+                        double now = clock->time();
+                        if (timeout >= 0.0 && (now - start_time) >= timeout) {
+                                r_warn("StepperController::synchronize: time out");
+                                break;
+                        }
+                }
+                return success;
+        }
+
+        int CablebotBase::on_position()
+        {
+                int result = -1;
+                nlohmann::json response;
+                base_serial_->send("p", response);
+                
+                bool success = (response[romiserial::kStatusCode] == 0);
+                if (success) {
+                        result = (int) response[1];
+                } 
+                return result;
+        }
+        
         bool CablebotBase::get_base_position(v3& position)
         {
             nlohmann::json response;

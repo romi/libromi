@@ -65,6 +65,11 @@ namespace romi {
         {
                 return controller_.get_position(position);
         }
+
+        bool Oquam::synchronize(double timeout_seconds)
+        {
+                return controller_.synchronize(timeout_seconds);                
+        }
         
         bool Oquam::get_position(v3& position)
         {

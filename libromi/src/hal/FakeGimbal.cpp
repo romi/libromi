@@ -48,6 +48,11 @@ namespace romi {
                 position.set(x_, y_, z_);
                 return true;
         }
+
+        bool FakeGimbal::synchronize(double)
+        {
+                return true;
+        }
         
         bool FakeGimbal::get_range(IRange& range)
         {

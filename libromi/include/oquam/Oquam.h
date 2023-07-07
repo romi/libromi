@@ -68,6 +68,7 @@ namespace romi {
                 bool homing() override;
                 bool get_range(CNCRange &range) override;
                 bool get_position(v3& position) override; 
+                bool synchronize(double timeout_seconds) override; 
 
                 // IActivity interface
                 bool pause_activity() override;
