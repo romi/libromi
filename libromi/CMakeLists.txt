@@ -226,6 +226,7 @@ set(SOURCES
         include/camera/CameraIntrinsics.h
         include/camera/CameraSettings.h
         include/camera/CameraWithConfig.h
+        include/camera/ExternalCamera.h
         include/camera/FakeCamera.h
         include/camera/FileCamera.h
         include/camera/ICameraDistortion.h
@@ -257,6 +258,7 @@ set(SOURCES
         include/hal/BrushMotorDriver.h
         include/hal/CNCAndGimbal.h
         include/hal/FakeGimbal.h
+        include/hal/FakeI2C.h
         include/hal/ICameraMount.h
         include/hal/II2C.h
         include/hal/I2C.h
@@ -322,6 +324,7 @@ set(SOURCES
         src/camera/CameraIntrinsics.cpp
         src/camera/CameraSettings.cpp
         src/camera/CameraWithConfig.cpp
+        src/camera/ExternalCamera.cpp
         src/camera/FakeCamera.cpp
         src/camera/FileCamera.cpp
         src/camera/Imager.cpp
@@ -341,6 +344,7 @@ set(SOURCES
         src/hal/BrushMotorDriver.cpp
         src/hal/CNCAndGimbal.cpp
         src/hal/FakeGimbal.cpp
+        src/hal/FakeI2C.cpp
         src/hal/ImagingDevice.cpp
         src/hal/I2C.cpp
         src/rpc/CNCAdaptor.cpp

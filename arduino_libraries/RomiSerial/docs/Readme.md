@@ -565,12 +565,10 @@ int main(int argc, char **argv)
 
 The Romi Serial library helps improve the reliability of the
 communication between a computer and an Arduino over the serial
-connection. 
-
-It was developed for the Romi Rover because it communicates with
-several microcontrollers over a serial bus. The proposed library
-should help improve the reliability of these serial communications. It
-aims to address the following issues:
+connection. It was developed for the Romi Rover because it
+communicates with several microcontrollers over a serial bus. The
+proposed library should help improve the reliability of these serial
+communications. It aims to address the following issues:
 
 * When the serial connection is used without proper synchronisation,
   the Arduino Uno may loose data without a warning because its

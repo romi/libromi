@@ -35,7 +35,7 @@ namespace romi {
                 reset();
                 motor_wake();
                 set_motor_power(40.0);
-                set_motor_position(0.0);
+                //set_motor_position(0.0);
 		  //set_angle(0.0);
 		  //set_follow(true);
         }
