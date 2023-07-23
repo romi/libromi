@@ -38,6 +38,7 @@
 #include "util/Logger.h"
 #include "util/RomiSerialLog.h"
 #include "camera/FakeCamera.h"
+#include "camera/ExternalCamera.h"
 #include "cablebot/FakeMotorController.h"
 #include "camera/CameraWithConfig.h"
 #include "hal/I2C.h"
@@ -127,11 +128,18 @@ namespace romi {
 
         std::shared_ptr<ICamera> Cablebot::make_camera(ICameraSettings& settings)
         {
-#ifdef PI_BUILD
-                return make_pi_camera(settings);
-#else
-                return make_fake_camera(settings);
-#endif
+                if (settings.type() == "pi-camera-hq")
+                        return make_pi_camera(settings);
+                
+                else if (settings.type() == "external-camera")
+                        return make_external_camera(settings);
+                        
+                else if (settings.type() == "fake-camera")
+                        return make_fake_camera(settings);
+
+                else {
+                        throw std::runtime_error("Unknown camera type");
+                }
         }
 
         std::shared_ptr<ICamera>
@@ -179,6 +187,16 @@ namespace romi {
                 
                 std::shared_ptr<ICamera> camera
                         = std::make_shared<FakeCamera>(width, height, fps);
+                return camera;
+        }
+
+        std::shared_ptr<ICamera> Cablebot::make_external_camera(ICameraSettings& settings)
+        {
+                std::string executable;
+                settings.get_option("executable", executable);
+                
+                std::shared_ptr<ICamera> camera
+                        = std::make_shared<ExternalCamera>(executable);
                 return camera;
         }
 

@@ -38,6 +38,7 @@ namespace romi {
         {
         public:
                 static constexpr const char *kPiCameraHQ1 = "pi-camera-hq-v10";
+                static constexpr const char *kExternalCamera = "external-camera";
 
                 virtual ~ICameraInfo() = default;
 

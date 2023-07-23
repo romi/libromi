@@ -26,9 +26,14 @@
 
 namespace romi {
         
-        CameraSettings::CameraSettings(nlohmann::json& json)
-                : settings_(json)
+        CameraSettings::CameraSettings(const std::string& type, nlohmann::json& json)
+                : type_(type), settings_(json)
         {
+        }
+
+        const std::string& CameraSettings::type() const
+        {
+                return type_;
         }
 
         nlohmann::json CameraSettings::get_all()

@@ -50,7 +50,7 @@ namespace romi {
                         = load_intrinsics(json[kIntrinsics]);
                         
                 std::unique_ptr<ICameraSettings> settings
-                        = load_settings(json[kSettings], camera_type);
+                        = load_settings(camera_type, json[camera_type]);
                 
                 std::unique_ptr<ICameraDistortion> distortion
                         = load_distortion(json[kDistortion]);
@@ -71,16 +71,17 @@ namespace romi {
         }
         
         std::unique_ptr<ICameraSettings>
-        CameraInfoIO::load_settings(nlohmann::json& json, std::string& camera_type)
+        CameraInfoIO::load_settings(const std::string& camera_type,
+                                    nlohmann::json& json_settings)
         {
-                if (camera_type != ICameraInfo::kPiCameraHQ1) {
-                        r_err("CameraInfoIO::load_settings: unhandled camera type: %s",
-                              camera_type.c_str());
-                        throw std::runtime_error("CameraInfoIO::load_settings");
-                }
+                // if (camera_type != ICameraInfo::kPiCameraHQ1) {
+                //         r_err("CameraInfoIO::load_settings: unhandled camera type: %s",
+                //               camera_type.c_str());
+                //         throw std::runtime_error("CameraInfoIO::load_settings");
+                // }
                 
                 std::unique_ptr<ICameraSettings> result
-                        = std::make_unique<CameraSettings>(json);
+                        = std::make_unique<CameraSettings>(camera_type, json_settings);
                 return result;
         }
         

@@ -125,6 +125,8 @@ namespace romi {
                 
                 virtual ~ICameraSettings() = default;
 
+                virtual const std::string& type() const = 0;
+
                 virtual nlohmann::json get_all() = 0;
                 
                 virtual double get_value(const std::string& name) = 0;

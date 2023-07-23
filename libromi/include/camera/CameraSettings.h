@@ -32,12 +32,14 @@ namespace romi {
         class CameraSettings : public ICameraSettings
         {
         protected:
+                std::string type_;
                 nlohmann::json settings_;
                 
         public:
-                CameraSettings(nlohmann::json& json);
+                CameraSettings(const std::string& camera_type, nlohmann::json& json);
                 ~CameraSettings() override = default;
-
+                
+                const std::string& type() const override;
                 nlohmann::json get_all() override;
 
                 double get_value(const std::string& name) override;

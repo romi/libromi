@@ -55,9 +55,11 @@ namespace romi {
                        std::shared_ptr<ICameraInfoIO>& io);
                 
         protected:
-                static std::shared_ptr<romi::ICamera> make_camera(ICameraSettings& settings);
-                static std::shared_ptr<romi::ICamera> make_pi_camera(ICameraSettings& settings);
-                static std::shared_ptr<romi::ICamera> make_fake_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_pi_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_fake_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_external_camera(ICameraSettings& settings);
+
                 static std::unique_ptr<IGimbal> make_gimbal(rcom::ILinux& linux);
                 static std::unique_ptr<IGimbal> make_i2c_gimbal(rcom::ILinux& linux);
                 static std::unique_ptr<IGimbal> make_fake_gimbal();

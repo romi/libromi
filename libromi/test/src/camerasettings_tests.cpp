@@ -33,7 +33,7 @@ TEST_F(camerasettings_tests, test_constructor_1)
         
         // Act
         try {
-                CameraSettings settings(json);
+                CameraSettings settings("type", json);
         } catch (...) {
                 FAIL() << "Didn't expected an error";
         }
@@ -47,7 +47,7 @@ TEST_F(camerasettings_tests, test_get_value)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
 
         //std::cout << json.dump(4) << std::endl;
         
@@ -66,7 +66,7 @@ TEST_F(camerasettings_tests, test_get_value_fails_when_not_a_number)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
         
         // Act
         try {
@@ -83,7 +83,7 @@ TEST_F(camerasettings_tests, test_get_value_fails_when_missing_number)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
         
         // Act
         try {
@@ -100,7 +100,7 @@ TEST_F(camerasettings_tests, test_get_option)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
 
         //std::cout << json.dump(4) << std::endl;
         
@@ -118,7 +118,7 @@ TEST_F(camerasettings_tests, test_get_option_fails_when_not_a_string)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
 
         //std::cout << json.dump(4) << std::endl;
         
@@ -138,7 +138,7 @@ TEST_F(camerasettings_tests, test_get_option_fails_when_missing)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
 
         //std::cout << json.dump(4) << std::endl;
         
@@ -158,7 +158,7 @@ TEST_F(camerasettings_tests, test_set_get_value)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
         settings.set_value("name1", 10.0);
 
         
@@ -175,7 +175,7 @@ TEST_F(camerasettings_tests, test_select_get_option)
         nlohmann::json json = {
                 {"name1", 1.0}, {"name2", 2.0}, {"name3", "value3"}
         };
-        CameraSettings settings(json);
+        CameraSettings settings("type", json);
         settings.select_option("name3", "new value");
         
         // Act

@@ -75,8 +75,8 @@ namespace romi {
                           std::unique_ptr<ICameraDistortion>& distortion);
                 
                 std::unique_ptr<ICameraIntrinsics> load_intrinsics(nlohmann::json& json);
-                std::unique_ptr<ICameraSettings> load_settings(nlohmann::json& json,
-                                                               std::string& camera_type);
+                std::unique_ptr<ICameraSettings> load_settings(const std::string& type,
+                                                               nlohmann::json& json);
                 std::unique_ptr<ICameraDistortion> load_distortion(nlohmann::json& json);
         };
 }
