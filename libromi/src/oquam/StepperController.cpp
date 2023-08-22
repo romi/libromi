@@ -181,7 +181,8 @@ namespace romi {
                                 r = -1;
                         }
                 } else {
-                        r_err("StepperController::get_position: error: %s", response[1].dump().c_str());
+                        r_err("StepperController::get_position: error: %s",
+                              response[1].dump().c_str());
                 }
                 
                 return success;
@@ -273,16 +274,39 @@ namespace romi {
                 return send_command_without_interruption("E[0]");
         }
         
-        bool StepperController::configure_homing(AxisIndex axis1, AxisIndex axis2,
-                                                 AxisIndex axis3)
+        bool StepperController::set_homing_axes(AxisIndex axis1,
+                                                AxisIndex axis2,
+                                                AxisIndex axis3)
         {
                 char command[64];
                 StringUtils::rprintf(command, 64, "h[%d,%d,%d]", axis1, axis2, axis3);
-                r_info("StepperController: setting homing to [%d,%d,%d]", axis1, axis2, axis3);
+                r_info("StepperController: setting homing axes to [%d,%d,%d]",
+                       axis1, axis2, axis3);
                 return send_command_without_interruption(command);
         }
 
-        bool StepperController::stop()         //???? utiliser la fonction de BrushMotorDriver en la passant en static pour eviter les doublons?
+        bool StepperController::set_homing_mode(HomingMode mode)
+        {
+                char command[64];
+                StringUtils::rprintf(command, 64, "o[%d]", (int) mode);
+                r_info("StepperController: setting homing mode to [%d]", (int) mode);
+                return send_command_without_interruption(command);
+        }
+        
+        bool StepperController::set_homing_speeds(int16_t axis1,
+                                                  int16_t axis2,
+                                                  int16_t axis3)
+        {
+                char command[64];
+                StringUtils::rprintf(command, 64, "s[%d,%d,%d]", axis1, axis2, axis3);
+                r_info("StepperController: setting homing speeds to [%d,%d,%d]",
+                       axis1, axis2, axis3);
+                return send_command_without_interruption(command);
+        }
+ 
+        //???? utiliser la fonction de BrushMotorDriver en la passant
+        //en static pour eviter les doublons?
+        bool StepperController::stop()         
         {
             nlohmann::json response;
             const char *command = "V[0,0,0]"; //Avec X ca ne marche pas
@@ -290,7 +314,8 @@ namespace romi {
             return check_response(command, response);
         }
 
-        bool StepperController::check_response(const char *command, nlohmann::json& response)
+        bool StepperController::check_response(const char *command,
+                                               nlohmann::json& response)
         {
             bool success = (response[romiserial::kStatusCode] == 0);
             if (!success) {

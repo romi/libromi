@@ -43,11 +43,13 @@ namespace romi {
                 bool get_position(v3& position) override;
                 bool moveto(double x, double y, double z,
                             double relative_speed) override;
+                // bool moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z) override;
                 bool spindle(double speed) override;
                 bool travel(Path &path, double relative_speed) override;
                 bool homing() override;
                 bool helix(double xc, double yc, double alpha, double z,
                            double relative_speed) override;
+                bool synchronize(double timeout_seconds) override; 
 
                 bool pause_activity() override;
                 bool continue_activity() override;

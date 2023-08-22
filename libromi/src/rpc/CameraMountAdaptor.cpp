@@ -107,7 +107,8 @@ namespace romi {
                 }
         }
 
-        void CameraMountAdaptor::execute_moveto(nlohmann::json& params, rcom::RPCError &error)
+        void CameraMountAdaptor::execute_moveto(nlohmann::json& params,
+                                                rcom::RPCError &error)
         {
                 r_debug("CameraMountAdaptor::execute_moveto");
                 double x = params[MethodsCameraMount::kXParam];
@@ -124,7 +125,8 @@ namespace romi {
                 }
         }
 
-        void CameraMountAdaptor::execute_get_position(nlohmann::json& result, rcom::RPCError &error)
+        void CameraMountAdaptor::execute_get_position(nlohmann::json& result,
+                                                      rcom::RPCError &error)
         {
                 r_debug("CameraMountAdaptor::get_position");
                 v3 xyz;

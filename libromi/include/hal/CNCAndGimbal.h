@@ -49,6 +49,17 @@ namespace romi {
                             double phi_x, double phi_y, double phi_z,
                             double relative_speed) override;
                 bool synchronize(double timeout_seconds) override;
+                
+                // IPowerDevice
+                bool power_up() override;
+                bool power_down() override;
+                bool stand_by() override;
+                bool wake_up() override;
+                
+                // IActivity
+                bool pause_activity() override;
+                bool continue_activity() override;
+                bool reset_activity() override;
         };
 }
 

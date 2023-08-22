@@ -45,10 +45,32 @@ namespace romi {
                   store_script_(false),
                   position_changed_(true)
         {
-                if (!controller_.configure_homing(settings_.homing_[0],
-                                                  settings_.homing_[1],
-                                                  settings_.homing_[2])) {
-                        throw std::runtime_error("Oquam: configure_homing failed");
+                if (!controller_.set_homing_axes(settings_.homing_axes_[0],
+                                                 settings_.homing_axes_[1],
+                                                 settings_.homing_axes_[2])) {
+                        throw std::runtime_error("Oquam: set_homing_axes failed");
+                }
+
+                double speeds[3];
+                for (int i = 0; i < 3; i++) {
+                        speeds[i] = (settings_.vmax_[i]
+                                    * settings_.scale_meters_to_steps_[i]
+                                    / 20.0);
+                }
+                
+                int16_t homing_speeds[3] = {0, 0, 0};
+                
+                for (int i = 0; i < 3; i++) {
+                        AxisIndex axis = settings_.homing_axes_[i];
+                        if (axis >= 0) {
+                                homing_speeds[i] = (int16_t) speeds[axis];
+                        }
+                }
+                
+                if (!controller_.set_homing_speeds(homing_speeds[0],
+                                                   homing_speeds[1],
+                                                   homing_speeds[2])) {
+                        throw std::runtime_error("Oquam: set_homing_speeds failed");
                 }
                 if (!spindle(0.0)) {
                         throw std::runtime_error("Oquam: failed to stop spindle");
@@ -101,13 +123,13 @@ namespace romi {
                 return position;
         }
 
-        bool Oquam::moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z)
-        {
-            SynchronizedCodeBlock synchronize(mutex_);
-            position_changed_ = true;
-            store_script_ = false;
-            return controller_.moveat(speed_x, speed_y, speed_z);
-        }
+        // bool Oquam::moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z)
+        // {
+        //     SynchronizedCodeBlock synchronize(mutex_);
+        //     position_changed_ = true;
+        //     store_script_ = false;
+        //     return controller_.moveat(speed_x, speed_y, speed_z);
+        // }
 
         bool Oquam::moveto(double x, double y, double z, double relative_speed)
         {
@@ -173,7 +195,7 @@ namespace romi {
                 }
                 return homing_result;
         }
-                
+
         bool Oquam::travel(Path &path, double relative_speed)
         {
                 SynchronizedCodeBlock synchronize(mutex_);
@@ -396,7 +418,8 @@ namespace romi {
 
         bool Oquam::power_up()
         {
-                return enable_driver() && homing();
+                //return enable_driver() && homing();
+                return enable_driver();
         }
         
         bool Oquam::power_down()

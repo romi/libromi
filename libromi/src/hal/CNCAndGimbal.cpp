@@ -65,5 +65,40 @@ namespace romi {
         {
                 return (cnc_->homing() && gimbal_->homing());
         }
+
+        bool CNCAndGimbal::power_up()
+        {
+                return (cnc_->power_up() && gimbal_->power_up());
+        }
+        
+        bool CNCAndGimbal::power_down()
+        {
+                return (cnc_->power_down() && gimbal_->power_down());
+        }
+        
+        bool CNCAndGimbal::stand_by()
+        {
+                return (cnc_->stand_by() && gimbal_->stand_by());
+        }
+        
+        bool CNCAndGimbal::wake_up()
+        {
+                return (cnc_->wake_up() && gimbal_->wake_up());
+        }
+        
+        bool CNCAndGimbal::pause_activity()
+        {
+                return (cnc_->pause_activity() && gimbal_->pause_activity());
+        }
+        
+        bool CNCAndGimbal::continue_activity()
+        {
+                return (cnc_->continue_activity() && gimbal_->continue_activity());
+        }
+        
+        bool CNCAndGimbal::reset_activity()
+        {
+                return (cnc_->reset_activity() && gimbal_->reset_activity());
+        }
 }
 

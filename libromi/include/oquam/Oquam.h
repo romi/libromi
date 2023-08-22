@@ -60,7 +60,7 @@ namespace romi {
                 
                 // ICNC interface, See ICNC.h for more info
                 bool moveto(double x, double y, double z, double relative_speed) override;
-                bool moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z) override;
+                // bool moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z) override;
                 bool travel(Path &path, double relative_speed) override;
                 bool helix(double xc, double yc, double alpha, double z,
                            double relative_speed) override;
@@ -68,7 +68,7 @@ namespace romi {
                 bool homing() override;
                 bool get_range(CNCRange &range) override;
                 bool get_position(v3& position) override; 
-                bool synchronize(double timeout_seconds) override; 
+                bool synchronize(double timeout_seconds) override;
 
                 // IActivity interface
                 bool pause_activity() override;

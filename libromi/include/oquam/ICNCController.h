@@ -28,7 +28,17 @@
 
 namespace romi {
 
-        enum AxisIndex { kNoAxis = -1, kAxisX = 0, kAxisY = 1, kAxisZ = 2 };
+        enum AxisIndex {
+                kNoAxis = -1,
+                kAxisX = 0,
+                kAxisY = 1,
+                kAxisZ = 2
+        };
+        
+        enum HomingMode {
+                kHomingDefault = 0,
+                kHomingWithContact = 1
+        };
 
         class ICNCController : public IActivity
         {
@@ -37,9 +47,14 @@ namespace romi {
                         
                 ~ICNCController() override = default;
 
-                virtual bool configure_homing(AxisIndex axis1, AxisIndex axis2,
-                                              AxisIndex axis3) = 0;
+                
+                virtual bool set_homing_axes(AxisIndex axis1, AxisIndex axis2,
+                                             AxisIndex axis3) = 0;
+                virtual bool set_homing_mode(HomingMode mode) = 0;
+                virtual bool set_homing_speeds(int16_t axis1, int16_t axis2,
+                                               int16_t axis3) = 0;
 
+                
                 virtual bool get_position(int32_t *pos) = 0;
 
                 /** The homing operation sets the ICNC in the home

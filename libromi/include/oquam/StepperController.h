@@ -36,13 +36,13 @@ namespace romi {
                 
         class StepperController : public ICNCController
         {
-        protected: //!!!A remettre en protected
+        protected: 
 
                 std::unique_ptr<romiserial::IRomiSerialClient> _romi_serial;
                 std::mutex _mutex;
                 std::condition_variable _continue_condition;
                 ActivityHelper _activity_helper;
-                
+        
         public:
                 
                 static constexpr const char *ClassName = "stepper-controller";
@@ -51,8 +51,12 @@ namespace romi {
                 
                 virtual ~StepperController() override = default;
 
-                bool configure_homing(AxisIndex axis1, AxisIndex axis2,
-                                      AxisIndex axis3) override;
+                bool set_homing_axes(AxisIndex axis1, AxisIndex axis2,
+                                     AxisIndex axis3) override;
+                bool set_homing_mode(HomingMode mode) override;
+                bool set_homing_speeds(int16_t axis1, int16_t axis2,
+                                       int16_t axis3) override;
+                
                 bool get_position(int32_t *pos) override;
                 bool homing() override;
                 bool spindle(double speed) override;

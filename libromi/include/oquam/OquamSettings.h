@@ -43,7 +43,7 @@ namespace romi {
                 double scale_meters_to_steps_[3];
                 double path_slice_duration_;
                 double path_max_slice_duration_;
-                AxisIndex homing_[3];
+                AxisIndex homing_axes_[3];
                 
                 OquamSettings(CNCRange& range,
                               const double *vmax,
@@ -52,7 +52,7 @@ namespace romi {
                               double path_max_deviation,
                               double path_slice_duration,
                               double path_max_slice_duration,
-                              const AxisIndex *homing);
+                              const AxisIndex *homing_axes);
         };
 }
 

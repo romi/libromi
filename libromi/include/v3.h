@@ -26,6 +26,7 @@
 #define _ROMI_V3_H_
 
 #include <cstddef>
+#include <stdexcept>
 
 namespace romi {
         
@@ -117,6 +118,13 @@ namespace romi {
                         x_[kZ] = value;
                 }
 
+                double& operator[](int index) {
+                        if (index < 0 || index > 2) {
+                                throw std::runtime_error("Index out of bound");
+                        }
+                        return x_[index];
+                }
+                
                 //
                 v3& operator=(double v) {
                         set(v);

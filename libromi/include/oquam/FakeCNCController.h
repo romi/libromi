@@ -43,11 +43,15 @@ namespace romi {
                         
                 virtual ~FakeCNCController() override = default;
 
-                bool configure_homing(AxisIndex axis1, AxisIndex axis2,
-                                      AxisIndex axis3) override {
-                        (void) axis1;
-                        (void) axis2;
-                        (void) axis3;
+                bool set_homing_axes(AxisIndex, AxisIndex, AxisIndex) override {
+                        return true;
+                }
+                
+                bool set_homing_mode(HomingMode) override {
+                        return true;
+                }
+                
+                bool set_homing_speeds(int16_t, int16_t, int16_t) override {
                         return true;
                 }
 

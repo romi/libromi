@@ -32,7 +32,7 @@ namespace romi {
                                      double path_max_deviation,
                                      double path_slice_duration,
                                      double path_max_slice_duration,
-                                     const AxisIndex *homing)
+                                     const AxisIndex *homing_axes)
                 : range_(range),
                   vmax_(vmax),
                   amax_(amax),
@@ -48,7 +48,7 @@ namespace romi {
                 
                 vcopy(scale_meters_to_steps_, scale_meters_to_steps);
                 for (int i = 0; i < 3; i++) {
-                        homing_[i] = homing[i];
+                        homing_axes_[i] = homing_axes[i];
                 }
         }
 }

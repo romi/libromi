@@ -64,28 +64,28 @@ namespace romi {
                                 error.code = rcom::RPCError::kMethodNotFound;
                                 error.message = "No method specified";
                                 
-                        } else if (method == MethodsCNC::homing) {
+                        } else if (method == MethodsCNC::kHoming) {
                                 execute_homing(error);
                                  
-                        } else if (method == MethodsCNC::moveto) {
+                        } else if (method == MethodsCNC::kMoveTo) {
                                 execute_moveto(params, error);
                                 
-                        } else if (method == MethodsCNC::spindle) {
+                        } else if (method == MethodsCNC::kSpindle) {
                                 execute_spindle(params, error);
                                 
-                        } else if (method == MethodsCNC::travel) {
+                        } else if (method == MethodsCNC::kTravel) {
                                 execute_travel(params, error);
                                 
-                        } else if (method == MethodsCNC::helix) {
+                        } else if (method == MethodsCNC::kHelix) {
                                 execute_helix(params, error);
                                 
-                        } else if (method == MethodsCNC::get_range) {
+                        } else if (method == MethodsCNC::kGetRange) {
                                 execute_get_range(result, error);
                                 
-                        } else if (method == MethodsCNC::get_position) {
+                        } else if (method == MethodsCNC::kGetPosition) {
                                 execute_get_position(result, error);
                                 
-                        } else if (method == MethodsCNC::synchronize) {
+                        } else if (method == MethodsCNC::kSynchronize) {
                                 execute_synchronize(params, error);
                                 
                         } else if (method == MethodsActivity::activity_pause) {
@@ -166,7 +166,7 @@ namespace romi {
         {
             r_debug("CNCAdaptor::execute_synchronize");
             
-            double timeout = params[MethodsCNC::kTimoutParam];
+            double timeout = params[MethodsCNC::kTimeoutParam];
             
             if (!cnc_.synchronize(timeout)) {
                 r_err("CNCAdaptor::execute_synchronize failed");

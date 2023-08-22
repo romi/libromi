@@ -47,7 +47,7 @@ namespace romi {
                 // depend on the direction of the (x,y,z) vector and
                 // the allowed maximum speeds on each of the axes.
                 virtual bool moveto(double x, double y, double z, double relative_speed) = 0;
-                virtual bool moveat(int16_t speed_x, int16_t speed_y, int16_t speed_z) = 0;
+                // virtual bool moveat(double vx, double vy, double vz) = 0;
                 virtual bool spindle(double speed) = 0;
                 virtual bool travel(Path &path, double relative_speed) = 0;
                 virtual bool helix(double xc, double yc, double alpha, double z,

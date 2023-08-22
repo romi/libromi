@@ -50,7 +50,7 @@ TEST_F(cncadaptor_tests, get_range_retuns_no_error_on_success)
                 .WillOnce(Return(true));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::get_range, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kGetRange, params, result, error);
 
         ASSERT_EQ(error.code, 0);
         ASSERT_EQ(error.message.length(), 0);
@@ -66,7 +66,7 @@ TEST_F(cncadaptor_tests, get_range_sets_error_on_failure)
                 .WillOnce(Return(false));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::get_range, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kGetRange, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
@@ -82,7 +82,7 @@ TEST_F(cncadaptor_tests, homing_retuns_no_error_on_success)
                 .WillOnce(Return(true));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::homing, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kHoming, params, result, error);
 
         ASSERT_EQ(error.code, 0);
         ASSERT_EQ(error.message.length(), 0);
@@ -98,7 +98,7 @@ TEST_F(cncadaptor_tests, homing_sets_error_on_failure)
                 .WillOnce(Return(false));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::homing, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kHoming, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
@@ -213,7 +213,7 @@ TEST_F(cncadaptor_tests, spindle_retuns_no_error_on_success)
                 .WillOnce(Return(true));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::spindle, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kSpindle, params, result, error);
 
         ASSERT_EQ(error.code, 0);
         ASSERT_EQ(error.message.length(), 0);
@@ -231,7 +231,7 @@ TEST_F(cncadaptor_tests, spindle_sets_error_on_failure)
                 .WillOnce(Return(false));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::spindle, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kSpindle, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
@@ -244,7 +244,7 @@ TEST_F(cncadaptor_tests, spindle_sets_error_on_missing_param)
         rcom::RPCError error;
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::spindle, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kSpindle, params, result, error);
 
         ASSERT_EQ(error.code, rcom::RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
@@ -263,7 +263,7 @@ TEST_F(cncadaptor_tests, moveto_retuns_no_error_on_success)
                 .WillOnce(Return(true));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::moveto, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kMoveTo, params, result, error);
 
         ASSERT_EQ(error.code, 0);
         ASSERT_EQ(error.message.length(), 0);
@@ -281,7 +281,7 @@ TEST_F(cncadaptor_tests, moveto_sets_error_on_failure)
                 .WillOnce(Return(false));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::moveto, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kMoveTo, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
@@ -294,7 +294,7 @@ TEST_F(cncadaptor_tests, moveto_sets_error_on_missing_params)
         rcom::RPCError error;
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::moveto, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kMoveTo, params, result, error);
 
         ASSERT_EQ(error.code, rcom::RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
@@ -310,7 +310,7 @@ TEST_F(cncadaptor_tests, travel_retuns_no_error_on_success)
                 .WillOnce(Return(true));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::travel, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kTravel, params, result, error);
 
         ASSERT_EQ(error.code, 0);
         ASSERT_EQ(error.message.length(), 0);
@@ -326,7 +326,7 @@ TEST_F(cncadaptor_tests, travel_sets_error_on_failure)
                 .WillOnce(Return(false));
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::travel, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kTravel, params, result, error);
 
         ASSERT_NE(error.code, 0);
         ASSERT_NE(error.message.length(), 0);
@@ -339,7 +339,7 @@ TEST_F(cncadaptor_tests, travel_sets_error_on_missing_params_1)
         rcom::RPCError error;
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::travel, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kTravel, params, result, error);
 
         ASSERT_EQ(error.code, rcom::RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);
@@ -352,7 +352,7 @@ TEST_F(cncadaptor_tests, travel_sets_error_on_missing_params_2)
         rcom::RPCError error;
 
         CNCAdaptor adaptor(cnc);
-        adaptor.execute("oquam", MethodsCNC::travel, params, result, error);
+        adaptor.execute("oquam", MethodsCNC::kTravel, params, result, error);
 
         ASSERT_EQ(error.code, rcom::RPCError::kInvalidParams);
         ASSERT_NE(error.message.length(), 0);

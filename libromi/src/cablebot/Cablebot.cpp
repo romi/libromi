@@ -28,6 +28,8 @@
 #include "picamera/PiCamera.h"
 #else
 #endif
+
+#include <rcom/RcomClient.h>
         
 #include "cablebot/Cablebot.h"
 #include "hal/BldcGimbalI2C.h"
@@ -42,28 +44,27 @@
 #include "cablebot/FakeMotorController.h"
 #include "camera/CameraWithConfig.h"
 #include "hal/I2C.h"
+#include "rpc/RemoteCamera.h"
+#include "rpc/RemoteCNC.h"
 
 namespace romi {
         
-        std::unique_ptr<ImagingDevice> Cablebot::create(rcom::ILinux& linux,
-                                                        std::shared_ptr<ICameraInfoIO>& io)
+        std::unique_ptr<ImagingDevice> Cablebot::create(
+                rcom::ILinux& linux,
+                std::shared_ptr<rcom::ILog>& rcomlog,
+                std::shared_ptr<ICameraInfoIO>& io)
         {
                 auto info = io->load();
                 
                 // Camera
                 std::shared_ptr<ICamera> real_camera
-                        = make_camera(info->get_settings());
+                        = make_camera(rcomlog, info->get_settings());
                 std::shared_ptr<ICamera> camera
                         = std::make_shared<CameraWithConfig>(io, real_camera);
 
-                // Gimbal
-                std::unique_ptr<IGimbal> gimbal = make_gimbal(linux);
-                
-                // Base
-                std::unique_ptr<romiserial::IRomiSerialClient> base_serial
-                        = connect_base();
+                // Mount
                 std::shared_ptr<ICameraMount> mount
-                        = std::make_shared<romi::CablebotBase>(base_serial, gimbal);
+                        = make_mount(linux, rcomlog);
                         
                 // Cablebot
                 return std::make_unique<ImagingDevice>(camera, mount);
@@ -126,13 +127,18 @@ namespace romi {
                 return (uint32_t) settings.get_value(ICameraSettings::kBitrate);
         }
 
-        std::shared_ptr<ICamera> Cablebot::make_camera(ICameraSettings& settings)
+        std::shared_ptr<ICamera> Cablebot::make_camera(
+                std::shared_ptr<rcom::ILog>& rcomlog,
+                ICameraSettings& settings)
         {
                 if (settings.type() == "pi-camera-hq")
                         return make_pi_camera(settings);
                 
                 else if (settings.type() == "external-camera")
                         return make_external_camera(settings);
+                        
+                else if (settings.type() == "remote-camera")
+                        return make_remote_camera(rcomlog, settings);
                         
                 else if (settings.type() == "fake-camera")
                         return make_fake_camera(settings);
@@ -200,6 +206,19 @@ namespace romi {
                 return camera;
         }
 
+        std::shared_ptr<ICamera> Cablebot::make_remote_camera(
+                std::shared_ptr<rcom::ILog>& rcomlog,
+                ICameraSettings& settings)
+        {
+                std::string topic;
+                settings.get_option("topic", topic);
+                
+                auto client = rcom::RcomClient::create(topic, 10.0, rcomlog);
+                std::shared_ptr<ICamera> camera
+                        = std::make_shared<RemoteCamera>(client);
+                return camera;
+        }
+
         std::unique_ptr<romiserial::IRomiSerialClient> Cablebot::connect_base()
         {
 #ifdef PI_BUILD
@@ -259,5 +278,43 @@ namespace romi {
         {
                 std::unique_ptr<IGimbal> gimbal = std::make_unique<FakeGimbal>();
                 return gimbal;
+        }
+
+        std::shared_ptr<ICameraMount> Cablebot::make_mount(
+                rcom::ILinux& linux,
+                std::shared_ptr<rcom::ILog>& rcomlog)
+        {
+#if 0
+                return make_mount_v1(linux);
+#else
+                return make_mount_v2(linux, rcomlog);
+#endif                
+        }
+
+        std::shared_ptr<ICameraMount> Cablebot::make_mount_v1(rcom::ILinux& linux)
+        {
+                std::unique_ptr<IGimbal> gimbal = make_gimbal(linux);
+                
+                std::unique_ptr<romiserial::IRomiSerialClient> base_serial
+                        = connect_base();
+                std::shared_ptr<ICameraMount> mount
+                        = std::make_shared<romi::CablebotBase>(base_serial, gimbal);
+
+                return mount;
+        }
+
+        std::shared_ptr<ICameraMount> Cablebot::make_mount_v2(
+                rcom::ILinux&,
+                std::shared_ptr<rcom::ILog>& rcomlog)
+        {
+                auto cnc_client = rcom::RcomClient::create("cnc", 10.0, rcomlog);
+                std::unique_ptr<ICNC> cnc = std::make_unique<RemoteCNC>(cnc_client);
+                
+                std::unique_ptr<IGimbal> gimbal = std::make_unique<FakeGimbal>();
+                // auto gimbal_client = rcom::RcomClient::create("gimbal", 10.0, rcomlog);
+                // std::shared_ptr<IGimbal> gimbal
+                //         = std::make_shared<RemoteGimbal>(gimbal_client);
+                
+                return std::make_unique<CNCAndGimbal>(cnc, gimbal);
         }
 }

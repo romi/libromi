@@ -565,7 +565,7 @@ TEST_F(oquam_helix_tests, test_helix_full_circle)
         MockSession session;
 
 
-        EXPECT_CALL(controller, configure_homing(_,_,_))
+        EXPECT_CALL(controller, set_homing_axes(_,_,_))
                 .WillRepeatedly(Return(true));
         EXPECT_CALL(controller, spindle(0))
                 .WillOnce(Return(true));

@@ -40,7 +40,7 @@ namespace romi {
                 nlohmann::json result;
 
                 try {
-                        if (execute_with_result(MethodsCNC::get_range, result)) {
+                        if (execute_with_result(MethodsCNC::kGetRange, result)) {
                                 range.init(result);
                                 success = true;
                         }
@@ -60,7 +60,7 @@ namespace romi {
                 nlohmann::json result;
 
                 try {
-                        if (execute_with_result(MethodsCNC::get_position, result)) {
+                        if (execute_with_result(MethodsCNC::kGetPosition, result)) {
                                 position.set(result["x"], result["y"],
                                              result["z"]);
                                 success = true;
@@ -89,8 +89,14 @@ namespace romi {
 
                 params[MethodsCNC::kSpeedParam] = v;
 
-                return execute_with_params(MethodsCNC::moveto, params);
+                return execute_with_params(MethodsCNC::kMoveTo, params);
         }
+
+        // bool RemoteCNC::moveat(double vx, double vy, double vz)
+        // {
+        //         r_debug("RemoteCNC::moveat");
+        //         nlohmann::json params;
+        // }
 
         bool RemoteCNC::spindle(double speed)
         {
@@ -98,7 +104,7 @@ namespace romi {
 
                 nlohmann::json params;
                 params[MethodsCNC::kSpeedParam] = speed;
-                return execute_with_params(MethodsCNC::spindle, params);
+                return execute_with_params(MethodsCNC::kSpindle, params);
         }
         
         bool RemoteCNC::travel(Path &path, double relative_speed)
@@ -114,7 +120,7 @@ namespace romi {
                 parameters[MethodsCNC::kTravelPathParam] = points;
                 parameters[MethodsCNC::kSpeedParam] = relative_speed;
 
-                return execute_with_params(MethodsCNC::travel, parameters);
+                return execute_with_params(MethodsCNC::kTravel, parameters);
         }
 
         bool RemoteCNC::helix(double xc, double yc, double alpha, double z, double speed)
@@ -138,13 +144,22 @@ namespace romi {
 //                                                    MethodsCNC::kHelixAlphaParam, alpha,
 //                                                    MethodsCNC::kHelixZParam, z,
 //                                                    MethodsCNC::kSpeedParam, speed);
-                return execute_with_params(MethodsCNC::helix, params);
+                return execute_with_params(MethodsCNC::kHelix, params);
         }
 
         bool RemoteCNC::homing()
         {
                 r_debug("RemoteCNC::homing");
-                return execute_simple_request(MethodsCNC::homing);
+                return execute_simple_request(MethodsCNC::kHoming);
+        }
+
+        bool RemoteCNC::synchronize(double timeout_seconds)
+        {
+                r_debug("RemoteCNC::synchronize");
+
+                nlohmann::json params;
+                params[MethodsCNC::kTimeoutParam] = timeout_seconds;
+                return execute_with_params(MethodsCNC::kSynchronize, params);
         }
 
         bool RemoteCNC::pause_activity()

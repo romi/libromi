@@ -18,7 +18,9 @@ public:
         MOCK_METHOD(bool, reset_activity, (), (override));
         MOCK_METHOD(bool, enable, (), (override));
         MOCK_METHOD(bool, disable, (), (override));
-        MOCK_METHOD(bool, configure_homing, (romi::AxisIndex axis1, romi::AxisIndex axis2, romi::AxisIndex axis3), (override));
+        MOCK_METHOD(bool, set_homing_axes, (romi::AxisIndex axis1, romi::AxisIndex axis2, romi::AxisIndex axis3), (override));
+        MOCK_METHOD(bool, set_homing_speeds, (int16_t axis1, int16_t axis2, int16_t axis3), (override));
+        MOCK_METHOD(bool, set_homing_mode, (romi::HomingMode mode), (override));
         MOCK_METHOD(bool, stop, (), (override));
 };
 #pragma GCC diagnostic pop

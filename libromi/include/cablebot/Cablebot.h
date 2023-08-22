@@ -27,6 +27,7 @@
 #include <memory>
 #include <IRomiSerialClient.h>
 #include <rcom/ILinux.h>
+#include <rcom/ILog.h>
 #include "hal/ImagingDevice.h"
 #include "camera/ICameraInfoIO.h"
 #include "camera/ICameraInfo.h"
@@ -52,13 +53,20 @@ namespace romi {
                 
                 static std::unique_ptr<ImagingDevice>
                 create(rcom::ILinux& linux,
+                       std::shared_ptr<rcom::ILog>& rcomlog,
                        std::shared_ptr<ICameraInfoIO>& io);
                 
         protected:
-                static std::shared_ptr<ICamera> make_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_camera(
+                        std::shared_ptr<rcom::ILog>& rcomlog,
+                        ICameraSettings& settings);
                 static std::shared_ptr<ICamera> make_pi_camera(ICameraSettings& settings);
                 static std::shared_ptr<ICamera> make_fake_camera(ICameraSettings& settings);
-                static std::shared_ptr<ICamera> make_external_camera(ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_external_camera(
+                        ICameraSettings& settings);
+                static std::shared_ptr<ICamera> make_remote_camera(
+                        std::shared_ptr<rcom::ILog>& rcomlog,
+                        ICameraSettings& settings);
 
                 static std::unique_ptr<IGimbal> make_gimbal(rcom::ILinux& linux);
                 static std::unique_ptr<IGimbal> make_i2c_gimbal(rcom::ILinux& linux);
@@ -68,6 +76,16 @@ namespace romi {
                 static std::unique_ptr<romiserial::IRomiSerialClient> connect_real_base();
                 static std::unique_ptr<romiserial::IRomiSerialClient> connect_fake_base();
 
+                static std::shared_ptr<ICameraMount> make_mount(
+                        rcom::ILinux& linux,
+                        std::shared_ptr<rcom::ILog>& rcomlog);
+
+                static std::shared_ptr<ICameraMount> make_mount_v1(rcom::ILinux& linux);
+
+                static std::shared_ptr<ICameraMount> make_mount_v2(
+                        rcom::ILinux& linux,
+                        std::shared_ptr<rcom::ILog>& rcomlog);
+                
                 static CameraMode get_mode(ICameraSettings& settings);
                 static void get_resolution(ICameraSettings& settings,
                                            size_t& width, size_t& height);

@@ -30,14 +30,16 @@ namespace romi {
         {
         public:
                 
-                static constexpr const char *homing = "cnc-homing";
-                static constexpr const char *moveto = "cnc-moveto";
-                static constexpr const char *spindle = "cnc-spindle";
-                static constexpr const char *travel = "cnc-travel";
-                static constexpr const char *get_range = "cnc-get-range";
-                static constexpr const char *helix = "cnc-helix";
-                static constexpr const char *get_position = "cnc-get-position";
-                static constexpr const char *synchronize = "cnc-synchronize";
+                static constexpr const char *kHoming = "cnc-homing";
+                static constexpr const char *kSetHoming = "cnc-set-homing";
+                static constexpr const char *kMoveTo = "cnc-moveto";
+                //static constexpr const char *moveat = "cnc-moveat";
+                static constexpr const char *kSpindle = "cnc-spindle";
+                static constexpr const char *kTravel = "cnc-travel";
+                static constexpr const char *kGetRange = "cnc-get-range";
+                static constexpr const char *kHelix = "cnc-helix";
+                static constexpr const char *kGetPosition = "cnc-get-position";
+                static constexpr const char *kSynchronize = "cnc-synchronize";
 
                 static constexpr const char *kSpeedParam = "speed";
                 static constexpr const char *kMoveXParam = "x";
@@ -48,7 +50,7 @@ namespace romi {
                 static constexpr const char *kHelixYcParam = "yc";
                 static constexpr const char *kHelixAlphaParam = "alpha";
                 static constexpr const char *kHelixZParam = "z";
-                static constexpr const char *kTimoutParam = "timeout";
+                static constexpr const char *kTimeoutParam = "timeout";
         };
 }
 
