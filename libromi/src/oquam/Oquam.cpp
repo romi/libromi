@@ -197,7 +197,12 @@ namespace romi {
                         r_info("Oquam::set_relay: index out of bounds: %d", (int) index);
                         throw std::runtime_error("Oquam::set_relay: index out of bounds");
                 }
-                return controller_.spindle(1.0);
+                bool result = false;
+                if (value)
+                        result = controller_.spindle(1.0);
+                else
+                        result = controller_.spindle(0.0);
+                return result;
         }
         
         bool Oquam::homing()
