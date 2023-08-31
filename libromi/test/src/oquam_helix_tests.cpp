@@ -560,7 +560,8 @@ TEST_F(oquam_helix_tests, test_helix_full_circle)
                                            maximum_deviation,
                                            slice_duration,
                                            max_slice_duration,
-                                           homing);
+                                           homing,
+                                           kHomingDefault);
         MockCNCController controller;
         MockSession session;
 

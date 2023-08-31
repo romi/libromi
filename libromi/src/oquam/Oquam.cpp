@@ -72,6 +72,11 @@ namespace romi {
                                                    homing_speeds[2])) {
                         throw std::runtime_error("Oquam: set_homing_speeds failed");
                 }
+
+                if (!controller_.set_homing_mode(settings_.homing_mode_)) {
+                        throw std::runtime_error("Oquam: set_homing_mode failed");
+                }
+
                 if (!spindle(0.0)) {
                         throw std::runtime_error("Oquam: failed to stop spindle");
                 }

@@ -38,8 +38,8 @@ protected:
         
 	oquam_tests()
                 : range(xmin, xmax),
-                  settings(range, vmax, amax, scale, 0.005,
-                           slice_interval, max_slice_interval, homing),
+                  settings(range, vmax, amax, scale, 0.005, slice_interval,
+                           max_slice_interval, homing, kHomingDefault),
                   controller(),
                   linux(),
                   romiDeviceData("Oquam", "0001"),

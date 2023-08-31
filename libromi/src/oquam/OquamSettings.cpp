@@ -32,13 +32,15 @@ namespace romi {
                                      double path_max_deviation,
                                      double path_slice_duration,
                                      double path_max_slice_duration,
-                                     const AxisIndex *homing_axes)
+                                     const AxisIndex *homing_axes,
+                                     HomingMode homing_mode)
                 : range_(range),
                   vmax_(vmax),
                   amax_(amax),
                   path_max_deviation_(path_max_deviation),
                   path_slice_duration_(path_slice_duration),
-                  path_max_slice_duration_(path_max_slice_duration)
+                  path_max_slice_duration_(path_max_slice_duration),
+                  homing_mode_(homing_mode)
         {
                 // 32 seconds = 32000 ms < 2^16/2, which is the
                 // maximum value in the int16_t used to send block

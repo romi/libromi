@@ -38,8 +38,10 @@
 
 #define PIN_LIMIT_SWITCH_X   9
 #define PIN_LIMIT_SWITCH_Y   10
-#define PIN_LIMIT_SWITCH_Z   11
-#define PIN_SPINLDE          12
+#define PIN_LIMIT_SWITCH_Z   12
+#define PIN_SPINLDE          11
+//#define PIN_LIMIT_SWITCH_Z   11
+//#define PIN_SPINLDE          12
 
 /* 
  * The STEP_ and DIRECTION_ defines below are taken from Grbl.
