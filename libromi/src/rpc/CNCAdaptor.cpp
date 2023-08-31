@@ -88,6 +88,9 @@ namespace romi {
                         } else if (method == MethodsCNC::kSynchronize) {
                                 execute_synchronize(params, error);
                                 
+                        } else if (method == MethodsCNC::kSetRelay) {
+                                execute_set_relay(params);
+                                
                         } else if (method == MethodsActivity::activity_pause) {
                                 execute_pause(error);
                                 
@@ -273,11 +276,18 @@ namespace romi {
         void CNCAdaptor::execute_homing(rcom::RPCError &error)
         {
                 r_debug("CNCAdaptor::execute_homing");
-                
                 if (!cnc_.homing()) {
                         error.code = 1;
                         error.message = "homing failed";
                 }
+        }
+
+        void CNCAdaptor::execute_set_relay(nlohmann::json& params)
+        {
+                r_debug("CNCAdaptor::set_relay");
+                uint8_t index = params[MethodsCNC::kIndex];
+                bool value = params[MethodsCNC::kValue];
+                cnc_.set_relay(index, value);
         }
 
         void CNCAdaptor::execute_pause(rcom::RPCError &error)

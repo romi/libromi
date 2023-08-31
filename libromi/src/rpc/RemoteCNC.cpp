@@ -107,6 +107,21 @@ namespace romi {
                 return execute_with_params(MethodsCNC::kSpindle, params);
         }
         
+        uint8_t RemoteCNC::count_relays()
+        {
+                return 1; // TODO
+        }
+        
+        bool RemoteCNC::set_relay(uint8_t index, bool value)
+        {
+                r_debug("RemoteCNC::set_relay");
+                nlohmann::json params{
+                        {MethodsCNC::kIndex, index},
+                        {MethodsCNC::kValue, (double) value}
+                };
+                return execute_with_params(MethodsCNC::kSetRelay, params);
+        }
+        
         bool RemoteCNC::travel(Path &path, double relative_speed)
         {
                 r_debug("RemoteCNC::travel");

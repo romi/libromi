@@ -49,6 +49,8 @@ namespace romi {
                 virtual bool moveto(double x, double y, double z, double relative_speed) = 0;
                 // virtual bool moveat(double vx, double vy, double vz) = 0;
                 virtual bool spindle(double speed) = 0;
+                virtual uint8_t count_relays() = 0;
+                virtual bool set_relay(uint8_t index, bool value) = 0;
                 virtual bool travel(Path &path, double relative_speed) = 0;
                 virtual bool helix(double xc, double yc, double alpha, double z,
                                    double relative_speed) = 0;

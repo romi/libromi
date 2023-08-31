@@ -75,6 +75,9 @@ namespace romi {
                         } else if (method == MethodsCameraMount::kHoming) {
                                 execute_homing(error);
                         
+                        } else if (method == MethodsCameraMount::kSetRelay) {
+                                execute_set_relay(params);
+                        
                         } else if (method == MethodsActivity::activity_pause) {
                                 execute_pause(error);
                                 
@@ -241,5 +244,13 @@ namespace romi {
                         error.code = 1;
                         error.message = "wake_up failed";
                 }
+        }
+
+        void CameraMountAdaptor::execute_set_relay(nlohmann::json& params)
+        {
+                r_debug("CameraMountAdaptor::set_relay");
+                uint8_t index = params[MethodsCameraMount::kIndex];
+                bool value = params[MethodsCameraMount::kValue];
+                mount_.set_relay(index, value);
         }
 }

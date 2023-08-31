@@ -66,6 +66,16 @@ namespace romi {
                 return (cnc_->homing() && gimbal_->homing());
         }
 
+        uint8_t CNCAndGimbal::count_relays()
+        {
+                return cnc_->count_relays();
+        }
+         
+        bool CNCAndGimbal::set_relay(uint8_t index, bool value)
+        {
+                return cnc_->set_relay(index, value);
+        }
+
         bool CNCAndGimbal::power_up()
         {
                 return (cnc_->power_up() && gimbal_->power_up());

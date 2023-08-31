@@ -73,6 +73,16 @@ namespace romi {
         {
                 return mount_->homing();
         }
+
+        uint8_t ImagingDevice::count_relays()
+        {
+                return mount_->count_relays();
+        }
+        
+        bool ImagingDevice::set_relay(uint8_t index, bool value)
+        {
+                return mount_->set_relay(index, value);
+        }
         
         bool ImagingDevice::moveto(double x, double y, double z,
                                    double phi_x, double phi_y, double phi_z,

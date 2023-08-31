@@ -49,6 +49,7 @@ namespace romi {
                 void execute_power_down(rcom::RPCError &error);
                 void execute_stand_by(rcom::RPCError &error);
                 void execute_wake_up(rcom::RPCError &error);
+                void execute_set_relay(nlohmann::json& params);
 
 
         public:

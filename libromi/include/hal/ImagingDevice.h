@@ -57,6 +57,8 @@ namespace romi {
 
                 // ICameraMount
                 bool homing() override; 
+                uint8_t count_relays() override;
+                bool set_relay(uint8_t index, bool value) override;
                 bool get_range(CNCRange &xyz, IRange &angles) override;
                 bool get_position(v3& xyz, v3& angles) override;
                 bool moveto(double x, double y, double z,

@@ -47,6 +47,8 @@ namespace romi {
                 bool spindle(double speed) override;
                 bool travel(Path &path, double relative_speed) override;
                 bool homing() override;
+                uint8_t count_relays() override;
+                bool set_relay(uint8_t index, bool value) override;
                 bool helix(double xc, double yc, double alpha, double z,
                            double relative_speed) override;
                 bool synchronize(double timeout_seconds) override; 

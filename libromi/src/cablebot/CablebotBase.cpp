@@ -229,6 +229,16 @@ namespace romi {
         {
                 return send_base_command("H");
         }
+
+        uint8_t CablebotBase::count_relays()
+        {
+                return 0;
+        }
+        
+        bool CablebotBase::set_relay(uint8_t, bool)
+        {
+                throw std::runtime_error("CablebotBase: no relay");
+        }
  
         bool CablebotBase::get_position(v3& xyz, v3& angles)
         {

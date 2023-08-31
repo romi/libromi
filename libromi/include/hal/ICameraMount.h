@@ -38,6 +38,8 @@ namespace romi {
                 virtual ~ICameraMount() = default;
 
                 virtual bool homing() = 0; 
+                virtual uint8_t count_relays() = 0;
+                virtual bool set_relay(uint8_t index, bool value) = 0;
                 virtual bool get_position(v3& xyz, v3& angles) = 0;
                 virtual bool get_range(CNCRange &xyz, IRange &angles) = 0;
                 virtual bool moveto(double x, double y, double z,

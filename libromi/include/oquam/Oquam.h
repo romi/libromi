@@ -65,6 +65,8 @@ namespace romi {
                 bool helix(double xc, double yc, double alpha, double z,
                            double relative_speed) override;
                 bool spindle(double speed) override;
+                uint8_t count_relays() override;
+                bool set_relay(uint8_t index, bool value) override;
                 bool homing() override;
                 bool get_range(CNCRange &range) override;
                 bool get_position(v3& position) override; 

@@ -40,6 +40,7 @@ namespace romi {
                 static constexpr const char *kHelix = "cnc-helix";
                 static constexpr const char *kGetPosition = "cnc-get-position";
                 static constexpr const char *kSynchronize = "cnc-synchronize";
+                static constexpr const char *kSetRelay = "set-relay";
 
                 static constexpr const char *kSpeedParam = "speed";
                 static constexpr const char *kMoveXParam = "x";
@@ -51,6 +52,8 @@ namespace romi {
                 static constexpr const char *kHelixAlphaParam = "alpha";
                 static constexpr const char *kHelixZParam = "z";
                 static constexpr const char *kTimeoutParam = "timeout";
+                static constexpr const char *kIndex = "index";
+                static constexpr const char *kValue = "value";
         };
 }
 

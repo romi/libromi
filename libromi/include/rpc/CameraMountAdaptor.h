@@ -40,6 +40,7 @@ namespace romi {
                 void execute_get_position(nlohmann::json& result, rcom::RPCError &error);
                 void execute_get_range(nlohmann::json& result, rcom::RPCError &error);
                 void execute_homing(rcom::RPCError &error);
+                void execute_set_relay(nlohmann::json& params);
                 
                 void execute_stop(rcom::RPCError &error);
                 void execute_pause(rcom::RPCError &error);

@@ -95,7 +95,22 @@ namespace romi {
                 r_debug("RemoteCameraMount::homing");
                 return execute_simple_request(MethodsCameraMount::kHoming);
         }
- 
+
+        uint8_t RemoteCameraMount::count_relays()
+        {
+                return 1;
+        }
+        
+        bool RemoteCameraMount::set_relay(uint8_t index, bool value)
+        {
+                r_debug("RemoteCameraMount::set_relay");
+                nlohmann::json params{
+                        {MethodsCameraMount::kIndex, index},
+                        {MethodsCameraMount::kValue, (double) value}
+                };
+                return execute_with_params(MethodsCameraMount::kSetRelay, params);
+        }
+        
         bool RemoteCameraMount::pause_activity()
         {
                 r_debug("RemoteCameraMount::stop_activity");

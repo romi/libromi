@@ -34,6 +34,7 @@ namespace romi {
                 static constexpr const char *kGetRange = "camera-mount:get-range";
                 static constexpr const char *kGetPosition = "camera-mount:get-position";
                 static constexpr const char *kHoming = "camera-mount:homing";
+                static constexpr const char *kSetRelay = "camera-mount:set-relay";
 
                 static constexpr const char *kSpeedParam = "speed";
                 static constexpr const char *kXParam = "x";
@@ -50,6 +51,8 @@ namespace romi {
                 static constexpr const char *kPositionAngleZ = "az";
                 static constexpr const char *kXYZRange = "xyz-range";
                 static constexpr const char *kAnglesRange = "angles-range";
+                static constexpr const char *kIndex = "index";
+                static constexpr const char *kValue = "value";
         };
 }
 

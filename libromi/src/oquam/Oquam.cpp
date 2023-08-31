@@ -185,6 +185,21 @@ namespace romi {
                 return controller_.spindle(speed);
         }
 
+        uint8_t Oquam::count_relays()
+        {
+                return 1;
+        }
+
+        bool Oquam::set_relay(uint8_t index, bool value)
+        {
+                r_info("Oquam::relay[%d] %s", (int) index, value? "on" : "off");
+                if (index != 0) {
+                        r_info("Oquam::set_relay: index out of bounds: %d", (int) index);
+                        throw std::runtime_error("Oquam::set_relay: index out of bounds");
+                }
+                return controller_.spindle(1.0);
+        }
+        
         bool Oquam::homing()
         {
                 bool homing_result = true;

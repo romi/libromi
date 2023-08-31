@@ -37,6 +37,8 @@ namespace romi {
                 explicit RemoteCameraMount(std::unique_ptr<rcom::IRPCClient>& client);
                 ~RemoteCameraMount() override = default;
 
+                uint8_t count_relays() override;
+                bool set_relay(uint8_t index, bool value) override;
                 bool homing() override; 
                 bool get_position(v3& xyz, v3& angles) override; 
                 bool get_range(CNCRange& xyz, IRange& angles) override;

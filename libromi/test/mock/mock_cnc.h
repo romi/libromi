@@ -11,6 +11,8 @@ public:
         //MOCK_METHOD(bool, moveat, (int16_t speed_x, int16_t speed_y, int16_t speed_z), (override));
         MOCK_METHOD(bool, spindle, (double speed), (override));
         MOCK_METHOD(bool, travel, (romi::Path &path, double relative_speed), (override));
+        MOCK_METHOD(uint8_t, count_relays, (), (override));
+        MOCK_METHOD(bool, set_relay, (uint8_t, bool), (override));
         MOCK_METHOD(bool, homing, (), (override));
         MOCK_METHOD(bool, pause_activity, (), (override));
         MOCK_METHOD(bool, continue_activity, (), (override));
