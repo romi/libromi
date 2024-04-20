@@ -182,7 +182,6 @@ set(SOURCES
         include/IFolder.h
         include/api/ActivityHelper.h
         include/api/CNCRange.h
-        include/api/ConfigManager.h
         include/api/DataLog.h
         include/api/DataLogAccessor.h
         include/api/EventTimer.h
@@ -204,6 +203,7 @@ set(SOURCES
         include/api/IPowerDevice.h
         include/api/IRange.h
         include/api/IWeeder.h
+        include/api/LocalConfig.h
         include/api/Path.h
         include/api/Range.h
         include/api/StateMachine.h
@@ -221,6 +221,7 @@ set(SOURCES
         include/cablebot/ICablebotProgram.h
         include/cablebot/ICablebotProgramIO.h
         include/cablebot/ICablebotProgramList.h
+        include/camera/CameraFactory.h
         include/camera/CameraInfo.h
         include/camera/CameraInfoIO.h
         include/camera/CameraIntrinsics.h
@@ -266,6 +267,7 @@ set(SOURCES
         include/rpc/CNCAdaptor.h
         include/rpc/CameraAdaptor.h
         include/rpc/CameraMountAdaptor.h
+        include/rpc/ConfigAdaptor.h
         include/rpc/MethodsActivity.h
         include/rpc/MethodsCNC.h
         include/rpc/MethodsCamera.h
@@ -278,6 +280,7 @@ set(SOURCES
         include/rpc/RemoteCNC.h
         include/rpc/RemoteCamera.h
         include/rpc/RemoteCameraMount.h
+        include/rpc/RemoteConfig.h
         include/rpc/RemoteFunctionCallNames.h
         include/rpc/RemoteNavigation.h
         include/rpc/RemoteWeeder.h
@@ -302,11 +305,11 @@ set(SOURCES
         
         src/api/ActivityHelper.cpp
         src/api/CNCRange.cpp
-        src/api/ConfigManager.cpp
         src/api/DataLog.cpp
         src/api/DataLogAccessor.cpp
         src/api/EventTimer.cpp
         src/api/GimbalRange.cpp
+        src/api/LocalConfig.cpp
         src/api/Path.cpp
         src/api/Range.cpp
         src/battery_monitor/BatteryMonitor.cpp
@@ -319,6 +322,7 @@ set(SOURCES
         src/cablebot/CablebotProgramListAdaptor.cpp
         src/cablebot/CablebotRunner.cpp
         src/cablebot/FakeMotorController.cpp
+        src/camera/CameraFactory.cpp
         src/camera/CameraInfo.cpp
         src/camera/CameraInfoIO.cpp
         src/camera/CameraIntrinsics.cpp
@@ -350,10 +354,12 @@ set(SOURCES
         src/rpc/CNCAdaptor.cpp
         src/rpc/CameraAdaptor.cpp
         src/rpc/CameraMountAdaptor.cpp
+        src/rpc/ConfigAdaptor.cpp
         src/rpc/NavigationAdaptor.cpp
         src/rpc/RemoteCNC.cpp
         src/rpc/RemoteCamera.cpp
         src/rpc/RemoteCameraMount.cpp
+        src/rpc/RemoteConfig.cpp
         src/rpc/RemoteNavigation.cpp
         src/rpc/RemoteWeeder.cpp
         src/rpc/ScriptHubListener.cpp
@@ -372,6 +378,7 @@ set(SOURCES
 
 set(DATA_PROVIDER_SOURCES
         include/data_provider/CNCLocationProvider.h
+        include/data_provider/DummyLocationProvider.h
         include/data_provider/CameraMountLocationProvider.h
         include/data_provider/Gps.h
         include/data_provider/GpsLocationProvider.h
@@ -390,6 +397,7 @@ set(DATA_PROVIDER_SOURCES
         include/session/MetaFolder.h
         include/session/Session.h
         
+        src/data_provider/DummyLocationProvider.cpp
         src/data_provider/CNCLocationProvider.cpp
         src/data_provider/CameraMountLocationProvider.cpp
         src/data_provider/Gps.cpp

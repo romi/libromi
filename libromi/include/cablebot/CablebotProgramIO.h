@@ -26,7 +26,7 @@
 
 #include <rcom/json.hpp>
 #include "cablebot/ICablebotProgramIO.h"
-#include "api/ConfigManager.h"
+#include "api/IConfigManager.h"
 
 namespace romi {
 

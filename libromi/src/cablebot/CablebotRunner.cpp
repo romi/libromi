@@ -33,11 +33,11 @@ namespace romi {
         CablebotRunner::CablebotRunner(std::shared_ptr<ICablebotProgramList>& programs,
                                        ImagingDevice& cablebot,
                                        Session& session,
-                                       ICameraInfo& camera_info)
+                                       std::shared_ptr<romi::ICameraInfoIO>& info_io)
                 : programs_(programs),
                   cablebot_(cablebot),
                   session_(session),
-                  camera_info_(camera_info)
+                  info_io_(info_io)
         {
         }
         
@@ -75,7 +75,7 @@ namespace romi {
                 
                 session_.start(program.observation_id());
 
-                nlohmann::json json = CameraInfoIO::to_json(camera_info_);
+                nlohmann::json json = info_io_->get();
                 session_.store_metadata("camera", json);
                 
                 r_debug("CablebotRunner::init: Power up");

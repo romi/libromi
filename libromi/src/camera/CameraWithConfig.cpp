@@ -28,10 +28,10 @@
 namespace romi {
 
         CameraWithConfig::CameraWithConfig(std::shared_ptr<ICameraInfoIO>& io,
-                                           std::shared_ptr<ICamera>& camera)
+                                           std::unique_ptr<ICamera>& camera)
                 : io_(io),
                   info_(),
-                  camera_(camera)
+                  camera_(std::move(camera))
         {
                 info_ = io_->load();
                 apply_settings();

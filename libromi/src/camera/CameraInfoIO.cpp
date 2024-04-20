@@ -23,6 +23,7 @@
  */
 
 #include <stdexcept>
+#include <iostream>
 #include "util/Logger.h"
 #include "camera/CameraInfoIO.h"
 #include "camera/CameraInfo.h"
@@ -40,11 +41,20 @@ namespace romi {
         {
         }
 
+        nlohmann::json CameraInfoIO::get()
+        {
+                return config_->get_section(section_);
+        }
+        
         std::unique_ptr<ICameraInfo> CameraInfoIO::load()
         {
-                nlohmann::json json = config_->get_section(section_);
-                        
+                nlohmann::json json = get();
+
+                std::cout << json << std::endl;
+                
                 std::string camera_type = json[kCameraType];
+
+                r_debug("CameraInfoIO::load: type: %s", camera_type.c_str());
                 
                 std::unique_ptr<ICameraIntrinsics> intrinsics
                         = load_intrinsics(json[kIntrinsics]);
@@ -150,6 +160,21 @@ namespace romi {
 
         nlohmann::json CameraInfoIO::to_json(ICameraInfo& info)
         {
+                // Only the camera settings can be updated
+                // dynamically. First, we recover the original JSON,
+                // then we overwrite the camera settings. This makes
+                // sure that we copy any object in the 'camera'
+                // section that we don't handle.
+                nlohmann::json json = config_->get_section(section_);
+                std::string camera_type = json[kCameraType];
+                ICameraSettings& settings = info.get_settings();
+                json[camera_type] = settings.get_all();
+                return json;
+        }
+
+        /*
+        nlohmann::json CameraInfoIO::to_json(ICameraInfo& info)
+        {
                 ICameraIntrinsics& intrinsics = info.get_intrinsics();
                 double fx, fy, cx, cy;
                 intrinsics.get_focal_length(fx, fy);
@@ -202,4 +227,5 @@ namespace romi {
                 };
                 return json;
         }
+        */
 }

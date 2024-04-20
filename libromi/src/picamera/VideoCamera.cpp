@@ -42,6 +42,7 @@ namespace romi {
 
         VideoCamera::~VideoCamera()
         {
+                r_info("VideoCamera: deleted");
                 encoder_.disable_output();
         }
         

@@ -21,8 +21,8 @@
   <http://www.gnu.org/licenses/>.
 
  */
-#ifndef __ROMI_CAMERAHANDLER_H
-#define __ROMI_CAMERAHANDLER_H
+#ifndef __ROMI_CAMERAADAPTOR_H
+#define __ROMI_CAMERAADAPTOR_H
 
 #include <rcom/IRPCHandler.h>
 #include "api/ICamera.h"
@@ -62,4 +62,4 @@ namespace romi {
         };
 }
 
-#endif // __ROMI_CAMERAHANDLER_H
+#endif // __ROMI_CAMERAADAPTOR_H

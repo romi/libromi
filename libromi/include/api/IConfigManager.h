@@ -37,6 +37,7 @@ namespace romi {
                 virtual void set_section(const std::string& name,
                                          nlohmann::json& value) = 0;
                 virtual nlohmann::json get_section(const std::string& name) = 0;
+                virtual nlohmann::json get() = 0;
         };
 }
 

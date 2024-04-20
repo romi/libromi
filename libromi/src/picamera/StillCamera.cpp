@@ -1,4 +1,4 @@
-/*
+/*StillCamera
   libromi
 
   Copyright (C) 2019 Sony Computer Science Laboratories
@@ -39,6 +39,7 @@ namespace romi {
 
         StillCamera::~StillCamera()
         {
+                r_info("StillCamera: deleted");
         }
         
         bool StillCamera::grab(romi::Image &image)

@@ -29,7 +29,7 @@
 #include "cablebot/ICablebotProgramList.h"
 #include "hal/ImagingDevice.h"
 #include "session/Session.h"
-#include "camera/ICameraInfo.h"
+#include "camera/ICameraInfoIO.h"
 
 namespace romi {
 
@@ -39,7 +39,7 @@ namespace romi {
                 std::shared_ptr<ICablebotProgramList> programs_;
                 ImagingDevice& cablebot_;
                 Session& session_;
-                ICameraInfo& camera_info_;
+                std::shared_ptr<ICameraInfoIO> info_io_;
                 
                 void try_run(uint8_t hour, uint8_t minute);
                 void run(ICablebotProgram& program);
@@ -56,7 +56,7 @@ namespace romi {
                 CablebotRunner(std::shared_ptr<ICablebotProgramList>& programs,
                                ImagingDevice& cablebot,
                                Session& session,
-                               ICameraInfo& camera_info);
+                               std::shared_ptr<romi::ICameraInfoIO>& info_io);
                 ~CablebotRunner() override = default;
 
                 void wakeup(uint8_t hour, uint8_t minute) override;

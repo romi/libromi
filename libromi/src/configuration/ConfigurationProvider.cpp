@@ -44,7 +44,7 @@ namespace romi {
     std::string get_brush_motor_device(romi::IOptions &options, nlohmann::json &config)
     {
             std::string brush_motor_device
-                    = options.get_value(romi::RoverOptions::navigation_device);
+                    = options.get_value(romi::RoverOptions::kNavigationDevice);
             if (brush_motor_device.empty()) {
                     brush_motor_device = get_brush_motor_device_in_config(config);
             }
@@ -85,7 +85,7 @@ namespace romi {
 
     std::string get_script_file(romi::IOptions &options, nlohmann::json&)
     {
-            std::string file = options.get_value(romi::RoverOptions::script);
+            std::string file = options.get_value(romi::RoverOptions::kScript);
             // if (file.empty()) {
             //         file = get_script_file_in_config(config);
             // }
@@ -95,7 +95,7 @@ namespace romi {
     std::string get_session_directory(romi::IOptions &options, nlohmann::json &config)
     {
             (void) config;
-            std::string dir = options.get_value(romi::RoverOptions::session_directory);
+            std::string dir = options.get_value(romi::RoverOptions::kSessionDirectory);
             if (dir.empty()) {
                     // TODO: to be finalized: get seesion dir from config
                     // file, add the current date to the path, and create
@@ -107,7 +107,7 @@ namespace romi {
 
     std::string get_camera_image(romi::IOptions& options, nlohmann::json& config)
     {
-            std::string path = options.get_value(romi::RoverOptions::camera_image);
+            std::string path = options.get_value(romi::RoverOptions::kCameraImage);
             if (path.empty()) {
                     path = config["weeder"]["file-camera"]["image"];
             }
@@ -128,7 +128,7 @@ namespace romi {
 
     std::string get_camera_device(romi::IOptions& options, nlohmann::json& config)
     {
-            std::string device = options.get_value(romi::RoverOptions::camera_device);
+            std::string device = options.get_value(romi::RoverOptions::kCameraDevice);
             if (device.empty())
                     device = get_camera_device_in_config(config);
             return device;
@@ -148,7 +148,7 @@ namespace romi {
 
     std::string get_camera_classname(romi::IOptions& options, nlohmann::json& config)
     {
-            std::string device = options.get_value(romi::RoverOptions::camera_classname);
+            std::string device = options.get_value(romi::RoverOptions::kCameraClassname);
             if (device.empty())
                     device = get_camera_classname_in_config(config);
             return device;

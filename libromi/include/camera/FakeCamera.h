@@ -40,7 +40,6 @@ namespace romi {
         protected:
                 size_t width_;
                 size_t height_;
-                int32_t fps_;
                 Image image_;
                 rcom::MemBuffer jpeg_;
                 
@@ -49,7 +48,7 @@ namespace romi {
                 
         public:
                 
-                explicit FakeCamera(size_t width, size_t height, int32_t fps);
+                explicit FakeCamera(size_t width, size_t height);
                 ~FakeCamera() override = default;
         
                 bool grab(Image &image) override;

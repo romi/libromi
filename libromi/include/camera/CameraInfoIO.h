@@ -65,7 +65,9 @@ namespace romi {
                 std::unique_ptr<ICameraInfo> load() override;
                 void store(ICameraInfo& info) override;
 
-                static nlohmann::json to_json(ICameraInfo& info);
+                nlohmann::json get() override;
+                
+                nlohmann::json to_json(ICameraInfo& info);
                 
         protected:
                 std::unique_ptr<ICameraInfo>

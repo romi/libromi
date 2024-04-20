@@ -35,41 +35,41 @@ namespace romi {
 
                 // File paths
                 
-                { RoverOptions::config, true, "config.json",
+                { RoverOptions::kConfig, true, "config.json",
                   "Path of the config file" },
 
-                { RoverOptions::script, true, nullptr,
+                { RoverOptions::kScript, true, nullptr,
                   "The path of the file containing the scripts and menus" },
                 
-                { RoverOptions::registry, true, nullptr,
+                { RoverOptions::kRegistry, true, nullptr,
                   "The IP address of the registry"},
                 
-                { RoverOptions::session_directory, true, ".",
+                { RoverOptions::kSessionDirectory, true, ".",
                   "The session directory where the output "
                   "files are stored (logs, images...)"},
                 
-                { RoverOptions::soundfont, true, nullptr,
+                { RoverOptions::kSoundfont, true, nullptr,
                   "The path of the soundfont for the sound notification "},
 
-                { RoverOptions::joystick_device, true, nullptr,
+                { RoverOptions::kJoystickDevice, true, nullptr,
                   "The path of the system device for the input device" },
                 
-                { RoverOptions::display_device, true, nullptr,
+                { RoverOptions::kDisplayDevice, true, nullptr,
                   "The path of the system device for the display "},
                 
-                { RoverOptions::camera_classname, true, nullptr,
+                { RoverOptions::kCameraClassname, true, nullptr,
                   "The classname of the camera to instanciate."},
                 
-                { RoverOptions::camera_device, true, nullptr,
+                { RoverOptions::kCameraDevice, true, nullptr,
                   "The device path for the USB camera."},
                 
-                { RoverOptions::camera_image, true, nullptr,
+                { RoverOptions::kCameraImage, true, nullptr,
                   "The path of the image file for the file camera."},
                 
-                { RoverOptions::cnc_device, true, nullptr,
+                { RoverOptions::kCncDevice, true, nullptr,
                   "The stepper controller's serial device "},
                 
-                { RoverOptions::navigation_device, true, nullptr,
+                { RoverOptions::kNavigationDevice, true, nullptr,
                   "The brush motor driver's serial device"
                 },
         };
@@ -88,7 +88,7 @@ namespace romi {
 
         std::string RoverOptions::get_config_file()
         {
-                std::string file = get_value(romi::RoverOptions::config);
+                std::string file = get_value(romi::RoverOptions::kConfig);
                 if (file.empty()) {
                         throw std::runtime_error("No configuration file was given (can't run without one...).");
                 }

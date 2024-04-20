@@ -31,10 +31,9 @@
 
 namespace romi {
 
-        FakeCamera::FakeCamera(size_t width, size_t height, int32_t fps)
+        FakeCamera::FakeCamera(size_t width, size_t height)
                 : width_(width),
                   height_(height),
-                  fps_(fps),
                   image_(Image::RGB, width, height),
                   jpeg_()
         {

@@ -22,24 +22,34 @@
 
  */
 
-#ifndef __ROMI_ICAMERAINFOIO_H
-#define __ROMI_ICAMERAINFOIO_H
+#ifndef __ROMI_LOCALCONFIG_H
+#define __ROMI_LOCALCONFIG_H
 
-#include <memory>
-#include <json.hpp>
-#include "camera/ICameraInfo.h"
+#include <filesystem>
+#include "api/IConfigManager.h"
 
 namespace romi {
-        
-        class ICameraInfoIO
-        {
-        public:
-                virtual ~ICameraInfoIO() = default;
 
-                virtual nlohmann::json get() = 0;
-                virtual std::unique_ptr<ICameraInfo> load() = 0;
-                virtual void store(ICameraInfo& info) = 0;
+        class LocalConfig : public IConfigManager
+        {
+        protected:
+                std::filesystem::path path_;
+                nlohmann::json config_;
+
+                void load();
+                void store();
+                
+        public:
+                LocalConfig(std::filesystem::path& path);
+                ~LocalConfig() override = default;
+                
+                bool has_section(const std::string& name) override;
+                void set_section(const std::string& name,
+                                 nlohmann::json& value) override;
+                nlohmann::json get_section(const std::string& name) override;
+                nlohmann::json get() override;
         };
+
 }
 
-#endif // __ROMI_ICAMERAINFOIO_H
+#endif // __ROMI_LOCALCONFIG_H

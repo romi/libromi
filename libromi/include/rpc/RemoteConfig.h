@@ -21,25 +21,29 @@
   <http://www.gnu.org/licenses/>.
 
  */
-
-#ifndef __ROMI_ICAMERAINFOIO_H
-#define __ROMI_ICAMERAINFOIO_H
+#ifndef __ROMI_REMOTECONFIG_H
+#define __ROMI_REMOTECONFIG_H
 
 #include <memory>
-#include <json.hpp>
-#include "camera/ICameraInfo.h"
+#include <rcom/RemoteStub.h>
+#include "api/IConfigManager.h"
 
 namespace romi {
-        
-        class ICameraInfoIO
+
+        class RemoteConfig : public IConfigManager, public rcom::RemoteStub
         {
         public:
-                virtual ~ICameraInfoIO() = default;
+                static constexpr const char *ClassName = "remote-config";
 
-                virtual nlohmann::json get() = 0;
-                virtual std::unique_ptr<ICameraInfo> load() = 0;
-                virtual void store(ICameraInfo& info) = 0;
+        public:
+                RemoteConfig(std::unique_ptr<rcom::IRPCClient>& client);
+                ~RemoteConfig() override = default;
+
+                bool has_section(const std::string& name) override;
+                void set_section(const std::string& name, nlohmann::json& value) override;
+                nlohmann::json get_section(const std::string& name) override;
+                nlohmann::json get() override;
         };
 }
 
-#endif // __ROMI_ICAMERAINFOIO_H
+#endif // __ROMI_REMOTECONFIG_H

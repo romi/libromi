@@ -57,7 +57,7 @@ namespace romi {
                 auto info = io->load();
                 
                 // Camera
-                std::shared_ptr<ICamera> real_camera
+                std::unique_ptr<ICamera> real_camera
                         = make_camera(rcomlog, info->get_settings());
                 std::shared_ptr<ICamera> camera
                         = std::make_shared<CameraWithConfig>(io, real_camera);
@@ -127,7 +127,7 @@ namespace romi {
                 return (uint32_t) settings.get_value(ICameraSettings::kBitrate);
         }
 
-        std::shared_ptr<ICamera> Cablebot::make_camera(
+        std::unique_ptr<ICamera> Cablebot::make_camera(
                 std::shared_ptr<rcom::ILog>& rcomlog,
                 ICameraSettings& settings)
         {
@@ -148,7 +148,7 @@ namespace romi {
                 }
         }
 
-        std::shared_ptr<ICamera>
+        std::unique_ptr<ICamera>
         Cablebot::make_pi_camera(ICameraSettings& settings)
         {
 #ifdef PI_BUILD
@@ -176,7 +176,7 @@ namespace romi {
 										    height);
                 }
                 
-                std::shared_ptr<ICamera> camera = romi::PiCamera::create(*pi_settings);
+                std::unique_ptr<ICamera> camera = romi::PiCamera::create(*pi_settings);
                 return camera;
 #else
                 (void) settings;
@@ -184,29 +184,27 @@ namespace romi {
 #endif
         }
         
-        std::shared_ptr<ICamera> Cablebot::make_fake_camera(ICameraSettings& settings)
+        std::unique_ptr<ICamera> Cablebot::make_fake_camera(ICameraSettings& settings)
         {
                 size_t width, height;
                 get_resolution(settings, width, height);
-
-                int32_t fps = get_framerate(settings);
                 
-                std::shared_ptr<ICamera> camera
-                        = std::make_shared<FakeCamera>(width, height, fps);
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<FakeCamera>(width, height);
                 return camera;
         }
 
-        std::shared_ptr<ICamera> Cablebot::make_external_camera(ICameraSettings& settings)
+        std::unique_ptr<ICamera> Cablebot::make_external_camera(ICameraSettings& settings)
         {
                 std::string executable;
                 settings.get_option("executable", executable);
                 
-                std::shared_ptr<ICamera> camera
-                        = std::make_shared<ExternalCamera>(executable);
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<ExternalCamera>(executable);
                 return camera;
         }
 
-        std::shared_ptr<ICamera> Cablebot::make_remote_camera(
+        std::unique_ptr<ICamera> Cablebot::make_remote_camera(
                 std::shared_ptr<rcom::ILog>& rcomlog,
                 ICameraSettings& settings)
         {
@@ -214,8 +212,8 @@ namespace romi {
                 settings.get_option("topic", topic);
                 
                 auto client = rcom::RcomClient::create(topic, 10.0, rcomlog);
-                std::shared_ptr<ICamera> camera
-                        = std::make_shared<RemoteCamera>(client);
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<RemoteCamera>(client);
                 return camera;
         }
 

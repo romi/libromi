@@ -35,7 +35,7 @@ namespace romi {
         protected:
                 std::shared_ptr<ICameraInfoIO> io_;
                 std::unique_ptr<ICameraInfo> info_;
-                std::shared_ptr<ICamera> camera_;
+                std::unique_ptr<ICamera> camera_;
 
                 void apply_settings();
                 void apply_values();
@@ -44,7 +44,7 @@ namespace romi {
         public:
                 
                 explicit CameraWithConfig(std::shared_ptr<ICameraInfoIO>& io,
-                                          std::shared_ptr<ICamera>& camera);
+                                          std::unique_ptr<ICamera>& camera);
                 ~CameraWithConfig() override = default;
         
                 bool grab(Image &image) override;
