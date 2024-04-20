@@ -57,10 +57,12 @@ namespace romi {
                 auto info = io->load();
                 
                 // Camera
-                std::unique_ptr<ICamera> real_camera
-                        = make_camera(rcomlog, info->get_settings());
+                // std::unique_ptr<ICamera> real_camera
+                //         = make_camera(rcomlog, info->get_settings());
+                // std::shared_ptr<ICamera> camera
+                //         = std::make_shared<CameraWithConfig>(io, real_camera);
                 std::shared_ptr<ICamera> camera
-                        = std::make_shared<CameraWithConfig>(io, real_camera);
+                        = make_camera(rcomlog, info->get_settings());
 
                 // Mount
                 std::shared_ptr<ICameraMount> mount
