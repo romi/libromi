@@ -131,21 +131,21 @@ namespace romi {
                 std::shared_ptr<rcom::ILog>& rcomlog,
                 ICameraSettings& settings)
         {
-                if (settings.type() == "pi-camera-hq")
-                        return make_pi_camera(settings);
+                // if (settings.type() == "pi-camera-hq")
+                //         return make_pi_camera(settings);
                 
-                else if (settings.type() == "external-camera")
-                        return make_external_camera(settings);
+                // else if (settings.type() == "external-camera")
+                //         return make_external_camera(settings);
                         
-                else if (settings.type() == "remote-camera")
+                // else if (settings.type() == "remote-camera")
                         return make_remote_camera(rcomlog, settings);
                         
-                else if (settings.type() == "fake-camera")
-                        return make_fake_camera(settings);
+                // else if (settings.type() == "fake-camera")
+                //         return make_fake_camera(settings);
 
-                else {
-                        throw std::runtime_error("Unknown camera type");
-                }
+                // else {
+                //         throw std::runtime_error("Unknown camera type");
+                // }
         }
 
         std::unique_ptr<ICamera>
@@ -206,10 +206,10 @@ namespace romi {
 
         std::unique_ptr<ICamera> Cablebot::make_remote_camera(
                 std::shared_ptr<rcom::ILog>& rcomlog,
-                ICameraSettings& settings)
+                ICameraSettings&)
         {
-                std::string topic;
-                settings.get_option("topic", topic);
+                std::string topic = "camera";
+                // settings.get_option("topic", topic);
                 
                 auto client = rcom::RcomClient::create(topic, 10.0, rcomlog);
                 std::unique_ptr<ICamera> camera
