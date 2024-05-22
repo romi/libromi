@@ -46,9 +46,10 @@ namespace romi {
                 
         std::vector<Centers> sort_centers(Centers& centers, Image& components);
 
-    std::vector<std::pair<uint32_t, uint32_t>>
-    calculate_adjacent_centres(const std::vector<double> &kseedsl,
-                               const std::vector<double> &kseedsx, const std::vector<double> &kseedsy);
+        std::vector<std::pair<uint32_t, uint32_t>>
+        calculate_adjacent_centres(const std::vector<double> &kseedsl,
+                                   const std::vector<double> &kseedsx,
+                                   const std::vector<double> &kseedsy);
         
 }
 

@@ -25,6 +25,7 @@
 #include <chrono>
 #include "camera_v4l.h"
 #include "camera/USBCamera.h"
+#include "cv/ImageIO.h"
 #include "util/Logger.h"
 
 namespace romi {
@@ -32,8 +33,13 @@ namespace romi {
         using SynchonizedCodeBlock = std::lock_guard<std::mutex>;
 
         USBCamera::USBCamera(const std::string& device, size_t width, size_t height)
-                : _camera(nullptr), _device(device), _mutex(),
-                _done(false), _image(), _thread()
+                : _camera(nullptr),
+                  _device(device),
+                  _mutex(),
+                  _done(false),
+                  _image(),
+                  _buffer(),
+                  _thread()
         {
                 if (_device.length() == 0)
                         throw std::runtime_error("USBCamera: Invalid device");
@@ -61,9 +67,9 @@ namespace romi {
         {
                 (void) name;
                 (void) value;
-                r_err("USBCamera::set_value::Not implemented");
-                throw std::runtime_error("USBCamera::set_value::Not implemented");
-                return false;
+                r_warn("USBCamera::set_value::Not implemented");
+                //throw std::runtime_error("USBCamera::set_value::Not implemented");
+                return true;
         }
         
         bool USBCamera::select_option(const std::string& name,
@@ -71,9 +77,9 @@ namespace romi {
         {
                 (void) name;
                 (void) value;
-                r_err("USBCamera::set_value::Not implemented");
-                throw std::runtime_error("USBCamera::set_value::Not implemented");
-                return false;
+                r_warn("USBCamera::set_value::Not implemented");
+                //throw std::runtime_error("USBCamera::set_value::Not implemented");
+                return true;
         }
 
         bool USBCamera::open(size_t width, size_t height)
@@ -126,10 +132,28 @@ namespace romi {
         bool USBCamera::grab(Image &image)
         {
                 SynchonizedCodeBlock synchonized(_mutex);
+                r_info("USBCamera: grab");
                 image = _image;
                 return true;
         }
+        
+        rcom::MemBuffer& USBCamera::grab_jpeg()
+        {
+                SynchonizedCodeBlock synchonized(_mutex);
+                
+                r_info("USBCamera: grab");
+                
+                std::vector<uint8_t> buffer;
+                ImageIO::store_jpg_to_buffer(_image, buffer);
+                _buffer.clear();
+                _buffer.append(buffer.data(), buffer.size());
 
+                return _buffer;
+                
+                // r_err("USBCamera::grab_jpeg: Not implemented");
+                // throw std::runtime_error("USBCamera::grab_jpeg: Not implemented");
+        }
+        
         bool USBCamera::power_up()
         {
                 return true;

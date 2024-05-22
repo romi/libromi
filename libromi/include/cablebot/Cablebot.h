@@ -87,8 +87,8 @@ namespace romi {
                         std::shared_ptr<rcom::ILog>& rcomlog);
                 
                 static CameraMode get_mode(ICameraSettings& settings);
-                static void get_resolution(ICameraSettings& settings,
-                                           size_t& width, size_t& height);
+                // static void get_resolution(ICameraSettings& settings,
+                //                            size_t& width, size_t& height);
                 static int32_t get_framerate(ICameraSettings& settings);
                 static uint32_t get_bitrate(ICameraSettings& settings);
         };

@@ -42,10 +42,14 @@ namespace romi {
                         ICameraSettings& settings);
                 static std::unique_ptr<ICamera> make_fake_camera(
                         ICameraSettings& settings);
+                static std::unique_ptr<ICamera> make_file_camera(
+                        ICameraSettings& settings);
                 static std::unique_ptr<ICamera> make_external_camera(
                         ICameraSettings& settings);
                 static std::unique_ptr<ICamera> make_remote_camera(
                         std::shared_ptr<rcom::ILog>& rcomlog,
+                        ICameraSettings& settings);
+                static std::unique_ptr<ICamera> make_usb_camera(
                         ICameraSettings& settings);
                 
         public:

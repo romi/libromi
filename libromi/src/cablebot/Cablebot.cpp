@@ -84,40 +84,40 @@ namespace romi {
                         throw std::runtime_error("Cablebot::get_mode: unknown mode");
         }
         
-        void Cablebot::get_resolution(ICameraSettings& settings,
-                                      size_t& width, size_t& height)
-        {
-                std::string value;
-                settings.get_option(ICameraSettings::kResolution, value);
+        // void Cablebot::get_resolution(ICameraSettings& settings,
+        //                               size_t& width, size_t& height)
+        // {
+        //         std::string value;
+        //         settings.get_option(ICameraSettings::kResolution, value);
                 
-                if (value == ICameraSettings::kResolution4056x3040) {
-                        width = 4056;
-                        height = 3040;
-                } else if (value == ICameraSettings::kResolution2028x1520) {
-                        width = 2028;
-                        height = 1520;
-                } else if (value == ICameraSettings::kResolution1014x760) {
-                        width = 1014;
-                        height = 760;
-                } else if (value == ICameraSettings::kResolution3280x2464) {
-                        width = 3280;
-                        height = 2464;
-                } else if (value == ICameraSettings::kResolution1640x1232) {
-                        width = 1640;
-                        height = 1232;
-                } else if (value == ICameraSettings::kResolution820x616) {
-                        width = 820;
-                        height = 616;
-                } else if (value == ICameraSettings::kResolution1920x1080) {
-                        width = 1920;
-                        height = 1080;
-                } else if (value == ICameraSettings::kResolution640x480) {
-                        width = 640;
-                        height = 480;
-                } else {
-                        throw std::runtime_error("Cablebot::get_mode: unknown resolution");
-                }
-        }
+        //         if (value == ICameraSettings::kResolution4056x3040) {
+        //                 width = 4056;
+        //                 height = 3040;
+        //         } else if (value == ICameraSettings::kResolution2028x1520) {
+        //                 width = 2028;
+        //                 height = 1520;
+        //         } else if (value == ICameraSettings::kResolution1014x760) {
+        //                 width = 1014;
+        //                 height = 760;
+        //         } else if (value == ICameraSettings::kResolution3280x2464) {
+        //                 width = 3280;
+        //                 height = 2464;
+        //         } else if (value == ICameraSettings::kResolution1640x1232) {
+        //                 width = 1640;
+        //                 height = 1232;
+        //         } else if (value == ICameraSettings::kResolution820x616) {
+        //                 width = 820;
+        //                 height = 616;
+        //         } else if (value == ICameraSettings::kResolution1920x1080) {
+        //                 width = 1920;
+        //                 height = 1080;
+        //         } else if (value == ICameraSettings::kResolution640x480) {
+        //                 width = 640;
+        //                 height = 480;
+        //         } else {
+        //                 throw std::runtime_error("Cablebot::get_mode: unknown resolution");
+        //         }
+        // }
                 
         int32_t Cablebot::get_framerate(ICameraSettings& settings)
         {
@@ -157,9 +157,8 @@ namespace romi {
                 std::unique_ptr<romi::PiCameraSettings> pi_settings;
 
                 CameraMode mode = get_mode(settings);
-                size_t width, height;
-                
-                get_resolution(settings, width, height);
+                size_t width = (size_t) settings.get_value(ICameraSettings::kWidth);
+                size_t height = (size_t) settings.get_value(ICameraSettings::kHeight);
                 
                 if (mode == kVideoMode) {
                         int32_t fps = get_framerate(settings);
@@ -188,8 +187,8 @@ namespace romi {
         
         std::unique_ptr<ICamera> Cablebot::make_fake_camera(ICameraSettings& settings)
         {
-                size_t width, height;
-                get_resolution(settings, width, height);
+                size_t width = (size_t) settings.get_value(ICameraSettings::kWidth);
+                size_t height = (size_t) settings.get_value(ICameraSettings::kHeight);
                 
                 std::unique_ptr<ICamera> camera
                         = std::make_unique<FakeCamera>(width, height);

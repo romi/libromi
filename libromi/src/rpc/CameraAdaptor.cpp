@@ -42,6 +42,7 @@ namespace romi {
                 (void) id;
                 (void) params;
 
+                r_debug("CameraAdaptor::execute (binary)");
                 error.code = 0;
                 result.clear();
                 
@@ -73,6 +74,7 @@ namespace romi {
         {
                 (void) id;
                 error.code = 0;
+                r_debug("CameraAdaptor::execute (text)");
                                 
                 try {
                         if (method == MethodsPowerDevice::power_up) {

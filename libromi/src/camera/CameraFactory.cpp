@@ -26,8 +26,10 @@
 #include <rcom/RcomClient.h>
 #include "util/Logger.h"
 #include "camera/FakeCamera.h"
+#include "camera/FileCamera.h"
 #include "camera/ExternalCamera.h"
 #include "camera/CameraWithConfig.h"
+#include "camera/USBCamera.h"
 #include "rpc/RemoteCamera.h"
 #include "camera/CameraFactory.h"
 
@@ -65,23 +67,39 @@ namespace romi {
                         
                 else if (settings.type() == "fake-camera")
                         return make_fake_camera(settings);
+                
+                else if (settings.type() == "file-camera")
+                        return make_file_camera(settings);
+
+                else if (settings.type() == "v4l-camera")
+                        return make_usb_camera(settings);
 
                 else {
                         throw std::runtime_error("Unknown camera type");
                 }
         }
         
-        std::unique_ptr<ICamera> CameraFactory::make_fake_camera(ICameraSettings&)
+        std::unique_ptr<ICamera> CameraFactory::make_fake_camera(ICameraSettings& settings)
         {
                 r_debug("CameraFactory::make_fake_camera");
                 
-                size_t width, height;
-                // get_resolution(settings, width, height);
-                width = 1920;
-                height = 1080;
+                size_t width = (size_t) settings.get_value(ICameraSettings::kWidth);
+                size_t height = (size_t) settings.get_value(ICameraSettings::kHeight);
                 
                 std::unique_ptr<ICamera> camera
                         = std::make_unique<FakeCamera>(width, height);
+                return camera;
+        }
+        
+        std::unique_ptr<ICamera> CameraFactory::make_file_camera(ICameraSettings& settings)
+        {
+                r_debug("CameraFactory::make_file_camera");
+
+                std::string path;
+                settings.get_option(ICameraSettings::kPath, path);
+                
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<FileCamera>(path);
                 return camera;
         }
 
@@ -90,7 +108,7 @@ namespace romi {
                 r_debug("CameraFactory::make_external_camera");
                 
                 std::string executable;
-                settings.get_option("executable", executable);
+                settings.get_option(ICameraSettings::kPath, executable);
                 
                 std::unique_ptr<ICamera> camera
                         = std::make_unique<ExternalCamera>(executable);
@@ -104,11 +122,25 @@ namespace romi {
                 r_debug("CameraFactory::make_remote_camera");
                 
                 std::string topic;
-                settings.get_option("topic", topic);
+                settings.get_option(ICameraSettings::kTopic, topic);
                 
                 auto client = rcom::RcomClient::create(topic, 10.0, rcomlog);
                 std::unique_ptr<ICamera> camera
                         = std::make_unique<RemoteCamera>(client);
+                return camera;
+        }
+
+        std::unique_ptr<ICamera> CameraFactory::make_usb_camera(ICameraSettings& settings)
+        {
+                r_debug("CameraFactory::make_usb_camera");
+                
+                std::string device;
+                settings.get_option(ICameraSettings::kDevice, device);
+                size_t width = (size_t) settings.get_value(ICameraSettings::kWidth);
+                size_t height = (size_t) settings.get_value(ICameraSettings::kHeight);
+                
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<USBCamera>(device, width, height);
                 return camera;
         }
 }

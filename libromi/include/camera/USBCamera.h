@@ -31,8 +31,10 @@
 #include <thread>
 #include <json.hpp>
 
+#include "rcom/MemBuffer.h"
 #include "api/ICamera.h"
 #include "cv/Image.h"
+#include "util/Logger.h"
 #include <atomic>
 
 typedef struct _camera_t camera_t;
@@ -50,7 +52,9 @@ namespace romi {
                 std::mutex _mutex;
                 std::atomic<bool> _done;
                 Image _image;
+                rcom::MemBuffer _buffer;
                 std::thread _thread;
+                
                 bool open(size_t width, size_t height);
                 void grab_from_camera();
                 void start_capture_thread();
@@ -65,10 +69,7 @@ namespace romi {
                 ~USBCamera() override;
                 
                 bool grab(Image &image) override;
-
-                rcom::MemBuffer& grab_jpeg() override {
-                        throw std::runtime_error("USBCamera::grab_jpeg: Not implemented");
-                }
+                rcom::MemBuffer& grab_jpeg() override;
                 
                 bool set_value(const std::string& name, double value) override;
                 bool select_option(const std::string& name,
