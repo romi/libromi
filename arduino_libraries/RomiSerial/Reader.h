@@ -30,8 +30,10 @@
 
 #ifndef __ssize_t_defined
 #ifndef	_SSIZE_T_DECLARED
+#ifndef	__SIZE_TYPE__
 // Arduino 1.8.13 doesn't seem to define ssize_t
 typedef signed long ssize_t;
+#endif
 #endif
 #endif
 
