@@ -120,7 +120,7 @@ void check_accuracy()
  */
 void setup()
 {
-        disable_driver();  // Disables the stepper driver for safety
+        // disable_driver();  // Disables the stepper driver for safety
         
         Serial.begin(115200);
         while (!Serial);  // Waits for Serial connection to initialize
@@ -133,7 +133,6 @@ void setup()
         enable_stepper_timer();
         romiSerial.send("Init OK");  // Sends initialization confirmation
 
-      
 }
 
 static unsigned long last_time = 0;  // Last recorded time for periodic operations
@@ -145,7 +144,7 @@ static int16_t id = 0;  // ID tracker for commands
  */
 void loop()
 {
-//    update_limit_switches();
+        update_limit_switches();
         romiSerial.handle_input();  // Handles any received serial commands
         check_accuracy();  // Periodically checks system accuracy
         delay(1);  // Introduces a small delay
@@ -658,35 +657,28 @@ int homing_moveto_switch_released(int axis)
 /**
  * @brief Performs the homing procedure for a specific axis.
  *
- * This function handles the homing routine for a specific axis iteratively, ensuring
- * success across multiple attempts. The success or failure of the operation is logged
- * for debugging purposes.
+ * This function handles the homing routine for a specific axis.
+ * The success or failure of the operation is logged for debugging purposes.
  *
  * @param axis The axis index (0, 1, or 2) to home.
  * @return bool Returns true if the homing operation is successful, false otherwise.
  */
 bool do_homing_axis(int axis)
 {
-        Serial.print("HOMING:xxxx\r\n"); // Begin the homing process and log the operation's start.
-        bool success = true;
-
-        // Attempt homing for each axis up to 3 iterations.
-        for (int i = 0; i < 3; i++) {
-                // Ensure the axis is within valid range before proceeding.
-                if (homing_axes[i] >= 0 && homing_axes[i] < 3) {
-                        success = do_homing_axis(homing_axes[i]); // Recursively home the axis.
-
-                        // Log success or failure of the homing process.
-                        Serial.print("Axis ");
-                        Serial.print(i);
-                        if (!success) {
-                                Serial.print(" FAILED homing:xxxx\r\n");
-                                break; // Exit the loop on failure.
-                        } else {
-                                Serial.print(" successful homing");
-                        }
-                        Serial.print(":xxxx\r\n");
-                }
+        // Begin the homing process
+        Serial.print("HOMING ");
+        Serial.print("axis ");
+        Serial.print(axis);
+        Serial.print("...:xxxx\r\n");
+        bool success = false;
+        if (homing_moveto_switch_pressed(axis) == 0
+            && homing_moveto_switch_released(axis) == 0
+            && homing_move(100, homing_speeds[axis]/5, axis) == 0) {
+                // Don't remove the RUNNING because wait() depends on
+                // it!
+                controller_state = STATE_RUNNING;
+                wait();
+                success = true;
         }
         return success; // Return the final status of the homing routine.
 }
@@ -845,11 +837,11 @@ void start_test()
                 // Uncomment the following code for motor movement testing:
                 // Provide motor movement commands and introduce a delay for observation.
 
-                // moveat(1000, 1000, 100);  // Move forward with specified speeds and duration.
-                // delay(500);               // Wait for 500ms.
+                moveat(1000, 1000, 100);  // Move forward with specified speeds and duration.
+                delay(500);               // Wait for 500ms.
 
-                // moveat(-1000, -1000, -100); // Move backward with specified speeds and duration.
-                // delay(500);                 // Wait for 500ms.
+                moveat(-1000, -1000, -100); // Move backward with specified speeds and duration.
+                delay(500);                 // Wait for 500ms.
 
                 update_limit_switches(); // Update the states of the limit switches.
 
