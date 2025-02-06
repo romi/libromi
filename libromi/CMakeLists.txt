@@ -12,26 +12,13 @@ set(romi_VERSION_MINOR 1)
 
 ############################################################
 if (${PI_BUILD})
-        set( PICAMERA_LIB_PATH_ROOT "/opt/vc")
+        set( PICAMERA_LIB_PATH_ROOT "/usr/include/libcamera")
 
-        find_path(PICAMERA_INCLUDE_DIR
-                NAMES bcm_host.h
-                PATHS ${PICAMERA_LIB_PATH_ROOT}/include)
-                
-        find_library(PICAMERA_SHARED_LIB
-                NAMES mmal
-                PATHS ${PICAMERA_LIB_PATH_ROOT}/lib)
-
-        add_library(mmal SHARED IMPORTED GLOBAL)   
-        set_property(TARGET mmal 
-                        PROPERTY
-                        IMPORTED_LOCATION ${PICAMERA_SHARED_LIB})    
-
-        set_property(TARGET mmal 
-                        PROPERTY
-                        INTERFACE_INCLUDE_DIRECTORIES "${PICAMERA_INCLUDE_DIR}"
-                )
-        set(PI_CAMERA_LIB mmal)
+        find_library(
+                NAMES libcamera
+                PATHS ${PICAMERA_LIB_PATH_ROOT}/libcamera
+        )
+        set(PI_CAMERA_LIB "libcamera")
 else()
         set(PI_CAMERA_LIB "")
 endif()
