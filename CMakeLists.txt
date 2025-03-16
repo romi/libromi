@@ -36,6 +36,11 @@ set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 ############################################################
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(libcamera REQUIRED libcamera>=0.3)
+
+############################################################
+
 # Options.
 # Build tests by default. We want to run tests whether we are developing or building a release. I mean... why wouldn't you? :)
 option(BUILD_TESTS "Build all tests." ON)

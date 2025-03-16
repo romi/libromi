@@ -1,6 +1,6 @@
 MESSAGE("${PROJECT_NAME} Importing Romi Project Build Settings" )
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -18,8 +18,14 @@ endif()
 
 # Ideal list of warnings! Add gradually!
 #-Werror -Wall -Wpedantic -Wextra -Wmissing-include-dirs -Wuseless-cast -Wconversion -Wsign-conversion -Wswitch-default -Weffc++ -Wswitch-enum -Wzero-as-null-pointer-constant -Winit-self -Wformat=2 -Waddress -Wlogical-op -Wpointer-arith)
-set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wconversion -Wsign-conversion -Wswitch-default -Wswitch-enum -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2 -fpic")
-set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS} -Weffc++ -Wzero-as-null-pointer-constant ${PROJECT_SANITISE_FLAGS}")
+
+# libcamera doesn't compile with -Weffc++
+#set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wconversion -Wsign-conversion -Wswitch-default -Wswitch-enum -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2 -fpic")
+set(COMMON_COMPILATION_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wconversion -Wswitch-default -Wswitch-enum -Winit-self -Waddress -Wlogical-op -Wpointer-arith -Wformat=2 -fpic")
+
+# libcamera doesn't compile with -Weffc++
+#set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS} -Weffc++ -Wzero-as-null-pointer-constant ${PROJECT_SANITISE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${COMMON_COMPILATION_FLAGS} -Wzero-as-null-pointer-constant ${PROJECT_SANITISE_FLAGS}")
 set(CMAKE_C_FLAGS "${COMMON_COMPILATION_FLAGS} ${PROJECT_SANITISE_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 set(CMAKE_C_FLAGS_RELEASE "-O2")

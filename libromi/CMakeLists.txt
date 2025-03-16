@@ -237,6 +237,7 @@ set(SOURCES
         include/camera/ICameraIntrinsics.h
         include/camera/ICameraSettings.h
         include/camera/Imager.h
+        include/camera/LibCamera.h
         include/camera/SimpleRadialDistortion.h        
         include/camera/USBCamera.h
         include/configuration/ConfigurationProvider.h
@@ -332,6 +333,7 @@ set(SOURCES
         src/camera/FakeCamera.cpp
         src/camera/FileCamera.cpp
         src/camera/Imager.cpp
+        src/camera/LibCamera.cpp
         src/camera/SimpleRadialDistortion.cpp
         src/camera/USBCamera.cpp
         src/camera/camera_v4l.cpp
@@ -414,12 +416,14 @@ add_library(romi SHARED ${SOURCES} ${DATA_PROVIDER_SOURCES} ${PICAMERA_SOURCES} 
 target_include_directories(romi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        ${libcamera_INCLUDE_DIRS}
         )
 
 target_link_libraries(romi
         romiserial
         rcom
         #fluidsynth
+        ${libcamera_LINK_LIBRARIES}
         ortools
         stdc++fs
         ${PI_CAMERA_LIB})

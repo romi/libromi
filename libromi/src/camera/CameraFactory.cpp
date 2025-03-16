@@ -30,6 +30,7 @@
 #include "camera/ExternalCamera.h"
 #include "camera/CameraWithConfig.h"
 #include "camera/USBCamera.h"
+#include "camera/LibCamera.h"
 #include "rpc/RemoteCamera.h"
 #include "camera/CameraFactory.h"
 
@@ -74,11 +75,14 @@ namespace romi {
                 else if (settings.type() == "v4l-camera")
                         return make_usb_camera(settings);
 
+                else if (settings.type() == "libcamera")
+                        return make_libcamera(settings);
+
                 else {
                         throw std::runtime_error("Unknown camera type");
                 }
         }
-        
+
         std::unique_ptr<ICamera> CameraFactory::make_fake_camera(ICameraSettings& settings)
         {
                 r_debug("CameraFactory::make_fake_camera");
@@ -141,6 +145,15 @@ namespace romi {
                 
                 std::unique_ptr<ICamera> camera
                         = std::make_unique<USBCamera>(device, width, height);
+                return camera;
+        }
+
+        std::unique_ptr<ICamera> CameraFactory::make_libcamera(ICameraSettings&)
+        {
+                r_debug("CameraFactory::make_libcamera");
+                
+                std::unique_ptr<ICamera> camera
+                        = std::make_unique<LibCamera>();
                 return camera;
         }
 }

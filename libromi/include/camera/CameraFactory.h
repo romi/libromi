@@ -51,6 +51,8 @@ namespace romi {
                         ICameraSettings& settings);
                 static std::unique_ptr<ICamera> make_usb_camera(
                         ICameraSettings& settings);
+                static std::unique_ptr<ICamera> make_libcamera(
+                        ICameraSettings& settings);
                 
         public:
                 virtual ~CameraFactory() = default;
